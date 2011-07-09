@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.VSPackage", "VisualMutator.VSPackage\VisualMutator.VSPackage.csproj", "{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.VSPackage_IntegrationTests", "VisualMutator.VSPackage\VisualMutator.VSPackage_IntegrationTests\VisualMutator.VSPackage_IntegrationTests.csproj", "{380E0CFD-F091-4BF6-91DD-A3A51EB40C24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5595361A-79C0-4ADD-A571-4453346CB09E}"
+	ProjectSection(SolutionItems) = preProject
+		IntegrationTests.testsettings = IntegrationTests.testsettings
+		UnitTests.testsettings = UnitTests.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.VSPackage_UnitTests", "VisualMutator.VSPackage\VisualMutator.VSPackage_UnitTests\VisualMutator.VSPackage_UnitTests.csproj", "{6807C7EB-9FC1-4AA8-A705-4CD1290187F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Domain", "VisualMutator.Domain\VisualMutator.Domain.csproj", "{61F1869A-C97F-44F7-853E-4C3555BF82BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Tests", "VisualMutator.Tests\VisualMutator.Tests.csproj", "{8FDC25E2-B546-4DF6-B2A6-EAF5CA33BD92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{380E0CFD-F091-4BF6-91DD-A3A51EB40C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{380E0CFD-F091-4BF6-91DD-A3A51EB40C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{380E0CFD-F091-4BF6-91DD-A3A51EB40C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{380E0CFD-F091-4BF6-91DD-A3A51EB40C24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6807C7EB-9FC1-4AA8-A705-4CD1290187F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6807C7EB-9FC1-4AA8-A705-4CD1290187F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6807C7EB-9FC1-4AA8-A705-4CD1290187F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6807C7EB-9FC1-4AA8-A705-4CD1290187F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61F1869A-C97F-44F7-853E-4C3555BF82BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61F1869A-C97F-44F7-853E-4C3555BF82BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61F1869A-C97F-44F7-853E-4C3555BF82BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61F1869A-C97F-44F7-853E-4C3555BF82BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FDC25E2-B546-4DF6-B2A6-EAF5CA33BD92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FDC25E2-B546-4DF6-B2A6-EAF5CA33BD92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FDC25E2-B546-4DF6-B2A6-EAF5CA33BD92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FDC25E2-B546-4DF6-B2A6-EAF5CA33BD92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
