@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PiotrTrzpil.VisualMutator_VSPackage</RootNamespace>
     <AssemblyName>VisualMutator.VSPackage</AssemblyName>
-    <SignAssembly>True</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
@@ -131,8 +131,18 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyControl.xaml.cs">
-      <DependentUpon>MyControl.xaml</DependentUpon>
+    <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\ILMutationsController.cs" />
+    <Compile Include="Infrastructure\Bootstrapper.cs" />
+    <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
+    <Compile Include="Infrastructure\VisualStudioConnection.cs" />
+    <Compile Include="ViewModels\ExtViewModel.cs" />
+    <Compile Include="Views\Abstract\IILMutationsView.cs" />
+    <Compile Include="ViewModels\ILMutationsViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Views\Abstract\IMainControl.cs" />
+    <Compile Include="Views\MainControl.xaml.cs">
+      <DependentUpon>MainControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MyToolWindow.cs" />
     <Compile Include="Guids.cs" />
@@ -142,6 +152,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Views\ILMutationsView.xaml.cs">
+      <DependentUpon>ILMutationsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VisualMutator.VSPackagePackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
@@ -179,10 +192,20 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MyControl.xaml">
+    <Page Include="Views\MainControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ILMutationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualMutator.Domain\VisualMutator.Domain.csproj">
+      <Project>{61F1869A-C97F-44F7-853E-4C3555BF82BB}</Project>
+      <Name>VisualMutator.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

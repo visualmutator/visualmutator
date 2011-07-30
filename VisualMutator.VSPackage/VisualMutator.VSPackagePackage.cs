@@ -11,6 +11,8 @@ using Microsoft.VisualStudio.Shell;
 
 namespace PiotrTrzpil.VisualMutator_VSPackage
 {
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+
     /// <summary>
     /// This is the class that implements the package exposed by this assembly.
     ///
@@ -34,6 +36,8 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
     [Guid(GuidList.guidVisualMutator_VSPackagePkgString)]
     public sealed class VisualMutator_VSPackagePackage : Package
     {
+        private Bootstrapper _bootstrapper;
+
         /// <summary>
         /// Default constructor of the package.
         /// Inside this method you can place any initialization code that does not require 
@@ -44,6 +48,11 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
         public VisualMutator_VSPackagePackage()
         {
             Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
+
+            _bootstrapper = new Bootstrapper();
+
+
+
         }
 
         /// <summary>
@@ -62,6 +71,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            window.Content = _bootstrapper.Shell;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
 
@@ -88,8 +98,14 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
                 MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand( menuToolWin );
             }
+          
+            _bootstrapper.InitializePackage(this);
+
         }
         #endregion
+
+
+        public static object MainControl;
 
     }
 }

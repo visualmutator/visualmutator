@@ -40,11 +40,11 @@
             foreach (var operatorsPack in Senders)
             {
                 var catalog2 = new AssemblyCatalog(operatorsPack.GetType().Assembly);
-                var container2 = new CompositionContainer(catalog);
+                var container2 = new CompositionContainer(catalog2);
 
                 var pack = new MyClass();
 
-                container.ComposeParts(pack);
+                container2.ComposeParts(pack);
 
                 foreach (var mutationOperator in pack.Oper)
                 {

@@ -14,12 +14,14 @@ using System.Windows.Shapes;
 
 namespace PiotrTrzpil.VisualMutator_VSPackage
 {
+    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+
     /// <summary>
     /// Interaction logic for MyControl.xaml
     /// </summary>
-    public partial class MyControl : UserControl
+    public partial class MainControl : UserControl, IMainControl
     {
-        public MyControl()
+        public MainControl()
         {
             InitializeComponent();
         }
