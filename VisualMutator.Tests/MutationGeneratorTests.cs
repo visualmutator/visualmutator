@@ -20,12 +20,12 @@
         {
 
 
-            var gen = new MutantGenerator();
+        //    var gen = new MutantGenerator();
 
 
 
 
-            gen.GenerateMutants();
+          //  gen.GenerateMutants();
 
 
         }

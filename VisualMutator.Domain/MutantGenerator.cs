@@ -30,7 +30,7 @@
 
         public void GenerateMutants()
         {
-            _operatorsManager.ApplyOperators();
+      //      _operatorsManager.ApplyOperators();
         }
 
     }

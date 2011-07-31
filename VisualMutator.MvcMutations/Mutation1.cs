@@ -19,9 +19,9 @@
     public class Mutation1 : IMutationOperator
     {
        
-        public void Mutate(string assemblyPath)
+        public void Mutate(IEnumerable<TypeDefinition> types)
         {
-            AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assemblyPath);
+       //     AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assemblyPath);
       
             //  var tt = new TypeReference();
 
@@ -31,24 +31,24 @@
             //    ad.Modules
 
             // def.
-            var list = new List<TypeDefinition>();
-            
-            list.Add(ad.MainModule.Types
+            var controllers = new List<TypeDefinition>();
+
+            controllers.Add(types
                 .FirstOrDefault(t => t.IsOfType("System.Web.Mvc.Controller")));
 
 
             
           //  ModuleWriter.WriteModuleTo();
 
-            foreach (TypeDefinition typ in list)
+            foreach (TypeDefinition controllerType in controllers)
             {
-                MethodDefinition methodToModify = typ.Methods
+                MethodDefinition methodToModify = controllerType.Methods
                     .FirstOrDefault(
                         m =>
                         m.ReturnType.FullName == "System.Web.Mvc.ActionResult"
                         && !m.IsAbstract);
 
-                MethodDefinition targetAction = typ.Methods
+                MethodDefinition targetAction = controllerType.Methods
                     .FirstOrDefault(
                         m =>
                         m != methodToModify
@@ -77,11 +77,11 @@
 
                     ILProcessor proc = methodToModify.Body
                         .GetILProcessor();
-
+              
                     AssemblyNameReference ass =
-                        ad.MainModule.AssemblyReferences.Single(x => x.Name == "System.Web.Mvc");
+                        controllerType.Module.AssemblyReferences.Single(x => x.Name == "System.Web.Mvc");
 
-                    AssemblyDefinition def = ad.MainModule.AssemblyResolver.Resolve(ass);
+                    AssemblyDefinition def = controllerType.Module.AssemblyResolver.Resolve(ass);
 
                     var type = new TypeReference(
                         "System.Web.Mvc", "Controller", def.MainModule, ass);
@@ -93,11 +93,11 @@
 
                 //    var me = new MethodReference("RedirectToAction", type);
                     proc.InsertBefore(istr, Instruction.Create(OpCodes.Ldstr,"Index"));
-                    proc.Replace(istr, Instruction.Create(OpCodes.Call, typ.Module.Import(me)));
+                    proc.Replace(istr, Instruction.Create(OpCodes.Call, controllerType.Module.Import(me)));
                 }
             }
 
-            ad.Write(assemblyPath);
+           // ad.Write(assemblyPath);
 
 
         }
