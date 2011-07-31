@@ -18,24 +18,41 @@
 
         private readonly IVisualStudioConnection _visualStudio;
 
+        private readonly IMutantGenerator _mutantGenerator;
+
+        private readonly ITypesManager _typesManager;
+
+
         public ILMutationsController(
             ILMutationsViewModel viewModel,
-            IVisualStudioConnection visualStudio
+            IVisualStudioConnection visualStudio,
+            IMutantGenerator mutantGenerator,
+            ITypesManager typesManager
             )
         {
             _viewModel = viewModel;
             _visualStudio = visualStudio;
+            _mutantGenerator = mutantGenerator;
+            _typesManager = typesManager;
+     
+            _viewModel.CommandMutate = new DelegateCommand(Mutate);
             _viewModel.CommandRefresh = new DelegateCommand(Refresh);
-        }
 
+            _viewModel.Assemblies = _typesManager.Assemblies;
+            _viewModel.MutationPackages = mutantGenerator.OperatorsManager.OperatorPackages;
+        }
+        public void Mutate()
+        {
+            _mutantGenerator.GenerateMutants();
+        }
 
         public void Refresh()
         {
-
             var paths = _visualStudio.GetProjectPaths();
 
-            var c = new Class1();
-            c.CreateTree(paths, _viewModel.Assemblies);
+            _typesManager.RefreshTypes(paths);
+
+
 
         }
         public ILMutationsViewModel ILMutationsVm

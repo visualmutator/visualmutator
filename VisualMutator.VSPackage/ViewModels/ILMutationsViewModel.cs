@@ -9,6 +9,8 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
 
+    using VisualMutator.Domain;
+
     public class ILMutationsViewModel : ExtViewModel<IILMutationsView>
     {
 
@@ -36,6 +38,23 @@
             }
         }
 
+        private ICommand _commandMutate;
+
+        public ICommand CommandMutate
+        {
+            get
+            {
+                return _commandMutate;
+            }
+            set
+            {
+                if (_commandMutate != value)
+                {
+                    _commandMutate = value;
+                    this.RaisePropertyChangedExt(() => CommandMutate);
+                }
+            }
+        }
 
         private ObservableCollection<AssemblyNode> _assemblies;
 
@@ -43,8 +62,12 @@
         {
             set
             {
-                _assemblies = value;
-                this.RaisePropertyChangedExt(() => Assemblies);
+                if (_assemblies != value)
+                {
+                    _assemblies = value;
+                    this.RaisePropertyChangedExt(() => Assemblies);
+                }
+         
             }
             get
             {
@@ -52,7 +75,41 @@
             }
         }
 
+        private ObservableCollection<OperatorPackage> _mutationPackages;
 
+        public ObservableCollection<OperatorPackage> MutationPackages
+        {
+            set
+            {
+                if (_mutationPackages != value)
+                {
+                    _mutationPackages = value;
+                    this.RaisePropertyChangedExt(() => MutationPackages);
+                }
+            }
+            get
+            {
+                return _mutationPackages;
+            }
+        }
+
+        private string _loggedText;
+
+        public string LoggedText
+        {
+            set
+            {
+                if (_loggedText != value)
+                {
+                    _loggedText = value;
+                    this.RaisePropertyChangedExt(() => LoggedText);
+                }
+            }
+            get
+            {
+                return _loggedText;
+            }
+        }
     }
 }
 

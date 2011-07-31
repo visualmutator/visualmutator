@@ -5,24 +5,31 @@
     using System.Linq;
     using System.Text;
 
+    using Moq;
+
     using NUnit.Framework;
 
     using VisualMutator.Domain;
-    using VisualMutator.MvcMutations;
 
     [TestFixture]
-    public class MonoCecilTests
+    public class MutationGeneratorTests
     {
 
         [Test]
         public void Test1()
         {
-         //   var m = new Mutation1();
-         //   m.Mutate();
-            //
 
-            var p = new MEFOperatorLoader();
+
+            var gen = new MutantGenerator();
+
+
+
+
+            gen.GenerateMutants();
+
+
         }
+        
     }
 }
 

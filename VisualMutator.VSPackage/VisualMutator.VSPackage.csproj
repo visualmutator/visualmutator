@@ -134,6 +134,7 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\ILMutationsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
+    <Compile Include="Infrastructure\EventLogger.cs" />
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
     <Compile Include="Infrastructure\VisualStudioConnection.cs" />
     <Compile Include="ViewModels\ExtViewModel.cs" />
