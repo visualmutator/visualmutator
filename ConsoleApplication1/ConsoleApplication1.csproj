@@ -47,10 +47,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VisualMutator.Domain\VisualMutator.Domain.csproj">
-      <Project>{61F1869A-C97F-44F7-853E-4C3555BF82BB}</Project>
-      <Name>VisualMutator.Domain</Name>
-    </ProjectReference>
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>

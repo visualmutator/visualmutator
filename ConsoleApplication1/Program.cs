@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ConsoleApplication1
 {
-    using VisualMutator.Domain;
+   // using VisualMutator.Domain;
     using VisualMutator.MvcMutations;
 
     class Program

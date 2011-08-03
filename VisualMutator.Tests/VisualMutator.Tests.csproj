@@ -63,13 +63,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VisualMutator.Domain\VisualMutator.Domain.csproj">
-      <Project>{61F1869A-C97F-44F7-853E-4C3555BF82BB}</Project>
-      <Name>VisualMutator.Domain</Name>
-    </ProjectReference>
     <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
       <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
       <Name>VisualMutator.MvcMutations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.VSPackage\VisualMutator.VSPackage.csproj">
+      <Project>{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}</Project>
+      <Name>VisualMutator.VSPackage</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
