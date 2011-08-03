@@ -35,14 +35,13 @@
 
         public MutantGenerator(
             IOperatorsManager operatorsManager, 
-            ITypesManager typesManager,
-            IAssemblyWriter assemblyWriter
+            ITypesManager typesManager
+
             )
         {
             _operatorsManager = operatorsManager;
             _typesManager = typesManager;
-            _assemblyWriter = assemblyWriter;
-
+        
             _generatedMutants = new ObservableCollection<MutationSession>();
         }
 

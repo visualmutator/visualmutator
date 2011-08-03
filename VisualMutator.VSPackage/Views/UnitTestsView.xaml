@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="322" d:DesignWidth="624">
     <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
         <ListView Grid.ColumnSpan="2" AllowDrop="True" SelectionMode="Extended" ItemsSource="{Binding Mutants}"
               IsManipulationEnabled="True">
@@ -14,7 +14,7 @@
                 <GridView>
                     <GridViewColumn Width="400" Header="Name"
                           DisplayMemberBinding="{Binding Mode=TwoWay, Path=Name}"/>
-                    <GridViewColumn Width="300" Header="Date" DisplayMemberBinding="{Binding Date}"/>
+                    <GridViewColumn Width="300" Header="Datte" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>
         </ListView>

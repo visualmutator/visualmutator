@@ -42,13 +42,20 @@
             _kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();
 
 
-
+            _kernel.Bind<UnitTestsController>().ToSelf().InSingletonScope();
 
 
             _kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>();
-
+            _kernel.Bind<IMutantGenerator>().To<MutantGenerator>();
+            _kernel.Bind<ITypesManager>().To<SolutionTypesManager>();
+            _kernel.Bind<IOperatorsManager>().To<OperatorsManager>();
+            _kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>();
+            _kernel.Bind<IUnitTestsView>().To<UnitTestsView>();
+            _kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
 
             _appController = _kernel.Get<ApplicationController>();
+
+
 
             VisualMutator_VSPackagePackage.MainControl = Shell;
 

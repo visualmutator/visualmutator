@@ -8,7 +8,7 @@
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow"
-             Background="{DynamicResource {x:Static vsfx:VsBrushes.ToolWindowBackgroundKey}}" Height="406" Width="864"
+             Background="{DynamicResource {x:Static vsfx:VsBrushes.ToolWindowBackgroundKey}}"
              UseLayoutRounding="True">
     <TabControl d:DataContext="{d:DesignInstance ViewModels:MainWindowViewModel}">
         <TabItem Header="Mutations">
@@ -20,6 +20,7 @@
             </StackPanel> -->
         </TabItem>
         <TabItem Header="Unit Tests">
+            <Views:UnitTestsView Content="{Binding UnitTestsView}"/>
         </TabItem>
     </TabControl>
 </UserControl>

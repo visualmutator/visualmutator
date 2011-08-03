@@ -42,6 +42,8 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on 
             // the object returned by the Content property.
             base.Content = VisualMutator_VSPackagePackage.MainControl;
+            
+         
          //   new MainControl();
         }
     }

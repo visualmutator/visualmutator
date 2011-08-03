@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text;
     using System.Waf.Applications;
+    using System.Windows;
 
     using Ninject;
 
@@ -52,9 +53,11 @@
 
         public void Refresh()
         {
-            var paths = _visualStudio.GetProjectPaths();
+            MessageBox.Show(_visualStudio.Test());
 
-            _typesManager.RefreshTypes(paths);
+            //var paths = _visualStudio.GetProjectPaths();
+
+            // _typesManager.RefreshTypes(paths);
         }
 
         public ILMutationsViewModel ILMutationsVm
@@ -76,7 +79,7 @@
 
         public void Initialize()
         {
-            Refresh();
+            //Refresh();
         }
     }
 }

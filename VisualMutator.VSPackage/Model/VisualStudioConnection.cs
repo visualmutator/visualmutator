@@ -1,13 +1,20 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
 
     using EnvDTE;
 
     using Microsoft.VisualStudio.Shell;
+    public interface IVisualStudioConnection
+    {
+        IEnumerable<string> GetProjectPaths();
 
+        string Test();
+    }
     public class VisualStudioConnection : IVisualStudioConnection
     {
         private DTE dte;
@@ -43,7 +50,30 @@
         }
 
 
-
+        public string Test()
+        {
+            if (dte.Solution.IsOpen)
+            {
+                var sb = new StringBuilder();
+                foreach (var pro in dte.Solution.Properties.Cast<Property>())
+                {
+                    try
+                    {
+                        sb.AppendLine(pro.Name + " --- " + pro.Value);
+                    }
+                    catch (Exception)
+                    {
+                        
+                     
+                    }
+                   
+                }
+                return sb.ToString();
+            
+            }
+            return "";
+        }
 
     }
+
 }

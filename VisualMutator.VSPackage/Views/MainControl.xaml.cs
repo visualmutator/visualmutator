@@ -1,5 +1,6 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views
 {
+    using System;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -8,11 +9,13 @@
     /// <summary>
     /// Interaction logic for MyControl.xaml
     /// </summary>
-    public partial class MainControl : UserControl, IMainControl
+    public partial class MainControl : UserControl, IMainControl, IDisposable
     {
         public MainControl()
         {
             InitializeComponent();
+            this.ClipToBounds = true;
+        
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
@@ -22,5 +25,12 @@
                             "VisualMutator");
 
         }
+
+        public void Dispose()
+        {
+            
+        }
+
+
     }
 }

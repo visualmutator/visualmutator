@@ -13,6 +13,8 @@
 
         private object _iLMutationsView;
 
+        private object _unitTestsView;
+
         public MainWindowViewModel(IMainControl view)
             : base(view)
         {
@@ -36,12 +38,12 @@
         {
             set
             {
-                _iLMutationsView = value;
-                this.RaisePropertyChangedExt(() => ILMutationsView);
+                _unitTestsView = value;
+                this.RaisePropertyChangedExt(() => UnitTestsView);
             }
             get
             {
-                return _iLMutationsView;
+                return _unitTestsView;
             }
         }
     }
