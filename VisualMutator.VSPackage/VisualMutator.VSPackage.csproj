@@ -56,10 +56,23 @@
       <Private>false</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -136,6 +149,21 @@
     <Compile Include="Controllers\UnitTestsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
+    <Compile Include="Model\AssemblyNode.cs" />
+    <Compile Include="Model\AssemblyWriter.cs" />
+    <Compile Include="Model\ElementToMutate.cs" />
+    <Compile Include="Model\ExtModel.cs" />
+    <Compile Include="Model\IVisualStudioConnection.cs" />
+    <Compile Include="Model\MEFOperatorLoader.cs" />
+    <Compile Include="Model\MutantGenerator.cs" />
+    <Compile Include="Model\MutationOperator.cs" />
+    <Compile Include="Model\MutationSession.cs" />
+    <Compile Include="Model\OperatorPackage.cs" />
+    <Compile Include="Model\OperatorsManager.cs" />
+    <Compile Include="Model\SessionsManager.cs" />
+    <Compile Include="Model\SolutionTypesManager.cs" />
+    <Compile Include="Model\TypeNode.cs" />
+    <Compile Include="Model\VisualStudioConnection.cs" />
     <Compile Include="ViewModels\ExtViewModel.cs" />
     <Compile Include="Views\Abstract\IILMutationsView.cs" />
     <Compile Include="ViewModels\ILMutationsViewModel.cs" />
@@ -211,9 +239,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VisualMutator.Domain\VisualMutator.Domain.csproj">
-      <Project>{61F1869A-C97F-44F7-853E-4C3555BF82BB}</Project>
-      <Name>VisualMutator.Domain</Name>
+    <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
+      <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
+      <Name>VisualMutator.Extensibility</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
