@@ -8,6 +8,7 @@
     using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
     using VisualMutator.Domain;
 

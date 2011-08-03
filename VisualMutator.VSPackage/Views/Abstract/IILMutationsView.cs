@@ -1,4 +1,4 @@
-namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
+namespace PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract
 {
     using System.Waf.Applications;
 

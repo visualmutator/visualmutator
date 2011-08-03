@@ -14,15 +14,14 @@ using System.Windows.Shapes;
 
 namespace PiotrTrzpil.VisualMutator_VSPackage.Views
 {
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
     /// <summary>
-    /// Interaction logic for MutationsView.xaml
+    /// Interaction logic for UnitTestsView.xaml
     /// </summary>
-    public partial class ILMutationsView : UserControl, IILMutationsView
+    public partial class UnitTestsView : UserControl, IUnitTestsView
     {
-        public ILMutationsView()
+        public UnitTestsView()
         {
             InitializeComponent();
         }

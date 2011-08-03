@@ -24,9 +24,13 @@
 
         private ILMutationsController _ilMutationsController;
 
+        private readonly UnitTestsController _unitTestsController;
+
         public ApplicationController(IKernel kernel, 
             MainWindowViewModel mainWindowVm,
-            ILMutationsController ilMutationsController)
+            ILMutationsController ilMutationsController,
+            UnitTestsController unitTestsController
+            )
         {
             _kernel = kernel;
  
@@ -36,9 +40,14 @@
          //   var view = new ILMutationsView();
           //  var vm = new ILMutationsViewModel(view);
             _ilMutationsController = ilMutationsController;
+            _unitTestsController = unitTestsController;
 
             _mainWindowVm.ILMutationsView = _ilMutationsController.ILMutationsVm.View;
-     
+            _mainWindowVm.UnitTestsView = _unitTestsController.UnitTestsVm.View;
+
+            _unitTestsController.Mutants = _ilMutationsController.GeneratedMutants;
+
+
 
         }
 

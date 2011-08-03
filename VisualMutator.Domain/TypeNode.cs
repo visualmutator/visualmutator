@@ -11,13 +11,21 @@
 
     public class TypeNode : ElementToMutate
     {
-        private readonly TypeDefinition _type;
+        private string _fullName;
 
-        public TypeNode(TypeDefinition type)
+        public string FullName
         {
-            _type = type;
+            get
+            {
+                return _fullName;
+            }
+        }
 
-            Name = type.Name;
+        public TypeNode(string fullName, string name)
+        {
+            _fullName = fullName;
+
+            Name = name;
             Included = true;
         }
     }

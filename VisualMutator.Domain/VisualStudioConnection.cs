@@ -1,10 +1,8 @@
-﻿namespace VisualMutator.Domain
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
 
     using EnvDTE;
 
@@ -43,5 +41,9 @@
                 yield return Path.Combine(localPath, outputPath, outputFileName);
             }
         }
+
+
+
+
     }
 }

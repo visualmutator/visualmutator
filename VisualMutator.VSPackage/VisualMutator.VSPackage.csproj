@@ -133,10 +133,9 @@
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\ILMutationsController.cs" />
+    <Compile Include="Controllers\UnitTestsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
-    <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
-    <Compile Include="Infrastructure\VisualStudioConnection.cs" />
     <Compile Include="ViewModels\ExtViewModel.cs" />
     <Compile Include="Views\Abstract\IILMutationsView.cs" />
     <Compile Include="ViewModels\ILMutationsViewModel.cs" />
@@ -156,6 +155,11 @@
     <Compile Include="Views\ILMutationsView.xaml.cs">
       <DependentUpon>ILMutationsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Abstract\IUnitTestsView.cs" />
+    <Compile Include="Views\UnitTestsView.xaml.cs">
+      <DependentUpon>UnitTestsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\UnitTestsViewModel.cs" />
     <Compile Include="VisualMutator.VSPackagePackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
@@ -198,6 +202,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ILMutationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UnitTestsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -14,7 +14,8 @@
 
         void LoadOperators();
 
-        void ApplyOperators(IEnumerable<TypeDefinition> types);
+        IEnumerable<MutationOperator> GetActiveOperators();
+
     }
 
     public class OperatorsManager : IOperatorsManager
@@ -55,14 +56,11 @@
         }
 
 
-        public void ApplyOperators(IEnumerable<TypeDefinition> types)
+        public IEnumerable<MutationOperator> GetActiveOperators()
         {
-            foreach (var mutOperator in OperatorPackages.SelectMany(pack => pack.Operators)
-                .Where(oper => oper.IsEnabled))
-            {
-                mutOperator.Operator.Mutate(types);
-            }
-            
+            return OperatorPackages.SelectMany(pack => pack.Operators)
+                .Where(oper => oper.IsEnabled);
+
         }
 
 

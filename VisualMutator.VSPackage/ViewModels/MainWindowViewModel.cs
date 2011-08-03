@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Text;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
     public class MainWindowViewModel : ExtViewModel<IMainControl>
@@ -31,6 +32,17 @@
         }
 
 
-
+        public object UnitTestsView
+        {
+            set
+            {
+                _iLMutationsView = value;
+                this.RaisePropertyChangedExt(() => ILMutationsView);
+            }
+            get
+            {
+                return _iLMutationsView;
+            }
+        }
     }
 }

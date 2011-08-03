@@ -12,20 +12,30 @@
 
     public class AssemblyNode : ElementToMutate
     {
-        private readonly AssemblyDefinition _assembly;
 
-        public AssemblyNode(AssemblyDefinition assembly)
+        private string _fullPath;
+
+        public AssemblyNode(string name, string fullPath)
         {
-            _assembly = assembly;
+            _fullPath = fullPath;
+      
 
             Types = new ObservableCollection<TypeNode>();
 
-            Name = assembly.Name.Name;
+            Name = name;
             Included = true;
 
         }
 
-      //  ObservableCollection<TypeNode> Types 
+        public string FullPath
+        {
+            get
+            {
+                return _fullPath;
+            }
+        }
+
+        //  ObservableCollection<TypeNode> Types 
 
         private ObservableCollection<TypeNode> _types;
 

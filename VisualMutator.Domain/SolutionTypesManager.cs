@@ -4,6 +4,7 @@
 
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     using Mono.Cecil;
 
@@ -16,6 +17,8 @@
         ObservableCollection<AssemblyNode> Assemblies { get; set; }
 
         void RefreshTypes(IEnumerable<string> projectsPaths);
+
+        IEnumerable<TypeDefinition> GetIncludedTypes();
     }
 
     public class SolutionTypesManager : ITypesManager
@@ -43,10 +46,10 @@
             foreach (string path in projectsPaths)
             {
                 AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(path);
-                var node = new AssemblyNode(ad);
+                var node = new AssemblyNode(ad.Name.Name, path);
                 foreach (TypeDefinition typ in ad.MainModule.Types)
                 {
-                    node.Types.Add(new TypeNode(typ));
+                    node.Types.Add(new TypeNode(typ.FullName, typ.Name));
 
 
                 }
@@ -55,8 +58,19 @@
         }
 
 
+        public IEnumerable<TypeDefinition> GetIncludedTypes()
+        {
+            foreach (var assembly in Assemblies)
+            {
+                var ad = AssemblyDefinition.ReadAssembly(assembly.FullPath);
+                foreach (var type in assembly.Types.Where(t=> t.Included))
+                {
+                    yield return ad.MainModule.Types.Single(t => t.FullName == type.FullName);
+                }
 
+            }
 
+        }
 
 
     }
