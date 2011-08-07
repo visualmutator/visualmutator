@@ -63,7 +63,7 @@
             foreach (var assembly in Assemblies)
             {
                 var ad = AssemblyDefinition.ReadAssembly(assembly.FullPath);
-                foreach (var type in assembly.Types.Where(t=> t.Included))
+                foreach (var type in assembly.Types.Where(t=> t.IsIncluded))
                 {
                     yield return ad.MainModule.Types.Single(t => t.FullName == type.FullName);
                 }

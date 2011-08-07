@@ -18,10 +18,7 @@
             //_sessions = new List<MutationSession>();
         }
 
-        public MutationSession CreateSession(IEnumerable<MutationOperator> operators, IEnumerable<TypeDefinition> types)
-        {
-            return new MutationSession(operators, types);
-        }
+     
 
         public void SaveSession(MutationSession session)
         {

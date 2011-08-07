@@ -7,6 +7,7 @@
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
     using System.IO;
+    using System.Reflection;
 
     using VisualMutator.Extensibility;
 
@@ -24,10 +25,15 @@
 
         public IEnumerable<IOperatorsPack> ReloadOperators()
         {
+            var p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            
+       
+            var path = Path.Combine(Path.GetDirectoryName(p), "Extensions");
             var catalog =
-                new DirectoryCatalog(Path.Combine(Environment.CurrentDirectory, "Extensions"));
-            var container = new CompositionContainer(catalog);
+                new DirectoryCatalog(path);
 
+            var container = new CompositionContainer(catalog);
+            
             container.ComposeParts(this);
 
             foreach (IOperatorsPack operatorsPack in OperatorPacks)

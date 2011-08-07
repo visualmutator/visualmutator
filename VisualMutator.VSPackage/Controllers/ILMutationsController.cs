@@ -25,24 +25,27 @@
 
         private readonly ITypesManager _typesManager;
 
+        private readonly IOperatorsManager _operatorsManager;
 
         public ILMutationsController(
             ILMutationsViewModel viewModel,
             IVisualStudioConnection visualStudio,
             IMutantGenerator mutantGenerator,
-            ITypesManager typesManager
+            ITypesManager typesManager,
+            IOperatorsManager operatorsManager
             )
         {
             _viewModel = viewModel;
             _visualStudio = visualStudio;
             _mutantGenerator = mutantGenerator;
             _typesManager = typesManager;
-     
+            _operatorsManager = operatorsManager;
+
             _viewModel.CommandMutate = new DelegateCommand(Mutate);
             _viewModel.CommandRefresh = new DelegateCommand(Refresh);
 
             _viewModel.Assemblies = _typesManager.Assemblies;
-            _viewModel.MutationPackages = mutantGenerator.OperatorsManager.OperatorPackages;
+            _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
         }
 
         public void Mutate()
@@ -53,11 +56,15 @@
 
         public void Refresh()
         {
-            MessageBox.Show(_visualStudio.Test());
+          //  MessageBox.Show(_visualStudio.Test());
 
-            //var paths = _visualStudio.GetProjectPaths();
+            var paths = _visualStudio.GetProjectPaths();
 
-            // _typesManager.RefreshTypes(paths);
+             _typesManager.RefreshTypes(paths);
+
+
+            _operatorsManager.LoadOperators();
+
         }
 
         public ILMutationsViewModel ILMutationsVm

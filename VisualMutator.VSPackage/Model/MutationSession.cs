@@ -9,9 +9,19 @@
 
     public class MutationSession
     {
+        private readonly string _name;
+
         private readonly IEnumerable<MutationOperator> _operators;
 
         private readonly IEnumerable<TypeDefinition> _types;
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+        }
 
         public IEnumerable<TypeDefinition> Types
         {
@@ -21,13 +31,10 @@
             }
         }
 
-        public MutationSession()
+  
+        public MutationSession(string name, IEnumerable<MutationOperator> operators, IEnumerable<TypeDefinition> types)
         {
-            
-        }
-
-        public MutationSession(IEnumerable<MutationOperator> operators, IEnumerable<TypeDefinition> types)
-        {
+            _name = name;
             _operators = operators;
             _types = types;
         }

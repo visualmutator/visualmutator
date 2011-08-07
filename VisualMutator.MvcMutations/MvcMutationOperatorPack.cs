@@ -19,7 +19,7 @@
             var container = new CompositionContainer(catalog);
             container.ComposeParts(this);
         }
-
+        [ImportMany]
         public IEnumerable<IMutationOperator> Operators
         {
             get; set;

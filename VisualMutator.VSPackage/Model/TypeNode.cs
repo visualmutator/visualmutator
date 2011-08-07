@@ -9,7 +9,7 @@
 
     using VisualMutator.Domain;
 
-    public class TypeNode : ElementToMutate
+    public class TypeNode : TreeElement
     {
         private string _fullName;
 
@@ -26,7 +26,7 @@
             _fullName = fullName;
 
             Name = name;
-            Included = true;
+            IsIncluded = true;
         }
     }
 }

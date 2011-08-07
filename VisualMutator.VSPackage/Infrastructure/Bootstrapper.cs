@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
 
     using EnvDTE;
@@ -25,6 +26,27 @@
 
         private IKernel _kernel;
 
+        static Bootstrapper()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender,  e) =>
+            {
+                AssemblyName requestedName = new AssemblyName(e.Name);
+
+                if (requestedName.Name == "VisualMutator.Extensibility")
+                {
+                    var p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+                    var path = Path.Combine(Path.GetDirectoryName(p), 
+                        "Extensions", "VisualMutator.Extensibility.dll");
+
+                    return Assembly.LoadFrom(path);
+                }
+                else
+                {
+                    return null;
+                }
+            };
+        }
+
         public Bootstrapper()
         {
             _kernel = new StandardKernel();
@@ -45,12 +67,12 @@
             _kernel.Bind<UnitTestsController>().ToSelf().InSingletonScope();
 
 
-            _kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>();
-            _kernel.Bind<IMutantGenerator>().To<MutantGenerator>();
-            _kernel.Bind<ITypesManager>().To<SolutionTypesManager>();
-            _kernel.Bind<IOperatorsManager>().To<OperatorsManager>();
-            _kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>();
-            _kernel.Bind<IUnitTestsView>().To<UnitTestsView>();
+            _kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>().InSingletonScope();
+            _kernel.Bind<IMutantGenerator>().To<MutantGenerator>().InSingletonScope();
+            _kernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
+            _kernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
+            _kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
+            _kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
             _kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
 
             _appController = _kernel.Get<ApplicationController>();

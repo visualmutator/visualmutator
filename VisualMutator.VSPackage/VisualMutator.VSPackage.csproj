@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,12 +37,6 @@
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Practices.Prism">
-      <HintPath>..\packages\Prism.4.0.0.0\lib\NET40\Microsoft.Practices.Prism.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Prism.Interactivity">
-      <HintPath>..\packages\Prism.4.0.0.0\lib\NET40\Microsoft.Practices.Prism.Interactivity.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -151,7 +145,7 @@
     <Compile Include="Infrastructure\EventLogger.cs" />
     <Compile Include="Model\AssemblyNode.cs" />
     <Compile Include="Model\AssemblyWriter.cs" />
-    <Compile Include="Model\ElementToMutate.cs" />
+    <Compile Include="Model\TreeElement.cs" />
     <Compile Include="Model\ExtModel.cs" />
     <Compile Include="Model\IVisualStudioConnection.cs" />
     <Compile Include="Model\MEFOperatorLoader.cs" />
@@ -242,6 +236,12 @@
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>
+      <VSIXSubPath>Extensions</VSIXSubPath>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
+      <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
+      <Name>VisualMutator.MvcMutations</Name>
+      <VSIXSubPath>Extensions</VSIXSubPath>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -289,5 +289,21 @@
   </Target>
   <Target Name="AfterBuild">
   </Target>
+  
   -->
+  <PropertyGroup>
+    <CopyAllFilesToSingleFolderForPackageDependsOn>
+            CollectExtensionDLLs;
+            CollectExtensionViews;
+            $(CopyAllFilesToSingleFolderForPackageDependsOn);
+        </CopyAllFilesToSingleFolderForPackageDependsOn>
+  </PropertyGroup>
+  <Target Name="CollectExtensionDLLs">
+    <ItemGroup>
+      <_CustomFiles Include="bin\Extensions\**\*" />
+      <FilesForPackagingFromProject Include="%(_CustomFiles.Identity)">
+        <DestinationRelativePath>bin\Extensions\%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
 </Project>

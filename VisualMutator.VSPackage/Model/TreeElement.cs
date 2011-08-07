@@ -5,25 +5,25 @@
     using System.Linq;
     using System.Text;
 
-    public class ElementToMutate : ExtModel
+    public class TreeElement : ExtModel
     {
-        public ElementToMutate()
+        public TreeElement()
         {
             
         }
 
-        private bool _included;
+        private bool _isIncluded;
 
-        public bool Included
+        public bool IsIncluded
         {
             set
             {
-                _included = value;
-                this.RaisePropertyChangedExt(() => Included);
+                _isIncluded = value;
+                this.RaisePropertyChangedExt(() => IsIncluded);
             }
             get
             {
-                return _included;
+                return _isIncluded;
             }
         }
 

@@ -7,25 +7,16 @@
 
     using VisualMutator.Extensibility;
 
-    public class MutationOperator : ExtModel
+    public class MutationOperator : TreeElement
     {
         public IMutationOperator Operator { get; set; }
 
         public MutationOperator(IMutationOperator mutationOperator)
         {
             Operator = mutationOperator;
+            Name = "oper";
         }
 
-        public bool IsEnabled
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        
     }
 }

@@ -13,7 +13,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="400" Header="Name"
-                          DisplayMemberBinding="{Binding Mode=TwoWay, Path=Name}"/>
+                          DisplayMemberBinding="{Binding Path=Name}"/>
                     <GridViewColumn Width="300" Header="Datte" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>

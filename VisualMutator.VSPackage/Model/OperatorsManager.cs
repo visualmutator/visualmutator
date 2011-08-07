@@ -59,7 +59,7 @@
         public IEnumerable<MutationOperator> GetActiveOperators()
         {
             return OperatorPackages.SelectMany(pack => pack.Operators)
-                .Where(oper => oper.IsEnabled);
+                .Where(oper => oper.IsIncluded);
 
         }
 

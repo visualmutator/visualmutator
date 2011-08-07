@@ -13,6 +13,7 @@
     {
         IEnumerable<string> GetProjectPaths();
 
+        string CreateMutantsRootFolderPath();
         string Test();
     }
     public class VisualStudioConnection : IVisualStudioConnection
@@ -48,7 +49,11 @@
                 yield return Path.Combine(localPath, outputPath, outputFileName);
             }
         }
-
+        public string CreateMutantsRootFolderPath()
+        {
+            string slnPath = (string)dte.Solution.Properties.Cast<Property>().Single(p => p.Name == "Path").Value;
+            return Directory.GetParent(slnPath).CreateSubdirectory("visal_mutator_mutants").FullName;
+        }
 
         public string Test()
         {

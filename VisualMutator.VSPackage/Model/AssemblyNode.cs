@@ -10,7 +10,7 @@
 
     using VisualMutator.Domain;
 
-    public class AssemblyNode : ElementToMutate
+    public class AssemblyNode : TreeElement
     {
 
         private string _fullPath;
@@ -23,7 +23,7 @@
             Types = new ObservableCollection<TypeNode>();
 
             Name = name;
-            Included = true;
+            IsIncluded = true;
 
         }
 

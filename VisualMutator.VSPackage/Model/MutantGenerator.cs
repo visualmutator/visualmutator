@@ -7,6 +7,8 @@
     using System.Linq;
     using System.Text;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+
     public interface IMutantGenerator
     {
         IOperatorsManager OperatorsManager { get; }
@@ -21,7 +23,9 @@
 
         private readonly ITypesManager _typesManager;
 
-        private readonly IAssemblyWriter _assemblyWriter;
+        private readonly IVisualStudioConnection _visualStudio;
+
+
 
         private ObservableCollection<MutationSession> _generatedMutants; 
 
@@ -35,13 +39,14 @@
 
         public MutantGenerator(
             IOperatorsManager operatorsManager, 
-            ITypesManager typesManager
-
+            ITypesManager typesManager,
+            IVisualStudioConnection visualStudio
             )
         {
             _operatorsManager = operatorsManager;
             _typesManager = typesManager;
-        
+            _visualStudio = visualStudio;
+
             _generatedMutants = new ObservableCollection<MutationSession>();
         }
 
@@ -66,24 +71,19 @@
 
 
             var operators = _operatorsManager.GetActiveOperators();
-
-            var session = new MutationSession(operators, types);
+            string name = DateTime.Now.ToString("dd.MM.yyyy HH-mm-ss");
+            var session = new MutationSession(name, operators, types);
 
             session.Run();
 
 
-
+            SaveSession(session);
             
 
             _generatedMutants.Add(session);
 
+            
 
-         //   man.SaveSession(session);
-
-//            foreach (var assemblyDefinition in assemblies)
-//            {
-//                _assemblyWriter.Write("test", assemblyDefinition);
-//            }
 
         }
 
@@ -91,9 +91,17 @@
         private void SaveSession(MutationSession session)
         {
             var assemblies = session.Types.Select(t => t.Module.Assembly).Distinct();
-         //   string path = 
-         //   Directory.CreateDirectory()
 
+            string path = _visualStudio.CreateMutantsRootFolderPath();
+            foreach (var assemblyDefinition in assemblies)
+            {
+                string dir = Path.Combine(path, session.Name);
+                Directory.CreateDirectory(dir);
+                string file = Path.Combine(dir, assemblyDefinition.Name.Name + ".dll");
+                assemblyDefinition.Write(file);
+            }
+    
+         
         }
 
     }

@@ -8,13 +8,17 @@
 
     #endregion
 
-    public class OperatorPackage : ExtModel
+    public class OperatorPackage : TreeElement
     {
+        private readonly IOperatorsPack _operatorsPack;
+
         private  ObservableCollection<MutationOperator> _operators;
 
         public OperatorPackage(IOperatorsPack operatorsPack)
         {
-            throw new System.NotImplementedException();
+            _operatorsPack = operatorsPack;
+            Name = "pack";
+            Operators = new ObservableCollection<MutationOperator>();
         }
 
         public ObservableCollection<MutationOperator> Operators
