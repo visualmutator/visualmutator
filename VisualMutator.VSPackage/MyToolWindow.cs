@@ -46,5 +46,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
          
          //   new MainControl();
         }
+       
+
     }
 }

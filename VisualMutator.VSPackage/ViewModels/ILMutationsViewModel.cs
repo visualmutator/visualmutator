@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
+
     using System.Linq;
     using System.Text;
+    using System.Windows;
     using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
     using VisualMutator.Domain;
@@ -19,6 +21,7 @@
             : base(view)
         {
             Assemblies = new ObservableCollection<AssemblyNode>();
+            IsVisible = false;
         }
 
         private ICommand _commandRefresh;
@@ -109,6 +112,18 @@
             get
             {
                 return _loggedText;
+            }
+        }
+
+        public bool IsVisible
+        {
+            get
+            {
+                return ViewCore.Visibility == Visibility.Visible;
+            }
+            set
+            {
+                ViewCore.Visibility = value ? Visibility.Visible : Visibility.Hidden;
             }
         }
     }

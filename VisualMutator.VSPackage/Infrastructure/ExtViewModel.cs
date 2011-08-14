@@ -24,5 +24,12 @@
             this.RaisePropertyChanged(memberExpression.Member.Name);
         }
 
+        public TView ViewObject
+        {
+            get
+            {
+                return ViewCore;
+            }
+        }
     }
 }

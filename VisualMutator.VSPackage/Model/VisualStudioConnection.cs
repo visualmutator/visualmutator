@@ -8,26 +8,42 @@
 
     using EnvDTE;
 
+    using EnvDTE80;
+
     using Microsoft.VisualStudio.Shell;
     public interface IVisualStudioConnection
     {
         IEnumerable<string> GetProjectPaths();
 
-        string CreateMutantsRootFolderPath();
+        string GetMutantsRootFolderPath();
         string Test();
+
+        SolutionEvents SolutionEvents { get; }
     }
     public class VisualStudioConnection : IVisualStudioConnection
     {
-        private DTE dte;
+        private readonly DTE2 _dte;
+
+        private SolutionEvents _solutionEvents;
 
         public VisualStudioConnection()
         {
-            dte = (DTE)Package.GetGlobalService(typeof(DTE));
+            _dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
+       
+        }
+
+        public SolutionEvents SolutionEvents
+        {
+            get
+            {
+                return _solutionEvents;
+            }
         }
 
         public IEnumerable<string> GetProjectPaths()
         {
-            var chosenProjects = dte.Solution.Cast<Project>()
+            var chosenProjects = _dte.Solution.Cast<Project>()
                 .Where(
                     p => p.ConfigurationManager != null
                          && p.ConfigurationManager.ActiveConfiguration != null
@@ -49,18 +65,19 @@
                 yield return Path.Combine(localPath, outputPath, outputFileName);
             }
         }
-        public string CreateMutantsRootFolderPath()
+        public string GetMutantsRootFolderPath()
         {
-            string slnPath = (string)dte.Solution.Properties.Cast<Property>().Single(p => p.Name == "Path").Value;
+            string slnPath = (string)_dte.Solution.Properties.Cast<Property>().Single(p => p.Name == "Path").Value;
             return Directory.GetParent(slnPath).CreateSubdirectory("visal_mutator_mutants").FullName;
         }
+      
 
         public string Test()
         {
-            if (dte.Solution.IsOpen)
+            if (_dte.Solution.IsOpen)
             {
                 var sb = new StringBuilder();
-                foreach (var pro in dte.Solution.Properties.Cast<Property>())
+                foreach (var pro in _dte.Solution.Properties.Cast<Property>())
                 {
                     try
                     {

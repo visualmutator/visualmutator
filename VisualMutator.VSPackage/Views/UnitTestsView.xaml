@@ -4,12 +4,29 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
-             mc:Ignorable="d" 
+             xmlns:AttachedBehaviors="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.AttachedBehaviors"
+             xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters" mc:Ignorable="d" 
              d:DesignHeight="322" d:DesignWidth="624">
-    <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
-        <ListView Grid.ColumnSpan="2" AllowDrop="True" SelectionMode="Extended" ItemsSource="{Binding Mutants}"
-              IsManipulationEnabled="True">
+    
+    
+    
+    <UserControl.Resources>
 
+    <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
+    </UserControl.Resources>
+    
+    
+    <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition  Height="20" />
+            <RowDefinition/>
+            <RowDefinition  Height="4"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="1" AllowDrop="True" SelectionMode="Extended" ItemsSource="{Binding Mutants}"
+              IsManipulationEnabled="True" SelectedItem="{Binding SelectedMutant}">
+    
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="400" Header="Name"
@@ -18,5 +35,50 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
+        <GridSplitter Grid.Row="2" Width="Auto" HorizontalAlignment="Stretch"/>
+
+        <TreeView Grid.Row="3" ItemsSource="{Binding TestNamespaces}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding TestClasses}">
+                    <TextBlock Text="{Binding Name}"/>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding TestMethods}">
+                            <TextBlock Text="{Binding Name}"/>
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <Rectangle Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}" Stroke="Blue" Height="10" Width="10"/>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DockPanel>
+                                    
+                                </DataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
+                        </HierarchicalDataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.ItemContainerStyle >
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="AttachedBehaviors:MouseDoubleClickBehavior.MouseDoubleClick"
+                    Value="{Binding CommandRunTest}"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+
+
+        <DockPanel Grid.Row="0"> 
+            <Button  HorizontalAlignment="Left" Content="sda" Command="{Binding CommandRefresh}"/>
+            <CheckBox  Content="Current Solution" IsChecked="{Binding TestCurrentSolution}"/>
+            
+            
+        </DockPanel>
+        
+        
+
+
+
+
+
     </Grid>
 </UserControl>

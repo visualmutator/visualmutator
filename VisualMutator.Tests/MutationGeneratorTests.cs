@@ -5,17 +5,19 @@
     using System.Linq;
     using System.Text;
 
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     using Moq;
 
     using NUnit.Framework;
 
     using VisualMutator.Domain;
 
-    [TestFixture]
+    [TestClass]
     public class MutationGeneratorTests
     {
 
-        [Test]
+        [TestMethod]
         public void Test1()
         {
 

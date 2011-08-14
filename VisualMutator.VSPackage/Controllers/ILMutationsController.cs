@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
+
     using System.Linq;
     using System.Text;
     using System.Waf.Applications;
     using System.Windows;
+
+    using EnvDTE;
 
     using Ninject;
 
@@ -47,6 +49,35 @@
             _viewModel.Assemblies = _typesManager.Assemblies;
             _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
         }
+        public void Initialize()
+        {
+            _viewModel.IsVisible = true;
+            _visualStudio.SolutionEvents.Opened += Activate;
+            _visualStudio.SolutionEvents.AfterClosing += Deactivate;
+            _visualStudio.SolutionEvents.ProjectAdded += HandleProjectAdded;
+
+            
+
+        }
+
+        private void Activate()
+        {
+            _viewModel.IsVisible = true;
+            _mutantGenerator.LoadSessions();
+            Refresh();
+        }
+        private void Deactivate()
+        {
+            _viewModel.IsVisible = false;
+           _viewModel.Assemblies.Clear();
+        }
+        private void HandleProjectAdded(Project project)
+        {
+            Refresh();
+           
+        }
+
+
 
         public void Mutate()
         {
@@ -84,9 +115,6 @@
             }
         }
 
-        public void Initialize()
-        {
-            //Refresh();
-        }
+        
     }
 }

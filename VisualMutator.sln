@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Tests", "Visu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.MvcMutations", "VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj", "{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Extensibility", "VisualMutator.Extensibility\VisualMutator.Extensibility.csproj", "{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}"
 EndProject
 Global
@@ -90,15 +88,6 @@ Global
 		{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}.Release|x86.ActiveCfg = Release|Any CPU
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Debug|x86.ActiveCfg = Debug|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Release|Any CPU.ActiveCfg = Release|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Release|Mixed Platforms.Build.0 = Release|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Release|x86.ActiveCfg = Release|x86
-		{92B958F0-33B6-4E4A-9B0B-BC5751FAB7B8}.Release|x86.Build.0 = Release|x86
 		{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

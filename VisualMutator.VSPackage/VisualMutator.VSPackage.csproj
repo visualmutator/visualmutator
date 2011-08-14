@@ -65,6 +65,15 @@
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.core">
+      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util">
+      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.util.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -143,26 +152,33 @@
     <Compile Include="Controllers\UnitTestsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
-    <Compile Include="Model\AssemblyNode.cs" />
-    <Compile Include="Model\AssemblyWriter.cs" />
-    <Compile Include="Model\TreeElement.cs" />
-    <Compile Include="Model\ExtModel.cs" />
-    <Compile Include="Model\IVisualStudioConnection.cs" />
-    <Compile Include="Model\MEFOperatorLoader.cs" />
-    <Compile Include="Model\MutantGenerator.cs" />
-    <Compile Include="Model\MutationOperator.cs" />
-    <Compile Include="Model\MutationSession.cs" />
-    <Compile Include="Model\OperatorPackage.cs" />
-    <Compile Include="Model\OperatorsManager.cs" />
-    <Compile Include="Model\SessionsManager.cs" />
-    <Compile Include="Model\SolutionTypesManager.cs" />
-    <Compile Include="Model\TypeNode.cs" />
+    <Compile Include="Infrastructure\ObservableCollection.cs" />
+    <Compile Include="Model\Mutations\AssemblyNode.cs" />
+    <Compile Include="Model\Mutations\AssemblyWriter.cs" />
+    <Compile Include="Model\Mutations\TreeElement.cs" />
+    <Compile Include="Infrastructure\ExtModel.cs" />
+    <Compile Include="Model\Mutations\MEFOperatorLoader.cs" />
+    <Compile Include="Model\Mutations\MutantGenerator.cs" />
+    <Compile Include="Model\Mutations\MutationOperator.cs" />
+    <Compile Include="Model\Mutations\MutationSession.cs" />
+    <Compile Include="Model\Mutations\OperatorPackage.cs" />
+    <Compile Include="Model\Mutations\OperatorsManager.cs" />
+    <Compile Include="Model\Mutations\SessionsManager.cs" />
+    <Compile Include="Model\Mutations\SolutionTypesManager.cs" />
+    <Compile Include="Model\Mutations\TypeNode.cs" />
+    <Compile Include="Model\Tests\TestNodeMethod.cs" />
+    <Compile Include="Model\Tests\TestNodeNamespace.cs" />
+    <Compile Include="Model\Tests\TestStatus.cs" />
+    <Compile Include="Model\Tests\TestTreeNode.cs" />
+    <Compile Include="Model\Tests\TestNodeClass.cs" />
     <Compile Include="Model\VisualStudioConnection.cs" />
-    <Compile Include="ViewModels\ExtViewModel.cs" />
+    <Compile Include="Infrastructure\ExtViewModel.cs" />
     <Compile Include="Views\Abstract\IILMutationsView.cs" />
     <Compile Include="ViewModels\ILMutationsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\Abstract\IMainControl.cs" />
+    <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
+    <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
     <Compile Include="Views\MainControl.xaml.cs">
       <DependentUpon>MainControl.xaml</DependentUpon>
     </Compile>
@@ -198,6 +214,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
@@ -244,6 +261,7 @@
       <VSIXSubPath>Extensions</VSIXSubPath>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

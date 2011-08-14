@@ -49,7 +49,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
         {
             Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
 
-            _bootstrapper = new Bootstrapper();
+            try
+            {
+                _bootstrapper = new Bootstrapper();
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            
 
 
 
@@ -75,7 +84,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
 
-
+ 
         /////////////////////////////////////////////////////////////////////////////
         // Overriden Package Implementation
         #region Package Members
@@ -98,8 +107,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
                 MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand( menuToolWin );
             }
-          
-            _bootstrapper.InitializePackage(this);
+            try
+            {
+                _bootstrapper.InitializePackage(this);
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            
 
         }
         #endregion

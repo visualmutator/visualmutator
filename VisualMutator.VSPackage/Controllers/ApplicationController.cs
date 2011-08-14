@@ -11,6 +11,7 @@
 
     using Ninject;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
 
@@ -26,10 +27,13 @@
 
         private readonly UnitTestsController _unitTestsController;
 
+        private readonly IVisualStudioConnection _visualStudioConnection;
+
         public ApplicationController(IKernel kernel, 
             MainWindowViewModel mainWindowVm,
             ILMutationsController ilMutationsController,
-            UnitTestsController unitTestsController
+            UnitTestsController unitTestsController,
+            IVisualStudioConnection visualStudioConnection
             )
         {
             _kernel = kernel;
@@ -42,6 +46,7 @@
           //  var vm = new ILMutationsViewModel(view);
             _ilMutationsController = ilMutationsController;
             _unitTestsController = unitTestsController;
+            _visualStudioConnection = visualStudioConnection;
 
             _mainWindowVm.ILMutationsView = _ilMutationsController.ILMutationsVm.View;
             _mainWindowVm.UnitTestsView = _unitTestsController.UnitTestsVm.View;
@@ -49,7 +54,7 @@
             _unitTestsController.Mutants = _ilMutationsController.GeneratedMutants;
 
 
-
+           // _visualStudioConnection.SolutionEvents.Opened
         }
 
         public object Shell
@@ -63,7 +68,7 @@
         public void Initialize()
         {
             _ilMutationsController.Initialize();
-            
+            _unitTestsController.Initialize();
         }
     }
 }

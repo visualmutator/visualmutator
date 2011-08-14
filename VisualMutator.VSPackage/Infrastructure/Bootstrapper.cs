@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Windows;
 
     using EnvDTE;
 
@@ -42,9 +43,23 @@
                 }
                 else
                 {
+                 //   string[] Parts = e.Name.Split(',');
+                 //   string File = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + Parts[0].Trim() + ".dll";
+
+                //    return System.Reflection.Assembly.LoadFrom(File);
                     return null;
                 }
             };
+
+
+
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.ToString());
         }
 
         public Bootstrapper()

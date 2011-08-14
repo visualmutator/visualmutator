@@ -3,7 +3,7 @@
     #region Usings
 
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
+   
     using System.Linq;
 
     using Mono.Cecil;
@@ -46,6 +46,8 @@
             foreach (string path in projectsPaths)
             {
                 AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(path);
+
+               
                 var node = new AssemblyNode(ad.Name.Name, path);
                 foreach (TypeDefinition typ in ad.MainModule.Types)
                 {

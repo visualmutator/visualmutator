@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
-            
-             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels" mc:Ignorable="d" d:DesignHeight="300"
+             d:DesignWidth="300">
 
   <UserControl.Resources>
     <Style TargetType="Button">
@@ -16,55 +15,63 @@
   </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:ILMutationsViewModel}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition/>
+      <RowDefinition Height="4"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>
       <ColumnDefinition/>
     </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition/>
-      <RowDefinition/>
-
-    </Grid.RowDefinitions>
-
 
     <Button Grid.Column="0" Grid.Row="0" Content="Refresh" Command="{Binding CommandRefresh}"/>
     <Button Grid.Column="1" Grid.Row="0" Content="Mutate" Command="{Binding CommandMutate}"/>
 
-        <TreeView Grid.Row="1"  Grid.Column="0" ItemsSource="{Binding Assemblies}">
-      <TreeView.ItemTemplate>
-        <HierarchicalDataTemplate ItemsSource="{Binding Types}">
-          <TextBlock Text="{Binding Name}"/>
-            
-          <HierarchicalDataTemplate.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Name}"/>
-            </DataTemplate>
-          </HierarchicalDataTemplate.ItemTemplate>
-        </HierarchicalDataTemplate>
-      </TreeView.ItemTemplate>
-    </TreeView>
+    <Grid Grid.Row="1" Grid.ColumnSpan="2">
 
-        <TreeView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MutationPackages}">
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Operators}">
-                    <TextBlock Text="{Binding Name}"/>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="4"/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
 
-                    <HierarchicalDataTemplate.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </HierarchicalDataTemplate.ItemTemplate>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
-      
-        <GridSplitter Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" HorizontalAlignment="Left"
-                  VerticalAlignment="Stretch"/>
-        <GridSplitter Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
-                  VerticalAlignment="Top"/>
+      <TreeView Grid.Column="0" ItemsSource="{Binding Assemblies}">
+        <TreeView.ItemTemplate>
+          <HierarchicalDataTemplate ItemsSource="{Binding Types}">
+            <TextBlock Text="{Binding Name}"/>
 
-        <TextBox Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding LoggedText}"/>
+            <HierarchicalDataTemplate.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}"/>
+              </DataTemplate>
+            </HierarchicalDataTemplate.ItemTemplate>
+          </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
+
+      <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
+
+      <TreeView Grid.Column="2" ItemsSource="{Binding MutationPackages}">
+        <TreeView.ItemTemplate>
+          <HierarchicalDataTemplate ItemsSource="{Binding Operators}">
+            <TextBlock Text="{Binding Name}"/>
+
+            <HierarchicalDataTemplate.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}"/>
+              </DataTemplate>
+            </HierarchicalDataTemplate.ItemTemplate>
+          </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
 
     </Grid>
+
+    <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
+
+    <TextBox Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding LoggedText}"/>
+
+  </Grid>
 </UserControl>

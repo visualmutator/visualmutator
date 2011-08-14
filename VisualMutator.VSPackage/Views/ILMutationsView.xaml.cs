@@ -14,17 +14,27 @@ using System.Windows.Shapes;
 
 namespace PiotrTrzpil.VisualMutator_VSPackage.Views
 {
+    using System.Waf.Applications;
+
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    /// <summary>
-    /// Interaction logic for MutationsView.xaml
-    /// </summary>
+    public interface IILMutationsView : IView
+    {
+        Visibility Visibility
+        {
+            get;
+            set;
+        }
+    }
     public partial class ILMutationsView : UserControl, IILMutationsView
     {
         public ILMutationsView()
         {
             InitializeComponent();
+       
         }
+
+       
     }
 }
