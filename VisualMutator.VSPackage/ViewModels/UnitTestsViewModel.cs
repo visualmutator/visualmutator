@@ -1,6 +1,7 @@
 namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 {
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
@@ -62,20 +63,20 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
 
 
-        private ICommand _commandRefresh;
+        private ICommand _commandRunTests;
 
-        public ICommand CommandRefresh
+        public ICommand CommandRunTests
         {
             get
             {
-                return _commandRefresh;
+                return _commandRunTests;
             }
             set
             {
-                if (_commandRefresh != value)
+                if (_commandRunTests != value)
                 {
-                    _commandRefresh = value;
-                    this.RaisePropertyChangedExt(() => CommandRefresh);
+                    _commandRunTests = value;
+                    this.RaisePropertyChangedExt(() => CommandRunTests);
                 }
             }
         }
@@ -121,5 +122,61 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
 
 
+        private bool _areTestsRunning;
+
+        public bool AreTestsRunning
+        {
+            set
+            {
+                if (_areTestsRunning != value)
+                {
+                    _areTestsRunning = value;
+                    this.RaisePropertyChangedExt(() => AreTestsRunning);
+                }
+            }
+            get
+            {
+                return _areTestsRunning;
+            }
+        }
+
+        private TestTreeNode _selectedTestItem;
+
+
+        public TestTreeNode SelectedTestItem
+        {
+            set
+            {
+                if (_selectedTestItem != value)
+                {
+                    _selectedTestItem = value;
+                    this.RaisePropertyChangedExt(() => SelectedTestItem);
+                }
+            }
+            get
+            {
+                return _selectedTestItem;
+            }
+        }
+
+
+
+        private string _resultText;
+
+        public string ResultText
+        {
+            set
+            {
+                if (_resultText != value)
+                {
+                    _resultText = value;
+                    this.RaisePropertyChangedExt(() => ResultText);
+                }
+            }
+            get
+            {
+                return _resultText;
+            }
+        }
     }
 }

@@ -81,6 +81,7 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -152,7 +153,13 @@
     <Compile Include="Controllers\UnitTestsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
+    <Compile Include="Infrastructure\Execute.cs" />
+    <Compile Include="Infrastructure\FuncFactory.cs" />
+    <Compile Include="Infrastructure\IFactory.cs" />
+    <Compile Include="Infrastructure\MessageBoxService.cs" />
+    <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\ObservableCollection.cs" />
+    <Compile Include="Infrastructure\ProvideBindingPathAttribute.cs" />
     <Compile Include="Model\Mutations\AssemblyNode.cs" />
     <Compile Include="Model\Mutations\AssemblyWriter.cs" />
     <Compile Include="Model\Mutations\TreeElement.cs" />
@@ -177,6 +184,7 @@
     <Compile Include="ViewModels\ILMutationsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\Abstract\IMainControl.cs" />
+    <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
     <Compile Include="Views\MainControl.xaml.cs">

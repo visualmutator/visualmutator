@@ -45,7 +45,7 @@
 
                 container2.ComposeParts(pack);
 
-                
+           
             }
 
             return OperatorPacks;

@@ -29,6 +29,7 @@
 
         static Bootstrapper()
         {
+            
             AppDomain.CurrentDomain.AssemblyResolve += (sender,  e) =>
             {
                 AssemblyName requestedName = new AssemblyName(e.Name);
@@ -51,10 +52,18 @@
                 }
             };
 
-
+            
 
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+
+            Application.Current.DispatcherUnhandledException += new System.Windows.Threading.DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
+
+        }
+
+        static void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.ToString());
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -90,9 +99,20 @@
             _kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
             _kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
 
+            _kernel.Bind<IMessageBoxService>().To<MessageBoxService>();
+
+
+
+            var exe = new Execute();
+            exe.InitializeWithDispatcher();
+
+
+            _kernel.Bind<IExecute>().ToConstant(exe);
+
+
             _appController = _kernel.Get<ApplicationController>();
 
-
+            
 
             VisualMutator_VSPackagePackage.MainControl = Shell;
 
@@ -108,6 +128,9 @@
 
         public void InitializePackage(VisualMutator_VSPackagePackage visualMutatorVsPackagePackage)
         {
+
+
+
             _appController.Initialize();
 
 

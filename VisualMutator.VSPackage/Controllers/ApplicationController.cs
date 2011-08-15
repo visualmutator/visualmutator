@@ -19,7 +19,7 @@
 
     public class ApplicationController
     {
-        private IKernel _kernel;
+       
 
         private readonly MainWindowViewModel _mainWindowVm;
 
@@ -29,14 +29,14 @@
 
         private readonly IVisualStudioConnection _visualStudioConnection;
 
-        public ApplicationController(IKernel kernel, 
+        public ApplicationController(
             MainWindowViewModel mainWindowVm,
             ILMutationsController ilMutationsController,
             UnitTestsController unitTestsController,
             IVisualStudioConnection visualStudioConnection
             )
         {
-            _kernel = kernel;
+           
  
             _mainWindowVm = mainWindowVm;
 

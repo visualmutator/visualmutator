@@ -13,6 +13,15 @@
 
     public abstract class TestTreeNode : ExtModel
     {
+        protected TestTreeNode()
+        {
+            CommandRunTest = new DelegateCommand(Comm);
+        }
+        public ITest Test
+        {
+            get;
+            set;
+        }
 
         private string _name;
 
@@ -33,13 +42,44 @@
         }
 
 
-        public ITest Test { get; set; }
 
+       
 
-        protected TestTreeNode()
+        public bool HasResults
         {
-            CommandRunTest = new DelegateCommand(Comm);
+            get
+            {
+
+                return (Status == TestStatus.Failure || Status == TestStatus.Success);
+            }
+           
         }
+
+        private TestResult _result;
+
+
+        public TestResult Result
+        {
+            set
+            {
+               
+                _result = value;
+            }
+            get
+            {
+                if (!HasResults)
+                {
+                    throw new InvalidOperationException("No results");
+                }
+                if (_result == null)
+                {
+                    throw new ArgumentException("Result not set");
+                }
+                return _result;
+            }
+        }
+
+        
 
         public void Comm()
         {

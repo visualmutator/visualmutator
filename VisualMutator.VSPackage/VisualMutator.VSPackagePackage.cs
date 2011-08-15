@@ -11,6 +11,8 @@ using Microsoft.VisualStudio.Shell;
 
 namespace PiotrTrzpil.VisualMutator_VSPackage
 {
+    using System.Windows;
+
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
 
     /// <summary>
@@ -34,6 +36,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
     // This attribute registers a tool window exposed by this package.
     [ProvideToolWindow(typeof(MyToolWindow))]
     [Guid(GuidList.guidVisualMutator_VSPackagePkgString)]
+    [ProvideBindingPath]
     public sealed class VisualMutator_VSPackagePackage : Package
     {
         private Bootstrapper _bootstrapper;
@@ -53,10 +56,17 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
             {
                 _bootstrapper = new Bootstrapper();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                
-                throw;
+
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+                else
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
             
 
@@ -81,7 +91,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             window.Content = _bootstrapper.Shell;
-            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+            ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
 
  
@@ -107,14 +117,22 @@ namespace PiotrTrzpil.VisualMutator_VSPackage
                 MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand( menuToolWin );
             }
+
+
             try
             {
                 _bootstrapper.InitializePackage(this);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                
-                throw;
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+                else
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
             
 
