@@ -1,10 +1,6 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.Tests
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
 
     public class TestNodeNamespace : TestTreeNode
     {
@@ -27,7 +23,7 @@
                 if (_testClasses != value)
                 {
                     _testClasses = value;
-                    this.RaisePropertyChangedExt(() => TestClasses);
+                    this.RaisePropertyChanged(() => TestClasses);
                 }
             }
             get

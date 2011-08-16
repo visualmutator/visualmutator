@@ -5,12 +5,11 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
     using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.Tests;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    using VisualMutator.Domain;
-
-    public class UnitTestsViewModel : ExtViewModel<IUnitTestsView>
+    public class UnitTestsViewModel : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ViewModel<IUnitTestsView>
     {
 
         public UnitTestsViewModel(IUnitTestsView view)
@@ -30,7 +29,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_mutants != value)
                 {
                     _mutants = value;
-                    this.RaisePropertyChangedExt(() => Mutants);
+                    this.RaisePropertyChanged(() => Mutants);
                 }
             }
             get
@@ -51,7 +50,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_selectedMutant != value)
                 {
                     _selectedMutant = value;
-                    this.RaisePropertyChangedExt(() => SelectedMutant);
+                    this.RaisePropertyChanged(() => SelectedMutant);
                 }
             }
             get
@@ -76,7 +75,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_commandRunTests != value)
                 {
                     _commandRunTests = value;
-                    this.RaisePropertyChangedExt(() => CommandRunTests);
+                    this.RaisePropertyChanged(() => CommandRunTests);
                 }
             }
         }
@@ -91,7 +90,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_testNamespaces != value)
                 {
                     _testNamespaces = value;
-                    this.RaisePropertyChangedExt(() => TestNamespaces);
+                    this.RaisePropertyChanged(() => TestNamespaces);
                 }
             }
             get
@@ -111,7 +110,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_testCurrentSolution != value)
                 {
                     _testCurrentSolution = value;
-                    this.RaisePropertyChangedExt(() => TestCurrentSolution);
+                    this.RaisePropertyChanged(() => TestCurrentSolution);
                 }
             }
             get
@@ -131,7 +130,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_areTestsRunning != value)
                 {
                     _areTestsRunning = value;
-                    this.RaisePropertyChangedExt(() => AreTestsRunning);
+                    this.RaisePropertyChanged(() => AreTestsRunning);
                 }
             }
             get
@@ -150,7 +149,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_selectedTestItem != value)
                 {
                     _selectedTestItem = value;
-                    this.RaisePropertyChangedExt(() => SelectedTestItem);
+                    this.RaisePropertyChanged(() => SelectedTestItem);
                 }
             }
             get
@@ -170,7 +169,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_resultText != value)
                 {
                     _resultText = value;
-                    this.RaisePropertyChangedExt(() => ResultText);
+                    this.RaisePropertyChanged(() => ResultText);
                 }
             }
             get

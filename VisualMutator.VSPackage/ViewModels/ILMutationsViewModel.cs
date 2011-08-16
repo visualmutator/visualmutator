@@ -9,12 +9,11 @@
     using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    using VisualMutator.Domain;
-
-    public class ILMutationsViewModel : ExtViewModel<IILMutationsView>
+    public class ILMutationsViewModel : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ViewModel<IILMutationsView>
     {
 
         public ILMutationsViewModel(IILMutationsView view)
@@ -37,7 +36,7 @@
                 if (_commandRefresh != value)
                 {
                     _commandRefresh = value;
-                    this.RaisePropertyChangedExt(() => CommandRefresh);
+                    this.RaisePropertyChanged(() => CommandRefresh);
                 }
             }
         }
@@ -55,7 +54,7 @@
                 if (_commandMutate != value)
                 {
                     _commandMutate = value;
-                    this.RaisePropertyChangedExt(() => CommandMutate);
+                    this.RaisePropertyChanged(() => CommandMutate);
                 }
             }
         }
@@ -69,7 +68,7 @@
                 if (_assemblies != value)
                 {
                     _assemblies = value;
-                    this.RaisePropertyChangedExt(() => Assemblies);
+                    this.RaisePropertyChanged(() => Assemblies);
                 }
          
             }
@@ -88,7 +87,7 @@
                 if (_mutationPackages != value)
                 {
                     _mutationPackages = value;
-                    this.RaisePropertyChangedExt(() => MutationPackages);
+                    this.RaisePropertyChanged(() => MutationPackages);
                 }
             }
             get
@@ -106,7 +105,7 @@
                 if (_loggedText != value)
                 {
                     _loggedText = value;
-                    this.RaisePropertyChangedExt(() => LoggedText);
+                    this.RaisePropertyChanged(() => LoggedText);
                 }
             }
             get

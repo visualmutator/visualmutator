@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +11,7 @@
     using EnvDTE80;
 
     using Microsoft.VisualStudio.Shell;
+
     public interface IVisualStudioConnection
     {
         IEnumerable<string> GetProjectPaths();

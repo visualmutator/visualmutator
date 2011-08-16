@@ -9,12 +9,13 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System;
-using System.Text;
-using System.IO;
-
-namespace Microsoft.VisualStudio.Shell
+namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
+    using System;
+    using System.Text;
+
+    using Microsoft.VisualStudio.Shell;
+
     /// <summary>
     /// This attribute registers a path that should be probed for candidate assemblies at assembly load time.
     /// 

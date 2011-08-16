@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Domain
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
     #region Usings
 

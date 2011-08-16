@@ -19,7 +19,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Views
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    public interface IILMutationsView : IView
+    public interface IILMutationsView : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.IView
     {
         Visibility Visibility
         {

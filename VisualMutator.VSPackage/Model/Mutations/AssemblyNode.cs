@@ -1,15 +1,5 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-
-    using Mono.Cecil;
-
-    using VisualMutator.Domain;
-
     public class AssemblyNode : TreeElement
     {
 
@@ -20,7 +10,7 @@
             _fullPath = fullPath;
       
 
-            Types = new ObservableCollection<TypeNode>();
+            Types = new Infrastructure.ObservableCollection<TypeNode>();
 
             Name = name;
             IsIncluded = true;
@@ -37,14 +27,14 @@
 
         //  ObservableCollection<TypeNode> Types 
 
-        private ObservableCollection<TypeNode> _types;
+        private Infrastructure.ObservableCollection<TypeNode> _types;
 
-        public ObservableCollection<TypeNode> Types
+        public Infrastructure.ObservableCollection<TypeNode> Types
         {
             set
             {
                 _types = value;
-                this.RaisePropertyChangedExt(() => Types);
+                this.RaisePropertyChanged(() => Types);
             }
             get
             {

@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VSSDK.Tools.VsIdeTesting;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
+
 using EnvDTE;
 
 namespace VisualMutator.VSPackage_IntegrationTests

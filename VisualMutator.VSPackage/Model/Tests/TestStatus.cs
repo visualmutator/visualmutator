@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.Tests
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
     public enum TestStatus
     {

@@ -11,8 +11,6 @@
 
     using NUnit.Framework;
 
-    using VisualMutator.Domain;
-
     [TestClass]
     public class MutationGeneratorTests
     {

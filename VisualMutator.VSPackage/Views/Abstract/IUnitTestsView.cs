@@ -2,7 +2,7 @@
 {
     using System.Waf.Applications;
 
-    public interface IUnitTestsView : IView
+    public interface IUnitTestsView : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.IView
     {
 
     }

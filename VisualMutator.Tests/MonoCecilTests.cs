@@ -7,7 +7,8 @@
 
     using NUnit.Framework;
 
-    using VisualMutator.Domain;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
+
     using VisualMutator.MvcMutations;
 
     [TestFixture]

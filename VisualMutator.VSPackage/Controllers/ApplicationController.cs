@@ -7,15 +7,12 @@
 
     using EnvDTE;
 
-    using Microsoft.VisualStudio.Shell;
-
     using Ninject;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
-
-    using VisualMutator.Domain;
 
     public class ApplicationController
     {

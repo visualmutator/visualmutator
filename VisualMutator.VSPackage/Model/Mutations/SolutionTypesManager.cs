@@ -1,9 +1,8 @@
-﻿namespace VisualMutator.Domain
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
     #region Usings
 
     using System.Collections.Generic;
-   
     using System.Linq;
 
     using Mono.Cecil;

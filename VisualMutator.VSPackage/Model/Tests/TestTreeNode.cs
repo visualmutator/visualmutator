@@ -1,17 +1,12 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.Tests
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Waf.Applications;
     using System.Windows.Input;
 
     using NUnit.Core;
 
-    using VisualMutator.Domain;
-
-    public abstract class TestTreeNode : ExtModel
+    public abstract class TestTreeNode : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ModelElement
     {
         protected TestTreeNode()
         {
@@ -32,7 +27,7 @@
                 if (_name != value)
                 {
                     _name = value;
-                    this.RaisePropertyChangedExt(() => Name);
+                    this.RaisePropertyChanged(() => Name);
                 }
             }
             get
@@ -98,7 +93,7 @@
                 if (_commandRunTest != value)
                 {
                     _commandRunTest = value;
-                    this.RaisePropertyChangedExt(() => CommandRunTest);
+                    this.RaisePropertyChanged(() => CommandRunTest);
                 }
             }
         }
@@ -112,7 +107,7 @@
                 if (_status != value)
                 {
                     _status = value;
-                    this.RaisePropertyChangedExt(() => Status);
+                    this.RaisePropertyChanged(() => Status);
                 }
             }
             get

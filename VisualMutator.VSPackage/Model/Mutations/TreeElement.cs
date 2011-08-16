@@ -1,11 +1,6 @@
-﻿namespace VisualMutator.Domain
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    public class TreeElement : ExtModel
+    public class TreeElement : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ModelElement
     {
         public TreeElement()
         {
@@ -19,7 +14,7 @@
             set
             {
                 _isIncluded = value;
-                this.RaisePropertyChangedExt(() => IsIncluded);
+                this.RaisePropertyChanged(() => IsIncluded);
             }
             get
             {
@@ -34,7 +29,7 @@
             set
             {
                 _name = value;
-                this.RaisePropertyChangedExt(() => Name);
+                this.RaisePropertyChanged(() => Name);
             }
             get
             {

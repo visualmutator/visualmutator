@@ -7,7 +7,7 @@
     using System.Windows.Data;
     using System.Windows.Media;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.Tests;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
 
     #endregion
 

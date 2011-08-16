@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Domain
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
     #region Usings
 
@@ -28,7 +28,7 @@
                 if (_operators != value)
                 {
                     _operators = value;
-                    RaisePropertyChangedExt(() => Operators);
+                    RaisePropertyChanged(() => Operators);
                 }
             }
             get

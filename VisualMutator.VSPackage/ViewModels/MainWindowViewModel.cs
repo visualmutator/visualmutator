@@ -8,7 +8,7 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    public class MainWindowViewModel : ExtViewModel<IMainControl>
+    public class MainWindowViewModel : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ViewModel<IMainControl>
     {
 
         private object _iLMutationsView;
@@ -25,7 +25,7 @@
             set
             {
                 _iLMutationsView = value;
-                this.RaisePropertyChangedExt(() => ILMutationsView);
+                this.RaisePropertyChanged(() => ILMutationsView);
             }
             get
             {
@@ -39,7 +39,7 @@
             set
             {
                 _unitTestsView = value;
-                this.RaisePropertyChangedExt(() => UnitTestsView);
+                this.RaisePropertyChanged(() => UnitTestsView);
             }
             get
             {

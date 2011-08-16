@@ -17,14 +17,14 @@
     using NUnit.Util;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.Tests;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
-
-    using VisualMutator.Domain;
 
     #endregion
 
-    public class UnitTestsController : Controller
+    public class UnitTestsController : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller
     {
         private readonly Dictionary<string, TestTreeNode> _testMap;
 

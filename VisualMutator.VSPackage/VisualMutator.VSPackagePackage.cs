@@ -7,7 +7,6 @@ using Microsoft.Win32;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
 
 namespace PiotrTrzpil.VisualMutator_VSPackage
 {

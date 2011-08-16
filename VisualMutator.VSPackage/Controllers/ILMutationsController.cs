@@ -13,11 +13,11 @@
     using Ninject;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
 
-    using VisualMutator.Domain;
-
-    public class ILMutationsController : Controller
+    public class ILMutationsController : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller
     {
         private readonly ILMutationsViewModel _viewModel;
 

@@ -10,16 +10,14 @@
 
     using EnvDTE;
 
-    using Microsoft.VisualStudio.Shell;
-
     using Ninject;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
-
-    using VisualMutator.Domain;
 
     public class Bootstrapper
     {
