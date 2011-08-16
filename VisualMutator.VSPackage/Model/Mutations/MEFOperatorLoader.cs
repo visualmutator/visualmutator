@@ -25,15 +25,14 @@
 
         public IEnumerable<IOperatorsPack> ReloadOperators()
         {
-            var p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-            
-       
-            var path = Path.Combine(Path.GetDirectoryName(p), "Extensions");
+            string p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+
+            string path = Path.Combine(Path.GetDirectoryName(p), "Extensions");
             var catalog =
                 new DirectoryCatalog(path);
 
             var container = new CompositionContainer(catalog);
-            
+
             container.ComposeParts(this);
 
             foreach (IOperatorsPack operatorsPack in OperatorPacks)
@@ -44,8 +43,6 @@
                 var pack = new LoadedOperatorPack();
 
                 container2.ComposeParts(pack);
-
-           
             }
 
             return OperatorPacks;

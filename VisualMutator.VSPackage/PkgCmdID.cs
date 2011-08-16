@@ -1,13 +1,7 @@
-﻿// PkgCmdID.cs
-// MUST match PkgCmdID.h
-using System;
-
-namespace PiotrTrzpil.VisualMutator_VSPackage
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage
 {
-    static class PkgCmdIDList
+    internal static class PkgCmdIDList
     {
-
-        public const uint cmdidVisualMutator =    0x101;
-
+        public const uint cmdidVisualMutator = 0x101;
     };
 }

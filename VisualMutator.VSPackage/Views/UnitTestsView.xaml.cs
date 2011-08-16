@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-namespace PiotrTrzpil.VisualMutator_VSPackage.Views
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views
 {
+    #region Usings
+
+    using System.Windows.Controls;
+    using System.Windows.Input;
+
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
+    #endregion
+
     /// <summary>
-    /// Interaction logic for UnitTestsView.xaml
+    ///   Interaction logic for UnitTestsView.xaml
     /// </summary>
     public partial class UnitTestsView : UserControl, IUnitTestsView
     {
@@ -34,7 +27,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Views
                 //mouse down event handler.
                 e.Handled = true;
             }
-
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
+    #region Usings
+
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+
+    #endregion
 
     public class FuncFactory<TObject> : IFactory<TObject>
     {
-        private Func<TObject> _func;
+        private readonly Func<TObject> _func;
 
         public FuncFactory(Func<TObject> func)
         {

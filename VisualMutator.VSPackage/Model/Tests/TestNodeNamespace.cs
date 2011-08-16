@@ -1,20 +1,19 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
+    #region Usings
+
     using System.Collections.ObjectModel;
+
+    #endregion
 
     public class TestNodeNamespace : TestTreeNode
     {
-
-
-
+        private ObservableCollection<TestNodeClass> _testClasses;
 
         public TestNodeNamespace()
         {
             TestClasses = new ObservableCollection<TestNodeClass>();
         }
-
-
-        private ObservableCollection<TestNodeClass> _testClasses;
 
         public ObservableCollection<TestNodeClass> TestClasses
         {
@@ -23,7 +22,7 @@
                 if (_testClasses != value)
                 {
                     _testClasses = value;
-                    this.RaisePropertyChanged(() => TestClasses);
+                    RaisePropertyChanged(() => TestClasses);
                 }
             }
             get
@@ -31,6 +30,5 @@
                 return _testClasses;
             }
         }
-
     }
 }

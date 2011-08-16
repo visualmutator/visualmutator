@@ -1,26 +1,17 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    #region Usings
 
-    using EnvDTE;
-
-    using Ninject;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views;
+
+    #endregion
 
     public class ApplicationController
     {
-       
+        private readonly ILMutationsController _ilMutationsController;
 
         private readonly MainWindowViewModel _mainWindowVm;
-
-        private ILMutationsController _ilMutationsController;
 
         private readonly UnitTestsController _unitTestsController;
 
@@ -33,14 +24,10 @@
             IVisualStudioConnection visualStudioConnection
             )
         {
-           
- 
             _mainWindowVm = mainWindowVm;
 
-          
-
-         //   var view = new ILMutationsView();
-          //  var vm = new ILMutationsViewModel(view);
+            //   var view = new ILMutationsView();
+            //  var vm = new ILMutationsViewModel(view);
             _ilMutationsController = ilMutationsController;
             _unitTestsController = unitTestsController;
             _visualStudioConnection = visualStudioConnection;
@@ -50,8 +37,7 @@
 
             _unitTestsController.Mutants = _ilMutationsController.GeneratedMutants;
 
-
-           // _visualStudioConnection.SolutionEvents.Opened
+            // _visualStudioConnection.SolutionEvents.Opened
         }
 
         public object Shell

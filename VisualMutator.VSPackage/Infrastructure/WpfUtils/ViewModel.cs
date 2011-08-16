@@ -9,7 +9,7 @@
     #endregion
 
     public abstract class ViewModel<TView> : ModelElement
-        where TView : class, PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.IView
+        where TView : class, IView
     {
         private readonly EventListeners eventListeners;
 

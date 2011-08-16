@@ -1,6 +1,10 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
+    #region Usings
+
     using System.Windows.Controls;
+
+    #endregion
 
     public interface IEventLogger
     {
@@ -22,6 +26,7 @@
         {
             _control.AppendText(message);
         }
+
         public void Error(string message)
         {
             _control.AppendText(message);

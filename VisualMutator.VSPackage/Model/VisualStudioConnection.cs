@@ -1,5 +1,7 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 {
+    #region Usings
+
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -12,26 +14,29 @@
 
     using Microsoft.VisualStudio.Shell;
 
+    #endregion
+
     public interface IVisualStudioConnection
     {
+        SolutionEvents SolutionEvents { get; }
+
         IEnumerable<string> GetProjectPaths();
 
         string GetMutantsRootFolderPath();
-        string Test();
 
-        SolutionEvents SolutionEvents { get; }
+        string Test();
     }
+
     public class VisualStudioConnection : IVisualStudioConnection
     {
         private readonly DTE2 _dte;
 
-        private SolutionEvents _solutionEvents;
+        private readonly SolutionEvents _solutionEvents;
 
         public VisualStudioConnection()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(DTE));
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
-       
         }
 
         public SolutionEvents SolutionEvents
@@ -44,41 +49,44 @@
 
         public IEnumerable<string> GetProjectPaths()
         {
-            var chosenProjects = _dte.Solution.Cast<Project>()
+            IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
                 .Where(
                     p => p.ConfigurationManager != null
                          && p.ConfigurationManager.ActiveConfiguration != null
                          && p.ConfigurationManager.ActiveConfiguration.IsBuildable);
 
-            foreach (var project in chosenProjects)
+            foreach (Project project in chosenProjects)
             {
-                var properties = project.Properties.Cast<Property>();
+                IEnumerable<Property> properties = project.Properties.Cast<Property>();
 
-                string localPath = (string)properties
-                                               .Single(prop => prop.Name == "LocalPath").Value;
-                string outputFileName = (string)properties
-                                                    .Single(prop => prop.Name == "OutputFileName").Value;
+                var localPath = (string)properties
+                                            .Single(prop => prop.Name == "LocalPath").Value;
+                var outputFileName = (string)properties
+                                                 .Single(prop => prop.Name == "OutputFileName").
+                                                 Value;
 
-                string outputPath = (string)project.ConfigurationManager
-                                                .ActiveConfiguration.Properties.Cast<Property>()
-                                                .Single(prop => prop.Name == "OutputPath").Value;
+                var outputPath = (string)project.ConfigurationManager
+                                             .ActiveConfiguration.Properties.Cast<Property>()
+                                             .Single(prop => prop.Name == "OutputPath").Value;
 
                 yield return Path.Combine(localPath, outputPath, outputFileName);
             }
         }
+
         public string GetMutantsRootFolderPath()
         {
-            string slnPath = (string)_dte.Solution.Properties.Cast<Property>().Single(p => p.Name == "Path").Value;
+            var slnPath =
+                (string)
+                _dte.Solution.Properties.Cast<Property>().Single(p => p.Name == "Path").Value;
             return Directory.GetParent(slnPath).CreateSubdirectory("visal_mutator_mutants").FullName;
         }
-      
 
         public string Test()
         {
             if (_dte.Solution.IsOpen)
             {
                 var sb = new StringBuilder();
-                foreach (var pro in _dte.Solution.Properties.Cast<Property>())
+                foreach (Property pro in _dte.Solution.Properties.Cast<Property>())
                 {
                     try
                     {
@@ -86,17 +94,11 @@
                     }
                     catch (Exception)
                     {
-                        
-                     
                     }
-                   
                 }
                 return sb.ToString();
-            
             }
             return "";
         }
-
     }
-
 }

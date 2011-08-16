@@ -6,8 +6,8 @@
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
              xmlns:AttachedBehaviors="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.AttachedBehaviors"
              xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" mc:Ignorable="d"
-             d:DesignHeight="322" d:DesignWidth="624">
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" mc:Ignorable="d" d:DesignHeight="322"
+             d:DesignWidth="624">
 
   <UserControl.Resources>
 
@@ -16,7 +16,7 @@
     <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
       <Setter Property="Height" Value="10"/>
       <Setter Property="Width" Value="10"/>
-        <Setter Property="Margin" Value="0,0,5,0"/>
+      <Setter Property="Margin" Value="0,0,5,0"/>
       <Setter Property="Stroke" Value="Black"/>
     </Style>
 
@@ -40,8 +40,8 @@
     </DockPanel>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
-      <ListView AllowDrop="True" SelectionMode="Extended" ItemsSource="{Binding Mutants}"
-                IsManipulationEnabled="True" SelectedItem="{Binding SelectedMutant}">
+      <ListView AllowDrop="True" SelectionMode="Extended" ItemsSource="{Binding Mutants}" IsManipulationEnabled="True"
+                SelectedItem="{Binding SelectedMutant}">
 
         <ListView.View>
           <GridView>
@@ -92,17 +92,17 @@
         </Style>
 
       </TreeView.ItemContainerStyle>
-            <i:Interaction.Behaviors>
-                <AttachedBehaviors:BindableSelectedItemBehaviour SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}" />
-            </i:Interaction.Behaviors>
+      <i:Interaction.Behaviors>
+        <AttachedBehaviors:BindableSelectedItemBehaviour SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}"/>
+      </i:Interaction.Behaviors>
 
-        </TreeView>
+    </TreeView>
 
     <GridSplitter Grid.Row="4" Width="Auto" HorizontalAlignment="Stretch"/>
 
     <ScrollViewer Grid.Row="5">
-            <TextBlock Text="{Binding ResultText}"  />
-        </ScrollViewer>
+      <TextBlock Text="{Binding ResultText}"/>
+    </ScrollViewer>
 
   </Grid>
 </UserControl>

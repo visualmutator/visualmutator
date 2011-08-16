@@ -2,9 +2,5 @@
 {
     public class TestNodeMethod : TestTreeNode
     {
-        public TestNodeMethod()
-        {
-            
-        }
     }
 }

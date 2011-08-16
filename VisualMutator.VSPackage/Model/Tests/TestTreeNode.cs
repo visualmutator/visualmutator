@@ -1,24 +1,33 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
+    #region Usings
+
     using System;
     using System.Waf.Applications;
     using System.Windows.Input;
 
     using NUnit.Core;
 
-    public abstract class TestTreeNode : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ModelElement
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+
+    #endregion
+
+    public abstract class TestTreeNode : ModelElement
     {
+        private ICommand _commandRunTest;
+
+        private string _name;
+
+        private TestResult _result;
+
+        private TestStatus _status;
+
         protected TestTreeNode()
         {
             CommandRunTest = new DelegateCommand(Comm);
         }
-        public ITest Test
-        {
-            get;
-            set;
-        }
 
-        private string _name;
+        public ITest Test { get; set; }
 
         public string Name
         {
@@ -27,7 +36,7 @@
                 if (_name != value)
                 {
                     _name = value;
-                    this.RaisePropertyChanged(() => Name);
+                    RaisePropertyChanged(() => Name);
                 }
             }
             get
@@ -36,28 +45,18 @@
             }
         }
 
-
-
-       
-
         public bool HasResults
         {
             get
             {
-
                 return (Status == TestStatus.Failure || Status == TestStatus.Success);
             }
-           
         }
-
-        private TestResult _result;
-
 
         public TestResult Result
         {
             set
             {
-               
                 _result = value;
             }
             get
@@ -74,14 +73,6 @@
             }
         }
 
-        
-
-        public void Comm()
-        {
-            Name += "!";
-        }
-        private ICommand _commandRunTest;
-
         public ICommand CommandRunTest
         {
             get
@@ -93,12 +84,10 @@
                 if (_commandRunTest != value)
                 {
                     _commandRunTest = value;
-                    this.RaisePropertyChanged(() => CommandRunTest);
+                    RaisePropertyChanged(() => CommandRunTest);
                 }
             }
         }
-
-        private TestStatus _status;
 
         public TestStatus Status
         {
@@ -107,7 +96,7 @@
                 if (_status != value)
                 {
                     _status = value;
-                    this.RaisePropertyChanged(() => Status);
+                    RaisePropertyChanged(() => Status);
                 }
             }
             get
@@ -115,6 +104,10 @@
                 return _status;
             }
         }
-      
+
+        public void Comm()
+        {
+            Name += "!";
+        }
     }
 }

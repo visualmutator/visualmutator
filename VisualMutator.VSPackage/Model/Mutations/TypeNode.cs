@@ -2,15 +2,7 @@
 {
     public class TypeNode : TreeElement
     {
-        private string _fullName;
-
-        public string FullName
-        {
-            get
-            {
-                return _fullName;
-            }
-        }
+        private readonly string _fullName;
 
         public TypeNode(string fullName, string name)
         {
@@ -18,6 +10,14 @@
 
             Name = name;
             IsIncluded = true;
+        }
+
+        public string FullName
+        {
+            get
+            {
+                return _fullName;
+            }
         }
     }
 }

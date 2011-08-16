@@ -1,20 +1,25 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
+    #region Usings
+
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+
+    #endregion
+
     public class AssemblyNode : TreeElement
     {
+        private readonly string _fullPath;
 
-        private string _fullPath;
+        private ObservableCollection<TypeNode> _types;
 
         public AssemblyNode(string name, string fullPath)
         {
             _fullPath = fullPath;
-      
 
-            Types = new Infrastructure.ObservableCollection<TypeNode>();
+            Types = new ObservableCollection<TypeNode>();
 
             Name = name;
             IsIncluded = true;
-
         }
 
         public string FullPath
@@ -27,14 +32,12 @@
 
         //  ObservableCollection<TypeNode> Types 
 
-        private Infrastructure.ObservableCollection<TypeNode> _types;
-
-        public Infrastructure.ObservableCollection<TypeNode> Types
+        public ObservableCollection<TypeNode> Types
         {
             set
             {
                 _types = value;
-                this.RaisePropertyChanged(() => Types);
+                RaisePropertyChanged(() => Types);
             }
             get
             {

@@ -3,9 +3,11 @@
     public enum TestStatus
     {
         Inconclusive,
+
         Running,
+
         Success,
+
         Failure,
-        
     }
 }

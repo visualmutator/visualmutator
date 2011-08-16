@@ -1,35 +1,48 @@
 namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 {
-    using System.Windows;
-    using System.Windows.Controls;
+    #region Usings
+
     using System.Windows.Input;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    public class UnitTestsViewModel : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ViewModel<IUnitTestsView>
+    #endregion
+
+    public class UnitTestsViewModel : ViewModel<IUnitTestsView>
     {
+        private bool _areTestsRunning;
+
+        private ICommand _commandRunTests;
+
+        private Infrastructure.ObservableCollection<MutationSession> _mutants;
+
+        private string _resultText;
+
+        private MutationSession _selectedMutant;
+
+        private TestTreeNode _selectedTestItem;
+
+        private bool _testCurrentSolution;
+
+        private Infrastructure.ObservableCollection<TestNodeNamespace> _testNamespaces;
 
         public UnitTestsViewModel(IUnitTestsView view)
             : base(view)
         {
-
-            TestNamespaces = new ObservableCollection<TestNodeNamespace>();
+            TestNamespaces = new Infrastructure.ObservableCollection<TestNodeNamespace>();
         }
 
-
-        private ObservableCollection<MutationSession> _mutants;
-
-        public ObservableCollection<MutationSession> Mutants
+        public Infrastructure.ObservableCollection<MutationSession> Mutants
         {
             set
             {
                 if (_mutants != value)
                 {
                     _mutants = value;
-                    this.RaisePropertyChanged(() => Mutants);
+                    RaisePropertyChanged(() => Mutants);
                 }
             }
             get
@@ -38,11 +51,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-
-
-
-        private MutationSession _selectedMutant;
-
         public MutationSession SelectedMutant
         {
             set
@@ -50,7 +58,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_selectedMutant != value)
                 {
                     _selectedMutant = value;
-                    this.RaisePropertyChanged(() => SelectedMutant);
+                    RaisePropertyChanged(() => SelectedMutant);
                 }
             }
             get
@@ -58,11 +66,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 return _selectedMutant;
             }
         }
-
-
-
-
-        private ICommand _commandRunTests;
 
         public ICommand CommandRunTests
         {
@@ -75,22 +78,19 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_commandRunTests != value)
                 {
                     _commandRunTests = value;
-                    this.RaisePropertyChanged(() => CommandRunTests);
+                    RaisePropertyChanged(() => CommandRunTests);
                 }
             }
         }
 
-        private ObservableCollection<TestNodeNamespace> _testNamespaces;
-
-       
-        public ObservableCollection<TestNodeNamespace> TestNamespaces
+        public Infrastructure.ObservableCollection<TestNodeNamespace> TestNamespaces
         {
             set
             {
                 if (_testNamespaces != value)
                 {
                     _testNamespaces = value;
-                    this.RaisePropertyChanged(() => TestNamespaces);
+                    RaisePropertyChanged(() => TestNamespaces);
                 }
             }
             get
@@ -99,10 +99,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-
-
-        private bool _testCurrentSolution;
-
         public bool TestCurrentSolution
         {
             set
@@ -110,7 +106,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_testCurrentSolution != value)
                 {
                     _testCurrentSolution = value;
-                    this.RaisePropertyChanged(() => TestCurrentSolution);
+                    RaisePropertyChanged(() => TestCurrentSolution);
                 }
             }
             get
@@ -119,10 +115,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-
-
-        private bool _areTestsRunning;
-
         public bool AreTestsRunning
         {
             set
@@ -130,7 +122,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_areTestsRunning != value)
                 {
                     _areTestsRunning = value;
-                    this.RaisePropertyChanged(() => AreTestsRunning);
+                    RaisePropertyChanged(() => AreTestsRunning);
                 }
             }
             get
@@ -139,9 +131,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-        private TestTreeNode _selectedTestItem;
-
-
         public TestTreeNode SelectedTestItem
         {
             set
@@ -149,7 +138,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_selectedTestItem != value)
                 {
                     _selectedTestItem = value;
-                    this.RaisePropertyChanged(() => SelectedTestItem);
+                    RaisePropertyChanged(() => SelectedTestItem);
                 }
             }
             get
@@ -158,10 +147,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-
-
-        private string _resultText;
-
         public string ResultText
         {
             set
@@ -169,7 +154,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 if (_resultText != value)
                 {
                     _resultText = value;
-                    this.RaisePropertyChanged(() => ResultText);
+                    RaisePropertyChanged(() => ResultText);
                 }
             }
             get

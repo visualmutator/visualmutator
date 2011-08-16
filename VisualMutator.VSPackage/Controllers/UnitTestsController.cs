@@ -16,16 +16,25 @@
     using NUnit.Core.Filters;
     using NUnit.Util;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
 
+    using Controller = PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller;
+
     #endregion
 
-    public class UnitTestsController : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller
+    public class UnitTestsController : Controller
     {
+        private readonly DelegateCommand _commandRunTests;
+
+        private readonly IExecute _execute;
+
+        private readonly IMessageService _messageBoxService;
+
         private readonly Dictionary<string, TestTreeNode> _testMap;
 
         private readonly TestLoader _tl;
@@ -34,18 +43,12 @@
 
         private readonly IVisualStudioConnection _visualStudioConnection;
 
-        private readonly IMessageBoxService _messageBoxService;
-
-        private readonly IExecute _execute;
-
-        private ObservableCollection<MutationSession> _mutants;
-
-        private DelegateCommand _commandRunTests;
+        private Infrastructure.ObservableCollection<MutationSession> _mutants;
 
         public UnitTestsController(
             UnitTestsViewModel unitTestsVm,
             IVisualStudioConnection visualStudioConnection,
-            IMessageBoxService messageBoxService,
+            IMessageService messageBoxService,
             IExecute execute
             )
         {
@@ -55,12 +58,11 @@
             _execute = execute;
 
             _commandRunTests = new DelegateCommand(
-                RunTests, () => _unitTestsVm.SelectedMutant!=null && !_unitTestsVm.AreTestsRunning );
+                RunTests, () => _unitTestsVm.SelectedMutant != null && !_unitTestsVm.AreTestsRunning);
             _unitTestsVm.CommandRunTests = _commandRunTests;
 
-
             _testMap = new Dictionary<string, TestTreeNode>();
-            AddWeakEventListener(unitTestsVm, ViewModelChanged);
+            EventListeners.Add(unitTestsVm, ViewModelChanged);
 
             ServiceManager.Services.AddService(new SettingsService());
             ServiceManager.Services.AddService(new DomainManager());
@@ -79,11 +81,10 @@
             _tl.Events.TestFinished += Events_TestFinished;
             _tl.Events.SuiteFinished += Events_SuiteFinished;
             _tl.Events.RunFinished += Events_RunFinished;
-            _tl.Events.RunStarting += new TestEventHandler(Events_RunStarting);
+            _tl.Events.RunStarting += Events_RunStarting;
             // _tl.Events.
         }
 
-      
         public UnitTestsViewModel UnitTestsVm
         {
             get
@@ -92,7 +93,7 @@
             }
         }
 
-        public ObservableCollection<MutationSession> Mutants
+        public Infrastructure.ObservableCollection<MutationSession> Mutants
         {
             set
             {
@@ -129,7 +130,7 @@
                 if (method != null && method.HasResults)
                 {
                     _unitTestsVm.ResultText = method.Result.Message;
-                }   
+                }
                 else
                 {
                     _unitTestsVm.ResultText = "";
@@ -172,44 +173,34 @@
 
         public void RunTests()
         {
-            
-            
             TestsToRun = _unitTestsVm.TestNamespaces;
             _tl.RunTests();
         }
-        void Events_RunStarting(object sender, TestEventArgs args)
+
+        private void Events_RunStarting(object sender, TestEventArgs args)
         {
-            _execute.OnUIThread(()=>
-            {
-                _unitTestsVm.AreTestsRunning = true;
-                _commandRunTests.RaiseCanExecuteChanged();
-
-                foreach (var testTreeNode in _testMap.Values)
+            _execute.OnUIThread(
+                () =>
                 {
-                    testTreeNode.Status = TestStatus.Running;
-                    
-                    
-                }
+                    _unitTestsVm.AreTestsRunning = true;
+                    _commandRunTests.RaiseCanExecuteChanged();
 
-
-
-            });
-           
+                    foreach (TestTreeNode testTreeNode in _testMap.Values)
+                    {
+                        testTreeNode.Status = TestStatus.Running;
+                    }
+                });
         }
 
         private void Events_TestFinished(object sender, TestEventArgs args)
         {
             //  ICollection<ITest> classes = GetTestClasses(args.Test);
             //  var namespaces = classes.Select(x => x.Parent).Distinct();
-           
+
             try
             {
                 TestStatus status = args.Result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
-                var node =_testMap[args.Result.Test.TestName.UniqueName];
-
-                
-
-
+                TestTreeNode node = _testMap[args.Result.Test.TestName.UniqueName];
 
                 node.Status = status;
 
@@ -229,7 +220,7 @@
                 }
                 else
                 {
-                    _messageBoxService.Show(e.ToString());
+                    _messageBoxService.ShowError(e.ToString());
                 }
             }
         }
@@ -238,11 +229,12 @@
         {
             try
             {
-                _execute.OnUIThread(() =>
-                {
-                    _unitTestsVm.AreTestsRunning = false;
-                    _commandRunTests.RaiseCanExecuteChanged();
-                });
+                _execute.OnUIThread(
+                    () =>
+                    {
+                        _unitTestsVm.AreTestsRunning = false;
+                        _commandRunTests.RaiseCanExecuteChanged();
+                    });
 
                 using (StreamWriter s = File.AppendText(@"C:\test.txt"))
                 {
@@ -258,7 +250,7 @@
                 }
                 else
                 {
-                    _messageBoxService.Show(e.ToString());
+                    _messageBoxService.ShowError(e.ToString());
                 }
             }
         }
@@ -274,7 +266,6 @@
                 {
                     node.Status = status;
                 }
-              
 
                 using (StreamWriter s = File.AppendText(@"C:\test.txt"))
                 {
@@ -290,7 +281,7 @@
                 }
                 else
                 {
-                    _messageBoxService.Show(e.ToString());
+                    _messageBoxService.ShowError(e.ToString());
                 }
             }
         }
@@ -304,8 +295,6 @@
             }
 
             _tl.LoadTest();
-
-            
         }
 
         private void Events_TestLoaded(object sender, TestEventArgs args)
@@ -360,7 +349,7 @@
                 }
                 else
                 {
-                    _messageBoxService.Show(e.ToString());
+                    _messageBoxService.ShowError(e.ToString());
                 }
             }
 
@@ -422,13 +411,12 @@
             }
             else
             {
-                _messageBoxService.Show(args.Exception.ToString());
+                _messageBoxService.ShowError(args.Exception.ToString());
             }
         }
 
         private void Events_ProjectLoaded(object sender, TestEventArgs args)
         {
-           
         }
 
         private void Events_ProjectLoadFailed(object sender, TestEventArgs args)
@@ -439,7 +427,7 @@
             }
             else
             {
-                _messageBoxService.Show(args.Exception.ToString());
+                _messageBoxService.ShowError(args.Exception.ToString());
             }
         }
     }

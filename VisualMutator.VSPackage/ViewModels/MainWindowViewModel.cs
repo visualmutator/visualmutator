@@ -1,16 +1,14 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    #region Usings
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Views;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    public class MainWindowViewModel : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ViewModel<IMainControl>
-    {
+    #endregion
 
+    public class MainWindowViewModel : ViewModel<IMainControl>
+    {
         private object _iLMutationsView;
 
         private object _unitTestsView;
@@ -25,7 +23,7 @@
             set
             {
                 _iLMutationsView = value;
-                this.RaisePropertyChanged(() => ILMutationsView);
+                RaisePropertyChanged(() => ILMutationsView);
             }
             get
             {
@@ -33,13 +31,12 @@
             }
         }
 
-
         public object UnitTestsView
         {
             set
             {
                 _unitTestsView = value;
-                this.RaisePropertyChanged(() => UnitTestsView);
+                RaisePropertyChanged(() => UnitTestsView);
             }
             get
             {

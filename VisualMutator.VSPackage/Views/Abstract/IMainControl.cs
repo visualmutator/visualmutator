@@ -1,16 +1,12 @@
-﻿
-
-namespace PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract
 {
+    #region Usings
 
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Waf.Applications;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
 
-    public interface IMainControl : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.IView
+    #endregion
+
+    public interface IMainControl : IView
     {
-         
     }
 }

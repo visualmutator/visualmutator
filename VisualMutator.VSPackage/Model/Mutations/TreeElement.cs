@@ -1,20 +1,23 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
-    public class TreeElement : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ModelElement
-    {
-        public TreeElement()
-        {
-            
-        }
+    #region Usings
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+
+    #endregion
+
+    public class TreeElement : ModelElement
+    {
         private bool _isIncluded;
+
+        private string _name;
 
         public bool IsIncluded
         {
             set
             {
                 _isIncluded = value;
-                this.RaisePropertyChanged(() => IsIncluded);
+                RaisePropertyChanged(() => IsIncluded);
             }
             get
             {
@@ -22,14 +25,12 @@
             }
         }
 
-        private string _name;
-
         public string Name
         {
             set
             {
                 _name = value;
-                this.RaisePropertyChanged(() => Name);
+                RaisePropertyChanged(() => Name);
             }
             get
             {

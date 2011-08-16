@@ -12,7 +12,7 @@
     {
         private readonly IOperatorsPack _operatorsPack;
 
-        private  ObservableCollection<MutationOperator> _operators;
+        private ObservableCollection<MutationOperator> _operators;
 
         public OperatorPackage(IOperatorsPack operatorsPack)
         {

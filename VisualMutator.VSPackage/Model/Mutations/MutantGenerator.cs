@@ -1,5 +1,7 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
 {
+    #region Usings
+
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,46 +12,31 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
 
+    #endregion
+
     public interface IMutantGenerator
     {
         IOperatorsManager OperatorsManager { get; }
-        void GenerateMutants();
 
         ObservableCollection<MutationSession> GeneratedMutants { get; }
+
+        void GenerateMutants();
 
         void LoadSessions();
     }
 
     public class MutantGenerator : IMutantGenerator
     {
+        private readonly ObservableCollection<MutationSession> _generatedMutants;
+
         private readonly IOperatorsManager _operatorsManager;
 
         private readonly ITypesManager _typesManager;
 
         private readonly IVisualStudioConnection _visualStudio;
 
-
-
-        private ObservableCollection<MutationSession> _generatedMutants; 
-
-        public IOperatorsManager OperatorsManager
-        {
-            get
-            {
-                return _operatorsManager;
-            }
-        }
-        public string SessionsFile
-        {
-            get
-            {
-                string path = _visualStudio.GetMutantsRootFolderPath();
-                return Path.Combine(path, "mutants.xml");
-            }
-        }
-
         public MutantGenerator(
-            IOperatorsManager operatorsManager, 
+            IOperatorsManager operatorsManager,
             ITypesManager typesManager,
             IVisualStudioConnection visualStudio
             )
@@ -59,6 +46,23 @@
             _visualStudio = visualStudio;
 
             _generatedMutants = new ObservableCollection<MutationSession>();
+        }
+
+        public string SessionsFile
+        {
+            get
+            {
+                string path = _visualStudio.GetMutantsRootFolderPath();
+                return Path.Combine(path, "mutants.xml");
+            }
+        }
+
+        public IOperatorsManager OperatorsManager
+        {
+            get
+            {
+                return _operatorsManager;
+            }
         }
 
         public ObservableCollection<MutationSession> GeneratedMutants
@@ -71,68 +75,19 @@
 
         public void GenerateMutants()
         {
+            IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
 
-            var types = _typesManager.GetIncludedTypes();
-            
+            //  var man = new SessionsManager();
 
-          //  var man = new SessionsManager();
+            IEnumerable<MutationOperator> operators = _operatorsManager.GetActiveOperators();
 
-
-
-            var operators = _operatorsManager.GetActiveOperators();
-
-            
-        
-            foreach (var mutationOperator in operators)
+            foreach (MutationOperator mutationOperator in operators)
             {
                 mutationOperator.Operator.Mutate(types);
             }
 
-
             SaveSession(operators, types);
-            
-
         }
-
-
-        private void SaveSession(IEnumerable<MutationOperator> operators, IEnumerable<TypeDefinition> types)
-        {
-            var assemblies = types.Select(t => t.Module.Assembly).Distinct();
-            string name = DateTime.Now.ToString("dd.MM.yyyy HH-mm-ss");
-
-
-            var session = new MutationSession
-            {
-                Name = name,
-                UsedOperators = operators.Select(o => o.Name).ToList(),
-                MutatedTypes = types.Select(t => t.Name).ToList(),
-                Assemblies = new List<string>()
-            };
-            
-
-            string path = _visualStudio.GetMutantsRootFolderPath();
-            foreach (var assemblyDefinition in assemblies)
-            {
-                string dir = Path.Combine(path, name);
-                Directory.CreateDirectory(dir);
-                string file = Path.Combine(dir, assemblyDefinition.Name.Name + ".dll");
-                assemblyDefinition.Write(file);
-                session.Assemblies.Add(file);
-            }
-            
-            _generatedMutants.Add(session);
-
-          //  File.Create(SessionsFile);
-            var ser = new XmlSerializer(typeof(List<MutationSession>));
-
-            using (var file = new StreamWriter(SessionsFile))
-            {
-                ser.Serialize(file, _generatedMutants.ToList());
-            }
-
-            
-        }
-
 
         public void LoadSessions()
         {
@@ -145,7 +100,7 @@
                     try
                     {
                         list = (List<MutationSession>)ser.Deserialize(file);
-                        foreach (var session in list)
+                        foreach (MutationSession session in list)
                         {
                             _generatedMutants.Add(session);
                         }
@@ -154,17 +109,43 @@
                     {
                     }
                 }
-                
-                
             }
-            
-
-
-
         }
 
+        private void SaveSession(
+            IEnumerable<MutationOperator> operators, IEnumerable<TypeDefinition> types)
+        {
+            IEnumerable<AssemblyDefinition> assemblies =
+                types.Select(t => t.Module.Assembly).Distinct();
+            string name = DateTime.Now.ToString("dd.MM.yyyy HH-mm-ss");
 
+            var session = new MutationSession
+            {
+                Name = name,
+                UsedOperators = operators.Select(o => o.Name).ToList(),
+                MutatedTypes = types.Select(t => t.Name).ToList(),
+                Assemblies = new List<string>()
+            };
 
+            string path = _visualStudio.GetMutantsRootFolderPath();
+            foreach (AssemblyDefinition assemblyDefinition in assemblies)
+            {
+                string dir = Path.Combine(path, name);
+                Directory.CreateDirectory(dir);
+                string file = Path.Combine(dir, assemblyDefinition.Name.Name + ".dll");
+                assemblyDefinition.Write(file);
+                session.Assemblies.Add(file);
+            }
 
+            _generatedMutants.Add(session);
+
+            //  File.Create(SessionsFile);
+            var ser = new XmlSerializer(typeof(List<MutationSession>));
+
+            using (var file = new StreamWriter(SessionsFile))
+            {
+                ser.Serialize(file, _generatedMutants.ToList());
+            }
+        }
     }
 }

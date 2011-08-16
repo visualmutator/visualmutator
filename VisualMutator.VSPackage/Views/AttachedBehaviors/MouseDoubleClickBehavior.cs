@@ -2,7 +2,6 @@
 {
     #region Usings
 
-    using System;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -18,7 +17,6 @@
                 typeof(MouseDoubleClickBehavior),
                 new UIPropertyMetadata(MouseDoubleClickChanged));
 
-      
         public static void SetMouseDoubleClick(DependencyObject target, ICommand value)
         {
             target.SetValue(MouseDoubleClickProperty, value);
@@ -58,6 +56,5 @@
                 command.Execute(arguments);
             }
         }
-
     }
 }

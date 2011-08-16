@@ -153,10 +153,8 @@
     <Compile Include="Controllers\UnitTestsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
-    <Compile Include="Infrastructure\Execute.cs" />
     <Compile Include="Infrastructure\FuncFactory.cs" />
     <Compile Include="Infrastructure\IFactory.cs" />
-    <Compile Include="Infrastructure\MessageBoxService.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\ObservableCollection.cs" />
     <Compile Include="Infrastructure\ProvideBindingPathAttribute.cs" />

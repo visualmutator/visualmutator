@@ -1,29 +1,34 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
+    #region Usings
 
-    using System.Linq;
-    using System.Text;
     using System.Windows;
     using System.Windows.Input;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    public class ILMutationsViewModel : PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.ViewModel<IILMutationsView>
+    #endregion
+
+    public class ILMutationsViewModel : ViewModel<IILMutationsView>
     {
+        private Infrastructure.ObservableCollection<AssemblyNode> _assemblies;
+
+        private ICommand _commandMutate;
+
+        private ICommand _commandRefresh;
+
+        private string _loggedText;
+
+        private Infrastructure.ObservableCollection<OperatorPackage> _mutationPackages;
 
         public ILMutationsViewModel(IILMutationsView view)
             : base(view)
         {
-            Assemblies = new ObservableCollection<AssemblyNode>();
+            Assemblies = new Infrastructure.ObservableCollection<AssemblyNode>();
             IsVisible = false;
         }
-
-        private ICommand _commandRefresh;
 
         public ICommand CommandRefresh
         {
@@ -36,12 +41,10 @@
                 if (_commandRefresh != value)
                 {
                     _commandRefresh = value;
-                    this.RaisePropertyChanged(() => CommandRefresh);
+                    RaisePropertyChanged(() => CommandRefresh);
                 }
             }
         }
-
-        private ICommand _commandMutate;
 
         public ICommand CommandMutate
         {
@@ -54,23 +57,20 @@
                 if (_commandMutate != value)
                 {
                     _commandMutate = value;
-                    this.RaisePropertyChanged(() => CommandMutate);
+                    RaisePropertyChanged(() => CommandMutate);
                 }
             }
         }
 
-        private ObservableCollection<AssemblyNode> _assemblies;
-
-        public ObservableCollection<AssemblyNode> Assemblies
+        public Infrastructure.ObservableCollection<AssemblyNode> Assemblies
         {
             set
             {
                 if (_assemblies != value)
                 {
                     _assemblies = value;
-                    this.RaisePropertyChanged(() => Assemblies);
+                    RaisePropertyChanged(() => Assemblies);
                 }
-         
             }
             get
             {
@@ -78,16 +78,14 @@
             }
         }
 
-        private ObservableCollection<OperatorPackage> _mutationPackages;
-
-        public ObservableCollection<OperatorPackage> MutationPackages
+        public Infrastructure.ObservableCollection<OperatorPackage> MutationPackages
         {
             set
             {
                 if (_mutationPackages != value)
                 {
                     _mutationPackages = value;
-                    this.RaisePropertyChanged(() => MutationPackages);
+                    RaisePropertyChanged(() => MutationPackages);
                 }
             }
             get
@@ -96,8 +94,6 @@
             }
         }
 
-        private string _loggedText;
-
         public string LoggedText
         {
             set
@@ -105,7 +101,7 @@
                 if (_loggedText != value)
                 {
                     _loggedText = value;
-                    this.RaisePropertyChanged(() => LoggedText);
+                    RaisePropertyChanged(() => LoggedText);
                 }
             }
             get
@@ -118,13 +114,12 @@
         {
             get
             {
-                return ViewCore.Visibility == Visibility.Visible;
+                return View.Visibility == Visibility.Visible;
             }
             set
             {
-                ViewCore.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+                View.Visibility = value ? Visibility.Visible : Visibility.Hidden;
             }
         }
     }
 }
-
