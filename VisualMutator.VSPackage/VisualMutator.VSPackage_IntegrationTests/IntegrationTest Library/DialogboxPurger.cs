@@ -7,6 +7,7 @@ namespace Microsoft.VsSDK.IntegrationTestLibrary
     using System.Runtime.InteropServices;
     using System.Threading;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell;
 
     /// <summary>
     /// This class is responsible to close dialog boxes that pop up during different VS Calls

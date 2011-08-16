@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell.Interop;
-
+using Microsoft.VisualStudio.Shell;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.Win32;
