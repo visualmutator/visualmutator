@@ -10,13 +10,13 @@
     {
         private readonly string _fullPath;
 
-        private ObservableCollection<TypeNode> _types;
+        private BetterObservableCollection<TypeNode> _types;
 
         public AssemblyNode(string name, string fullPath)
         {
             _fullPath = fullPath;
 
-            Types = new ObservableCollection<TypeNode>();
+            Types = new BetterObservableCollection<TypeNode>();
 
             Name = name;
             IsIncluded = true;
@@ -32,7 +32,7 @@
 
         //  ObservableCollection<TypeNode> Types 
 
-        public ObservableCollection<TypeNode> Types
+        public BetterObservableCollection<TypeNode> Types
         {
             set
             {

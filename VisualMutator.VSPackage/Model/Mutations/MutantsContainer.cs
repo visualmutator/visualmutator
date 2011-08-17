@@ -14,20 +14,20 @@
 
     #endregion
 
-    public interface IMutantGenerator
+    public interface IMutantsContainer
     {
         IOperatorsManager OperatorsManager { get; }
 
-        ObservableCollection<MutationSession> GeneratedMutants { get; }
+        BetterObservableCollection<MutationSession> GeneratedMutants { get; }
 
         void GenerateMutants();
 
         void LoadSessions();
     }
 
-    public class MutantGenerator : IMutantGenerator
+    public class MutantsContainer : IMutantsContainer
     {
-        private readonly ObservableCollection<MutationSession> _generatedMutants;
+        private readonly BetterObservableCollection<MutationSession> _generatedMutants;
 
         private readonly IOperatorsManager _operatorsManager;
 
@@ -35,7 +35,7 @@
 
         private readonly IVisualStudioConnection _visualStudio;
 
-        public MutantGenerator(
+        public MutantsContainer(
             IOperatorsManager operatorsManager,
             ITypesManager typesManager,
             IVisualStudioConnection visualStudio
@@ -45,7 +45,7 @@
             _typesManager = typesManager;
             _visualStudio = visualStudio;
 
-            _generatedMutants = new ObservableCollection<MutationSession>();
+            _generatedMutants = new BetterObservableCollection<MutationSession>();
         }
 
         public string SessionsFile
@@ -65,7 +65,7 @@
             }
         }
 
-        public ObservableCollection<MutationSession> GeneratedMutants
+        public BetterObservableCollection<MutationSession> GeneratedMutants
         {
             get
             {

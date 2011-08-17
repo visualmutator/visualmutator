@@ -25,9 +25,6 @@
             )
         {
             _mainWindowVm = mainWindowVm;
-
-            //   var view = new ILMutationsView();
-            //  var vm = new ILMutationsViewModel(view);
             _ilMutationsController = ilMutationsController;
             _unitTestsController = unitTestsController;
             _visualStudioConnection = visualStudioConnection;
@@ -35,9 +32,8 @@
             _mainWindowVm.ILMutationsView = _ilMutationsController.ILMutationsVm.View;
             _mainWindowVm.UnitTestsView = _unitTestsController.UnitTestsVm.View;
 
-            _unitTestsController.Mutants = _ilMutationsController.GeneratedMutants;
 
-            // _visualStudioConnection.SolutionEvents.Opened
+          //  _unitTestsController.Mutants = _ilMutationsController.GeneratedMutants;
         }
 
         public object Shell

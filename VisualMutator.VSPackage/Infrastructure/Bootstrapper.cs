@@ -8,9 +8,15 @@
     using System.Windows;
     using System.Windows.Threading;
 
+    using FileUtils;
+    using FileUtils.Impl;
+
     using Ninject;
+    using Ninject.Modules;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
@@ -27,13 +33,7 @@
 
         private IKernel _kernel;
 
-        static Bootstrapper()
-        {
-
-           
-
-        }
-
+       
         public Bootstrapper()
         {
              SetupAssemblyResolve();
@@ -47,35 +47,18 @@
         }
         public void SetupDependencyInjection()
         {
-            _kernel = new StandardKernel();
 
-            _kernel.Bind<IMessageService>().To<MessageService>();
-            _kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>().InSingletonScope();
-            //_kernel.Bind<IKernel>().ToConstant(_kernel);
+            var modules = new INinjectModule[]
+            {
+                new InfrastructureModule(), 
+                new MutantsModule(), 
+                new UnitTestsModule(), 
+            };
 
-            _kernel.Bind<ApplicationController>().ToSelf().InSingletonScope();
 
-            _kernel.Bind<IMainControl>().To<MainControl>().InSingletonScope();
-            _kernel.Bind<MainWindowViewModel>().ToSelf().InSingletonScope();
 
-            _kernel.Bind<IILMutationsView>().To<ILMutationsView>().InSingletonScope();
-            _kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();
+            _kernel = new StandardKernel(modules);
 
-            _kernel.Bind<UnitTestsController>().ToSelf().InSingletonScope();
-
-            
-            _kernel.Bind<IMutantGenerator>().To<MutantGenerator>().InSingletonScope();
-            _kernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
-            _kernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
-            _kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-            _kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
-            _kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
-
-            
-
-            var exe = new Execute();
-            exe.InitializeWithDispatcher();
-            _kernel.Bind<IExecute>().ToConstant(exe);
 
         }
         public void HookGlobalExceptionHandlers()

@@ -17,7 +17,7 @@
 
     public class ILMutationsController : Controller
     {
-        private readonly IMutantGenerator _mutantGenerator;
+        private readonly IMutantsContainer _mutantsContainer;
 
         private readonly IOperatorsManager _operatorsManager;
 
@@ -30,14 +30,14 @@
         public ILMutationsController(
             ILMutationsViewModel viewModel,
             IVisualStudioConnection visualStudio,
-            IMutantGenerator mutantGenerator,
+            IMutantsContainer mutantsContainer,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager
             )
         {
             _viewModel = viewModel;
             _visualStudio = visualStudio;
-            _mutantGenerator = mutantGenerator;
+            _mutantsContainer = mutantsContainer;
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
 
@@ -56,30 +56,23 @@
             }
         }
 
-        public Infrastructure.ObservableCollection<MutationSession> GeneratedMutants
-        {
-            get
-            {
-                return _mutantGenerator.GeneratedMutants;
-            }
-        }
 
         public void Initialize()
         {
             _viewModel.IsVisible = true;
-            _visualStudio.SolutionEvents.Opened += Activate;
-            _visualStudio.SolutionEvents.AfterClosing += Deactivate;
+            _visualStudio.SolutionEvents.Opened += ActivateOnSolutionOpened;
+            _visualStudio.SolutionEvents.AfterClosing += DeactivateOnSolutionClosed;
             _visualStudio.SolutionEvents.ProjectAdded += HandleProjectAdded;
         }
 
-        private void Activate()
+        private void ActivateOnSolutionOpened()
         {
             _viewModel.IsVisible = true;
-            _mutantGenerator.LoadSessions();
+            _mutantsContainer.LoadSessions();
             Refresh();
         }
 
-        private void Deactivate()
+        private void DeactivateOnSolutionClosed()
         {
             _viewModel.IsVisible = false;
             _viewModel.Assemblies.Clear();
@@ -93,7 +86,7 @@
         public void Mutate()
         {
             Refresh();
-            _mutantGenerator.GenerateMutants();
+            _mutantsContainer.GenerateMutants();
         }
 
         public void Refresh()

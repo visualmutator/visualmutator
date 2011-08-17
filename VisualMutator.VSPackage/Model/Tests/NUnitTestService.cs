@@ -1,159 +1,18 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Controllers
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
-    #region Usings
-
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Text;
-    using System.Waf.Applications;
 
     using NUnit.Core;
     using NUnit.Core.Filters;
     using NUnit.Util;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
-
-    using Controller = PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller;
-
-    #endregion
-
-    public class UnitTestsController : Controller
+    public class NUnitTestService
     {
-        private DelegateCommand _commandRunTests;
-
-        private readonly IExecute _execute;
-
-        private readonly IMessageService _messageBoxService;
-
-        private readonly IMutantsContainer _mutantsContainer;
-
-        private readonly Dictionary<string, TestTreeNode> _testMap;
-
-        private readonly TestLoader _tl;
-
-        private readonly UnitTestsViewModel _unitTestsVm;
-
-        private readonly IVisualStudioConnection _visualStudioConnection;
-
-        public UnitTestsController(
-            IUnitTestsView view,
-            IVisualStudioConnection visualStudioConnection,
-            IMessageService messageBoxService,
-            IMutantsContainer mutantsContainer,
-            IExecute execute
-            )
-        {
-          //  _unitTestsVm = unitTestsVm;
-            _visualStudioConnection = visualStudioConnection;
-            _messageBoxService = messageBoxService;
-            _mutantsContainer = mutantsContainer;
-            _execute = execute;
-
-            _unitTestsVm = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
-            InitViewModel();
-
-            
-
-            _testMap = new Dictionary<string, TestTreeNode>();
-            
-
-            ServiceManager.Services.AddService(new SettingsService());
-            ServiceManager.Services.AddService(new DomainManager());
-            ServiceManager.Services.AddService(new RecentFilesService());
-            ServiceManager.Services.AddService(new ProjectService());
-            ServiceManager.Services.AddService(new TestLoader());
-            ServiceManager.Services.AddService(new AddinRegistry());
-            ServiceManager.Services.AddService(new AddinManager());
-            ServiceManager.Services.AddService(new TestAgency());
-
-            _tl = new TestLoader();
-            _tl.Events.ProjectLoadFailed += Events_ProjectLoadFailed;
-            _tl.Events.ProjectLoaded += Events_ProjectLoaded;
-            _tl.Events.TestLoadFailed += Events_TestLoadFailed;
-            _tl.Events.TestLoaded += Events_TestLoaded;
-            _tl.Events.TestFinished += Events_TestFinished;
-            _tl.Events.SuiteFinished += Events_SuiteFinished;
-            _tl.Events.RunFinished += Events_RunFinished;
-            _tl.Events.RunStarting += Events_RunStarting;
-            // _tl.Events.
-        }
-
-        private void InitViewModel()
-        {
-            _commandRunTests = new DelegateCommand(
-                RunTests, () => _unitTestsVm.SelectedMutant != null && !_unitTestsVm.AreTestsRunning);
-            _unitTestsVm.CommandRunTests = _commandRunTests;
-
-
-            EventListeners.Add(_unitTestsVm, ViewModelChanged);
-        }
-
-
-
-        public UnitTestsViewModel UnitTestsVm
-        {
-            get
-            {
-                return _unitTestsVm;
-            }
-        }
-
-
-        public IEnumerable<TestTreeNode> TestsToRun { get; set; }
-
-     
-        public void ViewModelChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyChanged(() => _unitTestsVm.SelectedMutant))
-            {
-                RefreshTestList(_unitTestsVm.SelectedMutant.Assemblies);
-            }
-            else if (e.PropertyChanged(() => _unitTestsVm.TestCurrentSolution))
-            {
-                ChangeModeToCurrentSolution(_unitTestsVm.TestCurrentSolution);
-            }
-            else if (e.PropertyChanged(() => _unitTestsVm.SelectedTestItem))
-            {
-                var method = _unitTestsVm.SelectedTestItem as TestNodeMethod;
-                if (method != null && method.HasResults)
-                {
-                    _unitTestsVm.ResultText = method.Result.Message;
-                }
-                else
-                {
-                    _unitTestsVm.ResultText = "";
-                }
-            }
-        }
-
-        private void ChangeModeToCurrentSolution(bool testCurrentSolution)
-        {
-            if (testCurrentSolution)
-            {
-                RefreshTestList(_visualStudioConnection.GetProjectPaths());
-            }
-            else
-            {
-                RefreshTestList(_unitTestsVm.SelectedMutant.Assemblies);
-            }
-        }
-
-        public void Initialize()
-        {
-            //  _tl.R
-        }
 
         private TestFilter MakeNameFilter(ICollection<ITest> tests)
         {

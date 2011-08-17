@@ -23,9 +23,6 @@
         public static string PropertyName<T>(Expression<Func<T>> propertyExpression)
         {
             var memberExpression = propertyExpression.Body as MemberExpression;
-
-            var property = memberExpression.Member as PropertyInfo;
-
             return memberExpression.Member.Name;
         }
 

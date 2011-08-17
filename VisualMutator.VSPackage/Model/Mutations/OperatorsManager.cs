@@ -13,7 +13,7 @@
 
     public interface IOperatorsManager
     {
-        ObservableCollection<OperatorPackage> OperatorPackages { get; set; }
+        BetterObservableCollection<OperatorPackage> OperatorPackages { get; set; }
 
         void LoadOperators();
 
@@ -29,10 +29,10 @@
         public OperatorsManager(IOperatorLoader loader)
         {
             _loader = loader;
-            OperatorPackages = new ObservableCollection<OperatorPackage>();
+            OperatorPackages = new BetterObservableCollection<OperatorPackage>();
         }
 
-        public ObservableCollection<OperatorPackage> OperatorPackages { get; set; }
+        public BetterObservableCollection<OperatorPackage> OperatorPackages { get; set; }
 
         public void LoadOperators()
         {

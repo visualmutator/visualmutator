@@ -14,7 +14,7 @@
 
     public class ILMutationsViewModel : ViewModel<IILMutationsView>
     {
-        private ObservableCollection<AssemblyNode> _assemblies;
+        private BetterObservableCollection<AssemblyNode> _assemblies;
 
         private ICommand _commandMutate;
 
@@ -22,12 +22,12 @@
 
         private string _loggedText;
 
-        private ObservableCollection<OperatorPackage> _mutationPackages;
+        private BetterObservableCollection<OperatorPackage> _mutationPackages;
 
         public ILMutationsViewModel(IILMutationsView view)
             : base(view)
         {
-            Assemblies = new ObservableCollection<AssemblyNode>();
+            Assemblies = new BetterObservableCollection<AssemblyNode>();
             IsVisible = false;
         }
 
@@ -63,7 +63,7 @@
             }
         }
 
-        public ObservableCollection<AssemblyNode> Assemblies
+        public BetterObservableCollection<AssemblyNode> Assemblies
         {
             set
             {
@@ -79,7 +79,7 @@
             }
         }
 
-        public ObservableCollection<OperatorPackage> MutationPackages
+        public BetterObservableCollection<OperatorPackage> MutationPackages
         {
             set
             {

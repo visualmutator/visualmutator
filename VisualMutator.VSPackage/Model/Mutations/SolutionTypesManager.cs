@@ -13,7 +13,7 @@
 
     public interface ITypesManager
     {
-        ObservableCollection<AssemblyNode> Assemblies { get; set; }
+        BetterObservableCollection<AssemblyNode> Assemblies { get; set; }
 
         void RefreshTypes(IEnumerable<string> projectsPaths);
 
@@ -24,10 +24,10 @@
     {
         public SolutionTypesManager()
         {
-            Assemblies = new ObservableCollection<AssemblyNode>();
+            Assemblies = new BetterObservableCollection<AssemblyNode>();
         }
 
-        public ObservableCollection<AssemblyNode> Assemblies { get; set; }
+        public BetterObservableCollection<AssemblyNode> Assemblies { get; set; }
 
         public void RefreshTypes(IEnumerable<string> projectsPaths)
         {

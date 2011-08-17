@@ -4,6 +4,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
     using System.Windows.Input;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
@@ -17,7 +18,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
         private ICommand _commandRunTests;
 
-        private Infrastructure.ObservableCollection<MutationSession> _mutants;
+        private Infrastructure.BetterObservableCollection<MutationSession> _mutants;
 
         private string _resultText;
 
@@ -27,15 +28,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
         private bool _testCurrentSolution;
 
-        private Infrastructure.ObservableCollection<TestNodeNamespace> _testNamespaces;
+        private Infrastructure.BetterObservableCollection<TestNodeNamespace> _testNamespaces;
 
-        public UnitTestsViewModel(IUnitTestsView view)
+        public UnitTestsViewModel(IUnitTestsView view, BetterObservableCollection<MutationSession> mutants)
             : base(view)
         {
-            TestNamespaces = new Infrastructure.ObservableCollection<TestNodeNamespace>();
+            TestNamespaces = new Infrastructure.BetterObservableCollection<TestNodeNamespace>();
+            _mutants = mutants;
         }
 
-        public Infrastructure.ObservableCollection<MutationSession> Mutants
+        public Infrastructure.BetterObservableCollection<MutationSession> Mutants
         {
             set
             {
@@ -83,7 +85,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-        public Infrastructure.ObservableCollection<TestNodeNamespace> TestNamespaces
+        public Infrastructure.BetterObservableCollection<TestNodeNamespace> TestNamespaces
         {
             set
             {
