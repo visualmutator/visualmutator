@@ -5,6 +5,7 @@
     using System.Windows;
     using System.Windows.Input;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
@@ -13,7 +14,7 @@
 
     public class ILMutationsViewModel : ViewModel<IILMutationsView>
     {
-        private Infrastructure.ObservableCollection<AssemblyNode> _assemblies;
+        private ObservableCollection<AssemblyNode> _assemblies;
 
         private ICommand _commandMutate;
 
@@ -21,12 +22,12 @@
 
         private string _loggedText;
 
-        private Infrastructure.ObservableCollection<OperatorPackage> _mutationPackages;
+        private ObservableCollection<OperatorPackage> _mutationPackages;
 
         public ILMutationsViewModel(IILMutationsView view)
             : base(view)
         {
-            Assemblies = new Infrastructure.ObservableCollection<AssemblyNode>();
+            Assemblies = new ObservableCollection<AssemblyNode>();
             IsVisible = false;
         }
 
@@ -62,7 +63,7 @@
             }
         }
 
-        public Infrastructure.ObservableCollection<AssemblyNode> Assemblies
+        public ObservableCollection<AssemblyNode> Assemblies
         {
             set
             {
@@ -78,7 +79,7 @@
             }
         }
 
-        public Infrastructure.ObservableCollection<OperatorPackage> MutationPackages
+        public ObservableCollection<OperatorPackage> MutationPackages
         {
             set
             {

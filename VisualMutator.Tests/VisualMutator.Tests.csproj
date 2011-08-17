@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InfrastructureTests.cs" />
     <Compile Include="MonoCecilTests.cs" />
     <Compile Include="MutationGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

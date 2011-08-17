@@ -156,7 +156,7 @@
     <Compile Include="Infrastructure\FuncFactory.cs" />
     <Compile Include="Infrastructure\IFactory.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
-    <Compile Include="Infrastructure\ObservableCollection.cs" />
+    <Compile Include="Infrastructure\WpfUtils\ObservableCollection.cs" />
     <Compile Include="Infrastructure\ProvideBindingPathAttribute.cs" />
     <Compile Include="Infrastructure\WpfUtils\BasicCommand.cs" />
     <Compile Include="Infrastructure\WpfUtils\Controller.cs" />
@@ -167,7 +167,6 @@
     <Compile Include="Infrastructure\WpfUtils\Messages\MessageService.cs" />
     <Compile Include="Infrastructure\WpfUtils\Messages\MessageServiceExtensions.cs" />
     <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
-    <Compile Include="Infrastructure\WpfUtils\ObservableCollection.cs" />
     <Compile Include="Infrastructure\WpfUtils\UtilityExtensionMethods.cs" />
     <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
     <Compile Include="Model\Mutations\AssemblyNode.cs" />
