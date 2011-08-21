@@ -52,5 +52,14 @@
             }
             return service.ShowYesNoQuestion(null, message);
         }
+
+        public static void ShowError(this IMessageService service, Exception exception)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            service.ShowError(null, exception);
+        }
     }
 }

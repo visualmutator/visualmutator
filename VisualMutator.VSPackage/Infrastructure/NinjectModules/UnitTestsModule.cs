@@ -8,6 +8,7 @@
     using Ninject.Modules;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
@@ -22,8 +23,9 @@
 
             Kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
             Kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
+            Kernel.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
 
-            
+
         }
     }
 }

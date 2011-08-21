@@ -2,6 +2,7 @@
 {
     #region Usings
 
+    using System;
     using System.Globalization;
     using System.Windows;
 
@@ -170,6 +171,32 @@
             }
 
             return result == MessageBoxResult.Yes;
+        }
+
+        public void ShowError(object owner, Exception ex)
+        {
+            var ownerWindow = owner as Window;
+            if (ownerWindow != null)
+            {
+                MessageBox.Show(
+                    ownerWindow,
+                    ex.ToString(),
+                    "",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error,
+                    MessageBoxResult,
+                    MessageBoxOptions);
+            }
+            else
+            {
+                MessageBox.Show(
+                    ex.ToString(),
+                    "",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error,
+                    MessageBoxResult,
+                    MessageBoxOptions);
+            }
         }
     }
 }

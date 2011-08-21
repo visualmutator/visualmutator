@@ -27,7 +27,7 @@
             CommandRunTest = new DelegateCommand(Comm);
         }
 
-        public ITest Test { get; set; }
+        
 
         public string Name
         {

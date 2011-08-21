@@ -39,6 +39,8 @@
 
         private readonly IMutantsContainer _mutantsContainer;
 
+        private readonly ITestsContainer _testsContainer;
+
         private readonly Dictionary<string, TestTreeNode> _testMap;
 
         private readonly TestLoader _tl;
@@ -52,6 +54,7 @@
             IVisualStudioConnection visualStudioConnection,
             IMessageService messageBoxService,
             IMutantsContainer mutantsContainer,
+            ITestsContainer testsContainer,
             IExecute execute
             )
         {
@@ -59,6 +62,7 @@
             _visualStudioConnection = visualStudioConnection;
             _messageBoxService = messageBoxService;
             _mutantsContainer = mutantsContainer;
+            _testsContainer = testsContainer;
             _execute = execute;
 
             _unitTestsVm = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
@@ -69,24 +73,7 @@
             _testMap = new Dictionary<string, TestTreeNode>();
             
 
-            ServiceManager.Services.AddService(new SettingsService());
-            ServiceManager.Services.AddService(new DomainManager());
-            ServiceManager.Services.AddService(new RecentFilesService());
-            ServiceManager.Services.AddService(new ProjectService());
-            ServiceManager.Services.AddService(new TestLoader());
-            ServiceManager.Services.AddService(new AddinRegistry());
-            ServiceManager.Services.AddService(new AddinManager());
-            ServiceManager.Services.AddService(new TestAgency());
 
-            _tl = new TestLoader();
-            _tl.Events.ProjectLoadFailed += Events_ProjectLoadFailed;
-            _tl.Events.ProjectLoaded += Events_ProjectLoaded;
-            _tl.Events.TestLoadFailed += Events_TestLoadFailed;
-            _tl.Events.TestLoaded += Events_TestLoaded;
-            _tl.Events.TestFinished += Events_TestFinished;
-            _tl.Events.SuiteFinished += Events_SuiteFinished;
-            _tl.Events.RunFinished += Events_RunFinished;
-            _tl.Events.RunStarting += Events_RunStarting;
             // _tl.Events.
         }
 
@@ -118,7 +105,7 @@
         {
             if (e.PropertyChanged(() => _unitTestsVm.SelectedMutant))
             {
-                RefreshTestList(_unitTestsVm.SelectedMutant.Assemblies);
+                RefreshTestList();
             }
             else if (e.PropertyChanged(() => _unitTestsVm.TestCurrentSolution))
             {
@@ -140,14 +127,7 @@
 
         private void ChangeModeToCurrentSolution(bool testCurrentSolution)
         {
-            if (testCurrentSolution)
-            {
-                RefreshTestList(_visualStudioConnection.GetProjectPaths());
-            }
-            else
-            {
-                RefreshTestList(_unitTestsVm.SelectedMutant.Assemblies);
-            }
+           
         }
 
         public void Initialize()
@@ -286,8 +266,14 @@
             }
         }
 
-        public void RefreshTestList(IEnumerable<string> assemblies)
+        public void RefreshTestList()
         {
+
+            _testsContainer.LoadTests(_unitTestsVm.SelectedMutant);
+
+
+
+            var assemblies = _unitTestsVm.SelectedMutant.Assemblies;
             _tl.NewProject();
             foreach (string project in assemblies)
             {
