@@ -8,7 +8,7 @@
 
     #endregion
 
-    public abstract class ViewModel<TView> : ModelElement
+    public abstract class ViewModel<TView> : ModelElement, IEventNotifier
         where TView : class, IView
     {
         private readonly EventListeners _eventListeners;

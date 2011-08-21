@@ -9,20 +9,21 @@
     using System.Threading.Tasks;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
     public interface ITestsContainer
     {
-        void LoadTests(MutationSession mutant);
+        IEnumerable<TestNodeNamespace> LoadTests(MutationSession mutant);
 
-        Task[] RunTests();
+        void RunTests();
     }
 
     public class TestsContainer : ITestsContainer
     {
         private readonly IEnumerable<ITestService> _testServices;
 
-        private IDictionary<string, TestTreeNode> _testMap;
+   
 
         public BetterObservableCollection<TestNodeNamespace> TestNamespaces
         {
@@ -33,7 +34,7 @@
         {
             _testServices = testServices;
 
-            _testMap = new Dictionary<string, TestTreeNode>();
+          
              TestNamespaces =new BetterObservableCollection<TestNodeNamespace>();
         }
 
@@ -45,17 +46,29 @@
 
         
 
-        public void LoadTests(MutationSession mutant)
+        public IEnumerable<TestNodeNamespace> LoadTests(MutationSession mutant)
         {
-            var assemblies = mutant.Assemblies;
-            _testServices.ToObservable().e
+        
+            return _testServices.AsParallel()
+                .SelectMany(s => s.LoadTests(mutant.Assemblies))
+                .GroupBy(classNode => classNode.Namespace)
+                .Select(group => new TestNodeNamespace
+                {
+                    Name = group.Key,
+                    TestClasses = group.ToObsCollection()
+                });
 
 
         }
 
-        public Task[] RunTests()
+        public void RunTests()
         {
-            return _testServices.Select(s => s.RunTests()).ToArray();
+     
+            Parallel.ForEach(_testServices, service =>
+            {
+                service.RunTests();
+            });
+
 
         }
     }

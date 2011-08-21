@@ -24,7 +24,7 @@
 
         protected TestTreeNode()
         {
-            CommandRunTest = new DelegateCommand(Comm);
+            CommandRunTest = new BasicCommand(Comm);
         }
 
         

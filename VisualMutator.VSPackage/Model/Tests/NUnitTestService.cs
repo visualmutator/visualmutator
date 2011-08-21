@@ -15,6 +15,7 @@
     using NUnit.Core.Filters;
     using NUnit.Util;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
 
     #endregion
@@ -68,112 +69,71 @@
         }
 
 
-        public override Task<IEnumerable<TestNodeNamespace>> LoadTests(IEnumerable<string> assemblies)
+        public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
         {
-            return new Task<IEnumerable<TestNodeNamespace>>(() =>
+            
+            IEnumerable<TestNodeClass> tests = null;
+            using (var job = new TestsLoadJob(this, assemblies))
             {
-                IEnumerable<TestNodeNamespace> tests = null;
-                using (var job = new TestsLoadJob(this, assemblies))
-                {
-                    job.Subscribe(arg => tests = BuildTestTree(arg)); 
-                }
-                return tests;
-            });
+                job.Subscribe(arg => tests = BuildTestTree(arg)); 
+            }
+            return tests;
+            
         }
 
-        public override Task RunTests()
+        public override void RunTests()
         {
-            return new Task(() =>
-            {
-                using (var eventObj = new ManualResetEventSlim())
-                using (var job = new TestsRunJob(this))
-                {
-                    job.Subscribe(result =>
-                    {
-                        TestTreeNode node = TestMap[result.Test.TestName.UniqueName];
-                        node.Status = result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
-                        node.Message = result.Message;
-                    }, () =>
-                    {
-                        eventObj.Set();
-                    });
-                    eventObj.Wait();
-                }
+            
+            TestMap.Values.Each(t => t.Status = TestStatus.Running);
 
-            });
+            using (var eventObj = new ManualResetEventSlim())
+            using (var job = new TestsRunJob(this))
+            {
+                job.Subscribe(result =>
+                {
+                    TestTreeNode node = TestMap[result.Test.TestName.UniqueName];
+                    node.Status = result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
+                    node.Message = result.Message;
+                }, () =>
+                {
+                    eventObj.Set();
+                });
+                eventObj.Wait();
+            }
+
+           
            
         }
 
-        private void Events_RunFinished(object sender, TestEventArgs args)
+
+        private IEnumerable<TestNodeClass> BuildTestTree(ITest test)
         {
-            try
-            {
-                _execute.OnUIThread(
-                    () =>
-                    {
-                        _unitTestsVm.AreTestsRunning = false;
-                        _commandRunTests.RaiseCanExecuteChanged();
-                    });
-
-                using (StreamWriter s = File.AppendText(@"C:\test.txt"))
-                {
-                    s.WriteLine(
-                        "RunFinished   " + args.Result.Name + "  s?: " + args.Result.IsSuccess);
-                }
-            }
-            catch (Exception e)
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    _messageService.ShowError(e.ToString());
-                }
-            }
-        }
-
-   
-
-        private IEnumerable<TestNodeNamespace> BuildTestTree(ITest test)
-        {
-            var list = new List<TestNodeNamespace>();
+            var list = new List<TestNodeClass>();
             IEnumerable<ITest> classes = GetTestClasses(test).ToList();
-            IEnumerable<ITest> namespaces = classes.Select(x => x.Parent).Distinct();
-            foreach (ITest testNamespace in namespaces)
+      
+            foreach (ITest testClass in classes.Where(c => c.Tests != null
+                        && c.Tests.Count != 0 ))
             {
-                var ns = new TestNodeNamespace
+                var c = new TestNodeClass
                 {
-                    Name = testNamespace.TestName.FullName,
+                    Name = testClass.TestName.Name,
+                    Namespace = test.Parent.TestName.FullName
                 };
-                ITest testNamespace1 = testNamespace;
-                foreach (ITest testClass in classes.Where(
-                    c => c.Tests != null
-                         && c.Tests.Count != 0 && c.Parent == testNamespace1))
+
+                foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
                 {
-                    var c = new TestNodeClass
+                    var m = new TestNodeMethod
                     {
-                        Name = testClass.TestName.Name,
+                        Name = testMethod.TestName.Name,
                     };
-
-                    foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
-                    {
-                        var m = new TestNodeMethod
-                        {
-                            Name = testMethod.TestName.Name,
-                        };
-                        c.TestMethods.Add(m);
-                        TestMap.Add(testMethod.TestName.UniqueName, m);
-                    }
-                    ns.TestClasses.Add(c);
-                    TestMap.Add(testClass.TestName.UniqueName, c);
+                    c.TestMethods.Add(m);
+                    TestMap.Add(testMethod.TestName.UniqueName, m);
                 }
-
-                TestMap.Add(testNamespace.TestName.UniqueName, ns);
-
-                list.Add(ns);
+             
+                TestMap.Add(testClass.TestName.UniqueName, c);
+                list.Add(c);
             }
+
             return list;
 
            
@@ -234,7 +194,7 @@
 
                 _service.TestLoader.LoadTest();
                 return this;
-                //   return subject.Subscribe(observer);
+               
             }
 
             private void TestLoadedHandler(TestEventArgs sArgs)

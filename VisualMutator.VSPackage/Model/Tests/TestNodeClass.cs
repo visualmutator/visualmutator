@@ -10,6 +10,9 @@
     {
         private ObservableCollection<TestNodeMethod> _testMethods;
 
+        public string Namespace { get; set; }
+
+
         public TestNodeClass()
         {
             TestMethods = new ObservableCollection<TestNodeMethod>();

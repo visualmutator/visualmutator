@@ -1,93 +1,73 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 {
-    using System;
+    #region Usings
+
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
-    using System.Text;
     using System.Threading.Tasks;
 
     using Mono.Cecil;
+
+    #endregion
 
     public class MsTestService : ITestService
     {
         private IEnumerable<string> _assembliesWithTests;
 
-        public MsTestService()
+        public IDictionary<string, TestTreeNode> TestMap { get; set; }
+
+        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
         {
             
+            IEnumerable<string> assembliesWithTests;
+            var methods = ScanAssemblies(assemblies, out assembliesWithTests);
+            _assembliesWithTests = assembliesWithTests;
+
+            return CreateTree(methods);
+           
         }
-        public IDictionary<string, TestTreeNode> TestMap
+
+        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods)
         {
-            get;
-            set;
-        }
-     
-        public IEnumerable<TestNodeNamespace> CreateTree(IEnumerable<MethodDefinition> methods)
-        {
+            var groupsByClass = methods.GroupBy(m => m.DeclaringType);
+            //     .GroupBy(groupByType => groupByType.Key.Namespace);
 
-            var groupsByNamespace = methods.GroupBy(m => m.DeclaringType)
-                .GroupBy(groupByType => groupByType.Key.Namespace);
+            var list = new List<TestNodeClass>();
 
-            var list = new List<TestNodeNamespace>();
-
-            foreach (var namespaceGroup in groupsByNamespace)
+            foreach (var typeGroup in groupsByClass)
             {
-                var ns = new TestNodeNamespace
+                var type = typeGroup.Key;
+                var c = new TestNodeClass
                 {
-                    Name = namespaceGroup.Key
-
+                    Name = type.Name,
+                    Namespace = type.Namespace
                 };
 
-
-                foreach (var typeGroup in namespaceGroup)
+                foreach (MethodDefinition method in typeGroup)
                 {
-                    var c = new TestNodeClass
+                    var m = new TestNodeMethod
                     {
-                        Name = typeGroup.Key.Name,
+                        Name = method.Name
                     };
 
-                    foreach (var method in typeGroup)
-                    {
-                        var m = new TestNodeMethod
-                        {
-                            Name = method.Name
-                        };
+                    c.TestMethods.Add(m);
 
-
-                        c.TestMethods.Add(m);
-
-                        string id = typeGroup.Key.FullName + "." + method.Name;
-                        TestMap.Add(id, m);
-
-
-                    }
-                    ns.TestClasses.Add(c);
-
-
+                    string id = type.FullName + "." + method.Name;
+                    TestMap.Add(id, m);
                 }
-                list.Add(ns);
 
+                TestMap.Add(type.FullName, c);
+                list.Add(c);
             }
+
             return list;
         }
 
-        public Task<IEnumerable<TestNodeNamespace>> LoadTests(IEnumerable<string> assemblies)
-        {
-            return new Task<IEnumerable<TestNodeNamespace>>( () =>
-            {
-                IEnumerable<string> assembliesWithTests;
-                var methods = ScanAssemblies(assemblies, out assembliesWithTests);
-                _assembliesWithTests = assembliesWithTests;
-
-                return CreateTree(methods);
-            });
-        }
         public void RunTests()
         {
-            
         }
-        private IEnumerable<MethodDefinition> 
+
+        private IEnumerable<MethodDefinition>
             ScanAssemblies(IEnumerable<string> assemblies, out IEnumerable<string> assembliesWithTests)
         {
             var list = new List<MethodDefinition>();
@@ -96,22 +76,18 @@
             {
                 AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly);
                 IEnumerable<TypeDefinition> types =
-               
-                
                     ad.MainModule.Types.Where(
                         t =>
                         t.CustomAttributes.Any(
                             a =>
                             a.AttributeType.FullName ==
                             @"Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute")).ToList();
-                
+
                 var methods = types.SelectMany(t => t.Methods).Where(
                     m => m.CustomAttributes.Any(
                         a =>
                         a.AttributeType.FullName ==
                         @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));
-
-
 
                 list.AddRange(methods);
 

@@ -11,16 +11,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 
     public interface ITestService
     {
-        Task<IEnumerable<TestNodeNamespace>> LoadTests(IEnumerable<string> assemblies);
+        IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
 
-        Task RunTests();
+        void RunTests();
     }
 
     public abstract class AbstractTestService : ITestService
     {
-        public abstract Task<IEnumerable<TestNodeNamespace>> LoadTests(IEnumerable<string> assemblies);
+        public abstract IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
 
-        public abstract Task RunTests();
+        public abstract void RunTests();
 
         protected IDictionary<string, TestTreeNode> TestMap
         {

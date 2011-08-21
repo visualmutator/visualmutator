@@ -33,7 +33,7 @@
 
     public class UnitTestsController : Controller
     {
-        private DelegateCommand _commandRunTests;
+        private BasicCommand _commandRunTests;
 
         private readonly IExecute _execute;
 
@@ -51,6 +51,10 @@
 
         private readonly IVisualStudioConnection _visualStudioConnection;
 
+        private BasicCommand _reloadTestList;
+        private BasicCommand _showTestDetails;
+
+
         public UnitTestsController(
             IUnitTestsView view,
             IVisualStudioConnection visualStudioConnection,
@@ -61,35 +65,39 @@
 
             )
         {
-          //  _unitTestsVm = unitTestsVm;
+   
             _visualStudioConnection = visualStudioConnection;
             _messageBoxService = messageBoxService;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _execute = execute;
 
+             _testMap = new Dictionary<string, TestTreeNode>();
+
             _unitTestsVm = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
             InitViewModel();
 
-            
-
-            _testMap = new Dictionary<string, TestTreeNode>();
-            
-
-
-            // _tl.Events.
         }
+
+
 
         private void InitViewModel()
         {
-            _commandRunTests = new DelegateCommand(
-                RunTests, () => _unitTestsVm.SelectedMutant != null && !_unitTestsVm.AreTestsRunning);
-            
-            
+            _commandRunTests = new BasicCommand(RunTests, () =>
+               _unitTestsVm.SelectedMutant != null && !_unitTestsVm.AreTestsRunning);
+            _commandRunTests.UpdateOnChanged(_unitTestsVm, () => _unitTestsVm.SelectedMutant);
+            _commandRunTests.UpdateOnChanged(_unitTestsVm, () => _unitTestsVm.AreTestsRunning);
+
+
+            _reloadTestList = new BasicCommand(RefreshTestList);
+            _reloadTestList.ExecuteOnChanged(_unitTestsVm, () => _unitTestsVm.SelectedMutant);
+
+            _showTestDetails = new BasicCommand(ShowTestDetails);
+            _showTestDetails.ExecuteOnChanged(_unitTestsVm, () => _unitTestsVm.SelectedTestItem);
+
             _unitTestsVm.CommandRunTests = _commandRunTests;
 
 
-            EventListeners.Add(_unitTestsVm, ViewModelChanged);
         }
 
 
@@ -105,337 +113,59 @@
 
         public IEnumerable<TestTreeNode> TestsToRun { get; set; }
 
-     
-        public void ViewModelChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyChanged(() => _unitTestsVm.SelectedMutant))
-            {
-                RefreshTestList();
-            }
-            else if (e.PropertyChanged(() => _unitTestsVm.TestCurrentSolution))
-            {
-                ChangeModeToCurrentSolution(_unitTestsVm.TestCurrentSolution);
-            }
-            else if (e.PropertyChanged(() => _unitTestsVm.SelectedTestItem))
-            {
-                var method = _unitTestsVm.SelectedTestItem as TestNodeMethod;
-                if (method != null && method.HasResults)
-                {
-                    _unitTestsVm.ResultText = method.Message;
-                }
-                else
-                {
-                    _unitTestsVm.ResultText = "";
-                }
-            }
-        }
 
-        private void ChangeModeToCurrentSolution(bool testCurrentSolution)
+        public void ShowTestDetails()
         {
-           
+            var method = _unitTestsVm.SelectedTestItem as TestNodeMethod;
+            if (method != null && method.HasResults)
+            {
+                _unitTestsVm.ResultText = method.Message;
+            }
+            else
+            {
+                _unitTestsVm.ResultText = "";
+            }
         }
 
         public void Initialize()
         {
-            //  _tl.R
+           
         }
-
-        private TestFilter MakeNameFilter(ICollection<ITest> tests)
+        public void RefreshTestList()
         {
-            if (tests == null || tests.Count == 0)
+            Task.Factory.StartNew(() =>
             {
-                return TestFilter.Empty;
-            }
+                return _testsContainer.LoadTests(_unitTestsVm.SelectedMutant);
 
-            var nameFilter = new NameFilter();
-            foreach (ITest test in tests)
+            }).ContinueWith(prev =>
             {
-                nameFilter.Add(test.TestName);
-            }
+                _unitTestsVm.TestNamespaces.ReplaceRange(prev.Result);
 
-            return nameFilter;
+            }, _execute.WpfScheduler);
+
+
         }
+       
 
         public void RunTests()
         {
             _unitTestsVm.AreTestsRunning = true;
-            _commandRunTests.RaiseCanExecuteChanged();
 
-            foreach (TestTreeNode testTreeNode in _testMap.Values)
+            
+            Task.Factory.StartNew(() =>
             {
-                testTreeNode.Status = TestStatus.Running;
-            }
+                _testsContainer.RunTests();
 
-            var tasks = _testsContainer.RunTests();
-
-            Task.Factory.ContinueWhenAll(tasks, prevTasks =>
+            }).ContinueWith( prevTask =>
             {
                 _unitTestsVm.AreTestsRunning = false;
-                _commandRunTests.RaiseCanExecuteChanged();
 
-            }, CancellationToken.None, TaskContinuationOptions.None, _execute.WpfScheduler);
+            }, _execute.WpfScheduler);
 
 
         }
 
-        private void Events_RunStarting(object sender, TestEventArgs args)
-        {
-            _execute.OnUIThread(
-                () =>
-                {
-                    _unitTestsVm.AreTestsRunning = true;
-                    _commandRunTests.RaiseCanExecuteChanged();
 
-                    foreach (TestTreeNode testTreeNode in _testMap.Values)
-                    {
-                        testTreeNode.Status = TestStatus.Running;
-                    }
-                });
-        }
-
-        private void Events_TestFinished(object sender, TestEventArgs args)
-        {
-            //  ICollection<ITest> classes = GetTestClasses(args.Test);
-            //  var namespaces = classes.Select(x => x.Parent).Distinct();
-
-            try
-            {
-                TestStatus status = args.Result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
-                TestTreeNode node = _testMap[args.Result.Test.TestName.UniqueName];
-
-                node.Status = status;
-
-                node.Result = args.Result;
-
-                using (StreamWriter s = File.AppendText(@"C:\test.txt"))
-                {
-                    s.WriteLine(
-                        "TestFinished   " + args.Result.Name + "  s?: " + args.Result.IsSuccess);
-                }
-            }
-            catch (Exception e)
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    _messageBoxService.ShowError(e.ToString());
-                }
-            }
-        }
-
-        private void Events_RunFinished(object sender, TestEventArgs args)
-        {
-            try
-            {
-                _execute.OnUIThread(
-                    () =>
-                    {
-                        _unitTestsVm.AreTestsRunning = false;
-                        _commandRunTests.RaiseCanExecuteChanged();
-                    });
-
-                using (StreamWriter s = File.AppendText(@"C:\test.txt"))
-                {
-                    s.WriteLine(
-                        "RunFinished   " + args.Result.Name + "  s?: " + args.Result.IsSuccess);
-                }
-            }
-            catch (Exception e)
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    _messageBoxService.ShowError(e.ToString());
-                }
-            }
-        }
-
-        private void Events_SuiteFinished(object sender, TestEventArgs args)
-        {
-            try
-            {
-                TestStatus status = args.Result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
-
-                TestTreeNode node;
-                if (_testMap.TryGetValue(args.Result.Test.TestName.UniqueName, out node))
-                {
-                    node.Status = status;
-                }
-
-                using (StreamWriter s = File.AppendText(@"C:\test.txt"))
-                {
-                    s.WriteLine(
-                        "SuiteFinished   " + args.Result.Name + "  s?: " + args.Result.IsSuccess);
-                }
-            }
-            catch (Exception e)
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    _messageBoxService.ShowError(e.ToString());
-                }
-            }
-        }
-
-        public void RefreshTestList()
-        {
-
-            _testsContainer.LoadTests(_unitTestsVm.SelectedMutant);
-
-
-
-            var assemblies = _unitTestsVm.SelectedMutant.Assemblies;
-            _tl.NewProject();
-            foreach (string project in assemblies)
-            {
-                _tl.TestProject.ActiveConfig.Assemblies.Add(project);
-            }
-
-            _tl.LoadTest();
-        }
-
-        private void Events_TestLoaded(object sender, TestEventArgs args)
-        {
-            try
-            {
-                _unitTestsVm.TestNamespaces.Clear();
-                _testMap.Clear();
-                ICollection<ITest> classes = GetTestClasses(args.Test);
-                IEnumerable<ITest> namespaces = classes.Select(x => x.Parent).Distinct();
-                foreach (ITest testNamespace in namespaces)
-                {
-                    var ns = new TestNodeNamespace
-                    {
-                        Name = testNamespace.TestName.FullName,
-                        Test = testNamespace,
-                    };
-                    ITest testNamespace1 = testNamespace;
-                    foreach (ITest testClass in classes.Where(
-                        c => c.Tests != null
-                             && c.Tests.Count != 0 && c.Parent == testNamespace1))
-                    {
-                        var c = new TestNodeClass
-                        {
-                            Name = testClass.TestName.Name,
-                            Test = testClass,
-                        };
-
-                        foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
-                        {
-                            var m = new TestNodeMethod
-                            {
-                                Name = testMethod.TestName.Name,
-                                Test = testMethod,
-                            };
-                            c.TestMethods.Add(m);
-                            _testMap.Add(testMethod.TestName.UniqueName, m);
-                        }
-                        ns.TestClasses.Add(c);
-                        _testMap.Add(testClass.TestName.UniqueName, c);
-                    }
-                    _unitTestsVm.TestNamespaces.Add(ns);
-                    _testMap.Add(testNamespace.TestName.UniqueName, ns);
-                }
-                _commandRunTests.RaiseCanExecuteChanged();
-            }
-            catch (Exception e)
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    _messageBoxService.ShowError(e.ToString());
-                }
-            }
-
-            //            
-            //            var sb = new StringBuilder();
-            //            Print("", args.Test, sb);
-            //
-            //            using (var s = new System.IO.StreamWriter(@"C:\test.txt"))
-            //            {
-            //                s.Write(sb.ToString());
-            //            }
-
-            //  MessageBox.Show(sb.ToString());
-        }
-
-        private ICollection<ITest> GetTestClasses(ITest test)
-        {
-            var list = new List<ITest>();
-            GetTestClassesInternal(list, test);
-            return list;
-        }
-
-        private void GetTestClassesInternal(ICollection<ITest> collection, ITest test)
-        {
-            if (test.TestType == "TestFixture")
-            {
-                collection.Add(test);
-                return;
-            }
-            else if (test.Tests != null)
-            {
-                foreach (ITest t in test.Tests.Cast<ITest>())
-                {
-                    GetTestClassesInternal(collection, t);
-                }
-            }
-        }
-
-        private void Print(string pref, ITest info, StringBuilder sb)
-        {
-            sb.AppendLine(pref + info.TestName);
-            sb.AppendLine(pref + "IsSuite: " + info.IsSuite);
-            sb.AppendLine(pref + "TestType: " + info.TestType);
-            sb.AppendLine(pref);
-            if (info.Tests != null)
-            {
-                foreach (ITest test in info.Tests.Cast<ITest>())
-                {
-                    Print(pref + "   ", test, sb);
-                }
-            }
-        }
-
-        private void Events_TestLoadFailed(object sender, TestEventArgs args)
-        {
-            if (Debugger.IsAttached)
-            {
-                Debugger.Break();
-            }
-            else
-            {
-                _messageBoxService.ShowError(args.Exception.ToString());
-            }
-        }
-
-        private void Events_ProjectLoaded(object sender, TestEventArgs args)
-        {
-        }
-
-        private void Events_ProjectLoadFailed(object sender, TestEventArgs args)
-        {
-            if (Debugger.IsAttached)
-            {
-                Debugger.Break();
-            }
-            else
-            {
-                _messageBoxService.ShowError(args.Exception.ToString());
-            }
-        }
+        
     }
 }

@@ -7,6 +7,7 @@
 
     using EnvDTE;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
@@ -41,8 +42,8 @@
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
 
-            _viewModel.CommandMutate = new DelegateCommand(Mutate);
-            _viewModel.CommandRefresh = new DelegateCommand(Refresh);
+            _viewModel.CommandMutate = new BasicCommand(Mutate);
+            _viewModel.CommandRefresh = new BasicCommand(Refresh);
 
             _viewModel.Assemblies = _typesManager.Assemblies;
             _viewModel.MutationPackages = _operatorsManager.OperatorPackages;

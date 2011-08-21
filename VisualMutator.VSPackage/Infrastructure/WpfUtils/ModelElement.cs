@@ -14,7 +14,7 @@
 
         protected void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpression)
         {
-            string propertyName = UtilityExtensionMethods.PropertyName(propertyExpression);
+            string propertyName = Utility.PropertyName(propertyExpression);
 
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }

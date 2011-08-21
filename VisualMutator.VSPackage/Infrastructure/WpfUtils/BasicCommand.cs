@@ -19,7 +19,7 @@
         {
         }
 
-        public BasicCommand(Action<TParam> execute, Func<TParam, bool> canExecute)
+        protected BasicCommand(Action<TParam> execute, Func<TParam, bool> canExecute)
         {
             if (execute == null)
             {
@@ -34,7 +34,7 @@
 
         public bool CanExecute(object parameter)
         {
-            return canExecute != null ? canExecute((TParam)parameter) : true;
+            return canExecute == null || canExecute((TParam)parameter);
         }
 
         public void Execute(object parameter)
@@ -53,17 +53,24 @@
         }
 
         public void UpdateOnChanged<T>(IEventNotifier notifier, 
+            Expression<Func<T>> propertyExpression) 
+        {
+            notifier.EventListeners.Add(notifier, propertyExpression.PropertyName(),() =>
+            {
+                OnCanExecuteChanged(EventArgs.Empty);
+            });
+        }
+        public void ExecuteOnChanged<T>(IEventNotifier notifier,
             Expression<Func<T>> propertyExpression)
         {
-            notifier.EventListeners.Add(notifier, (source, args) =>
+            notifier.EventListeners.Add(notifier, propertyExpression.PropertyName(), () =>
             {
-                if (args.PropertyChanged(propertyExpression))
+                if (CanExecute(null))
                 {
-                    OnCanExecuteChanged(EventArgs.Empty);
+                    Execute(null);
                 }
             });
         }
-
         protected virtual void OnCanExecuteChanged(EventArgs e)
         {
             EventHandler canExecuteChanged = CanExecuteChanged;
@@ -76,12 +83,7 @@
 
     public class BasicCommand : BasicCommand<object>
     {
-        public BasicCommand(Action execute)
-            : this(execute, null)
-        {
-        }
-
-        public BasicCommand(Action execute, Func<bool> canExecute)
+        public BasicCommand(Action execute, Func<bool> canExecute = null)
             : base(execute != null ? p => execute() : (Action<object>)null,
                 canExecute != null ? p => canExecute() : (Func<object, bool>)null)
         {

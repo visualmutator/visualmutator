@@ -5,6 +5,8 @@
     using System.Linq;
     using System.Text;
 
+    using Ninject;
+    using Ninject.Activation;
     using Ninject.Modules;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
@@ -23,9 +25,25 @@
 
             Kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
             Kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
+
+
             Kernel.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
+
+            Kernel.Bind<NUnitTestService>().ToSelf().InSingletonScope();
+            Kernel.Bind<MsTestService>().ToSelf().InSingletonScope();
+
+            Kernel.Bind<IEnumerable<ITestService>>().ToMethod(CreateTestService);
+
 
 
         }
+
+        private IEnumerable<ITestService> CreateTestService(IContext context)
+        {
+            yield return context.Kernel.Get<NUnitTestService>();
+            yield return context.Kernel.Get<MsTestService>();
+        }
+
+
     }
 }
