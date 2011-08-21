@@ -3,23 +3,22 @@
     #region Usings
 
     using System;
-    using System.Linq.Expressions;
     using System.Windows.Input;
 
     #endregion
 
-    public class BasicCommand<TParam> : ICommand
+    public class AutoCommand<TParam> : BasicCommand
     {
         protected readonly Func<TParam, bool> canExecute;
 
         protected readonly Action<TParam> execute;
 
-        public BasicCommand(Action<TParam> execute)
+        public AutoCommand(Action<TParam> execute)
             : this(execute, null)
         {
         }
 
-        public BasicCommand(Action<TParam> execute, Func<TParam, bool> canExecute)
+        public AutoCommand(Action<TParam> execute, Func<TParam, bool> canExecute)
         {
             if (execute == null)
             {
@@ -50,18 +49,6 @@
         public void RaiseCanExecuteChanged()
         {
             OnCanExecuteChanged(EventArgs.Empty);
-        }
-
-        public void UpdateOnChanged<T>(IEventNotifier notifier, 
-            Expression<Func<T>> propertyExpression)
-        {
-            notifier.EventListeners.Add(notifier, (source, args) =>
-            {
-                if (args.PropertyChanged(propertyExpression))
-                {
-                    OnCanExecuteChanged(EventArgs.Empty);
-                }
-            });
         }
 
         protected virtual void OnCanExecuteChanged(EventArgs e)

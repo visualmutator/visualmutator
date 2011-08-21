@@ -13,31 +13,31 @@
 
     public class EventListeners
     {
-        private readonly ICollection<CollectionChangedEventListener> collectionListeners;
+        private readonly ICollection<CollectionChangedEventListener> _collectionListeners;
 
-        private readonly ICollection<PropertyChangedEventListener> propertyListeners;
+        private readonly ICollection<PropertyChangedEventListener> _propertyListeners;
 
         public EventListeners()
         {
-            propertyListeners = new List<PropertyChangedEventListener>();
-            collectionListeners = new List<CollectionChangedEventListener>();
+            _propertyListeners = new List<PropertyChangedEventListener>();
+            _collectionListeners = new List<CollectionChangedEventListener>();
         }
 
         public void Add(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
         {
             var listener = new PropertyChangedEventListener(source, handler);
-            propertyListeners.Add(listener);
+            _propertyListeners.Add(listener);
             PropertyChangedEventManager.AddListener(source, listener, "");
         }
 
         public void Remove(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
         {
-            PropertyChangedEventListener listener = propertyListeners
+            PropertyChangedEventListener listener = _propertyListeners
                 .LastOrDefault(x => x.Source == source && x.Handler == handler);
 
             if (listener != null)
             {
-                propertyListeners.Remove(listener);
+                _propertyListeners.Remove(listener);
                 PropertyChangedEventManager.RemoveListener(source, listener, "");
             }
         }
@@ -46,19 +46,19 @@
             INotifyCollectionChanged source, NotifyCollectionChangedEventHandler handler)
         {
             var listener = new CollectionChangedEventListener(source, handler);
-            collectionListeners.Add(listener);
+            _collectionListeners.Add(listener);
             CollectionChangedEventManager.AddListener(source, listener);
         }
 
         public void Remove(
             INotifyCollectionChanged source, NotifyCollectionChangedEventHandler handler)
         {
-            CollectionChangedEventListener listener = collectionListeners
+            CollectionChangedEventListener listener = _collectionListeners
                 .LastOrDefault(x => x.Source == source && x.Handler == handler);
 
             if (listener != null)
             {
-                collectionListeners.Remove(listener);
+                _collectionListeners.Remove(listener);
                 CollectionChangedEventManager.RemoveListener(source, listener);
             }
         }
@@ -66,22 +66,22 @@
 
     internal class PropertyChangedEventListener : IWeakEventListener
     {
-        private readonly PropertyChangedEventHandler handler;
+        private readonly PropertyChangedEventHandler _handler;
 
-        private readonly INotifyPropertyChanged source;
+        private readonly INotifyPropertyChanged _source;
 
         public PropertyChangedEventListener(
             INotifyPropertyChanged source, PropertyChangedEventHandler handler)
         {
-            this.source = source;
-            this.handler = handler;
+            this._source = source;
+            this._handler = handler;
         }
 
         public INotifyPropertyChanged Source
         {
             get
             {
-                return source;
+                return _source;
             }
         }
 
@@ -89,13 +89,13 @@
         {
             get
             {
-                return handler;
+                return _handler;
             }
         }
 
         public bool ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
         {
-            handler(sender, (PropertyChangedEventArgs)e);
+            _handler(sender, (PropertyChangedEventArgs)e);
             return true;
         }
     }

@@ -175,8 +175,10 @@
     <Compile Include="Infrastructure\ProvideBindingPathAttribute.cs" />
     <Compile Include="Infrastructure\WpfUtils\BasicCommand.cs" />
     <Compile Include="Infrastructure\WpfUtils\Controller.cs" />
+    <Compile Include="Infrastructure\WpfUtils\AutoCommand.cs" />
     <Compile Include="Infrastructure\WpfUtils\EventListeners.cs" />
     <Compile Include="Infrastructure\WpfUtils\Execute.cs" />
+    <Compile Include="Infrastructure\WpfUtils\IEventNotifier.cs" />
     <Compile Include="Infrastructure\WpfUtils\IView.cs" />
     <Compile Include="Infrastructure\WpfUtils\Messages\IMessageService.cs" />
     <Compile Include="Infrastructure\WpfUtils\Messages\MessageService.cs" />

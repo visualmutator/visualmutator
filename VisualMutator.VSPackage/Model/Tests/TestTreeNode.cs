@@ -18,7 +18,7 @@
 
         private string _name;
 
-        private TestResult _result;
+        private string _message;
 
         private TestStatus _status;
 
@@ -53,11 +53,11 @@
             }
         }
 
-        public TestResult Result
+        public string Message
         {
             set
             {
-                _result = value;
+                _message = value;
             }
             get
             {
@@ -65,11 +65,11 @@
                 {
                     throw new InvalidOperationException("No results");
                 }
-                if (_result == null)
+                if (_message == null)
                 {
                     throw new ArgumentException("Result not set");
                 }
-                return _result;
+                return _message;
             }
         }
 

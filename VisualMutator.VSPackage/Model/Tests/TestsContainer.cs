@@ -5,12 +5,17 @@
     using System.Linq;
     using System.Text;
     using System.Reactive;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
     public interface ITestsContainer
     {
         void LoadTests(MutationSession mutant);
+
+        Task[] RunTests();
     }
 
     public class TestsContainer : ITestsContainer
@@ -48,19 +53,10 @@
 
         }
 
-        public void RunTests()
+        public Task[] RunTests()
         {
-            _execute.OnUIThread(
-                () =>
-                {
-                    _unitTestsVm.AreTestsRunning = true;
-                    _commandRunTests.RaiseCanExecuteChanged();
+            return _testServices.Select(s => s.RunTests()).ToArray();
 
-                    foreach (TestTreeNode testTreeNode in _testMap.Values)
-                    {
-                        testTreeNode.Status = TestStatus.Running;
-                    }
-                });
         }
     }
 }

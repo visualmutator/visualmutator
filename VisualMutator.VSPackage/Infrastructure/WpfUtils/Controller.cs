@@ -9,7 +9,7 @@
             _eventListeners = new EventListeners();
         }
 
-        public EventListeners EventListeners
+        protected EventListeners EventListeners
         {
             get
             {

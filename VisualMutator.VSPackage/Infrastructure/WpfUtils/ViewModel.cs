@@ -11,9 +11,9 @@
     public abstract class ViewModel<TView> : ModelElement
         where TView : class, IView
     {
-        private readonly EventListeners eventListeners;
+        private readonly EventListeners _eventListeners;
 
-        private readonly TView view;
+        private readonly TView _view;
 
         protected ViewModel(TView view)
         {
@@ -21,8 +21,8 @@
             {
                 throw new ArgumentNullException("view");
             }
-            this.view = view;
-            eventListeners = new EventListeners();
+            this._view = view;
+            _eventListeners = new EventListeners();
 
             if (SynchronizationContext.Current is DispatcherSynchronizationContext)
             {
@@ -44,7 +44,7 @@
         {
             get
             {
-                return eventListeners;
+                return _eventListeners;
             }
         }
 
@@ -52,7 +52,7 @@
         {
             get
             {
-                return view;
+                return _view;
             }
         }
     }

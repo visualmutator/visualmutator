@@ -10,6 +10,8 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Waf.Applications;
 
     using NUnit.Core;
@@ -56,6 +58,7 @@
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             IExecute execute
+
             )
         {
           //  _unitTestsVm = unitTestsVm;
@@ -81,6 +84,8 @@
         {
             _commandRunTests = new DelegateCommand(
                 RunTests, () => _unitTestsVm.SelectedMutant != null && !_unitTestsVm.AreTestsRunning);
+            
+            
             _unitTestsVm.CommandRunTests = _commandRunTests;
 
 
@@ -116,7 +121,7 @@
                 var method = _unitTestsVm.SelectedTestItem as TestNodeMethod;
                 if (method != null && method.HasResults)
                 {
-                    _unitTestsVm.ResultText = method.Result.Message;
+                    _unitTestsVm.ResultText = method.Message;
                 }
                 else
                 {
@@ -153,8 +158,24 @@
 
         public void RunTests()
         {
-            TestsToRun = _unitTestsVm.TestNamespaces;
-            _tl.RunTests();
+            _unitTestsVm.AreTestsRunning = true;
+            _commandRunTests.RaiseCanExecuteChanged();
+
+            foreach (TestTreeNode testTreeNode in _testMap.Values)
+            {
+                testTreeNode.Status = TestStatus.Running;
+            }
+
+            var tasks = _testsContainer.RunTests();
+
+            Task.Factory.ContinueWhenAll(tasks, prevTasks =>
+            {
+                _unitTestsVm.AreTestsRunning = false;
+                _commandRunTests.RaiseCanExecuteChanged();
+
+            }, CancellationToken.None, TaskContinuationOptions.None, _execute.WpfScheduler);
+
+
         }
 
         private void Events_RunStarting(object sender, TestEventArgs args)
