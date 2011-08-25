@@ -22,6 +22,11 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
 
         public abstract void RunTests();
 
+        protected AbstractTestService()
+        {
+            TestMap = new Dictionary<string, TestTreeNode>();
+        }
+
         protected IDictionary<string, TestTreeNode> TestMap
         {
             get;

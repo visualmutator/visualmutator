@@ -30,18 +30,27 @@
             Kernel.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
 
             Kernel.Bind<NUnitTestService>().ToSelf().InSingletonScope();
+
+
+
             Kernel.Bind<MsTestService>().ToSelf().InSingletonScope();
 
-            Kernel.Bind<IEnumerable<ITestService>>().ToMethod(CreateTestService);
+
+
+            Kernel.Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));
 
 
 
         }
 
-        private IEnumerable<ITestService> CreateTestService(IContext context)
+        private IEnumerable<ITestService> CreateTestService(IKernel kernel)
         {
-            yield return context.Kernel.Get<NUnitTestService>();
-            yield return context.Kernel.Get<MsTestService>();
+            return new ITestService[]
+            {
+                kernel.Get<NUnitTestService>(),
+                kernel.Get<MsTestService>()
+            };
+      
         }
 
 

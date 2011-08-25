@@ -18,14 +18,11 @@
         {
             var st = (TestStatus)value;
 
-            return
-                st == TestStatus.Inconclusive
-                    ? Brushes.Gainsboro
-                    : st == TestStatus.Failure
-                          ? Brushes.Red
-                          : st == TestStatus.Success
-                                ? Brushes.Green
-                                : st == TestStatus.Running ? Brushes.Blue : Binding.DoNothing;
+            return st == TestStatus.Inconclusive  ? Brushes.Gainsboro
+                    : st == TestStatus.Failure ? Brushes.Red 
+                    : st == TestStatus.Success ? Brushes.Green
+                    : st == TestStatus.Running ? Brushes.Blue 
+                    : Binding.DoNothing;
         }
 
         public object ConvertBack(

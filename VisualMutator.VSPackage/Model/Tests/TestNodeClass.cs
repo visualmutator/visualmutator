@@ -33,5 +33,7 @@
                 return _testMethods;
             }
         }
+
+        public string FullName { get; set; }
     }
 }

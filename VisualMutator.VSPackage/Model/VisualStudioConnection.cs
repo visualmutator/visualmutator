@@ -25,6 +25,8 @@
         string GetMutantsRootFolderPath();
 
         string Test();
+
+        IEnumerable<string> GetReferencedAssemblies();
     }
 
     public class VisualStudioConnection : IVisualStudioConnection
@@ -71,6 +73,12 @@
 
                 yield return Path.Combine(localPath, outputPath, outputFileName);
             }
+        }
+        public IEnumerable<string> GetReferencedAssemblies()
+        {
+            var projects = GetProjectPaths();
+            string binDir = Path.GetDirectoryName(projects.First());
+            return Directory.GetFiles(binDir, "*.dll", SearchOption.AllDirectories).Where(p => !projects.Contains(p));
         }
 
         public string GetMutantsRootFolderPath()

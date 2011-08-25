@@ -117,6 +117,23 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
+        private bool _areTestsLoading;
+
+        public bool AreTestsLoading
+        {
+            set
+            {
+                if (_areTestsLoading != value)
+                {
+                    _areTestsLoading = value;
+                    RaisePropertyChanged(() => AreTestsLoading);
+                }
+            }
+            get
+            {
+                return _areTestsLoading;
+            }
+        }
         public bool AreTestsRunning
         {
             set

@@ -30,11 +30,21 @@
             set; get; 
         }
 
-        public TestsContainer(IEnumerable<ITestService> testServices)
+        public TestsContainer(NUnitTestService nunit, MsTestService ms)
         {
-            _testServices = testServices;
+            _testServices = new List<ITestService>
+            {
+                nunit,ms
+            };
 
-          
+
+
+            /*
+            if (_testServices == null || _testServices.Count() == 0)
+            {
+                throw new ArgumentNullException("testServices");
+            }
+          */
              TestNamespaces =new BetterObservableCollection<TestNodeNamespace>();
         }
 
@@ -56,7 +66,7 @@
                 {
                     Name = group.Key,
                     TestClasses = group.ToObsCollection()
-                });
+                }).ToList();
 
 
         }

@@ -2,102 +2,100 @@
 {
     #region Usings
 
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
+    using System.Xml.Linq;
 
     using Mono.Cecil;
-
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     #endregion
 
     internal class Program
     {
         private static void Main(string[] args)
         {
-            RefreshTestList(
-                new[]
-                {
-                    @"C:\Users\SysOp\Documents\Visual Studio 2010\Projects\MusicRename\MusicRename.Tests\bin\Debug\MusicRename.Tests.dll"
-                });
-        }
-
-
-
-
-        public static void RefreshTestList(IEnumerable<string> assemblies)
-        {
-            foreach (string assembly in assemblies)
+            string results = @"C:\results.xml";
+            try
             {
-                AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly);
-                IEnumerable<TypeDefinition> types =
-                    ad.MainModule.Types.Where(
-                        t =>
-                        t.CustomAttributes.Any(
-                            a =>
-                            a.AttributeType.FullName ==
-                            @"Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute")).ToList();
-
-                var methods = types.SelectMany(t => t.Methods).Where(
-                    m => m.CustomAttributes.Any(
-                        a =>
-                        a.AttributeType.FullName ==
-                        @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));
+          /*      var p = new Process();
+                p.StartInfo = new ProcessStartInfo(
+@"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\MSTest.exe");
 
 
+                string filePath = @"C:\Users\SysOp\Documents\Visual Studio 2010\Projects\MusicRename\MusicRename.Tests\bin\Debug\MusicRename.Tests.dll";
 
-               // var namespaces = types.Select(t => t.Namespace).Distinct();
-                var groupsByNamespace = methods.GroupBy(m => m.DeclaringType)
-                    .GroupBy(groupByType => groupByType.Key.Namespace);
-
-
+                
+                p.StartInfo.Arguments = @"/testcontainer:" + QuotePath(filePath) + @" -resultsfile:" + QuotePath(results);
 
 
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.UseShellExecute = false;
 
+                File.Delete(results);
+                p.Start();
+                StreamReader sr = p.StandardOutput;
+                string r = sr.ReadToEnd();
 
-            }
+         
+                p.WaitForExit();
 
+                Console.Out.WriteLine(r);
 
+                string s = File.ReadAllText(results);
+                
+                Console.Out.WriteLine(s);
 
-            foreach (var namespaceGroup in groupsByNamespace)
-            {
-                var ns = new TestNodeNamespace
+                Console.ReadLine();
+             //   return;
+                */
+                XDocument doc = XDocument.Load(results);
+               // var ss = doc.Root.Elements().ToList();//.Descendants().ToList();
+                 //   Element("Results").Descendants("UnitTestResult");
+
+             //   Utility.DescendantsAnyNs(doc.Root, "UnitTestResult");
+                foreach (var testResult in doc.Root.DescendantsAnyNs("UnitTestResult"))
                 {
-                    Name = namespaceGroup.Key
+                    string value = testResult.Attribute("testId").Value;
+                    var unitTest = doc.Root.DescendantsAnyNs("UnitTest")
+                        .Single(n => n.Attribute("id").Value == value);
+                    var testMethod = unitTest.ElementAnyNS("TestMethod");
 
-                };
+                    string methodName = testMethod.Attribute("name").Value;
+                    string longClassName = testMethod.Attribute("className").Value;
 
+                    string fullClassName = longClassName.Substring(0, longClassName.IndexOf(","));
 
-                foreach (var typeGroup in namespaceGroup)
-                {
-                    var c = new TestNodeClass
-                    {
-                        Name = typeGroup.Key.Name,
-                    };
-
-                    foreach (var method in typeGroup)
-                    {
-                        var m = new TestNodeMethod
-                        {
-                            Name = method.Name
-                        };
+                    int splitIndex = longClassName.LastIndexOf(".");
 
 
-                        c.TestMethods.Add(m);
-
-                        string id = typeGroup.Key.FullName + "." + method.Name;
-                        _testMap.Add(id, m);
-
-
-                    }
-                    ns.TestClasses.Add(c);
-
-
+             //       Trace.WriteLine(fullClassName);
+               //     Console.Out.WriteLine(methodName);
                 }
-                _unitTestsVm.TestNamespaces.Add(ns);
-
-            }
                 
 
 
+
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(e.ToString());
+           
+            }
+            
+            
+        }
+
+
+        public static string QuotePath(string path)
+        {
+            return @"""" + path + @"""";
         }
     }
+
+
+
+
 }

@@ -2,5 +2,8 @@
 {
     public class TestNodeMethod : TestTreeNode
     {
+        public TestNodeClass Class
+        {
+            get; set; }
     }
 }

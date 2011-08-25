@@ -6,7 +6,8 @@
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
              xmlns:AttachedBehaviors="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.AttachedBehaviors"
              xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" mc:Ignorable="d" d:DesignHeight="322"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views" mc:Ignorable="d" d:DesignHeight="322"
              d:DesignWidth="624">
 
   <UserControl.Resources>
@@ -20,6 +21,7 @@
       <Setter Property="Stroke" Value="Black"/>
     </Style>
 
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
   </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
@@ -53,50 +55,64 @@
     </ScrollViewer>
     <GridSplitter Grid.Row="2" Width="Auto" HorizontalAlignment="Stretch"/>
 
-    <TreeView Grid.Row="3" ItemsSource="{Binding TestNamespaces}">
-      <TreeView.ItemTemplate>
-        <HierarchicalDataTemplate ItemsSource="{Binding TestClasses}">
-          <DockPanel>
-            <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
+        <Grid  Grid.Row="3">
+
+       
+
+            <TreeView ItemsSource="{Binding TestNamespaces}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding TestClasses}">
+                        <DockPanel>
+                            <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
                        Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}"/>
-            <TextBlock Text="{Binding Name}"/>
-          </DockPanel>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DockPanel>
 
-          <HierarchicalDataTemplate.ItemTemplate>
-            <HierarchicalDataTemplate ItemsSource="{Binding TestMethods}">
-              <DockPanel>
-                <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
+                        <HierarchicalDataTemplate.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding TestMethods}">
+                                <DockPanel>
+                                    <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
                            Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}"/>
-                <TextBlock Text="{Binding Name}"/>
-              </DockPanel>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DockPanel>
 
-              <HierarchicalDataTemplate.ItemTemplate>
-                <DataTemplate>
-                  <DockPanel>
-                    <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel>
+                                            <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
                                Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}"/>
-                    <TextBlock Text="{Binding Name}"/>
-                  </DockPanel>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DockPanel>
 
-                </DataTemplate>
-              </HierarchicalDataTemplate.ItemTemplate>
-            </HierarchicalDataTemplate>
-          </HierarchicalDataTemplate.ItemTemplate>
-        </HierarchicalDataTemplate>
-      </TreeView.ItemTemplate>
-      <TreeView.ItemContainerStyle>
-        <Style TargetType="{x:Type TreeViewItem}">
-          <Setter Property="AttachedBehaviors:MouseDoubleClickBehavior.MouseDoubleClick"
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </HierarchicalDataTemplate.ItemTemplate>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="AttachedBehaviors:MouseDoubleClickBehavior.MouseDoubleClick"
                   Value="{Binding CommandRunTest}"/>
-          <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
-        </Style>
+                        <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
+                    </Style>
 
-      </TreeView.ItemContainerStyle>
-      <i:Interaction.Behaviors>
-        <AttachedBehaviors:BindableSelectedItemBehaviour SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}"/>
-      </i:Interaction.Behaviors>
+                </TreeView.ItemContainerStyle>
+                <i:Interaction.Behaviors>
+                    <AttachedBehaviors:BindableSelectedItemBehaviour SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}"/>
+                </i:Interaction.Behaviors>
 
-    </TreeView>
+            </TreeView>
+
+            <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                   Visibility="{Binding AreTestsLoading, 
+                Converter={StaticResource BoolToVisibilityConverter} }"/>
+
+            <!---->
+
+
+        </Grid>
+          
 
     <GridSplitter Grid.Row="4" Width="Auto" HorizontalAlignment="Stretch"/>
 

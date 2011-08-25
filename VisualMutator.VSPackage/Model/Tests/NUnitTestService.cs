@@ -4,12 +4,8 @@
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using NUnit.Core;
     using NUnit.Core.Filters;
@@ -26,14 +22,6 @@
 
         private readonly TestLoader _testLoader;
 
-        public TestLoader TestLoader
-        {
-            get
-            {
-                return _testLoader;
-            }
-        }
-
         public NUnitTestService(IMessageService messageService)
         {
             _messageService = messageService;
@@ -48,10 +36,16 @@
             ServiceManager.Services.AddService(new TestAgency());
 
             _testLoader = new TestLoader();
-          
         }
 
-        
+        public TestLoader TestLoader
+        {
+            get
+            {
+                return _testLoader;
+            }
+        }
+
         private TestFilter MakeNameFilter(ICollection<ITest> tests)
         {
             if (tests == null || tests.Count == 0)
@@ -68,56 +62,48 @@
             return nameFilter;
         }
 
-
         public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
         {
-            
+            TestMap.Clear();
             IEnumerable<TestNodeClass> tests = null;
             using (var job = new TestsLoadJob(this, assemblies))
             {
-                job.Subscribe(arg => tests = BuildTestTree(arg)); 
+                job.Subscribe(arg => tests = BuildTestTree(arg));
             }
             return tests;
-            
         }
 
         public override void RunTests()
         {
-            
             TestMap.Values.Each(t => t.Status = TestStatus.Running);
 
             using (var eventObj = new ManualResetEventSlim())
-            using (var job = new TestsRunJob(this))
             {
-                job.Subscribe(result =>
+                using (var job = new TestsRunJob(this))
                 {
-                    TestTreeNode node = TestMap[result.Test.TestName.UniqueName];
-                    node.Status = result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
-                    node.Message = result.Message;
-                }, () =>
-                {
-                    eventObj.Set();
-                });
-                eventObj.Wait();
+                    job.Subscribe(result =>
+                    {
+                        TestTreeNode node = TestMap[result.Test.TestName.UniqueName];
+                        node.Status = result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
+                        node.Message = result.Message;
+                    }, () => { eventObj.Set(); });
+                    eventObj.Wait();
+                }
             }
-
-           
-           
         }
-
 
         private IEnumerable<TestNodeClass> BuildTestTree(ITest test)
         {
             var list = new List<TestNodeClass>();
             IEnumerable<ITest> classes = GetTestClasses(test).ToList();
-      
+
             foreach (ITest testClass in classes.Where(c => c.Tests != null
-                        && c.Tests.Count != 0 ))
+                                                           && c.Tests.Count != 0))
             {
                 var c = new TestNodeClass
                 {
                     Name = testClass.TestName.Name,
-                    Namespace = test.Parent.TestName.FullName
+                    Namespace = testClass.Parent.TestName.FullName
                 };
 
                 foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
@@ -129,27 +115,32 @@
                     c.TestMethods.Add(m);
                     TestMap.Add(testMethod.TestName.UniqueName, m);
                 }
-             
+
                 TestMap.Add(testClass.TestName.UniqueName, c);
                 list.Add(c);
             }
-
             return list;
-
-           
         }
-
 
         private IEnumerable<ITest> GetTestClasses(ITest test)
         {
-            return test.Tests.Cast<ITest>()
-                .SelectMany(GetTestClasses)
-                .Where(t => t.TestType == "TestFixture");
+            var list = new List<ITest>();
+            GetTestClassesInternal(list, test);
+            return list;
         }
 
-
-
-        #region Nested type: MyClass
+        private void GetTestClassesInternal(List<ITest> list, ITest test)
+        {
+            var tests = test.Tests ?? new ITest[0];
+            if (test.TestType == "TestFixture")
+            {
+                list.Add(test);
+            }
+            else
+            {
+                tests.Cast<ITest>().Each(t => GetTestClassesInternal(list, t));
+            }
+        }
 
         private class TestsLoadJob : IObservable<ITest>, IDisposable
         {
@@ -159,9 +150,9 @@
 
             private readonly IDisposable _testLoaded;
 
-            private IObserver<ITest> _observer;
-
             private IEnumerable<string> _assemblies;
+
+            private IObserver<ITest> _observer;
 
             public TestsLoadJob(NUnitTestService service, IEnumerable<string> assemblies)
             {
@@ -194,7 +185,6 @@
 
                 _service.TestLoader.LoadTest();
                 return this;
-               
             }
 
             private void TestLoadedHandler(TestEventArgs sArgs)
@@ -225,10 +215,6 @@
                 //                
             }
         }
-
-        #endregion
-
-        #region Nested type: TestsRunning
 
         private class TestsRunJob : IObservable<TestResult>, IDisposable
         {
@@ -287,7 +273,5 @@
                 _observer.OnCompleted();
             }
         }
-
-        #endregion
     }
 }

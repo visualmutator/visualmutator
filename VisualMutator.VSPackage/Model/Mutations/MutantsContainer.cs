@@ -138,17 +138,13 @@
                 assemblyDefinition.Write(file);
                 session.Assemblies.Add(file);
             }
-
-            var projects = _visualStudio.GetProjectPaths();
-
-            string binDir = Directory.GetParent(projects.First()).FullName;
-
-
-            foreach (var file in Directory.GetFiles(binDir)
-                .Where(f => !projects.Contains(f)))
+            foreach (var referenced in _visualStudio.GetReferencedAssemblies())
             {
-                File.Copy(file, dir + Path.GetFileName(file));
+             
+                File.Copy(referenced, dir+@"\"+ Path.GetFileName(referenced));
             }
+
+
             _generatedMutants.Add(session);
 
             //  File.Create(SessionsFile);

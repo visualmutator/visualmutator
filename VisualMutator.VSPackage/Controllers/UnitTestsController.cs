@@ -133,12 +133,19 @@
         }
         public void RefreshTestList()
         {
+            _unitTestsVm.AreTestsLoading = true;
+            _unitTestsVm.TestNamespaces.Clear();
             Task.Factory.StartNew(() =>
             {
                 return _testsContainer.LoadTests(_unitTestsVm.SelectedMutant);
 
             }).ContinueWith(prev =>
             {
+                _unitTestsVm.AreTestsLoading = false;
+                if (prev.Exception != null)
+                {
+                    _messageBoxService.ShowError(prev.Exception);
+                }
                 _unitTestsVm.TestNamespaces.ReplaceRange(prev.Result);
 
             }, _execute.WpfScheduler);
@@ -156,8 +163,12 @@
             {
                 _testsContainer.RunTests();
 
-            }).ContinueWith( prevTask =>
+            }).ContinueWith( prev =>
             {
+                if (prev.Exception != null)
+                {
+                    _messageBoxService.ShowError(prev.Exception);
+                }
                 _unitTestsVm.AreTestsRunning = false;
 
             }, _execute.WpfScheduler);
