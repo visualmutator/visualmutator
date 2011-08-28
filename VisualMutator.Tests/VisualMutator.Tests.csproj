@@ -35,6 +35,7 @@
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
@@ -57,9 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InfrastructureTests.cs" />
+    <Compile Include="Infrastructure\TestUtils.cs" />
     <Compile Include="MonoCecilTests.cs" />
     <Compile Include="MutationGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolutionTypesTests.cs" />
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>

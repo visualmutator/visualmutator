@@ -73,20 +73,29 @@
             }
         }
 
+
+
         public void GenerateMutants()
         {
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
 
             //  var man = new SessionsManager();
 
-            IEnumerable<MutationOperator> operators = _operatorsManager.GetActiveOperators();
+            IEnumerable<OperatorNode> operators = _operatorsManager.GetActiveOperators();
 
-            foreach (MutationOperator mutationOperator in operators)
+            foreach (OperatorNode mutationOperator in operators)
             {
                 mutationOperator.Operator.Mutate(types);
             }
 
             SaveSession(operators, types);
+        }
+
+        public void DeleteSession(MutationSession session)
+        {
+            _generatedMutants.Remove(session);
+
+            SaveSettingsFile();
         }
 
         public void LoadSessions()
@@ -113,7 +122,7 @@
         }
 
         private void SaveSession(
-            IEnumerable<MutationOperator> operators, IEnumerable<TypeDefinition> types)
+            IEnumerable<OperatorNode> operators, IEnumerable<TypeDefinition> types)
         {
             IEnumerable<AssemblyDefinition> assemblies =
                 types.Select(t => t.Module.Assembly).Distinct();
@@ -147,7 +156,13 @@
 
             _generatedMutants.Add(session);
 
-            //  File.Create(SessionsFile);
+           
+            SaveSettingsFile();
+        }
+
+
+        private void SaveSettingsFile()
+        {
             var ser = new XmlSerializer(typeof(List<MutationSession>));
 
             using (var file = new StreamWriter(SessionsFile))
@@ -155,5 +170,7 @@
                 ser.Serialize(file, _generatedMutants.ToList());
             }
         }
+
+
     }
 }

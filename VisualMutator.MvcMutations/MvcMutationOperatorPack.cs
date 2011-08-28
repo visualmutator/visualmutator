@@ -10,7 +10,7 @@
     using VisualMutator.Extensibility;
 
 
-    [Export(typeof(IOperatorsPack))]
+    [PackageExport]
     public class MvcMutationOperatorPack : IOperatorsPack
     {
         public MvcMutationOperatorPack()
@@ -23,6 +23,22 @@
         public IEnumerable<IMutationOperator> Operators
         {
             get; set;
+        }
+
+        public string Name
+        {
+            get
+            {
+                return "ASP.NET MVC3 Operators Package";
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return "Operators specific to ASP.NET MVC3 web framework.";
+            }
         }
     }
 }

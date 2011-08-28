@@ -108,13 +108,13 @@
         private static void Current_DispatcherUnhandledException(
             object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.ToString());
+            MessageBox.Show(e.Exception.ToString());
         }
 
         private static void CurrentDomain_UnhandledException(
             object sender, UnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.ToString());
+            MessageBox.Show(e.ExceptionObject.ToString());
         }
 
         public void InitializePackage(VisualMutator_VSPackagePackage visualMutatorVsPackagePackage)

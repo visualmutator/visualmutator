@@ -37,14 +37,16 @@
             arguments.Append(@"-resultsfile:" + resultsFile.InQuotes());
 
             p.StartInfo.Arguments = arguments.ToString();
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+     //       p.StartInfo.RedirectStandardOutput = true;
+       //     p.StartInfo.UseShellExecute = false;
 
             File.Delete(resultsFile);
 
             p.Start();
 
-            string s = p.StandardOutput.ReadToEnd();
+       //     string s = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
             return resultsFile;
         }

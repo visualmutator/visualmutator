@@ -13,48 +13,51 @@
 
     public interface IOperatorsManager
     {
-        BetterObservableCollection<OperatorPackage> OperatorPackages { get; set; }
+        BetterObservableCollection<PackageNode> OperatorPackages { get; set; }
 
         void LoadOperators();
 
-        IEnumerable<MutationOperator> GetActiveOperators();
+        IEnumerable<OperatorNode> GetActiveOperators();
     }
 
     public class OperatorsManager : IOperatorsManager
     {
         private readonly IOperatorLoader _loader;
 
-        //ObservableCollection<OperatorsPackage> OperatorPackages
-
+        
         public OperatorsManager(IOperatorLoader loader)
         {
             _loader = loader;
-            OperatorPackages = new BetterObservableCollection<OperatorPackage>();
+            OperatorPackages = new BetterObservableCollection<PackageNode>();
         }
 
-        public BetterObservableCollection<OperatorPackage> OperatorPackages { get; set; }
+        public BetterObservableCollection<PackageNode> OperatorPackages { get; set; }
 
         public void LoadOperators()
         {
             OperatorPackages.Clear();
+
+            var root = new FakeOperatorPackageRootNode("Root");
+
             IEnumerable<IOperatorsPack> packages = _loader.ReloadOperators();
             foreach (IOperatorsPack operatorsPack in packages)
             {
-                var package = new OperatorPackage(operatorsPack);
+                var package = new PackageNode(root,operatorsPack);
                 foreach (IMutationOperator mutationOperator in operatorsPack.Operators)
                 {
-                    var operatorNode = new MutationOperator(mutationOperator);
+                    var operatorNode = new OperatorNode(package,mutationOperator);
                     package.Operators.Add(operatorNode);
                 }
-
+                root.Children.Add(package);
                 OperatorPackages.Add(package);
             }
+            root.IsIncluded = true;
         }
 
-        public IEnumerable<MutationOperator> GetActiveOperators()
+        public IEnumerable<OperatorNode> GetActiveOperators()
         {
             return OperatorPackages.SelectMany(pack => pack.Operators)
-                .Where(oper => oper.IsIncluded);
+                .Where(oper => oper.IsLeafIncluded);
         }
     }
 }

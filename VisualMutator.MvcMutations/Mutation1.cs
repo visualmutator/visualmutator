@@ -101,6 +101,22 @@
 
 
         }
+
+        public string Name
+        {
+            get
+            {
+                return "Replace method return statement.";
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return "Replaces previous ActionResult with RedirectToAction.";
+            }
+        }
     }
 
     internal static class Mixin

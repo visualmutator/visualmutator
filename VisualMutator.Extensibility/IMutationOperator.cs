@@ -13,5 +13,11 @@ namespace VisualMutator.Extensibility
     public interface IMutationOperator
     {
         void Mutate(IEnumerable<TypeDefinition> assemblyPath);
+
+        string Name { get; }
+
+        string Description { get; }
+
+
     }
 }

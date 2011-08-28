@@ -60,7 +60,7 @@
 
         public void Initialize()
         {
-            _viewModel.IsVisible = true;
+          //  _viewModel.IsVisible = true;
             _visualStudio.SolutionEvents.Opened += ActivateOnSolutionOpened;
             _visualStudio.SolutionEvents.AfterClosing += DeactivateOnSolutionClosed;
             _visualStudio.SolutionEvents.ProjectAdded += HandleProjectAdded;

@@ -186,14 +186,14 @@
     <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
     <Compile Include="Infrastructure\WpfUtils\Utility.cs" />
     <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
-    <Compile Include="Model\Mutations\AssemblyNode.cs" />
+    <Compile Include="Model\Mutations\TypeNamespaceNode.cs" />
     <Compile Include="Model\Mutations\AssemblyWriter.cs" />
-    <Compile Include="Model\Mutations\TreeElement.cs" />
+    <Compile Include="Model\Mutations\TreeNode.cs" />
     <Compile Include="Model\Mutations\MEFOperatorLoader.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
-    <Compile Include="Model\Mutations\MutationOperator.cs" />
+    <Compile Include="Model\Mutations\OperatorNode.cs" />
     <Compile Include="Model\Mutations\MutationSession.cs" />
-    <Compile Include="Model\Mutations\OperatorPackage.cs" />
+    <Compile Include="Model\Mutations\PackageNode.cs" />
     <Compile Include="Model\Mutations\OperatorsManager.cs" />
     <Compile Include="Model\Mutations\SessionsManager.cs" />
     <Compile Include="Model\Mutations\SolutionTypesManager.cs" />
@@ -273,6 +273,10 @@
     <None Include="Resources\Images_24bit.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Views\Resources\assembly.png" />
+    <Resource Include="Views\Resources\mutation.png" />
+    <Resource Include="Views\Resources\namespace.png" />
+    <Resource Include="Views\Resources\type.png" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>

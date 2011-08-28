@@ -22,7 +22,7 @@
 
         private string _loggedText;
 
-        private BetterObservableCollection<OperatorPackage> _mutationPackages;
+        private BetterObservableCollection<PackageNode> _mutationPackages;
 
         public ILMutationsViewModel(IILMutationsView view)
             : base(view)
@@ -79,7 +79,7 @@
             }
         }
 
-        public BetterObservableCollection<OperatorPackage> MutationPackages
+        public BetterObservableCollection<PackageNode> MutationPackages
         {
             set
             {

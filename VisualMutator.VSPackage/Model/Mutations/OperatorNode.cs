@@ -6,12 +6,13 @@
 
     #endregion
 
-    public class MutationOperator : TreeElement
+    public class OperatorNode : LeafNode<PackageNode, OperatorNode>
     {
-        public MutationOperator(IMutationOperator mutationOperator)
+        public OperatorNode(PackageNode parent, IMutationOperator mutationOperator)
+            : base(parent, mutationOperator.Name)
         {
             Operator = mutationOperator;
-            Name = "oper";
+         
         }
 
         public IMutationOperator Operator { get; set; }
