@@ -19,13 +19,23 @@
 
     public class MsTestService : AbstractTestService
     {
+        private readonly IVisualStudioConnection _visualStudio;
+
         private IEnumerable<string> _assembliesWithTests;
+
+        public MsTestService(IVisualStudioConnection visualStudio)
+        {
+            _visualStudio = visualStudio;
+        }
 
         private string RunMsTest()
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(
-                @"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\MSTest.exe");
+            p.StartInfo = new ProcessStartInfo(Path.Combine(_visualStudio.InstallPath,@"Common7\IDE\MSTest.exe" ));
+              //  @"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\MSTest.exe");
+
+
+
 
             var arguments = new StringBuilder();
             foreach (string assembly in _assembliesWithTests)
@@ -88,7 +98,8 @@
 
                 if (node.Status == TestStatus.Failure)
                 {
-                    testResult.DescendantsAnyNs("ErrorInfo").Single();
+                    var errorInfo =testResult.DescendantsAnyNs("ErrorInfo").Single();
+                    node.Message = errorInfo.ElementAnyNS("Message").Value;
                 }
 
                 yield return node;

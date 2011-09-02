@@ -41,7 +41,7 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition/>
       <RowDefinition Height="4"/>
-      <RowDefinition/>
+      <RowDefinition Height="140"/>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>
@@ -98,13 +98,13 @@
 
                 </HierarchicalDataTemplate>
 
-                <HierarchicalDataTemplate DataType="{x:Type Mutations:TypeNode}">
+                <DataTemplate DataType="{x:Type Mutations:TypeNode}">
                     <DockPanel>
                         <Image Source="Resources/type.png" />
                         <CheckBox IsChecked="{Binding IsIncluded}" />
                         <TextBlock Text="{Binding Name}"/>
                     </DockPanel>
-                </HierarchicalDataTemplate>
+                </DataTemplate>
 
             </Grid.Resources>
 
@@ -113,27 +113,33 @@
       <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
 
       <TreeView Grid.Column="2" ItemsSource="{Binding MutationPackages}">
-        <TreeView.ItemTemplate >
-          <HierarchicalDataTemplate ItemsSource="{Binding Operators}">
-         
-                <DockPanel>
-                    <Image Source="Resources/mutation.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}" />
-                    <TextBlock Text="{Binding Name}"/>
-                </DockPanel>
-            <HierarchicalDataTemplate.ItemTemplate>
-              <DataTemplate>
-                <DockPanel>
-                    <Image Source="Resources/mutation.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}" />
-                    <TextBlock Text="{Binding Name}"/>
-                </DockPanel>
-                 
-              </DataTemplate>
-            </HierarchicalDataTemplate.ItemTemplate>
-          </HierarchicalDataTemplate>
-        </TreeView.ItemTemplate>
-                
+
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type Mutations:PackageNode}" 
+                                              ItemsSource="{Binding Operators}">
+
+                        <DockPanel>
+                            <Image Source="Resources/mutation.png"/>
+                            <CheckBox IsChecked="{Binding IsIncluded}" />
+                            <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPack.Description}"/>
+                        </DockPanel>
+
+
+                    </HierarchicalDataTemplate>
+                    
+                    
+                    <DataTemplate DataType="{x:Type Mutations:OperatorNode}" >
+                        <DockPanel>
+                            <Image Source="Resources/mutation.png"/>
+                            <CheckBox IsChecked="{Binding IsIncluded}" />
+                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Operator.Description}" />
+                        </DockPanel>
+
+                    </DataTemplate>
+
+                </TreeView.Resources>
+
+
 
         </TreeView>
 
@@ -141,7 +147,7 @@
 
     <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
 
-    <TextBox Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding LoggedText}"/>
+    <TextBox Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding LoggedText}"/>
 
   </Grid>
 </UserControl>

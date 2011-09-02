@@ -14,6 +14,8 @@
 
     public abstract class TestTreeNode : ModelElement
     {
+        private readonly TestTreeNode _parent;
+
         private ICommand _commandRunTest;
 
         private string _name;
@@ -22,12 +24,11 @@
 
         private TestStatus _status;
 
-        protected TestTreeNode()
+        protected TestTreeNode(TestTreeNode parent)
         {
+            _parent = parent;
             CommandRunTest = new BasicCommand(Comm);
         }
-
-        
 
         public string Name
         {
@@ -89,15 +90,25 @@
             }
         }
 
+
+        public void SetStatus(TestStatus value)
+        {
+            if (_status != value)
+            {
+
+
+
+
+                _status = value;
+                RaisePropertyChanged(() => Status);
+            }
+        }
+
         public TestStatus Status
         {
             set
             {
-                if (_status != value)
-                {
-                    _status = value;
-                    RaisePropertyChanged(() => Status);
-                }
+                SetStatus(value);
             }
             get
             {

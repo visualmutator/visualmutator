@@ -19,10 +19,14 @@
         void RefreshTypes(IEnumerable<string> projectsPaths);
 
         IEnumerable<TypeDefinition> GetIncludedTypes();
+
+        IEnumerable<AssemblyDefinition> GetLoadedAssemblies();
     }
 
     public class SolutionTypesManager : ITypesManager
     {
+        private IEnumerable<AssemblyDefinition> _loadedAssemblies;
+
         public SolutionTypesManager()
         {
             Assemblies = new BetterObservableCollection<AssemblyNode>();
@@ -44,24 +48,28 @@
             set;
         }
 
-
-
+       
 
 
         public void RefreshTypes(IEnumerable<string> projectsPaths)
         {
-      
-          
+
+            _loadedAssemblies = projectsPaths
+                .Select(AssemblyDefinition.ReadAssembly);
             
 
        //    
-            BuildTypesTree(projectsPaths
-                .Select(AssemblyDefinition.ReadAssembly)
+            BuildTypesTree(_loadedAssemblies
             .ToDictionary(ad=>ad.Name.Name, 
             ad=>ad.MainModule.Types.Where(t => t.Name != "<Module>")));
 
             // TypeDefinition d = new TypeDefinition();
 
+        }
+
+        public IEnumerable<AssemblyDefinition> GetLoadedAssemblies()
+        {
+            return _loadedAssemblies;
         }
 
         public void BuildTypesTree(IDictionary<string, IEnumerable<TypeDefinition>> typesDictionary)

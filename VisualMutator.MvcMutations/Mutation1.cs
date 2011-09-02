@@ -127,7 +127,7 @@
 
             for (int i = 0; i < 10000; i++)
             {
-                if (currentType.FullName == "<Module>")
+                if (currentType.FullName == "<Module>" || !currentType.IsClass)
                 {
                     return false;
                 }

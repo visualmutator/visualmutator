@@ -78,7 +78,7 @@
         public void GenerateMutants()
         {
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
-
+            var assemblies = _typesManager.GetLoadedAssemblies();
             //  var man = new SessionsManager();
 
             IEnumerable<OperatorNode> operators = _operatorsManager.GetActiveOperators();
@@ -88,7 +88,7 @@
                 mutationOperator.Operator.Mutate(types);
             }
 
-            SaveSession(operators, types);
+            SaveSession(operators, types, assemblies);
         }
 
         public void DeleteSession(MutationSession session)
@@ -121,11 +121,10 @@
             }
         }
 
-        private void SaveSession(
-            IEnumerable<OperatorNode> operators, IEnumerable<TypeDefinition> types)
+        private void SaveSession(IEnumerable<OperatorNode> operators, IEnumerable<TypeDefinition> types,
+            IEnumerable<AssemblyDefinition> assemblyDefinitions)
         {
-            IEnumerable<AssemblyDefinition> assemblies =
-                types.Select(t => t.Module.Assembly).Distinct();
+         
             string name = DateTime.Now.ToString("dd.MM.yyyy HH-mm-ss");
 
             var session = new MutationSession
@@ -139,7 +138,7 @@
             string path = _visualStudio.GetMutantsRootFolderPath();
             string dir = Path.Combine(path, name);
             Directory.CreateDirectory(dir);
-            foreach (AssemblyDefinition assemblyDefinition in assemblies)
+            foreach (AssemblyDefinition assemblyDefinition in assemblyDefinitions)
             {
                 
                 

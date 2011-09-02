@@ -13,12 +13,15 @@
     using EnvDTE80;
 
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.Win32;
 
     #endregion
 
     public interface IVisualStudioConnection
     {
         SolutionEvents SolutionEvents { get; }
+
+        string InstallPath { get; }
 
         IEnumerable<string> GetProjectPaths();
 
@@ -39,6 +42,7 @@
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(DTE));
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
+          //  _dte.
         }
 
         public SolutionEvents SolutionEvents
@@ -46,6 +50,17 @@
             get
             {
                 return _solutionEvents;
+            }
+        }
+
+        public string InstallPath
+        {
+            get
+            {
+                RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\10.0\Setup\VS");
+                string vsInstallationPath = regKey.GetValue("ProductDir").ToString();
+                regKey.Close();
+                return vsInstallationPath;
             }
         }
 
