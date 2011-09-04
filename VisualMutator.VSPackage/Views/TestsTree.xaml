@@ -1,0 +1,95 @@
+﻿<UserControl x:Class="PiotrTrzpil.VisualMutator_VSPackage.Views.TestsTree"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
+             xmlns:AttachedBehaviors="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.AttachedBehaviors"
+             xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
+             xmlns:Tests="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Tests" mc:Ignorable="d" d:DesignHeight="116"
+             d:DesignWidth="365">
+
+  <UserControl.Resources>
+
+    <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
+
+    <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
+      <Setter Property="Height" Value="10"/>
+      <Setter Property="Width" Value="10"/>
+      <Setter Property="Margin" Value="0,0,5,0"/>
+      <Setter Property="Stroke" Value="Black"/>
+    </Style>
+    <Style TargetType="Image">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Stretch" Value="None"/>
+      <Setter Property="Margin" Value="0,0,2,0"/>
+    </Style>
+    <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+  </UserControl.Resources>
+
+  <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
+
+ 
+
+      <TreeView ItemsSource="{Binding TestNamespaces}">
+
+        <TreeView.Resources>
+          <HierarchicalDataTemplate DataType="{x:Type Tests:TestNodeNamespace}"
+                                    ItemsSource="{Binding Children}">
+            <DockPanel>
+              <Image Source="Resources/namespace.png"/>
+              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
+                         Fill="{Binding State, Converter={StaticResource TestStatusToFillConverter}}"/>
+              <TextBlock Text="{Binding Name}"/>
+            </DockPanel>
+          </HierarchicalDataTemplate>
+
+            
+          <HierarchicalDataTemplate DataType="{x:Type Tests:TestNodeClass}"
+                                    ItemsSource="{Binding Children}">
+            <DockPanel>
+              <Image Source="Resources/type.png"/>
+              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
+                         Fill="{Binding State, Converter={StaticResource TestStatusToFillConverter}}"/>
+              <TextBlock Text="{Binding Name}"/>
+            </DockPanel>
+          </HierarchicalDataTemplate>
+
+            
+          <DataTemplate DataType="{x:Type Tests:TestNodeMethod}">
+            <DockPanel>
+              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
+                         Fill="{Binding State, Converter={StaticResource TestStatusToFillConverter}}"/>
+              <TextBlock Text="{Binding Name}"/>
+            </DockPanel>
+          </DataTemplate>
+
+        </TreeView.Resources>
+
+        <TreeView.ItemContainerStyle>
+          <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="AttachedBehaviors:MouseDoubleClickBehavior.MouseDoubleClick"
+                    Value="{Binding CommandRunTest}"/>
+            <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
+          </Style>
+        </TreeView.ItemContainerStyle>
+
+        <i:Interaction.Behaviors>
+          <AttachedBehaviors:BindableSelectedItemBehaviour
+SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}"/>
+        </i:Interaction.Behaviors>
+
+      </TreeView>
+
+      <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Visibility="{Binding AreTestsLoading, 
+                Converter={StaticResource BoolToVisibilityConverter} }"/>
+
+
+
+  </Grid>
+</UserControl>

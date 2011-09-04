@@ -14,17 +14,18 @@
     {
 
         public AssemblyNode(string name)
-            : base(null, name)
+            : base(null, name, true)
         {
 
         }
 
     }
+
     public class TypeNamespaceNode : RecursiveNode
     {
 
         public TypeNamespaceNode(RecursiveNode parent, string name)
-            : base(parent,name)
+            : base(parent, name, true)
         {
            
         }
@@ -37,7 +38,7 @@
         private readonly TypeDefinition _typeDefinition;
 
         public TypeNode(RecursiveNode parent, string name, TypeDefinition typeDefinition)
-            : base(parent,name)
+            : base(parent, name, false)
         {
             _typeDefinition = typeDefinition;
         }

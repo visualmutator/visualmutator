@@ -137,16 +137,16 @@
             _unitTestsVm.TestNamespaces.Clear();
             Task.Factory.StartNew(() =>
             {
-                return _testsContainer.LoadTests(_unitTestsVm.SelectedMutant);
+                return _testsContainer.LoadTests(_unitTestsVm.SelectedMutant.Assemblies);
 
             }).ContinueWith(prev =>
             {
-                _unitTestsVm.AreTestsLoading = false;
                 if (prev.Exception != null)
                 {
                     _messageBoxService.ShowError(prev.Exception);
                 }
                 _unitTestsVm.TestNamespaces.ReplaceRange(prev.Result);
+                _unitTestsVm.AreTestsLoading = false;
 
             }, _execute.WpfScheduler);
 

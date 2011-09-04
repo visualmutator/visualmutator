@@ -20,21 +20,24 @@
         public override void Load()
         {
             Kernel.Bind<UnitTestsController>().ToSelf().InSingletonScope();
-
-
-
-            Kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
             Kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
+            Kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
+            
 
 
             Kernel.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
 
+
+
             Kernel.Bind<NUnitTestService>().ToSelf().InSingletonScope();
-
-
-
             Kernel.Bind<MsTestService>().ToSelf().InSingletonScope();
 
+            Kernel.Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
+            Kernel.Bind<IMsTestWrapper>().To<MsTestWrapper>().InSingletonScope();
+            
+
+
+            
 
 
             Kernel.Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));

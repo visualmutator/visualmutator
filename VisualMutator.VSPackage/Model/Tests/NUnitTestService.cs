@@ -18,34 +18,27 @@
 
     public class NUnitTestService : AbstractTestService
     {
+        private readonly INUnitWrapper _nUnitWrapper;
+
         private readonly IMessageService _messageService;
 
-        private readonly TestLoader _testLoader;
+  
 
-        public NUnitTestService(IMessageService messageService)
+        public NUnitTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
         {
+            _nUnitWrapper = nUnitWrapper;
             _messageService = messageService;
 
-            ServiceManager.Services.AddService(new SettingsService());
-            ServiceManager.Services.AddService(new DomainManager());
-            ServiceManager.Services.AddService(new RecentFilesService());
-            ServiceManager.Services.AddService(new ProjectService());
-            ServiceManager.Services.AddService(new TestLoader());
-            ServiceManager.Services.AddService(new AddinRegistry());
-            ServiceManager.Services.AddService(new AddinManager());
-            ServiceManager.Services.AddService(new TestAgency());
-
-            _testLoader = new TestLoader();
         }
 
-        public TestLoader TestLoader
+        public INUnitWrapper TestLoader
         {
             get
             {
-                return _testLoader;
+                return _nUnitWrapper;
             }
         }
-
+/*
         private TestFilter MakeNameFilter(ICollection<ITest> tests)
         {
             if (tests == null || tests.Count == 0)
@@ -61,35 +54,44 @@
 
             return nameFilter;
         }
-
+*/
         public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
         {
             TestMap.Clear();
             IEnumerable<TestNodeClass> tests = null;
             using (var job = new TestsLoadJob(this, assemblies))
             {
-                job.Subscribe(arg => tests = BuildTestTree(arg));
+                job.Subscribe(arg => tests = BuildTestTree(arg),
+                    ex => _messageService.ShowError(ex));
             }
+
+            if (tests == null)
+            {
+                throw new InvalidOperationException();
+            }
+
             return tests;
         }
 
-        public override void RunTests()
+        public override List<TestNodeMethod> RunTests()
         {
-            TestMap.Values.Each(t => t.Status = TestStatus.Running);
-
+            var list = new List<TestNodeMethod>();
             using (var eventObj = new ManualResetEventSlim())
+            using (var job = new TestsRunJob(this))
             {
-                using (var job = new TestsRunJob(this))
+                job.Subscribe(result =>
                 {
-                    job.Subscribe(result =>
-                    {
-                        TestTreeNode node = TestMap[result.Test.TestName.UniqueName];
-                        node.Status = result.IsSuccess ? TestStatus.Success : TestStatus.Failure;
-                        node.Message = result.Message;
-                    }, () => { eventObj.Set(); });
-                    eventObj.Wait();
-                }
+                    TestNodeMethod node = TestMap[result.Test.TestName.UniqueName];
+                    node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
+                    node.Message = result.Message;
+                    list.Add(node);
+                },
+                ex => _messageService.ShowError(ex),
+                eventObj.Set);
+
+                eventObj.Wait();
             }
+            return list;
         }
 
         private IEnumerable<TestNodeClass> BuildTestTree(ITest test)
@@ -100,23 +102,19 @@
             foreach (ITest testClass in classes.Where(c => c.Tests != null
                                                            && c.Tests.Count != 0))
             {
-                var c = new TestNodeClass
+                var c = new TestNodeClass(testClass.TestName.Name)
                 {
-                    Name = testClass.TestName.Name,
                     Namespace = testClass.Parent.TestName.FullName
                 };
 
                 foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
                 {
-                    var m = new TestNodeMethod
-                    {
-                        Name = testMethod.TestName.Name,
-                    };
-                    c.TestMethods.Add(m);
+                    var m = new TestNodeMethod(c, testMethod.TestName.Name);
+                    c.Children.Add(m);
                     TestMap.Add(testMethod.TestName.UniqueName, m);
                 }
 
-                TestMap.Add(testClass.TestName.UniqueName, c);
+                //TestMap.Add(testClass.TestName.UniqueName, c);
                 list.Add(c);
             }
             return list;
@@ -146,9 +144,9 @@
         {
             private readonly NUnitTestService _service;
 
-            private readonly IDisposable _testLoadFailed;
+            private IDisposable _testLoadFailed;
 
-            private readonly IDisposable _testLoaded;
+            private IDisposable _testLoaded;
 
             private IEnumerable<string> _assemblies;
 
@@ -159,12 +157,7 @@
                 _service = service;
                 _assemblies = assemblies;
 
-                _testLoaded = Observable.FromEvent<TestEventArgs>(_service.TestLoader.Events, "TestLoaded")
-                    .Select(e => e.EventArgs).Subscribe(TestLoadedHandler);
-
-                _testLoadFailed = Observable.FromEvent<TestEventArgs>(
-                    _service.TestLoader.Events, "TestLoadFailed")
-                    .Select(e => e.EventArgs).Subscribe(TestLoadFailedHandler);
+                
             }
 
             public void Dispose()
@@ -176,22 +169,17 @@
             public IDisposable Subscribe(IObserver<ITest> observer)
             {
                 _observer = observer;
-
-                _service.TestLoader.NewProject();
-                foreach (string project in _assemblies)
-                {
-                    _service.TestLoader.TestProject.ActiveConfig.Assemblies.Add(project);
-                }
-
-                _service.TestLoader.LoadTest();
+                _testLoaded = _service.TestLoader.TestLoaded.Subscribe(TestLoadedHandler);
+                _testLoadFailed = _service.TestLoader.TestLoadFailed.Subscribe(TestLoadFailedHandler);
+                _service.TestLoader.LoadTests(_assemblies);
                 return this;
             }
 
-            private void TestLoadedHandler(TestEventArgs sArgs)
+            private void TestLoadedHandler(ITest test)
             {
                 try
                 {
-                    _observer.OnNext(sArgs.Test);
+                    _observer.OnNext(test);
                 }
                 catch (Exception e)
                 {
@@ -218,57 +206,53 @@
 
         private class TestsRunJob : IObservable<TestResult>, IDisposable
         {
-            private readonly IDisposable _runFinished;
+            private IDisposable _runFinished;
 
             private readonly NUnitTestService _service;
 
-            private readonly IDisposable _testFinished;
+            private IDisposable _testFinished;
 
             private IObserver<TestResult> _observer;
 
-            private IDisposable _suiteFinished;
+          //  private IDisposable _suiteFinished;
 
             public TestsRunJob(NUnitTestService service)
             {
                 _service = service;
 
-                _testFinished = Observable.FromEvent<TestEventArgs>(
-                    _service.TestLoader.Events, "TestFinished")
-                    .Select(e => e.EventArgs.Result)
-                    .Subscribe(TestFinishedHandler);
-
-                _suiteFinished = Observable.FromEvent<TestEventArgs>(
-                    _service.TestLoader.Events, "SuiteFinished")
-                    .Select(e => e.EventArgs.Result)
-                    .Where(result => result.Test.TestType == "TestFixture")
-                    .Subscribe(TestFinishedHandler);
-
-                _runFinished = Observable.FromEvent<TestEventArgs>(
-                    _service.TestLoader.Events, "RunFinished")
-                    .Select(e => e.EventArgs.Result)
-                    .Subscribe(RunFinishedHandler);
             }
 
             public void Dispose()
             {
                 _testFinished.Dispose();
                 _runFinished.Dispose();
-                _suiteFinished.Dispose();
+                //  _suiteFinished.Dispose();
             }
 
             public IDisposable Subscribe(IObserver<TestResult> observer)
             {
                 _observer = observer;
+
+                _testFinished = _service.TestLoader.TestFinished.Subscribe(TestFinished);
+                /*
+                _suiteFinished = Observable.FromEvent<TestEventArgs>(
+                    _service.TestLoader.Events, "SuiteFinished")
+                    .Select(e => e.EventArgs.Result)
+                    .Where(result => result.Test.TestType == "TestFixture")
+                    .Subscribe(_observer.OnNext);
+                */
+                _runFinished = _service.TestLoader.RunFinished.Subscribe(RunFinished);
                 _service.TestLoader.RunTests();
                 return this;
             }
 
-            private void TestFinishedHandler(TestResult result)
+            private void TestFinished(TestResult result)
             {
+
                 _observer.OnNext(result);
             }
 
-            private void RunFinishedHandler(TestResult sArgs)
+            private void RunFinished(TestResult result)
             {
                 _observer.OnCompleted();
             }

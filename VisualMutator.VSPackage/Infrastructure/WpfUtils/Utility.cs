@@ -30,14 +30,15 @@
             }
             return obs;
         }
-        public static void Each<T>(this IEnumerable<T> collection, Action<T> action )
+   
+        public static IEnumerable<T> Each<T>(this IEnumerable<T> collection, Action<T> action)
         {
             foreach (T item in collection)
             {
                 action(item);
             }
+            return collection;
         }
-
         public static string InQuotes(this string str)
         {
             return @"""" + str + @"""";

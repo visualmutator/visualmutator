@@ -13,21 +13,21 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
     {
         IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
 
-        void RunTests();
+        List<TestNodeMethod> RunTests();
     }
 
     public abstract class AbstractTestService : ITestService
     {
         public abstract IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
 
-        public abstract void RunTests();
+        public abstract List<TestNodeMethod> RunTests();
 
         protected AbstractTestService()
         {
-            TestMap = new Dictionary<string, TestTreeNode>();
+            TestMap = new Dictionary<string, TestNodeMethod>();
         }
 
-        protected IDictionary<string, TestTreeNode> TestMap
+        public IDictionary<string, TestNodeMethod> TestMap
         {
             get;
             set;

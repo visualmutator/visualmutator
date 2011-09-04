@@ -11,24 +11,25 @@
 
     #endregion
 
-    [ValueConversion(typeof(TestStatus), typeof(Brush))]
+    [ValueConversion(typeof(TestNodeState), typeof(Brush))]
     public class TestStatusToFillConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var st = (TestStatus)value;
+            var st = (TestNodeState)value;
 
-            return st == TestStatus.Inconclusive  ? Brushes.Gainsboro
-                    : st == TestStatus.Failure ? Brushes.Red 
-                    : st == TestStatus.Success ? Brushes.Green
-                    : st == TestStatus.Running ? Brushes.Blue 
+            return st == TestNodeState.Inactive  ? Brushes.Gainsboro
+                    : st == TestNodeState.Failure ? Brushes.Red 
+                    : st == TestNodeState.Inconclusive ? Brushes.Orange
+                    : st == TestNodeState.Success ? Brushes.Green
+                    : st == TestNodeState.Running ? Brushes.Blue 
                     : Binding.DoNothing;
         }
 
         public object ConvertBack(
             object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Binding.DoNothing;
+            throw new InvalidOperationException();
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace VisualMutator.Tests
+﻿namespace VisualMutator.Tests.Util
 {
     #region Usings
 
+    using System.Collections.Generic;
     using System.Diagnostics;
 
     using NUnit.Framework;
@@ -15,5 +16,7 @@
         {
             Assert.AreEqual(another, obj);
         }
+
+        
     }
 }

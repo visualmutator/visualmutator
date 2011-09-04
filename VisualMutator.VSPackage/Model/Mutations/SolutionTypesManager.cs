@@ -75,7 +75,7 @@
         public void BuildTypesTree(IDictionary<string, IEnumerable<TypeDefinition>> typesDictionary)
         {
             Assemblies.Clear();
-            var root = new RecursiveNode(null, "");
+            var root = new FakeNode();
 
             foreach (var pair in typesDictionary)
             {

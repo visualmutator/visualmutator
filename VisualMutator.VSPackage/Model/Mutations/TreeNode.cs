@@ -2,6 +2,8 @@
 {
     #region Usings
 
+    using System;
+    using System.Collections;
     using System.Collections.Generic;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
@@ -163,32 +165,45 @@
             SetIsIncluded(state, updateChildren: false, updateParent:true);
         }
     }
-  
+
+    public class FakeNode : RecursiveNode
+    {
+        public FakeNode()
+            : base(null, "", true)
+        {
+        }
+    }
 
     public class RecursiveNode : Node
   
     {
         private BetterObservableCollection<RecursiveNode> _children;
 
-        public RecursiveNode(RecursiveNode parent, string name)
+        protected RecursiveNode(RecursiveNode parent, string name, bool hasChildren)
             : base(name)
         {
             _parent = parent;
+            if (hasChildren)
             _children = new BetterObservableCollection<RecursiveNode>();
+
         }
 
         private RecursiveNode _parent;
 
-      
+    
         public RecursiveNode Parent
         {
             get
             {
-                return this._parent;
+                return _parent;
+            }
+            set
+            {
+                _parent = value;
             }
         }
 
-        public IList<RecursiveNode> Children
+        public BetterObservableCollection<RecursiveNode> Children
         {
             get
             {
@@ -206,6 +221,7 @@
 
         protected override void UpdateChildren()
         {
+            if(Children != null)
             Children.Each(c => 
                 c.SetIsIncluded(_isIncluded, updateChildren: true, updateParent: false));
         }

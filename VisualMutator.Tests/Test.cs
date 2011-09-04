@@ -10,7 +10,7 @@
     using NUnit.Framework;
 
     [TestClass]
-    public class Test
+    public class Testsa
     {
 
         [TestMethod]

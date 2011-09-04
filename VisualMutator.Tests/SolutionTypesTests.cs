@@ -11,6 +11,8 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
+    using VisualMutator.Tests.Util;
+
     [TestFixture]
     public class SolutionTypesTests
     {

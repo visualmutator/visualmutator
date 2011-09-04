@@ -200,13 +200,15 @@
     <Compile Include="Model\Mutations\TypeNode.cs" />
     <Compile Include="Model\Tests\ITestService.cs" />
     <Compile Include="Model\Tests\MsTestService.cs" />
+    <Compile Include="Model\Tests\MsTestWrapper.cs" />
     <Compile Include="Model\Tests\NUnitTestService.cs" />
-    <Compile Include="Model\Tests\TestNodeMethod.cs" />
-    <Compile Include="Model\Tests\TestNodeNamespace.cs" />
+    <Compile Include="Model\Tests\NUnitWrapper.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeMethod.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeNamespace.cs" />
     <Compile Include="Model\Tests\TestsContainer.cs" />
-    <Compile Include="Model\Tests\TestStatus.cs" />
-    <Compile Include="Model\Tests\TestTreeNode.cs" />
-    <Compile Include="Model\Tests\TestNodeClass.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeState.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestTreeNode.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeClass.cs" />
     <Compile Include="Model\VisualStudioConnection.cs" />
     <Compile Include="Views\Abstract\IILMutationsView.cs" />
     <Compile Include="ViewModels\ILMutationsViewModel.cs" />
@@ -216,6 +218,9 @@
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
+    <Compile Include="Views\TestsTree.xaml.cs">
+      <DependentUpon>TestsTree.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainControl.xaml.cs">
       <DependentUpon>MainControl.xaml</DependentUpon>
     </Compile>
@@ -280,6 +285,10 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\TestsTree.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

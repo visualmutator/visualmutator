@@ -13,22 +13,7 @@
 
   <UserControl.Resources>
 
-    <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
-
-    <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
-      <Setter Property="Height" Value="10"/>
-      <Setter Property="Width" Value="10"/>
-      <Setter Property="Margin" Value="0,0,5,0"/>
-      <Setter Property="Stroke" Value="Black"/>
-    </Style>
-    <Style TargetType="Image">
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="HorizontalAlignment" Value="Left"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-      <Setter Property="Stretch" Value="None"/>
-      <Setter Property="Margin" Value="0,0,2,0"/>
-    </Style>
-    <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+  
   </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
@@ -43,9 +28,10 @@
     </Grid.RowDefinitions>
 
     <DockPanel Grid.Row="0">
-      <Button HorizontalAlignment="Left" Content="Run Tests" Command="{Binding CommandRunTests}"/>
-      <CheckBox Content="Current Solution" IsChecked="{Binding TestCurrentSolution}"/>
-
+      
+        <ComboBox />
+            
+        <Button HorizontalAlignment="Left" Content="Run Tests" Command="{Binding CommandRunTests}"/>
     </DockPanel>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
@@ -62,66 +48,8 @@
     </ScrollViewer>
     <GridSplitter Grid.Row="2" Width="Auto" HorizontalAlignment="Stretch"/>
 
-    <Grid Grid.Row="3">
+    <Views:TestsTree Grid.Row="3" />
 
-      <TreeView ItemsSource="{Binding TestNamespaces}">
-
-        <TreeView.Resources>
-          <HierarchicalDataTemplate DataType="{x:Type Tests:TestNodeNamespace}"
-                                    ItemsSource="{Binding TestClasses}">
-            <DockPanel>
-              <Image Source="Resources/namespace.png"/>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
-                         Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}"/>
-              <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </HierarchicalDataTemplate>
-
-            
-          <HierarchicalDataTemplate DataType="{x:Type Tests:TestNodeClass}"
-                                    ItemsSource="{Binding TestMethods}">
-            <DockPanel>
-              <Image Source="Resources/type.png"/>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
-                         Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}"/>
-              <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </HierarchicalDataTemplate>
-
-            
-          <DataTemplate DataType="{x:Type Tests:TestNodeMethod}">
-            <DockPanel>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
-                         Fill="{Binding Status, Converter={StaticResource TestStatusToFillConverter}}"/>
-              <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </DataTemplate>
-
-        </TreeView.Resources>
-
-        <TreeView.ItemContainerStyle>
-          <Style TargetType="{x:Type TreeViewItem}">
-            <Setter Property="AttachedBehaviors:MouseDoubleClickBehavior.MouseDoubleClick"
-                    Value="{Binding CommandRunTest}"/>
-            <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
-          </Style>
-        </TreeView.ItemContainerStyle>
-
-        <i:Interaction.Behaviors>
-          <AttachedBehaviors:BindableSelectedItemBehaviour
-SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}"/>
-        </i:Interaction.Behaviors>
-
-      </TreeView>
-
-      <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                             Visibility="{Binding AreTestsLoading, 
-                Converter={StaticResource BoolToVisibilityConverter} }"/>
-
-      <!---->
-
-
-    </Grid>
 
     <GridSplitter Grid.Row="4" Width="Auto" HorizontalAlignment="Stretch"/>
 
