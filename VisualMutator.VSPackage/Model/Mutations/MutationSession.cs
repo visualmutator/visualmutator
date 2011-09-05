@@ -14,6 +14,10 @@
 
         public List<string> MutatedTypes { get; set; }
 
-        public List<string> Assemblies { get; set; }
+        public List<string> Assemblies
+        {
+            get;
+            set;
+        }
     }
 }

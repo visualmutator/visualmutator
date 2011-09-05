@@ -23,6 +23,8 @@
 
         string InstallPath { get; }
 
+        BuildEvents BuildEvents { get; }
+
         IEnumerable<string> GetProjectPaths();
 
         string GetMutantsRootFolderPath();
@@ -38,11 +40,23 @@
 
         private readonly SolutionEvents _solutionEvents;
 
+        private BuildEvents _buildEvents;
+
         public VisualStudioConnection()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(DTE));
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
-          //  _dte.
+            _buildEvents = ((Events2)_dte.Events).BuildEvents;
+
+            //  _dte.
+        }
+
+        public BuildEvents BuildEvents
+        {
+            get
+            {
+                return _buildEvents;
+            }
         }
 
         public SolutionEvents SolutionEvents

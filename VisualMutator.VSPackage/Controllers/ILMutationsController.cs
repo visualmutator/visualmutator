@@ -7,6 +7,7 @@
 
     using EnvDTE;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
@@ -45,7 +46,7 @@
             _viewModel.CommandMutate = new BasicCommand(Mutate);
             _viewModel.CommandRefresh = new BasicCommand(Refresh);
 
-            _viewModel.Assemblies = _typesManager.Assemblies;
+            _viewModel.Assemblies = new BetterObservableCollection<AssemblyNode>();
             _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
         }
 
@@ -61,10 +62,19 @@
         public void Initialize()
         {
           //  _viewModel.IsVisible = true;
+            _visualStudio.BuildEvents.OnBuildDone += new _dispBuildEvents_OnBuildDoneEventHandler(BuildEvents_OnBuildDone);
             _visualStudio.SolutionEvents.Opened += ActivateOnSolutionOpened;
             _visualStudio.SolutionEvents.AfterClosing += DeactivateOnSolutionClosed;
             _visualStudio.SolutionEvents.ProjectAdded += HandleProjectAdded;
         }
+
+        void BuildEvents_OnBuildDone(vsBuildScope scope, vsBuildAction action)
+        {
+            
+        }
+
+
+
 
         private void ActivateOnSolutionOpened()
         {
@@ -96,7 +106,9 @@
 
             IEnumerable<string> paths = _visualStudio.GetProjectPaths();
 
-            _typesManager.RefreshTypes(paths);
+            var assemblies = _typesManager.BuildTypesTree(paths);
+            _viewModel.Assemblies.ReplaceRange(assemblies);
+
 
             _operatorsManager.LoadOperators();
         }

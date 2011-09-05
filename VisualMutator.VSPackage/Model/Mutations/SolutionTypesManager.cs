@@ -8,15 +8,13 @@
 
     using Mono.Cecil;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-
     #endregion
 
     public interface ITypesManager
     {
-        BetterObservableCollection<AssemblyNode> Assemblies { get; set; }
+        IEnumerable<AssemblyNode> AssemblyTreeNodes { get; }
 
-        void RefreshTypes(IEnumerable<string> projectsPaths);
+        IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths);
 
         IEnumerable<TypeDefinition> GetIncludedTypes();
 
@@ -25,46 +23,25 @@
 
     public class SolutionTypesManager : ITypesManager
     {
+        private readonly IAssemblyReaderWriter _assemblyReaderWriter;
+
+        private IList<AssemblyNode> _assemblyTreeNodes;
+
         private IEnumerable<AssemblyDefinition> _loadedAssemblies;
 
-        public SolutionTypesManager()
+        private IList<TypeNode> _types;
+
+        public SolutionTypesManager(IAssemblyReaderWriter assemblyReaderWriter)
         {
-            Assemblies = new BetterObservableCollection<AssemblyNode>();
-            Types = new BetterObservableCollection<TypeNode>();
+            _assemblyReaderWriter = assemblyReaderWriter;
         }
 
-
-
-
-        public BetterObservableCollection<AssemblyNode> Assemblies
+        public IEnumerable<AssemblyNode> AssemblyTreeNodes
         {
-            get;
-            set;
-        }
-
-        public BetterObservableCollection<TypeNode> Types
-        {
-            get;
-            set;
-        }
-
-       
-
-
-        public void RefreshTypes(IEnumerable<string> projectsPaths)
-        {
-
-            _loadedAssemblies = projectsPaths
-                .Select(AssemblyDefinition.ReadAssembly);
-            
-
-       //    
-            BuildTypesTree(_loadedAssemblies
-            .ToDictionary(ad=>ad.Name.Name, 
-            ad=>ad.MainModule.Types.Where(t => t.Name != "<Module>")));
-
-            // TypeDefinition d = new TypeDefinition();
-
+            get
+            {
+                return _assemblyTreeNodes;
+            }
         }
 
         public IEnumerable<AssemblyDefinition> GetLoadedAssemblies()
@@ -72,80 +49,75 @@
             return _loadedAssemblies;
         }
 
-        public void BuildTypesTree(IDictionary<string, IEnumerable<TypeDefinition>> typesDictionary)
+        public IEnumerable<TypeDefinition> GetIncludedTypes()
         {
-            Assemblies.Clear();
+            return _types.Where(t => (bool)t.IsIncluded).Select(t => t.TypeDefinition);
+        }
+
+        public IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths)
+        {
+            _loadedAssemblies = projectsPaths.Select(p => _assemblyReaderWriter.ReadAssembly(p));
+
+            var typesGroups = _loadedAssemblies.SelectMany(ad => ad.MainModule.Types)
+                .Where(t => t.Name != "<Module>").GroupBy(t => t.Module.Assembly.Name.Name);
+
+            _assemblyTreeNodes = new List<AssemblyNode>();
+            _types = new List<TypeNode>();
             var root = new FakeNode();
 
-            foreach (var pair in typesDictionary)
+            foreach (var types in typesGroups)
             {
-                IEnumerable<TypeDefinition> types = pair.Value;
-
-                var assemblyNode = new AssemblyNode(pair.Key);
-                Rec(assemblyNode, "", types);
+                var assemblyNode = new AssemblyNode(types.Key);
+                GroupTypes(assemblyNode, "", types);
 
                 root.Children.Add(assemblyNode);
-                Assemblies.Add(assemblyNode);
+                _assemblyTreeNodes.Add(assemblyNode);
             }
 
             root.IsIncluded = true;
- 
-        }
 
-        public void Rec(RecursiveNode parent, 
-            string currentNamespace, IEnumerable<TypeDefinition> types)
+            return _assemblyTreeNodes;
+        }
+     
+        public void GroupTypes(RecursiveNode parent,
+                               string currentNamespace, IEnumerable<TypeDefinition> types)
         {
-            var groups = types.Where(t => t.Namespace != currentNamespace &&
-                                          t.Namespace.StartsWith(currentNamespace))
+            var groupsByNamespace = types.Where(t => t.Namespace != currentNamespace &&
+                                                     t.Namespace.StartsWith(currentNamespace))
                 .OrderBy(t => t.Namespace)
                 .GroupBy(t => ExtractNextNamespacePart(t.Namespace, currentNamespace));
 
             var leafTypes = types.Where(t => t.Namespace == currentNamespace)
-               .OrderBy(t => t.Name);
+                .OrderBy(t => t.Name);
 
-
-
-            if (currentNamespace != "" && groups.Count() == 1 && !leafTypes.Any())
+            if (currentNamespace != "" && groupsByNamespace.Count() == 1 && !leafTypes.Any())
             {
-                var singleGroup = groups.Single();
+                var singleGroup = groupsByNamespace.Single();
                 parent.Name = ConcatNamespace(parent.Name, singleGroup.Key);
-                Rec(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup);
+                GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup);
             }
             else
             {
-                foreach (var group in groups)
+                foreach (var typesGroup in groupsByNamespace)
                 {
-                    var node = new TypeNamespaceNode(parent, group.Key);
-                    Rec(node, ConcatNamespace(currentNamespace, group.Key), group);
+                    var node = new TypeNamespaceNode(parent, typesGroup.Key);
+                    GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup);
                     parent.Children.Add(node);
                 }
 
-
-
-                foreach (var typeDefinition in leafTypes)
+                foreach (TypeDefinition typeDefinition in leafTypes)
                 {
                     var typeNode = new TypeNode(parent, typeDefinition.Name, typeDefinition);
                     parent.Children.Add(typeNode);
-                    Types.Add(typeNode);
+                    _types.Add(typeNode);
                 }
             }
-       
-
         }
 
-
-
-        public string InnerNamespace(string namespaceName)
-        {
-            return namespaceName.Remove(0, namespaceName.LastIndexOf(".") + 1);
-        }
-
-        public string ConcatNamespace(string one , string two)
+        public string ConcatNamespace(string one, string two)
         {
             return one == "" ? two : one + "." + two;
         }
-
-
 
         public string ExtractNextNamespacePart(string extractFrom, string namespaceName)
         {
@@ -153,41 +125,15 @@
             {
                 throw new ArgumentException("extractFrom");
             }
-      
+
             if (namespaceName != "")
             {
                 extractFrom = extractFrom.Remove(
                     0, namespaceName.Length + 1);
             }
 
-
-
             int index = extractFrom.IndexOf('.');
             return index != -1 ? extractFrom.Remove(extractFrom.IndexOf('.')) : extractFrom;
-        }
-
-
-        public string Remove(string namespaceName, string toRemove)
-        {
-            return namespaceName.Remove(0, namespaceName.LastIndexOf(".") + 1);
-        }
-
-
-
-        public IEnumerable<TypeDefinition> GetIncludedTypes()
-        {
-            return Types.Select(_ => _.TypeDefinition);
-
-
-            //
-            //            foreach (TypeNamespaceNode assembly in RootNamespaces)
-            //            {
-            //                AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly.AssemblyFilePath);
-            //                foreach (TypeNode type in assembly.Types.Where(t => t.IsLeafIncluded))
-            //                {
-            //                    yield return ad.MainModule.Types.Single(t => t.FullName == type.AssemblyFilePath);
-            //                }
-            //            }
         }
     }
 }

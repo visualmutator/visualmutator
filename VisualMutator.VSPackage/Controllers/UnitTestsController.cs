@@ -111,9 +111,6 @@
         }
 
 
-        public IEnumerable<TestTreeNode> TestsToRun { get; set; }
-
-
         public void ShowTestDetails()
         {
             var method = _unitTestsVm.SelectedTestItem as TestNodeMethod;
@@ -145,8 +142,16 @@
                 {
                     _messageBoxService.ShowError(prev.Exception);
                 }
-                _unitTestsVm.TestNamespaces.ReplaceRange(prev.Result);
-                _unitTestsVm.AreTestsLoading = false;
+                try
+                {
+                    _unitTestsVm.TestNamespaces.ReplaceRange(prev.Result);
+                    _unitTestsVm.AreTestsLoading = false;
+                }
+                catch (Exception e)
+                {
+                    _messageBoxService.ShowError(e);
+                }
+                
 
             }, _execute.WpfScheduler);
 

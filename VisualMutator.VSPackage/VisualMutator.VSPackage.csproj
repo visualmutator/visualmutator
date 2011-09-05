@@ -186,6 +186,7 @@
     <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
     <Compile Include="Infrastructure\WpfUtils\Utility.cs" />
     <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
+    <Compile Include="Model\Mutations\AssemblyReader.cs" />
     <Compile Include="Model\Mutations\TypeNamespaceNode.cs" />
     <Compile Include="Model\Mutations\AssemblyWriter.cs" />
     <Compile Include="Model\Mutations\TreeNode.cs" />

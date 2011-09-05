@@ -7,6 +7,8 @@
 
     using Mono.Cecil;
 
+    using Moq;
+
     using NUnit.Framework;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
@@ -16,18 +18,32 @@
     [TestFixture]
     public class SolutionTypesTests
     {
+        public Mock<IAssemblyReaderWriter> MockAssemblyReaderWriter(IEnumerable<KeyValuePair<string,AssemblyDefinition>> assemblies)
+        {
+            var mock = new Mock<IAssemblyReaderWriter>();
+            foreach (var pair in assemblies)
+            {
+                var pair1 = pair;
+                mock.Setup(_ => _.ReadAssembly(pair1.Key)).Returns(pair.Value);
+            }
+            return mock;
+        }
+        public AssemblyDefinition CreateAssembly(string assemblyName, IEnumerable<TypeDefinition> types)
+        {
+            var assembly = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition(assemblyName, new Version()),
+               "TestModule", ModuleKind.Console);
+            foreach (var typeDefinition in types)
+            {
+                assembly.MainModule.Types.Add(typeDefinition);
+            }
+            return assembly;
+        }
+
 
         [Test]
         public void Test1()
         {
-
-
-
-            var manager = new SolutionTypesManager();
-
-
-
-
+            
             var a = TypeAttributes.Public;
             var list = new List<TypeDefinition>
             {
@@ -47,14 +63,18 @@
                 new TypeDefinition("One.ZZZ.YYY.Four", "Type14", a),
 
             };
-          //  IDictionary<
-            var dict = new Dictionary<string, IEnumerable<TypeDefinition>>();
-            dict.Add("proj", list);
 
-            manager.BuildTypesTree(dict);
+            string path = @"C:\TestAssembly.dll";
+            var dict = new Dictionary<string, AssemblyDefinition>();
+            dict.Add(path, CreateAssembly("TestAssembly", list));
+
+            var mock = MockAssemblyReaderWriter(dict);
+            var manager = new SolutionTypesManager(mock.Object);
+
+            manager.BuildTypesTree(new[] { path });
 
 
-            var one = manager.Assemblies.Single().Children.Single();
+            var one = manager.AssemblyTreeNodes.Single().Children.Single();
 
             one.Children.Count.ShouldEqual(5);
 
@@ -73,7 +93,7 @@
         public void Test2()
         {
 
-            var manager = new SolutionTypesManager();
+            var manager = new SolutionTypesManager(null);
 
            
             manager.ExtractNextNamespacePart("One.Two.Three.Four.Five", "").ShouldEqual("One");

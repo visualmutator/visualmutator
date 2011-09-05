@@ -11,10 +11,7 @@
              xmlns:Tests="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Tests" mc:Ignorable="d" d:DesignHeight="322"
              d:DesignWidth="624">
 
-  <UserControl.Resources>
-
-  
-  </UserControl.Resources>
+  <UserControl.Resources></UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
 
@@ -28,28 +25,18 @@
     </Grid.RowDefinitions>
 
     <DockPanel Grid.Row="0">
-      
-        <ComboBox />
-            
-        <Button HorizontalAlignment="Left" Content="Run Tests" Command="{Binding CommandRunTests}"/>
+
+      <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant}"/>
+
+      <Button HorizontalAlignment="Right" Content="Run Tests" Command="{Binding CommandRunTests}"/>
     </DockPanel>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
-      <ListView AllowDrop="True" SelectionMode="Extended" ItemsSource="{Binding Mutants}" IsManipulationEnabled="True"
-                SelectedItem="{Binding SelectedMutant}">
+    <Grid Grid.Row="1">
+    </Grid>
 
-        <ListView.View>
-          <GridView>
-            <GridViewColumn Width="400" Header="Name" DisplayMemberBinding="{Binding Path=Name}"/>
-            <GridViewColumn Width="300" Header="Datte" DisplayMemberBinding="{Binding Date}"/>
-          </GridView>
-        </ListView.View>
-      </ListView>
-    </ScrollViewer>
     <GridSplitter Grid.Row="2" Width="Auto" HorizontalAlignment="Stretch"/>
 
-    <Views:TestsTree Grid.Row="3" />
-
+    <Views:TestsTree Grid.Row="3"/>
 
     <GridSplitter Grid.Row="4" Width="Auto" HorizontalAlignment="Stretch"/>
 
