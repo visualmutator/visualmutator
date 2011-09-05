@@ -153,7 +153,7 @@
                 }
                 
 
-            }, _execute.WpfScheduler);
+            }, _execute.GuiScheduler);
 
 
         }
@@ -176,7 +176,7 @@
                 }
                 _unitTestsVm.AreTestsRunning = false;
 
-            }, _execute.WpfScheduler);
+            }, _execute.GuiScheduler);
 
 
         }

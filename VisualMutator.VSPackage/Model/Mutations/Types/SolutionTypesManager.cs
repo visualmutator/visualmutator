@@ -79,7 +79,7 @@
             return _assemblyTreeNodes;
         }
      
-        public void GroupTypes(RecursiveNode parent,
+        public void GroupTypes(GenericNode parent,
                                string currentNamespace, IEnumerable<TypeDefinition> types)
         {
             var groupsByNamespace = types.Where(t => t.Namespace != currentNamespace &&

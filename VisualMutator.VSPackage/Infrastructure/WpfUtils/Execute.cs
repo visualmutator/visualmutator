@@ -13,32 +13,32 @@
     {
         void OnUIThread(Action action);
 
-        TaskScheduler WpfScheduler { get; }
+        TaskScheduler GuiScheduler { get; }
     }
 
     public class Execute : IExecute
     {
         private Action<Action> _executor = action => action();
 
-        private TaskScheduler _wpfScheduler;
+        private TaskScheduler _guiScheduler;
 
         public void OnUIThread(Action action)
         {
             _executor(action);
         }
 
-        public TaskScheduler WpfScheduler
+        public TaskScheduler GuiScheduler
         {
             get
             {
-                return _wpfScheduler;
+                return _guiScheduler;
             }
         }
 
         public void InitializeWithDispatcher()
         {
             Dispatcher dispatcher = Application.Current.Dispatcher;
-            _wpfScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            _guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
 
             _executor = action =>

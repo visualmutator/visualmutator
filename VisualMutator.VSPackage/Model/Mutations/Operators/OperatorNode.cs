@@ -3,7 +3,6 @@
     #region Usings
 
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
 
     using VisualMutator.Extensibility;
 
@@ -24,8 +23,8 @@
             : base(root, operatorsPack.Name)
         {
             _operatorsPack = operatorsPack;
-        
-            
+
+
         }
 
         public IOperatorsPack OperatorsPack
@@ -44,5 +43,16 @@
                 return Children;
             }
         }
+    }
+    public class OperatorNode : LeafNode<PackageNode, OperatorNode>
+    {
+        public OperatorNode(PackageNode parent, IMutationOperator mutationOperator)
+            : base(parent, mutationOperator.Name)
+        {
+            Operator = mutationOperator;
+         
+        }
+
+        public IMutationOperator Operator { get; set; }
     }
 }

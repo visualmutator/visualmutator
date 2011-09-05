@@ -166,7 +166,7 @@
         }
     }
 
-    public class FakeNode : RecursiveNode
+    public class FakeNode : GenericNode
     {
         public FakeNode()
             : base(null, "", true)
@@ -174,24 +174,24 @@
         }
     }
 
-    public class RecursiveNode : Node
+    public class GenericNode : Node
   
     {
-        private BetterObservableCollection<RecursiveNode> _children;
+        private BetterObservableCollection<GenericNode> _children;
 
-        protected RecursiveNode(RecursiveNode parent, string name, bool hasChildren)
+        protected GenericNode(GenericNode parent, string name, bool hasChildren)
             : base(name)
         {
             _parent = parent;
             if (hasChildren)
-            _children = new BetterObservableCollection<RecursiveNode>();
+            _children = new BetterObservableCollection<GenericNode>();
 
         }
 
-        private RecursiveNode _parent;
+        private GenericNode _parent;
 
     
-        public RecursiveNode Parent
+        public GenericNode Parent
         {
             get
             {
@@ -203,7 +203,7 @@
             }
         }
 
-        public BetterObservableCollection<RecursiveNode> Children
+        public BetterObservableCollection<GenericNode> Children
         {
             get
             {

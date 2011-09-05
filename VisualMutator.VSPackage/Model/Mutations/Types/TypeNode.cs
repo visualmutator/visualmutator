@@ -10,7 +10,7 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
 
     #endregion
-    public class AssemblyNode : RecursiveNode
+    public class AssemblyNode : GenericNode
     {
 
         public AssemblyNode(string name)
@@ -21,10 +21,10 @@
 
     }
 
-    public class TypeNamespaceNode : RecursiveNode
+    public class TypeNamespaceNode : GenericNode
     {
 
-        public TypeNamespaceNode(RecursiveNode parent, string name)
+        public TypeNamespaceNode(GenericNode parent, string name)
             : base(parent, name, true)
         {
            
@@ -33,11 +33,11 @@
     }
 
 
-    public class TypeNode : RecursiveNode
+    public class TypeNode : GenericNode
     {
         private readonly TypeDefinition _typeDefinition;
 
-        public TypeNode(RecursiveNode parent, string name, TypeDefinition typeDefinition)
+        public TypeNode(GenericNode parent, string name, TypeDefinition typeDefinition)
             : base(parent, name, false)
         {
             _typeDefinition = typeDefinition;

@@ -12,7 +12,7 @@
 
     #endregion
 
-    public abstract class TestTreeNode : RecursiveNode
+    public abstract class TestTreeNode : GenericNode
     {
         private ICommand _commandRunTest;
 
