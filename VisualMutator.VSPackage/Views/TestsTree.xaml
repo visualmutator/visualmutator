@@ -8,19 +8,48 @@
              xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
-             xmlns:Tests="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Tests" mc:Ignorable="d" d:DesignHeight="116"
+             xmlns:Tests="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Tests"
+             xmlns:PipedConverters="clr-namespace:PipedConverters" mc:Ignorable="d" d:DesignHeight="116"
              d:DesignWidth="365">
 
   <UserControl.Resources>
 
-    <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
+        <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
+<!--
+        <PipedConverters:ValueConverterGroup >
+            <Converters:CloningConverter/>
+            <Converters:TestStatusToFillConverter/>
+        </PipedConverters:ValueConverterGroup> -->
 
-    <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
+
+        <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
       <Setter Property="Height" Value="10"/>
       <Setter Property="Width" Value="10"/>
       <Setter Property="Margin" Value="0,0,5,0"/>
       <Setter Property="Stroke" Value="Black"/>
-    </Style>
+            <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType={x:Type TreeViewItem}}, Path=DataContext.State,
+                Converter={StaticResource TestStatusToFillConverter}}"/>
+      
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType={x:Type TreeViewItem}}, Path=DataContext.State}" Value="Running">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"  Duration="0:0:1" RepeatBehavior="Forever">
+                                    <DiscreteObjectKeyFrame Value="{x:Static Visibility.Visible}" />
+                                    <DiscreteObjectKeyFrame Value="{x:Static Visibility.Hidden}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                 
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                </DataTrigger>
+
+            </Style.Triggers>
+
+        </Style>
     <Style TargetType="Image">
       <Setter Property="VerticalAlignment" Value="Center"/>
       <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -29,7 +58,9 @@
       <Setter Property="Margin" Value="0,0,2,0"/>
     </Style>
     <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-  </UserControl.Resources>
+
+ 
+    </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
 
@@ -42,9 +73,9 @@
                                     ItemsSource="{Binding Children}">
             <DockPanel>
               <Image Source="Resources/namespace.png"/>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
-                         Fill="{Binding State, Converter={StaticResource TestStatusToFillConverter}}"/>
-              <TextBlock Text="{Binding Name}"/>
+                        <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
+
+                        <TextBlock Text="{Binding Name}"/>
             </DockPanel>
           </HierarchicalDataTemplate>
 
@@ -53,17 +84,16 @@
                                     ItemsSource="{Binding Children}">
             <DockPanel>
               <Image Source="Resources/type.png"/>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
-                         Fill="{Binding State, Converter={StaticResource TestStatusToFillConverter}}"/>
-              <TextBlock Text="{Binding Name}"/>
+                        <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
+
+                        <TextBlock Text="{Binding Name}"/>
             </DockPanel>
           </HierarchicalDataTemplate>
 
             
           <DataTemplate DataType="{x:Type Tests:TestNodeMethod}">
             <DockPanel>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"
-                         Fill="{Binding State, Converter={StaticResource TestStatusToFillConverter}}"/>
+              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
               <TextBlock Text="{Binding Name}"/>
             </DockPanel>
           </DataTemplate>

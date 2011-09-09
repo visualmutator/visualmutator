@@ -97,7 +97,7 @@
         public void Mutate()
         {
             Refresh();
-            _mutantsContainer.GenerateMutants();
+            _mutantsContainer.GenerateMutants("Mutant");
         }
 
         public void Refresh()

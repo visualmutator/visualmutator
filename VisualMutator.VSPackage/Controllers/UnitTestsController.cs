@@ -47,7 +47,7 @@
 
         private readonly TestLoader _tl;
 
-        private readonly UnitTestsViewModel _unitTestsVm;
+        private readonly UnitTestsViewModel _viewModel;
 
         private readonly IVisualStudioConnection _visualStudioConnection;
 
@@ -74,7 +74,7 @@
 
              _testMap = new Dictionary<string, TestTreeNode>();
 
-            _unitTestsVm = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
+            _viewModel = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
             InitViewModel();
 
         }
@@ -84,18 +84,23 @@
         private void InitViewModel()
         {
             _commandRunTests = new BasicCommand(RunTests, () =>
-               _unitTestsVm.SelectedMutant != null && !_unitTestsVm.AreTestsRunning);
-            _commandRunTests.UpdateOnChanged(_unitTestsVm, () => _unitTestsVm.SelectedMutant);
-            _commandRunTests.UpdateOnChanged(_unitTestsVm, () => _unitTestsVm.AreTestsRunning);
+               _viewModel.SelectedMutant != null && !_viewModel.AreTestsRunning);
+            _commandRunTests.UpdateOnChanged(_viewModel, () => _viewModel.SelectedMutant);
+            _commandRunTests.UpdateOnChanged(_viewModel, () => _viewModel.AreTestsRunning);
 
 
             _reloadTestList = new BasicCommand(RefreshTestList);
-            _reloadTestList.ExecuteOnChanged(_unitTestsVm, () => _unitTestsVm.SelectedMutant);
+            _reloadTestList.ExecuteOnChanged(_viewModel, () => _viewModel.SelectedMutant);
 
             _showTestDetails = new BasicCommand(ShowTestDetails);
-            _showTestDetails.ExecuteOnChanged(_unitTestsVm, () => _unitTestsVm.SelectedTestItem);
+            _showTestDetails.ExecuteOnChanged(_viewModel, () => _viewModel.SelectedTestItem);
 
-            _unitTestsVm.CommandRunTests = _commandRunTests;
+            _viewModel.CommandDeleteMutant = new BasicCommand(DeleteMutant, () => _viewModel.SelectedMutant != null);
+            _viewModel.CommandDeleteMutant.UpdateOnChanged(_viewModel, () => _viewModel.SelectedMutant);
+
+
+
+            _viewModel.CommandRunTests = _commandRunTests;
 
 
         }
@@ -106,21 +111,26 @@
         {
             get
             {
-                return _unitTestsVm;
+                return _viewModel;
             }
         }
+        public void DeleteMutant()
+        {
+            _mutantsContainer.DeleteMutant(_viewModel.SelectedMutant);
+            _viewModel.SelectedMutant = _viewModel.Mutants.Last();
 
+        }
 
         public void ShowTestDetails()
         {
-            var method = _unitTestsVm.SelectedTestItem as TestNodeMethod;
+            var method = _viewModel.SelectedTestItem as TestNodeMethod;
             if (method != null && method.HasResults)
             {
-                _unitTestsVm.ResultText = method.Message;
+                _viewModel.ResultText = method.Message;
             }
             else
             {
-                _unitTestsVm.ResultText = "";
+                _viewModel.ResultText = "";
             }
         }
 
@@ -130,11 +140,11 @@
         }
         public void RefreshTestList()
         {
-            _unitTestsVm.AreTestsLoading = true;
-            _unitTestsVm.TestNamespaces.Clear();
+            _viewModel.AreTestsLoading = true;
+            _viewModel.TestNamespaces.Clear();
             Task.Factory.StartNew(() =>
             {
-                return _testsContainer.LoadTests(_unitTestsVm.SelectedMutant.Assemblies);
+                return _testsContainer.LoadTests(_viewModel.SelectedMutant.Assemblies);
 
             }).ContinueWith(prev =>
             {
@@ -144,8 +154,8 @@
                 }
                 try
                 {
-                    _unitTestsVm.TestNamespaces.ReplaceRange(prev.Result);
-                    _unitTestsVm.AreTestsLoading = false;
+                    _viewModel.TestNamespaces.ReplaceRange(prev.Result);
+                    _viewModel.AreTestsLoading = false;
                 }
                 catch (Exception e)
                 {
@@ -161,7 +171,7 @@
 
         public void RunTests()
         {
-            _unitTestsVm.AreTestsRunning = true;
+            _viewModel.AreTestsRunning = true;
 
             
             Task.Factory.StartNew(() =>
@@ -174,7 +184,7 @@
                 {
                     _messageBoxService.ShowError(prev.Exception);
                 }
-                _unitTestsVm.AreTestsRunning = false;
+                _viewModel.AreTestsRunning = false;
 
             }, _execute.GuiScheduler);
 

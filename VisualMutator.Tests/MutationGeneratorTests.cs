@@ -15,20 +15,7 @@
     public class MutationGeneratorTests
     {
 
-        [TestMethod]
-        public void Test1()
-        {
-            throw new Exception();
 
-        //    var gen = new MutantGenerator();
-
-
-
-
-          //  gen.GenerateMutants();
-
-
-        }
         
     }
 }

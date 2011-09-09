@@ -16,8 +16,7 @@
     {
         private ICommand _commandRunTest;
 
-        private string _message;
-
+   
         private TestNodeState _state;
 
         protected TestTreeNode(TestTreeNode parent, string name, bool hasChildren)
@@ -35,26 +34,24 @@
             }
         }
 
+  
+        private string _message;
+
         public string Message
         {
             set
             {
-                _message = value;
+                if (_message != value)
+                {
+                    _message = value;
+                    RaisePropertyChanged(() => Message);
+                }
             }
             get
             {
-                if (!HasResults)
-                {
-                    throw new InvalidOperationException("No results");
-                }
-                if (_message == null)
-                {
-                    throw new ArgumentException("Result not set");
-                }
                 return _message;
             }
         }
-
         public ICommand CommandRunTest
         {
             get

@@ -8,6 +8,8 @@
     using System.Linq;
     using System.Xml.Serialization;
 
+    using FileUtils;
+
     using Mono.Cecil;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
@@ -20,9 +22,11 @@
 
         BetterObservableCollection<MutationSession> GeneratedMutants { get; }
 
-        void GenerateMutants();
+        void GenerateMutants(string name);
 
         void LoadSessions();
+
+        void DeleteMutant(MutationSession selectedMutant);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -37,16 +41,28 @@
 
         private readonly IAssemblyReaderWriter _assemblyReaderWriter;
 
+        private readonly IFactory<DateTime> _dateTimeNowFactory;
+
+        private readonly IDirectory _directory;
+
+        private readonly IFile _file;
+
         public MutantsContainer(
             IOperatorsManager operatorsManager,
             ITypesManager typesManager,
             IVisualStudioConnection visualStudio,
-            IAssemblyReaderWriter assemblyReaderWriter)
+            IAssemblyReaderWriter assemblyReaderWriter,
+            IFactory<DateTime> dateTimeNowFactory,
+            IDirectory directory, IFile file
+            )
         {
             _operatorsManager = operatorsManager;
             _typesManager = typesManager;
             _visualStudio = visualStudio;
             _assemblyReaderWriter = assemblyReaderWriter;
+            _dateTimeNowFactory = dateTimeNowFactory;
+            _directory = directory;
+            _file = file;
 
             _generatedMutants = new BetterObservableCollection<MutationSession>();
         }
@@ -78,7 +94,7 @@
 
 
 
-        public void GenerateMutants()
+        public void GenerateMutants(string name)
         {
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
       
@@ -90,13 +106,12 @@
                 mutationOperator.Operator.Mutate(types);
             }
 
-            
 
-            string name = DateTime.Now.ToString("dd.MM.yyyy HH-mm-ss");
 
             var session = new MutationSession
             {
                 Name = name,
+                DateOfCreation = _dateTimeNowFactory.Create(),
                 UsedOperators = operators.Select(o => o.Name).ToList(),
                 MutatedTypes = types.Select(t => t.Name).ToList(),
                 Assemblies = new List<string>(),
@@ -112,45 +127,47 @@
 
         }
 
+
+        public string MutantDirectoryPath(MutationSession mutant)
+        {
+            string path = _visualStudio.GetMutantsRootFolderPath();
+            return Path.Combine(path, mutant.Name + " - " + mutant.DateOfCreation);
+            
+        }
+
+
         public void StoreMutant(MutationSession mutant)
         {
             IEnumerable<AssemblyDefinition> assemblies = _typesManager.GetLoadedAssemblies();
-            string path = _visualStudio.GetMutantsRootFolderPath();
-            string dir = Path.Combine(path, mutant.Name);
-            Directory.CreateDirectory(dir);
+
+            string mutantDirectoryPath = MutantDirectoryPath(mutant);
+            _directory.CreateDirectory(mutantDirectoryPath);
             foreach (AssemblyDefinition assemblyDefinition in assemblies)
             {
-                string file = Path.Combine(dir, assemblyDefinition.Name.Name + ".dll");
+                string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
                 _assemblyReaderWriter.WriteAssembly(assemblyDefinition,file); 
                 mutant.Assemblies.Add(file);   
             }
             foreach (var referenced in _visualStudio.GetReferencedAssemblies())
             {
-
-                File.Copy(referenced, dir + @"\" + Path.GetFileName(referenced));
+                string destination = Path.Combine(mutantDirectoryPath , Path.GetFileName(referenced));
+                _file.Copy(referenced, destination);
             }
         }
 
 
 
-        public void DeleteSession(MutationSession session)
-        {
-            _generatedMutants.Remove(session);
-
-            SaveSettingsFile();
-        }
 
         public void LoadSessions()
         {
             if (File.Exists(SessionsFile))
             {
                 var ser = new XmlSerializer(typeof(List<MutationSession>));
-                List<MutationSession> list = null;
                 using (var file = new StreamReader(SessionsFile))
                 {
                     try
                     {
-                        list = (List<MutationSession>)ser.Deserialize(file);
+                        var list = (List<MutationSession>)ser.Deserialize(file);
                         foreach (MutationSession session in list)
                         {
                             _generatedMutants.Add(session);
@@ -162,7 +179,18 @@
                 }
             }
         }
-       
+
+        public void DeleteMutant(MutationSession mutant)
+        {
+            _generatedMutants.Remove(mutant);
+            SaveSettingsFile();
+
+            string dir = MutantDirectoryPath(mutant);
+            _directory.Delete(dir);
+
+            
+        }
+
         private void SaveSettingsFile()
         {
             var ser = new XmlSerializer(typeof(List<MutationSession>));

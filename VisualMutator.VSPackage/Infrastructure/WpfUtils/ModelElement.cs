@@ -5,6 +5,7 @@
     using System;
     using System.ComponentModel;
     using System.Linq.Expressions;
+    using System.Windows.Forms;
 
     #endregion
 
@@ -14,11 +15,11 @@
 
         protected void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpression)
         {
-            string propertyName = Utility.PropertyName(propertyExpression);
+            string propertyName = propertyExpression.PropertyName();
 
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
-
+       
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (PropertyChanged != null)

@@ -160,14 +160,15 @@
     <Compile Include="Controllers\UnitTestsController.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
+    <Compile Include="Infrastructure\Factories\StaticFactory.cs" />
     <Compile Include="Infrastructure\FileSystem\DirectoryService.cs" />
     <Compile Include="Infrastructure\FileSystem\FileService.cs" />
     <Compile Include="Infrastructure\FileSystem\IDirectory.cs" />
     <Compile Include="Infrastructure\FileSystem\IFile.cs" />
     <Compile Include="Infrastructure\FileSystem\FileSystemService.cs" />
-    <Compile Include="Infrastructure\FuncFactory.cs" />
-    <Compile Include="Infrastructure\IFactory.cs" />
-    <Compile Include="Infrastructure\NinjectFactory.cs" />
+    <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
+    <Compile Include="Infrastructure\Factories\IFactory.cs" />
+    <Compile Include="Infrastructure\Factories\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\InfrastructureModule.cs" />
     <Compile Include="Infrastructure\NinjectModules\MutantsModule.cs" />
     <Compile Include="Infrastructure\NinjectModules\SharedModelsModule.cs" />
@@ -184,7 +185,7 @@
     <Compile Include="Infrastructure\WpfUtils\Messages\MessageService.cs" />
     <Compile Include="Infrastructure\WpfUtils\Messages\MessageServiceExtensions.cs" />
     <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
-    <Compile Include="Infrastructure\WpfUtils\Utility.cs" />
+    <Compile Include="Infrastructure\Utility.cs" />
     <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
     <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
@@ -214,7 +215,10 @@
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Views\Converters\CloningConverter.cs" />
+    <Compile Include="Views\Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
+    <Compile Include="Views\Converters\ValueConverterGroup.cs" />
     <Compile Include="Views\TestsTree.xaml.cs">
       <DependentUpon>TestsTree.xaml</DependentUpon>
     </Compile>

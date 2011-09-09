@@ -4,44 +4,86 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
-             xmlns:AttachedBehaviors="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.AttachedBehaviors"
+             
              xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+         
              xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
-             xmlns:Tests="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Tests" mc:Ignorable="d" d:DesignHeight="322"
+              mc:Ignorable="d" d:DesignHeight="322"
              d:DesignWidth="624">
 
-  <UserControl.Resources></UserControl.Resources>
+  <UserControl.Resources>
+    <Converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5,2,5,2" />
+        </Style>
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+  </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
 
     <Grid.RowDefinitions>
       <RowDefinition Height="25"/>
-      <RowDefinition/>
+            <RowDefinition Height="Auto" />
       <RowDefinition Height="4"/>
       <RowDefinition/>
       <RowDefinition Height="4"/>
-      <RowDefinition/>
+            <RowDefinition Height="100"/>
     </Grid.RowDefinitions>
 
-    <DockPanel Grid.Row="0">
+        <Grid Grid.Row="0">
 
-      <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
 
-      <Button HorizontalAlignment="Right" Content="Run Tests" Command="{Binding CommandRunTests}"/>
-    </DockPanel>
+            </Grid.ColumnDefinitions>
+            <ComboBox  Grid.Column="0" VerticalContentAlignment="Center"  
+                       ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant}" DisplayMemberPath="Name"/>
 
-    <Grid Grid.Row="1">
+            <ProgressBar Grid.Column="0" Opacity="0.5" Visibility="{Binding AreTestsRunning, 
+                Converter={StaticResource BoolToVisibilityConverter} }" IsIndeterminate="True" />
+            
+            <DockPanel Grid.Column="1">
+
+
+                <Button  Content="Delete" Command="{Binding CommandDeleteMutant}"/>
+                <Button  Content="Run Tests" Command="{Binding CommandRunTests}"/>
+            </DockPanel>
+        </Grid>
+      
+
+    <Grid Grid.Row="1"
+          Visibility="{Binding SelectedMutant,  Converter={StaticResource NotNullToVisibilityConverter}}">
+
+      <Grid.RowDefinitions>
+        <RowDefinition Height="25"/>
+        <RowDefinition Height="25"/>
+        <RowDefinition Height="25"/>
+        <RowDefinition Height="25"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition/>
+
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:"/>
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Date of creation:"/>
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="Operators:"/>
+      <TextBlock Grid.Row="3" Grid.Column="0" Text="Affected files:"/>
+
+      <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMutant.Name}"/>
+      <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMutant.DateOfCreation}"/>
+      <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMutant.UsedOperators.Count}"/>
+      <TextBlock Grid.Row="3" Grid.Column="1" Text=""/>
     </Grid>
 
-    <GridSplitter Grid.Row="2" Width="Auto" HorizontalAlignment="Stretch"/>
-
+   
     <Views:TestsTree Grid.Row="3"/>
 
     <GridSplitter Grid.Row="4" Width="Auto" HorizontalAlignment="Stretch"/>
 
     <ScrollViewer Grid.Row="5">
-      <TextBlock Text="{Binding ResultText}"/>
+            <TextBlock FontSize="14" TextWrapping="Wrap"  Text="{Binding SelectedTestItem.Message}"/>
     </ScrollViewer>
 
   </Grid>

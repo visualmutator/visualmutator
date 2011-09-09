@@ -85,6 +85,23 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
+        private BasicCommand _commandDeleteMutant;
+
+        public BasicCommand CommandDeleteMutant
+        {
+            get
+            {
+                return _commandDeleteMutant;
+            }
+            set
+            {
+                if (_commandDeleteMutant != value)
+                {
+                    _commandDeleteMutant = value;
+                    this.RaisePropertyChanged(() => CommandDeleteMutant);
+                }
+            }
+        }
         public Infrastructure.BetterObservableCollection<TestNodeNamespace> TestNamespaces
         {
             set

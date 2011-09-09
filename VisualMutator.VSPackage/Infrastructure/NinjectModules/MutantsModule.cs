@@ -8,6 +8,7 @@
     using Ninject.Modules;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
@@ -28,10 +29,12 @@
            // Kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();
 
 
-
+            Kernel.Bind<IAssemblyReaderWriter>().To<AssemblyReaderWriter>().InSingletonScope();
             Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
             Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
             Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
+
+            Kernel.InjectFuncFactory<DateTime>(() => DateTime.Now);
 
         }
     }

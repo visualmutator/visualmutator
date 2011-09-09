@@ -2,6 +2,7 @@
 {
     #region Usings
 
+    using System;
     using System.Collections.Generic;
 
     #endregion
@@ -19,5 +20,9 @@
             get;
             set;
         }
+
+        public DateTime DateOfCreation { get; set; }
+
+
     }
 }
