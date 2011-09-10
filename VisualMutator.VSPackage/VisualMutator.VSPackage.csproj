@@ -214,6 +214,8 @@
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />
+    <Compile Include="Views\Converters\Converter.cs" />
+    <Compile Include="Views\Converters\DebugConverter.cs" />
     <Compile Include="Views\Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
     <Compile Include="Views\Converters\ValueConverterGroup.cs" />

@@ -8,16 +8,15 @@
     using System.Windows;
     using System.Windows.Data;
     [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class BoolToVisibilityConverter : IValueConverter
+    public class BoolToVisibilityConverter : Converter<BoolToVisibilityConverter, bool, Visibility>
     {
         
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        protected override Visibility Convert(bool value)
         {
-            bool val = (bool)value;
-            return val ? Visibility.Visible : Visibility.Hidden;
+            return value ? Visibility.Visible : Visibility.Hidden;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        protected override bool ConvertBack(Visibility value)
         {
             throw new NotSupportedException();
         }

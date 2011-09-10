@@ -185,6 +185,7 @@
 
         public void RunTests()
         {
+
             _viewModel.AreTestsRunning = true;
 
             

@@ -79,14 +79,17 @@
             object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             _messageService.ShowError(e.Exception,_log );
-    
+            e.Handled = true;
         }
 
         private void CurrentDomain_UnhandledException(
             object sender, UnhandledExceptionEventArgs e)
         {
-            _messageService.ShowError(e.ExceptionObject.ToString(), _log);
-   
+            var exception = (Exception)e.ExceptionObject;
+
+
+            _messageService.ShowError(exception, _log);
+
         }
 
 
