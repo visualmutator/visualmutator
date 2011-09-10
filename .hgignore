@@ -31,3 +31,5 @@ _ReSharper*/
 [Bb]uild[Ll]og.*
 *.[Pp]ublish.xml
 *.resharper
+ConsoleApplication2/ConsoleApplication2.csproj.vs10x
+1.0.lnk
