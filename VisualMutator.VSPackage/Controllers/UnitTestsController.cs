@@ -9,10 +9,11 @@
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Waf.Applications;
+
 
     using NUnit.Core;
     using NUnit.Core.Filters;
@@ -26,6 +27,8 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+
+    using log4net;
 
     using Controller = PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller;
 
@@ -54,7 +57,7 @@
         private BasicCommand _reloadTestList;
         private BasicCommand _showTestDetails;
 
-
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public UnitTestsController(
             IUnitTestsView view,
             IVisualStudioConnection visualStudioConnection,
@@ -138,31 +141,42 @@
         {
            
         }
+        public void Deactivate()
+        {
+          
+        }
         public void RefreshTestList()
         {
+            if (_viewModel.SelectedMutant == null)
+            {
+                return;
+            }
             _viewModel.AreTestsLoading = true;
             _viewModel.TestNamespaces.Clear();
             Task.Factory.StartNew(() =>
             {
+               
                 return _testsContainer.LoadTests(_viewModel.SelectedMutant.Assemblies);
+                
 
             }).ContinueWith(prev =>
             {
-                if (prev.Exception != null)
-                {
-                    _messageBoxService.ShowError(prev.Exception);
-                }
                 try
                 {
-                    _viewModel.TestNamespaces.ReplaceRange(prev.Result);
                     _viewModel.AreTestsLoading = false;
+                    if (prev.Exception != null)
+                    {
+                        _messageBoxService.ShowError(prev.Exception, _log);
+                    }
+                    else
+                    {
+                        _viewModel.TestNamespaces.ReplaceRange(prev.Result);
+                    }  
                 }
                 catch (Exception e)
                 {
-                    _messageBoxService.ShowError(e);
+                    _messageBoxService.ShowError(e, _log);
                 }
-                
-
             }, _execute.GuiScheduler);
 
 
@@ -182,7 +196,7 @@
             {
                 if (prev.Exception != null)
                 {
-                    _messageBoxService.ShowError(prev.Exception);
+                    _messageBoxService.ShowError(prev.Exception, _log);
                 }
                 _viewModel.AreTestsRunning = false;
 
@@ -191,7 +205,6 @@
 
         }
 
-
-        
+       
     }
 }

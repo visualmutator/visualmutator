@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
 
     using NUnit.Core;
@@ -14,6 +15,8 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
 
+    using log4net;
+
     #endregion
 
     public class NUnitTestService : AbstractTestService
@@ -22,7 +25,8 @@
 
         private readonly IMessageService _messageService;
 
-  
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public NUnitTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
         {
@@ -62,7 +66,7 @@
             using (var job = new TestsLoadJob(this, assemblies))
             {
                 job.Subscribe(arg => tests = BuildTestTree(arg),
-                    ex => _messageService.ShowError(ex));
+                    ex => _messageService.ShowError(ex,_log));
             }
 
             if (tests == null)
@@ -86,7 +90,7 @@
                     node.Message = result.Message;
                     list.Add(node);
                 },
-                ex => _messageService.ShowError(ex),
+                ex => _messageService.ShowError(ex, _log),
                 eventObj.Set);
 
                 eventObj.Wait();
@@ -183,13 +187,13 @@
                 }
                 catch (Exception e)
                 {
-                    _service._messageService.ShowError(e);
+                    _service._messageService.ShowError(e, _service._log);
                 }
             }
 
             private void TestLoadFailedHandler(TestEventArgs sArgs)
             {
-                _service._messageService.ShowError(sArgs.Exception);
+                _service._messageService.ShowError(sArgs.Exception, _service._log);
                 //                try
                 //                {
                 //                    _observer.OnError(sArgs.Exception);

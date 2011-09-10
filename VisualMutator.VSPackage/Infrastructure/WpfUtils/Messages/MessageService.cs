@@ -6,6 +6,8 @@
     using System.Globalization;
     using System.Windows;
 
+    using log4net;
+
     #endregion
 
     public class MessageService : IMessageService
@@ -198,5 +200,7 @@
                     MessageBoxOptions);
             }
         }
+
+     
     }
 }

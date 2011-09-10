@@ -41,7 +41,7 @@
             testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
 
 
-            var ser = new MsTestService(mock.Object, new Mock<IMessageService>().Object);
+            var ser = new MsTestService(mock.Object);
 
 
             IEnumerable<TestNodeClass> testNodeClasses = ser.LoadTests(new Collection<string> { "a"});
@@ -104,7 +104,7 @@
 
             mock.Setup(_ => _.RunMsTest(It.IsAny<IEnumerable<string>>())).Returns(d);
 
-            var ser = new MsTestService(mock.Object, new Mock<IMessageService>().Object);
+            var ser = new MsTestService(mock.Object);
 
 
             ser.LoadTests(new Collection<string> { "a" });

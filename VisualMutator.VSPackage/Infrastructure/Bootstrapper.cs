@@ -3,6 +3,7 @@
     #region Usings
 
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.Windows;
@@ -33,17 +34,52 @@
 
         private IKernel _kernel;
 
-       
+        private static log4net.ILog _log;
+
+
+
+        static Bootstrapper()
+        {
+            Log4NetConfig.Execute();
+            _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        }
+
+
         public Bootstrapper()
         {
-             SetupAssemblyResolve();
-            HookGlobalExceptionHandlers();
+            _log.Info("Starting bootstrapper.");
 
-            SetupDependencyInjection();
+            _log.Error("Error Test");
+
+            try
+            {
+                _log.Info("Configuring assembly resolve.");
+                SetupAssemblyResolve();
+               
+
+                _log.Info("Configuring dependency container.");
+                SetupDependencyInjection();
+
+                _log.Info("Executing dependency injection.");
+                _appController = _kernel.Get<ApplicationController>();
+
+                VisualMutator_VSPackagePackage.MainControl = Shell;
+            }
+            catch (Exception e)
+            {
+                _log.Error("Error during addin initialization",e);
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+                else
+                {
+                    MessageBox.Show(e.ToString());
+                }
+            }
+
+
             
-            _appController = _kernel.Get<ApplicationController>();
-
-            VisualMutator_VSPackagePackage.MainControl = Shell;
         }
         public void SetupDependencyInjection()
         {
@@ -61,13 +97,7 @@
 
 
         }
-        public void HookGlobalExceptionHandlers()
-        {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
-            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
-        }
-
+      
 
         public void SetupAssemblyResolve()
         {
@@ -103,18 +133,6 @@
             {
                 return _appController.Shell;
             }
-        }
-
-        private static void Current_DispatcherUnhandledException(
-            object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show(e.Exception.ToString());
-        }
-
-        private static void CurrentDomain_UnhandledException(
-            object sender, UnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show(e.ExceptionObject.ToString());
         }
 
         public void InitializePackage(VisualMutator_VSPackagePackage visualMutatorVsPackagePackage)

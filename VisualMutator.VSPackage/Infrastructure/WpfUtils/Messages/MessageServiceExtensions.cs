@@ -4,6 +4,8 @@
 
     using System;
 
+    using log4net;
+
     #endregion
 
     public static class MessageServiceExtensions
@@ -26,12 +28,13 @@
             service.ShowWarning(null, message);
         }
 
-        public static void ShowError(this IMessageService service, string message)
+        public static void ShowError(this IMessageService service, string message, ILog log)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
+            log.Error(message);
             service.ShowError(null, message);
         }
 
@@ -53,13 +56,18 @@
             return service.ShowYesNoQuestion(null, message);
         }
 
-        public static void ShowError(this IMessageService service, Exception exception)
+        public static void ShowError(this IMessageService service, Exception exception, ILog log)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
+
+
+            log.Error("Exception occurred.",exception);
             service.ShowError(null, exception);
+
+
         }
     }
 }

@@ -43,7 +43,7 @@
 
          
             var nUnitTestService = new NUnitTestService(nUnitWrapperMock.Object, new Mock<IMessageService>().Object);
-            var msTestService = new MsTestService(msTestWrapperMock.Object, new Mock<IMessageService>().Object);
+            var msTestService = new MsTestService(msTestWrapperMock.Object);
 
             var container = new TestsContainer(nUnitTestService, msTestService);
 

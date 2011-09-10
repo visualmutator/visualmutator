@@ -58,21 +58,9 @@
                 string.Format(
                     CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
 
-            try
-            {
+            
                 _bootstrapper = new Bootstrapper();
-            }
-            catch (Exception e)
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else
-                {
-                    MessageBox.Show(e.ToString());
-                }
-            }
+            
         }
 
         /// <summary>

@@ -3,7 +3,7 @@
     #region Usings
 
     using System.Collections.Generic;
-    using System.Waf.Applications;
+
 
     using EnvDTE;
 
@@ -63,9 +63,12 @@
         {
           //  _viewModel.IsVisible = true;
             _visualStudio.BuildEvents.OnBuildDone += new _dispBuildEvents_OnBuildDoneEventHandler(BuildEvents_OnBuildDone);
-            _visualStudio.SolutionEvents.Opened += ActivateOnSolutionOpened;
-            _visualStudio.SolutionEvents.AfterClosing += DeactivateOnSolutionClosed;
+       
             _visualStudio.SolutionEvents.ProjectAdded += HandleProjectAdded;
+
+            _viewModel.IsVisible = true;
+            _mutantsContainer.LoadSessions();
+            Refresh();
         }
 
         void BuildEvents_OnBuildDone(vsBuildScope scope, vsBuildAction action)
@@ -73,21 +76,13 @@
             
         }
 
-
-
-
-        private void ActivateOnSolutionOpened()
-        {
-            _viewModel.IsVisible = true;
-            _mutantsContainer.LoadSessions();
-            Refresh();
-        }
-
-        private void DeactivateOnSolutionClosed()
+        public void Deactivate()
         {
             _viewModel.IsVisible = false;
             _viewModel.Assemblies.Clear();
+            _mutantsContainer.Clear();
         }
+
 
         private void HandleProjectAdded(Project project)
         {
@@ -112,5 +107,7 @@
 
             _operatorsManager.LoadOperators();
         }
+
+        
     }
 }

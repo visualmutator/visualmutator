@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Xml.Serialization;
 
     using FileUtils;
@@ -13,6 +14,8 @@
     using Mono.Cecil;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+
+    using log4net;
 
     #endregion
 
@@ -27,6 +30,8 @@
         void LoadSessions();
 
         void DeleteMutant(MutationSession selectedMutant);
+
+        void Clear();
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -46,7 +51,7 @@
         private readonly IDirectory _directory;
 
         private readonly IFile _file;
-
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public MutantsContainer(
             IOperatorsManager operatorsManager,
             ITypesManager typesManager,
@@ -131,7 +136,8 @@
         public string MutantDirectoryPath(MutationSession mutant)
         {
             string path = _visualStudio.GetMutantsRootFolderPath();
-            return Path.Combine(path, mutant.Name + " - " + mutant.DateOfCreation);
+            return Path.Combine(path, mutant.Name + " - " 
+                + mutant.DateOfCreation.ToString("dd.MM.yy, HH.mm.ss"));
             
         }
 
@@ -148,10 +154,11 @@
                 _assemblyReaderWriter.WriteAssembly(assemblyDefinition,file); 
                 mutant.Assemblies.Add(file);   
             }
-            foreach (var referenced in _visualStudio.GetReferencedAssemblies())
+            var refer = _visualStudio.GetReferencedAssemblies();
+            foreach (var referenced in refer)
             {
                 string destination = Path.Combine(mutantDirectoryPath , Path.GetFileName(referenced));
-                _file.Copy(referenced, destination);
+                _file.Copy(referenced, destination, overwrite:true);
             }
         }
 
@@ -173,8 +180,9 @@
                             _generatedMutants.Add(session);
                         }
                     }
-                    catch (InvalidOperationException)
+                    catch (InvalidOperationException e)
                     {
+                        _log.Error("Invalid mutants file.", e);
                     }
                 }
             }
@@ -189,6 +197,11 @@
             _directory.Delete(dir);
 
             
+        }
+
+        public void Clear()
+        {
+           _generatedMutants.Clear();
         }
 
         private void SaveSettingsFile()

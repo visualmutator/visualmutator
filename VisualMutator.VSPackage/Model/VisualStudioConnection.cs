@@ -106,8 +106,15 @@
         public IEnumerable<string> GetReferencedAssemblies()
         {
             var projects = GetProjectPaths();
-            string binDir = Path.GetDirectoryName(projects.First());
-            return Directory.GetFiles(binDir, "*.dll", SearchOption.AllDirectories).Where(p => !projects.Contains(p));
+           // string binDir = Path.GetDirectoryName(projects.First());
+            var list = new List<string>();
+            foreach (var binDir in projects.Select(p => Path.GetDirectoryName(p)))
+            {
+                var files = Directory.GetFiles(binDir, "*.dll", SearchOption.AllDirectories)
+                    .Where(p => !projects.Contains(p));
+                list.AddRange(files);
+            }
+            return list;
         }
 
         public string GetMutantsRootFolderPath()

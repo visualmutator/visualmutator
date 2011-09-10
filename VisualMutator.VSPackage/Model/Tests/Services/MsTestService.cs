@@ -7,6 +7,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Windows;
     using System.Xml.Linq;
@@ -16,20 +17,23 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
 
+    using log4net;
+
     #endregion
 
     public class MsTestService : AbstractTestService
     {
         private readonly IMsTestWrapper _msTestWrapper;
 
-        private readonly IMessageService _messageService;
-
+      
         private IEnumerable<string> _assembliesWithTests;
 
-        public MsTestService(IMsTestWrapper msTestWrapper, IMessageService messageService)
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public MsTestService(IMsTestWrapper msTestWrapper)
         {
             _msTestWrapper = msTestWrapper;
-            _messageService = messageService;
+          
         }
 
         public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
