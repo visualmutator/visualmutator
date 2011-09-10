@@ -10,8 +10,6 @@
     using System.Reflection;
     using System.Xml.Linq;
 
-    using FluentLog4Net;
-    using FluentLog4Net.Layouts;
 
     using Mono.Cecil;
  

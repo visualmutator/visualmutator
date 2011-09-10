@@ -7,7 +7,6 @@
     using System.Reflection;
     using System.Text;
 
-    using FluentLog4Net;
 
     using log4net;
     using log4net.Appender;
@@ -21,34 +20,7 @@
         public static void Execute()
         {
             ConfigureLog();
-            /*
-            var myConsoleAppender = Append.To.ColoredConsole(c => c.Targeting.ConsoleOut());
-
-            var fatalErrorFileAppender = Append.To
-                .File(f => f
-                    .Named("Erorrs.log")
-                    .Append(true)
-                    .LockingMinimally());
-            var infoFileAppender = Append.To
-                .File(f => f
-                    .Named("Info.log")
-                    .Append(true)
-                    .LockingMinimally());
-
-
-            Log4Net.Configure()
-                .Logging.Default(log => log
-                .At(Level.Error)
-                .At(Level.Critical)
-                .To.Appender(fatalErrorFileAppender))
-
-                .Logging.Default(log => log
-                .At(Level.Info)
-                .To.Appender(infoFileAppender)
-                .To.Appender(myConsoleAppender))
-
-                .ApplyConfiguration();
-            */
+  
         }
 
         private static void ConfigureLog()
