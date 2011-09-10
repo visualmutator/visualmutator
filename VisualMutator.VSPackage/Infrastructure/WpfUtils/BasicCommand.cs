@@ -71,6 +71,17 @@
                 }
             });
         }
+        //public void ExecuteOnChanged<T>(IEventNotifier notifier,
+        //    Expression<Func<T>> propertyExpression, Func<bool> canExecuteFunc )
+        //{
+        //    notifier.EventListeners.Add(notifier, propertyExpression.PropertyName(), () =>
+        //    {
+        //        if (CanExecute(null))
+        //        {
+        //            Execute(null);
+        //        }
+        //    });
+        //}
         protected virtual void OnCanExecuteChanged(EventArgs e)
         {
             EventHandler canExecuteChanged = CanExecuteChanged;
