@@ -185,6 +185,7 @@
     <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
     <Compile Include="Infrastructure\Utility.cs" />
     <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
+    <Compile Include="Model\Mutations\NoTypesSelectedException.cs" />
     <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
     <Compile Include="Infrastructure\TreeNode.cs" />

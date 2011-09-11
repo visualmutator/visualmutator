@@ -15,6 +15,8 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
 
+    using VisualMutator.Extensibility;
+
     using log4net;
 
     #endregion
@@ -104,24 +106,36 @@
         public MutationSession GenerateMutant(string name, Action<string> mutationLog)
         {
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
-      
+            if (!types.Any())
+            {
+                throw new NoTypesSelectedException();
+            }
+
+            ModuleDefinition module = types.First().Module;
 
             IEnumerable<OperatorNode> operators = _operatorsManager.GetActiveOperators();
 
+            Action<MethodDefinition> operatorProgessLog = method =>
+            {
+                mutationLog("--- Mutating method: " + method.Name + " in type: "+method.DeclaringType.Name);
+            };
+
+            var list = new List<MutationResultDetails>();
             foreach (OperatorNode mutationOperator in operators)
             {
                 mutationLog("Applying operator: " + mutationOperator.Operator.Name);
-                mutationOperator.Operator.Mutate(types);
+                var result = mutationOperator.Operator.Mutate(module, types, operatorProgessLog);
+                list.Add(result);
             }
 
-
+           // IEnumerable<IEnumerable<TypeDefinition>> enumerable = list.Select(r => r.ModifiedMethods.GroupBy(m => m.DeclaringType).Select(g => g.Key));
 
             var session = new MutationSession
             {
                 Name = name,
                 DateOfCreation = _dateTimeNowFactory.Create(),
-                UsedOperators = operators.Select(o => o.Name).ToList(),
-                MutatedTypes = types.Select(t => t.Name).ToList(),
+                UsedOperators = list,
+           
                 Assemblies = new List<string>(),
             };
             mutationLog("Saving mutant...");

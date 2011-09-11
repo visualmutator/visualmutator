@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Extensibility
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication2", "ConsoleApplication2\ConsoleApplication2.csproj", "{C834CA92-EFD1-4118-8EAA-48BD890AB9B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.OperatorTests", "VisualMutator.OperatorTests\VisualMutator.OperatorTests.csproj", "{81498B98-B208-44F7-AF7E-6E1583D47D88}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = VisualMutator.vsmdi
@@ -111,6 +113,16 @@ Global
 		{C834CA92-EFD1-4118-8EAA-48BD890AB9B3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{C834CA92-EFD1-4118-8EAA-48BD890AB9B3}.Release|x86.ActiveCfg = Release|x86
 		{C834CA92-EFD1-4118-8EAA-48BD890AB9B3}.Release|x86.Build.0 = Release|x86
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

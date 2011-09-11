@@ -9,10 +9,21 @@ namespace VisualMutator.Extensibility
     using System.Text;
 
     using Mono.Cecil;
+    public class MutationResultDetails
+        {
+            public ICollection<MethodDefinition> ModifiedMethods
+            {
+                get;
+                set;
+            }
+
+        public IMutationOperator Operator { get; set; }
+        }
 
     public interface IMutationOperator
     {
-        void Mutate(IEnumerable<TypeDefinition> assemblyPath);
+        MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types,
+            Action<MethodDefinition> operatorProgessLog);
 
         string Name { get; }
 
