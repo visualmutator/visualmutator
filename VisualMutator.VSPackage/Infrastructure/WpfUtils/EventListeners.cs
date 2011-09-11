@@ -29,13 +29,18 @@
             _propertyListeners.Add(listener);
             PropertyChangedEventManager.AddListener(source, listener, "");
         }
+
         public void Add(INotifyPropertyChanged source, string name, Action action)
         {
             var listener = new PropertyChangedEventListener(source, (sender, args) => action());
             _propertyListeners.Add(listener);
             PropertyChangedEventManager.AddListener(source, listener, name);
         }
-
+        public void AddCollectionChangedEventHandler(INotifyCollectionChanged source,  Action action)
+        {
+            var handler = new NotifyCollectionChangedEventHandler((sender, args) => action());
+            Add(source, handler);
+        }
         public void Remove(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
         {
             PropertyChangedEventListener listener = _propertyListeners

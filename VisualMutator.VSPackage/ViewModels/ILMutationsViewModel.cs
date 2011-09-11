@@ -16,9 +16,9 @@
     {
         private BetterObservableCollection<AssemblyNode> _assemblies;
 
-        private ICommand _commandMutate;
+        private BasicCommand _commandMutate;
 
-        private ICommand _commandRefresh;
+        private BasicCommand _commandRefresh;
 
         private string _loggedText;
 
@@ -31,7 +31,7 @@
             IsVisible = false;
         }
 
-        public ICommand CommandRefresh
+        public BasicCommand CommandRefresh
         {
             get
             {
@@ -47,7 +47,7 @@
             }
         }
 
-        public ICommand CommandMutate
+        public BasicCommand CommandMutate
         {
             get
             {
@@ -95,6 +95,10 @@
             }
         }
 
+        public void MutationLog(string text)
+        {
+            View.MutationLog(text);
+        }
         public string LoggedText
         {
             set
@@ -111,6 +115,40 @@
             }
         }
 
+        private bool _areTypesLoading;
+
+        public bool AreTypesLoading
+        {
+            set
+            {
+                if (_areTypesLoading != value)
+                {
+                    _areTypesLoading = value;
+                    RaisePropertyChanged(() => AreTypesLoading);
+                }
+            }
+            get
+            {
+                return _areTypesLoading;
+            }
+        }
+
+        private bool _isMutationOngoing;
+        public bool IsMutationOngoing
+        {
+            set
+            {
+                if (_isMutationOngoing != value)
+                {
+                    _isMutationOngoing = value;
+                    RaisePropertyChanged(() => IsMutationOngoing);
+                }
+            }
+            get
+            {
+                return _isMutationOngoing;
+            }
+        }
         public bool IsVisible
         {
             get
@@ -121,6 +159,11 @@
             {
                 View.Visibility = value ? Visibility.Visible : Visibility.Hidden;
             }
+        }
+
+        public void ClearMutationLog()
+        {
+            View.ClearMutationLog();
         }
     }
 }

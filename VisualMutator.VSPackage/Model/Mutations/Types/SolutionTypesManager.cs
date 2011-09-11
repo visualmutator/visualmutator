@@ -4,9 +4,13 @@
 
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
 
     using Mono.Cecil;
+
+    using log4net;
 
     #endregion
 
@@ -23,11 +27,12 @@
 
     public class SolutionTypesManager : ITypesManager
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAssemblyReaderWriter _assemblyReaderWriter;
 
         private IList<AssemblyNode> _assemblyTreeNodes;
 
-        private IEnumerable<AssemblyDefinition> _loadedAssemblies;
+        private ICollection<AssemblyDefinition> _loadedAssemblies;
 
         private IList<TypeNode> _types;
 
@@ -56,8 +61,19 @@
 
         public IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths)
         {
-            _loadedAssemblies = projectsPaths.Select(p => _assemblyReaderWriter.ReadAssembly(p));
-
+            _loadedAssemblies = new List<AssemblyDefinition>();
+            foreach (var assembly in projectsPaths)
+            {
+                try
+                {
+                    _loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
+                }
+                catch (FileNotFoundException e)
+                {
+                    _log.Info("ReadAssembly failed. ", e);
+                }
+            }
+ 
             var typesGroups = _loadedAssemblies.SelectMany(ad => ad.MainModule.Types)
                 .Where(t => t.Name != "<Module>").GroupBy(t => t.Module.Assembly.Name.Name);
 

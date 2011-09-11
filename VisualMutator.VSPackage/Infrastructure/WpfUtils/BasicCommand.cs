@@ -3,6 +3,7 @@
     #region Usings
 
     using System;
+    using System.Collections.Specialized;
     using System.Linq.Expressions;
     using System.Windows.Input;
 
@@ -55,7 +56,16 @@
         public void UpdateOnChanged<T>(IEventNotifier notifier, 
             Expression<Func<T>> propertyExpression) 
         {
+            
             notifier.EventListeners.Add(notifier, propertyExpression.PropertyName(),() =>
+            {
+                OnCanExecuteChanged(EventArgs.Empty);
+            });
+        }
+        public void UpdateOnCollectionChanged(IEventNotifier notifier, INotifyCollectionChanged collection)
+        {
+
+            notifier.EventListeners.AddCollectionChangedEventHandler(collection, () =>
             {
                 OnCanExecuteChanged(EventArgs.Empty);
             });

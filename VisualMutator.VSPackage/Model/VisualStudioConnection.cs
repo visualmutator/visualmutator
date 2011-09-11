@@ -84,8 +84,8 @@
                 .Where(
                     p => p.ConfigurationManager != null
                          && p.ConfigurationManager.ActiveConfiguration != null
-                         && p.ConfigurationManager.ActiveConfiguration.IsBuildable);
-
+                         && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
+            var list = new List<string>();
             foreach (Project project in chosenProjects)
             {
                 IEnumerable<Property> properties = project.Properties.Cast<Property>();
@@ -100,8 +100,9 @@
                                              .ActiveConfiguration.Properties.Cast<Property>()
                                              .Single(prop => prop.Name == "OutputPath").Value;
 
-                yield return Path.Combine(localPath, outputPath, outputFileName);
+                list.Add(Path.Combine(localPath, outputPath, outputFileName));
             }
+            return list;
         }
         public IEnumerable<string> GetReferencedAssemblies()
         {

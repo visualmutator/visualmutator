@@ -25,13 +25,15 @@
 
         BetterObservableCollection<MutationSession> GeneratedMutants { get; }
 
-        void GenerateMutants(string name);
+        MutationSession GenerateMutant(string name, Action<string> mutationLog);
 
         void LoadSessions();
 
         void DeleteMutant(MutationSession selectedMutant);
 
         void Clear();
+
+        void SaveSettingsFile();
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -99,7 +101,7 @@
 
 
 
-        public void GenerateMutants(string name)
+        public MutationSession GenerateMutant(string name, Action<string> mutationLog)
         {
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
       
@@ -108,6 +110,7 @@
 
             foreach (OperatorNode mutationOperator in operators)
             {
+                mutationLog("Applying operator: " + mutationOperator.Operator.Name);
                 mutationOperator.Operator.Mutate(types);
             }
 
@@ -121,14 +124,11 @@
                 MutatedTypes = types.Select(t => t.Name).ToList(),
                 Assemblies = new List<string>(),
             };
-
+            mutationLog("Saving mutant...");
             StoreMutant(session);
 
+            return session;
 
-            _generatedMutants.Add(session);
-
-
-            SaveSettingsFile();
 
         }
 
@@ -204,7 +204,7 @@
            _generatedMutants.Clear();
         }
 
-        private void SaveSettingsFile()
+        public void SaveSettingsFile()
         {
             var ser = new XmlSerializer(typeof(List<MutationSession>));
 

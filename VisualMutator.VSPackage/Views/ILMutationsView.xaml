@@ -4,43 +4,44 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
-             xmlns:Mutations="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations" mc:Ignorable="d" d:DesignHeight="300"
-             d:DesignWidth="300">
+             xmlns:Mutations="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations"
+             xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
+             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views" mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
 
   <UserControl.Resources>
     <Style TargetType="Button">
       <Setter Property="Margin" Value="6"/>
       <Setter Property="Padding" Value="15,0,15,0"/>
     </Style>
-        <Style TargetType="TreeViewItem">
-            <Setter Property="IsExpanded" Value="True" />
-        </Style>
+    <Style TargetType="TreeViewItem">
+      <Setter Property="IsExpanded" Value="True"/>
+    </Style>
 
-        <Style TargetType="Image">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="Stretch" Value="None" />
-            <Setter Property="Margin" Value="0,0,2,0" />
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="5,0,5,0" />
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="2,0,2,0" />
-        </Style>
+    <Style TargetType="Image">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Stretch" Value="None"/>
+      <Setter Property="Margin" Value="0,0,2,0"/>
+    </Style>
+    <Style TargetType="CheckBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="5,0,5,0"/>
+    </Style>
+    <Style TargetType="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="2,0,2,0"/>
+    </Style>
 
-
-
-    </UserControl.Resources>
+  </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:ILMutationsViewModel}">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition/>
       <RowDefinition Height="4"/>
+      <RowDefinition Height="20"/>
       <RowDefinition Height="140"/>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
@@ -48,25 +49,22 @@
       <ColumnDefinition/>
     </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Grid.Row="0" Content="Refresh" Command="{Binding CommandRefresh}"/>
-            <Button Grid.Column="1" Grid.Row="0" Content="Mutate" Command="{Binding CommandMutate}"/>
+    <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <Button Grid.Column="0" Grid.Row="0" Content="Refresh" Command="{Binding CommandRefresh}"/>
+      <Button Grid.Column="1" Grid.Row="0" Content="Mutate" Command="{Binding CommandMutate}"/>
 
-            <TextBlock  Grid.Column="0" Grid.Row="1" Text="Types in solution:"/>
-            <TextBlock  Grid.Column="1" Grid.Row="1" Text="Available mutations:"/>
-            
-            
-        </Grid>
+      <TextBlock Grid.Column="0" Grid.Row="1" Text="Types in solution:"/>
+      <TextBlock Grid.Column="1" Grid.Row="1" Text="Available mutations:"/>
 
-
+    </Grid>
 
     <Grid Grid.Row="1" Grid.ColumnSpan="2">
 
@@ -76,78 +74,81 @@
         <ColumnDefinition/>
       </Grid.ColumnDefinitions>
 
-            <Grid.Resources>
+      <Grid.Resources>
 
-                <HierarchicalDataTemplate DataType="{x:Type Mutations:AssemblyNode}" 
-                                ItemsSource="{Binding Path=Children}">
-                    <DockPanel>
-                        <Image Source="Resources/assembly.png"/>
-                        <CheckBox IsChecked="{Binding IsIncluded}"  />
-                        <TextBlock Text="{Binding Name}"  />
-                    </DockPanel>
+        <HierarchicalDataTemplate DataType="{x:Type Mutations:AssemblyNode}"
+                                  ItemsSource="{Binding Path=Children}">
+          <DockPanel>
+            <Image Source="Resources/assembly.png"/>
+            <CheckBox IsChecked="{Binding IsIncluded}"/>
+            <TextBlock Text="{Binding Name}"/>
+          </DockPanel>
 
-                </HierarchicalDataTemplate>
+        </HierarchicalDataTemplate>
 
-                <HierarchicalDataTemplate DataType="{x:Type Mutations:TypeNamespaceNode}" 
-                                ItemsSource="{Binding Path=Children}">
-                    <DockPanel>
-                        <Image Source="Resources/namespace.png"/>
-                        <CheckBox IsChecked="{Binding IsIncluded}"  />
-                        <TextBlock Text="{Binding Name}"  />
-                    </DockPanel>
+        <HierarchicalDataTemplate DataType="{x:Type Mutations:TypeNamespaceNode}"
+                                  ItemsSource="{Binding Path=Children}">
+          <DockPanel>
+            <Image Source="Resources/namespace.png"/>
+            <CheckBox IsChecked="{Binding IsIncluded}"/>
+            <TextBlock Text="{Binding Name}"/>
+          </DockPanel>
 
-                </HierarchicalDataTemplate>
+        </HierarchicalDataTemplate>
 
-                <DataTemplate DataType="{x:Type Mutations:TypeNode}">
-                    <DockPanel>
-                        <Image Source="Resources/type.png" />
-                        <CheckBox IsChecked="{Binding IsIncluded}" />
-                        <TextBlock Text="{Binding Name}"/>
-                    </DockPanel>
-                </DataTemplate>
+        <DataTemplate DataType="{x:Type Mutations:TypeNode}">
+          <DockPanel>
+            <Image Source="Resources/type.png"/>
+            <CheckBox IsChecked="{Binding IsIncluded}"/>
+            <TextBlock Text="{Binding Name}"/>
+          </DockPanel>
+        </DataTemplate>
 
-            </Grid.Resources>
+      </Grid.Resources>
 
-            <TreeView Grid.Column="0" ItemsSource="{Binding Assemblies}"/>
-        
-      <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
+            <TreeView Grid.Column="0" ItemsSource="{Binding Assemblies}" Visibility="{Binding AreTypesLoading, 
+                Converter={Converters:FalseToVisibilityConverter}}"/>
+
+            <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Visibility="{Binding AreTypesLoading, 
+                Converter={Converters:BoolToVisibilityConverter}}"/>
+
+
+            <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
 
       <TreeView Grid.Column="2" ItemsSource="{Binding MutationPackages}">
 
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type Mutations:PackageNode}" 
-                                              ItemsSource="{Binding Operators}">
+        <TreeView.Resources>
+          <HierarchicalDataTemplate DataType="{x:Type Mutations:PackageNode}"
+                                    ItemsSource="{Binding Operators}">
 
-                        <DockPanel>
-                            <Image Source="Resources/mutation.png"/>
-                            <CheckBox IsChecked="{Binding IsIncluded}" />
-                            <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPack.Description}"/>
-                        </DockPanel>
+            <DockPanel>
+              <Image Source="Resources/mutation.png"/>
+              <CheckBox IsChecked="{Binding IsIncluded}"/>
+              <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPack.Description}"/>
+            </DockPanel>
 
+          </HierarchicalDataTemplate>
 
-                    </HierarchicalDataTemplate>
-                    
-                    
-                    <DataTemplate DataType="{x:Type Mutations:OperatorNode}" >
-                        <DockPanel>
-                            <Image Source="Resources/mutation.png"/>
-                            <CheckBox IsChecked="{Binding IsIncluded}" />
-                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Operator.Description}" />
-                        </DockPanel>
+          <DataTemplate DataType="{x:Type Mutations:OperatorNode}">
+            <DockPanel>
+              <Image Source="Resources/mutation.png"/>
+              <CheckBox IsChecked="{Binding IsIncluded}"/>
+              <TextBlock Text="{Binding Name}" ToolTip="{Binding Operator.Description}"/>
+            </DockPanel>
 
-                    </DataTemplate>
+          </DataTemplate>
 
-                </TreeView.Resources>
+        </TreeView.Resources>
 
-
-
-        </TreeView>
+      </TreeView>
 
     </Grid>
 
     <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
-
-    <TextBox Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding LoggedText}"/>
+        <ProgressBar Grid.Row="3" Grid.ColumnSpan="2" Opacity="0.5" IsIndeterminate="True"
+                 Visibility="{Binding IsMutationOngoing, Converter={ Converters:BoolToVisibilityConverter }}"/>
+    <TextBox Grid.Row="4" Grid.ColumnSpan="2" Name="MutationLogBox"/>
 
   </Grid>
 </UserControl>
