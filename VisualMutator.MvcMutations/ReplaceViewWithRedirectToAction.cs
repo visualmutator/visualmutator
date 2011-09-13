@@ -35,15 +35,14 @@
         }
 
 
-        public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types,
-            Action<MethodDefinition> operatorProgessLog)
+        public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
              var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));
 
-            IEnumerable<MutationTarget> mutationTargets = controllers.SelectMany(GetMutationTargets);
+            IEnumerable<MutationTarget> mutationTargets = controllers.SelectMany(GetMutationTargets).ToList();
             foreach (MutationTarget target in mutationTargets)
             {
-                operatorProgessLog(target.MethodToModify);
+       
                 var istr = target.InstructionToReplace;
 
                 ILProcessor proc = target.MethodToModify.Body.GetILProcessor();
@@ -83,7 +82,7 @@
                     m != methodToModify
                     && m.IsPublic
                     && m.Parameters.Count == 0
-                    && m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult"));
+                    && m.ReturnType.FullName==("System.Web.Mvc.ActionResult"));
 
                 if (instr != null && methodToRedirectTo != null)
                 {
@@ -108,7 +107,7 @@
         public MethodDefinition  GetRedirectToActionMethod(ModuleDefinition currentModule)
         {
             AssemblyNameReference ass =
-                      currentModule.AssemblyReferences.Single(x => x.Name == "System.Web.Mvc");
+                      currentModule.AssemblyReferences.Single(x => x.Name == "System.Web.Mvc" && x.Version == Version.Parse("3.0.0.0"));
 
             AssemblyDefinition def = currentModule.AssemblyResolver.Resolve(ass);
 
@@ -139,22 +138,22 @@
 
         private static Instruction FindValidViewCallInstruction(MethodDefinition methodToModify)
         {
-            return methodToModify.Body.Instructions
+            var ii= methodToModify.Body.Instructions
                 .FirstOrDefault(i =>
                 {
                     if (i.OpCode == OpCodes.Call)
                     {
                         var method = ((MethodReference)i.Operand);
                         if (method.DeclaringType.FullName == "System.Web.Mvc.Controller"
-                            && method.Name == "View"
-                            && method.Parameters.Count == 0)
+                            && method.Name == "View")
+                          //  && method.Parameters.Count == 0)
                         {
                             return true;
                         }
                     }
                     return false;
                 });
-      
+            return ii;
         }
     }
 
@@ -188,8 +187,7 @@
                 {
                     return false;
                 }
-                //TODO: An unhandled exception of type 'Mono.Cecil.AssemblyResolutionException' occurred in Mono.Cecil.dll
-                //TODO: Additional information: Failed to resolve assembly: 'Asp.net mvc, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+                
             }
             throw new InvalidOperationException();
         }

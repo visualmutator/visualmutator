@@ -37,11 +37,3 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly:
-    InternalsVisibleTo(
-        "VisualMutator.VSPackage_IntegrationTests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100171b9d44b51f74eabfe55f4a2d38f082c3d35c2ba40c349cb42fbf891f6a2e7274c72ea7d56cec124dad98f5f921cc899be152513d555dc82a1e864c28b46e3e10f2b48caacb6333ace352f3af780b8df3c0dc593b93bcbe9533ec87b1954ef20728ad3530cf6369d0c4bd0b548b74e7a621ef620d84cfbef23f8c3747a8c9b7"
-        )]
-[assembly:
-    InternalsVisibleTo(
-        "VisualMutator.VSPackage_UnitTests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100171b9d44b51f74eabfe55f4a2d38f082c3d35c2ba40c349cb42fbf891f6a2e7274c72ea7d56cec124dad98f5f921cc899be152513d555dc82a1e864c28b46e3e10f2b48caacb6333ace352f3af780b8df3c0dc593b93bcbe9533ec87b1954ef20728ad3530cf6369d0c4bd0b548b74e7a621ef620d84cfbef23f8c3747a8c9b7"
-        )]

@@ -124,7 +124,7 @@
             foreach (OperatorNode mutationOperator in operators)
             {
                 mutationLog("Applying operator: " + mutationOperator.Operator.Name);
-                var result = mutationOperator.Operator.Mutate(module, types, operatorProgessLog);
+                var result = mutationOperator.Operator.Mutate(module, types);
                 list.Add(result);
             }
 

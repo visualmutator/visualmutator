@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +49,20 @@
     <Compile Include="MvcMutations\RedirectToAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
+      <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
+      <Name>VisualMutator.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
+      <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
+      <Name>VisualMutator.MvcMutations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.Tests\VisualMutator.Tests.csproj">
+      <Project>{8FDC25E2-B546-4DF6-B2A6-EAF5CA33BD92}</Project>
+      <Name>VisualMutator.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

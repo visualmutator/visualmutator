@@ -22,8 +22,7 @@ namespace VisualMutator.Extensibility
 
     public interface IMutationOperator
     {
-        MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types,
-            Action<MethodDefinition> operatorProgessLog);
+        MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types);
 
         string Name { get; }
 
