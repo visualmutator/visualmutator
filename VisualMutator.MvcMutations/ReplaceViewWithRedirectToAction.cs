@@ -55,8 +55,8 @@
 
             var result = new MutationResultDetails
             {
-                Operator = this,
-                ModifiedMethods = mutationTargets.Select(t=> t.MethodToModify).ToList(),
+               
+                ModifiedMethods = mutationTargets.Select(t=> t.MethodToModify.FullName).ToList(),
             };
 
             return result;
@@ -107,8 +107,13 @@
         public MethodDefinition  GetRedirectToActionMethod(ModuleDefinition currentModule)
         {
             AssemblyNameReference ass =
-                      currentModule.AssemblyReferences.Single(x => x.Name == "System.Web.Mvc" && x.Version == Version.Parse("3.0.0.0"));
-
+                      currentModule.AssemblyReferences.FirstOrDefault(x => x.Name == "System.Web.Mvc" 
+                          && x.Version == Version.Parse("3.0.0.0"));
+            if (ass == null)
+            {
+                ass = currentModule.AssemblyReferences.FirstOrDefault(x => x.Name == "System.Web.Mvc"
+                              && x.Version == Version.Parse("2.0.0.0"));
+            }
             AssemblyDefinition def = currentModule.AssemblyResolver.Resolve(ass);
 
 

@@ -33,17 +33,28 @@
             testClasses.Add(clas);
 
 
-            
-            List<MethodDefinition> testMethods;
-            var msTestWrapperMock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
-            var td = new TypeDefinition("ns1", "Class2", TypeAttributes.Public);
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
 
-         
+            var td = new TypeDefinition("ns1", "Class2", TypeAttributes.Public);
+
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
+            //  AssemblyDefinition assembly = TestWrapperMocking.CreateAssembly("Ass", new[] { td });
+
+            //  var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
+
+            var msTestLoaderMock = new Mock<IMsTestLoader>();
+            msTestLoaderMock.Setup(_ => _.ScanAssemblies(It.IsAny<IEnumerable<string>>())).Returns(new AssemblyScanResult
+            {
+                AssembliesWithTests = new[] { "Ass" },
+                TestMethods = td.Methods
+            });
+
+
+
+
             var nUnitTestService = new NUnitTestService(nUnitWrapperMock.Object, new Mock<IMessageService>().Object);
-            var msTestService = new MsTestService(msTestWrapperMock.Object);
+            var msTestService = new MsTestService(null, msTestLoaderMock.Object);
 
             var container = new TestsContainer(nUnitTestService, msTestService);
 

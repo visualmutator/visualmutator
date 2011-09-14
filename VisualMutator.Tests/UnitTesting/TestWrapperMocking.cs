@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -71,19 +72,7 @@
         }
 
 
-        public static Mock<IMsTestWrapper> MockMsTestWrapperForLoad(out List<MethodDefinition> testMethods)
-        {
-            var wrapperMock = new Mock<IMsTestWrapper>();
-
-          
-            var list = new List<MethodDefinition>();
-            
-
-            wrapperMock.Setup(_ => _.ReadTestMethodsFromAssembly("a")).Returns(list);
-            testMethods = list;
-            return wrapperMock;
-        }
-
+      
         public static MethodDefinition CreateMethodDefinition(string name, TypeDefinition type)
         {
             var s = new TypeReference("System", "Void", null, null);
@@ -93,7 +82,16 @@
             };
         }
 
-
+        public static AssemblyDefinition CreateAssembly(string assemblyName, IEnumerable<TypeDefinition> types)
+        {
+            var assembly = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition(assemblyName, new Version()),
+               "TestModule", ModuleKind.Console);
+            foreach (var typeDefinition in types)
+            {
+                assembly.MainModule.Types.Add(typeDefinition);
+            }
+            return assembly;
+        }
     }
 }
 

@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="IMutationOperator.cs" />
     <Compile Include="IOperatorsPack.cs" />
+    <Compile Include="MutationResultDetails.cs" />
     <Compile Include="PackageInfoAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

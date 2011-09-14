@@ -25,47 +25,48 @@
     {
         private readonly IMsTestWrapper _msTestWrapper;
 
-      
+        private readonly IMsTestLoader _msTestLoader;
+
         private IEnumerable<string> _assembliesWithTests;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MsTestService(IMsTestWrapper msTestWrapper)
+        public MsTestService(IMsTestWrapper msTestWrapper, IMsTestLoader msTestLoader)
         {
             _msTestWrapper = msTestWrapper;
-          
+            _msTestLoader = msTestLoader;
         }
 
         public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
         {
             TestMap.Clear();
-            IEnumerable<string> assembliesWithTests;
-            var methods = ScanAssemblies(assemblies, out assembliesWithTests);
-            _assembliesWithTests = assembliesWithTests;
+         
+            var result = _msTestLoader.ScanAssemblies(assemblies);
+            _assembliesWithTests = result.AssembliesWithTests;
 
-            return CreateTree(methods);
+            return CreateTree(result.TestMethods);
         }
-
-        private IEnumerable<MethodDefinition>
-            ScanAssemblies(IEnumerable<string> assemblies, out IEnumerable<string> assembliesWithTests)
-        {
-            var list = new List<MethodDefinition>();
-            var withTests = new List<string>();
-            foreach (string assembly in assemblies)
-            {
-                var methods = _msTestWrapper.ReadTestMethodsFromAssembly(assembly);
-
-                list.AddRange(methods);
-
-                if (methods.Any())
+        /*
+                private IEnumerable<MethodDefinition>
+                    ScanAssemblies(IEnumerable<string> assemblies, out IEnumerable<string> assembliesWithTests)
                 {
-                    withTests.Add(assembly);
-                }
-            }
-            assembliesWithTests = withTests;
-            return list;
-        }
+                    var list = new List<MethodDefinition>();
+                    var withTests = new List<string>();
+                    foreach (string assembly in assemblies)
+                    {
+                        var methods = _msTestWrapper.ReadTestMethodsFromAssembly(assembly);
 
+                        list.AddRange(methods);
+
+                        if (methods.Any())
+                        {
+                            withTests.Add(assembly);
+                        }
+                    }
+                    assembliesWithTests = withTests;
+                    return list;
+                }
+                */
         public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods)
         {
             var groupsByClass = methods.GroupBy(m => m.DeclaringType);
@@ -101,9 +102,15 @@
 
         public override List<TestNodeMethod> RunTests()
         {
-
-            XDocument results = _msTestWrapper.RunMsTest(_assembliesWithTests);
-            return ReadTestResults(results).ToList();
+            if (_assembliesWithTests.Any())
+            {
+                XDocument results = _msTestWrapper.RunMsTest(_assembliesWithTests);
+                return ReadTestResults(results).ToList();
+            }
+            else
+            {
+                return new List<TestNodeMethod>();
+            }
 
         }
         public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc)
@@ -121,7 +128,7 @@
 
                 string fullClassName = longClassName.Substring(0, longClassName.IndexOf(","));
 
-                TestNodeMethod node = (TestNodeMethod)TestMap[fullClassName + "," + methodName];
+                TestNodeMethod node = TestMap[fullClassName + "," + methodName];
 
                 node.State = TranslateTestResultStatus(testResult.Attribute("outcome").Value);
 

@@ -12,6 +12,7 @@
     using NUnit.Framework;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
+    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
 
     using VisualMutator.Tests.Util;
@@ -30,18 +31,25 @@
         [Test]
         public void LoadingTests()
         {
-    
-           
 
-            List<MethodDefinition> testMethods;
-            var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
+            
+            
             var td = new TypeDefinition("ns2", "Class1", TypeAttributes.Public);
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
 
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
+          //  AssemblyDefinition assembly = TestWrapperMocking.CreateAssembly("Ass", new[] { td });
 
-            var ser = new MsTestService(mock.Object);
+            //  var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
+
+            var msTestLoaderMock = new Mock<IMsTestLoader>();
+            msTestLoaderMock.Setup(_ => _.ScanAssemblies(It.IsAny<IEnumerable<string>>())).Returns(new AssemblyScanResult
+            {
+                AssembliesWithTests = new[] { "Ass"},
+                TestMethods = td.Methods
+            });
+            var ser = new MsTestService(null, msTestLoaderMock.Object);
 
 
             IEnumerable<TestNodeClass> testNodeClasses = ser.LoadTests(new Collection<string> { "a"});
@@ -53,9 +61,32 @@
             testFixture.Children.ElementAt(1).Name.ShouldEqual("Test2");
             testFixture.Children.ElementAt(2).Name.ShouldEqual("Test3");
         }
+        [Test]
+        public void RunTests_Returns_Empty_List_When_No_Assemblies_With_Tests()
+        {
+            var msTestLoaderMock = new Mock<IMsTestLoader>();
+            msTestLoaderMock.Setup(_ => _.ScanAssemblies(It.IsAny<IEnumerable<string>>()))
+            .Returns(new AssemblyScanResult
+            {
+                AssembliesWithTests = new string[0],
+                TestMethods = new List<MethodDefinition>(),
+            });
+
+     
+            var ser = new MsTestService(null, msTestLoaderMock.Object);
+
+
+            ser.LoadTests(new Collection<string> { "any" });
+
+            var methods = ser.RunTests();
+
+            methods.Count.ShouldEqual(0);
+
+
+        }
 
         [Test]
-        public void RunningTests()
+        public void RunningTestsNormally()
         {
         
 
@@ -93,20 +124,27 @@
 
 
 
-            List<MethodDefinition> testMethods;
-            var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
             var td = new TypeDefinition("ns2", "Class1", TypeAttributes.Public);
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
-            testMethods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
 
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
+            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
+            //  AssemblyDefinition assembly = TestWrapperMocking.CreateAssembly("Ass", new[] { td });
 
+            //  var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
 
+            var msTestLoaderMock = new Mock<IMsTestLoader>();
+            msTestLoaderMock.Setup(_ => _.ScanAssemblies(It.IsAny<IEnumerable<string>>())).Returns(new AssemblyScanResult
+            {
+                AssembliesWithTests = new[] { "Ass" },
+                TestMethods = td.Methods
+            });
+            
+            var mock = new Mock<IMsTestWrapper>();
             mock.Setup(_ => _.RunMsTest(It.IsAny<IEnumerable<string>>())).Returns(d);
+            var ser = new MsTestService(mock.Object, msTestLoaderMock.Object);
 
-            var ser = new MsTestService(mock.Object);
-
-
+           
             ser.LoadTests(new Collection<string> { "a" });
 
          
@@ -126,7 +164,7 @@
        // [Test]
         public void Wrapper()
         {
-            var w = new MsTestWrapper(null);
+            var w = new MsTestLoader(new AssemblyReaderWriter());
       
             var methods = w.ReadTestMethodsFromAssembly(@"C:\Users\SysOp\Documents\Visual Studio 2010\Projects\MusicRename\MusicRename.Tests\bin\Debug\MusicRename.Tests.dll");
 

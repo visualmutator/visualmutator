@@ -34,6 +34,7 @@
 
             Kernel.Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
             Kernel.Bind<IMsTestWrapper>().To<MsTestWrapper>().InSingletonScope();
+            Kernel.Bind<IMsTestLoader>().To<MsTestLoader>().InSingletonScope();
             
 
 

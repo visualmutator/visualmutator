@@ -129,6 +129,8 @@
     <Compile Include="Model\Mutations\Types\SolutionTypesManager.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
     <Compile Include="Model\Tests\Services\ITestService.cs" />
+    <Compile Include="Model\Tests\Services\MsTestException.cs" />
+    <Compile Include="Model\Tests\Services\MsTestLoader.cs" />
     <Compile Include="Model\Tests\Services\MsTestService.cs" />
     <Compile Include="Model\Tests\Services\MsTestWrapper.cs" />
     <Compile Include="Model\Tests\Services\NUnitTestService.cs" />

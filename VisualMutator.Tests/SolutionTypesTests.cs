@@ -13,6 +13,7 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
+    using VisualMutator.Tests.UnitTesting;
     using VisualMutator.Tests.Util;
 
     [TestFixture]
@@ -28,16 +29,7 @@
             }
             return mock;
         }
-        public AssemblyDefinition CreateAssembly(string assemblyName, IEnumerable<TypeDefinition> types)
-        {
-            var assembly = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition(assemblyName, new Version()),
-               "TestModule", ModuleKind.Console);
-            foreach (var typeDefinition in types)
-            {
-                assembly.MainModule.Types.Add(typeDefinition);
-            }
-            return assembly;
-        }
+        
 
 
         [Test]
@@ -66,7 +58,7 @@
 
             string path = @"C:\TestAssembly.dll";
             var dict = new Dictionary<string, AssemblyDefinition>();
-            dict.Add(path, CreateAssembly("TestAssembly", list));
+            dict.Add(path, TestWrapperMocking.CreateAssembly("TestAssembly", list));
 
             var mock = MockAssemblyReaderWriter(dict);
             var manager = new SolutionTypesManager(mock.Object);

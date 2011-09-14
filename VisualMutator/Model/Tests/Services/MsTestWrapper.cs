@@ -16,7 +16,7 @@
 
     public interface IMsTestWrapper
     {
-        IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly);
+      //  IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly);
 
         XDocument RunMsTest(IEnumerable<string> assemblies);
     }
@@ -29,7 +29,7 @@
         {
             _visualStudio = visualStudio;
         }
-
+        /*
         public IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly)
         {
             AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly);
@@ -47,7 +47,7 @@
                     a.AttributeType.FullName ==
                     @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));
         }
-
+        */
         
         public XDocument RunMsTest(IEnumerable<string> assemblies)
         {
@@ -83,15 +83,20 @@
             p.StartInfo.RedirectStandardOutput = true;
             p.Start();
             StreamReader sr = p.StandardOutput;
-            string r = sr.ReadToEnd();
+            string consoleOutput = sr.ReadToEnd();
            
             p.WaitForExit();
 
+            try
+            {
+                return XDocument.Load(resultsFile);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new MsTestException(consoleOutput, e);
+            }
+            
 
-            XDocument results =  XDocument.Load(resultsFile);
-
-
-            return results;
 
         }
 
