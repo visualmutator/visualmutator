@@ -183,7 +183,7 @@
                 {
                     currentType = currentType.BaseType.Resolve();
                 }
-                catch (AssemblyResolutionException e)
+                catch (AssemblyResolutionException)
                 {
                     return false;
                 }

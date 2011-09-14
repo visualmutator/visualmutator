@@ -81,9 +81,9 @@
       <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
       <Name>VisualMutator.MvcMutations</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.VSPackage\VisualMutator.VSPackage.csproj">
-      <Project>{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}</Project>
-      <Name>VisualMutator.VSPackage</Name>
+    <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
+      <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
+      <Name>VisualMutator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

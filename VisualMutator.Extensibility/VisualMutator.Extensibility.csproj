@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\Extensions\</OutputPath>
+    <OutputPath>..\..\..\..\..\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

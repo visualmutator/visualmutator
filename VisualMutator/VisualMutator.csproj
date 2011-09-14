@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B40A493B-C264-423D-B5C7-14E120B4D358}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VisualMutator</RootNamespace>
+    <AssemblyName>VisualMutator</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core">
+      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util">
+      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.util.dll</HintPath>
+    </Reference>
+    <Reference Include="pnunit.framework">
+      <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.CoreEx, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Linq.Async, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Reactive, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Reactive.ClientProfile, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Reactive.ExtendedProfile, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Reactive.Testing, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\ILMutationsController.cs" />
+    <Compile Include="Controllers\UnitTestsController.cs" />
+    <Compile Include="Infrastructure\EventLogger.cs" />
+    <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
+    <Compile Include="Infrastructure\Factories\IFactory.cs" />
+    <Compile Include="Infrastructure\Factories\StaticFactory.cs" />
+    <Compile Include="Infrastructure\FileSystem\DirectoryService.cs" />
+    <Compile Include="Infrastructure\FileSystem\FileService.cs" />
+    <Compile Include="Infrastructure\FileSystem\FileSystemService.cs" />
+    <Compile Include="Infrastructure\FileSystem\IDirectory.cs" />
+    <Compile Include="Infrastructure\FileSystem\IFile.cs" />
+    <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
+    <Compile Include="Infrastructure\Log4NetConfig.cs" />
+    <Compile Include="Infrastructure\TreeNode.cs" />
+    <Compile Include="Infrastructure\Utility.cs" />
+    <Compile Include="Infrastructure\WpfUtils\BasicCommand.cs" />
+    <Compile Include="Infrastructure\WpfUtils\BetterObservableCollection.cs" />
+    <Compile Include="Infrastructure\WpfUtils\Controller.cs" />
+    <Compile Include="Infrastructure\WpfUtils\EventListeners.cs" />
+    <Compile Include="Infrastructure\WpfUtils\Execute.cs" />
+    <Compile Include="Infrastructure\WpfUtils\IEventNotifier.cs" />
+    <Compile Include="Infrastructure\WpfUtils\IView.cs" />
+    <Compile Include="Infrastructure\WpfUtils\Messages\IMessageService.cs" />
+    <Compile Include="Infrastructure\WpfUtils\Messages\MessageService.cs" />
+    <Compile Include="Infrastructure\WpfUtils\Messages\MessageServiceExtensions.cs" />
+    <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
+    <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
+    <Compile Include="Model\Mutations\MutantsContainer.cs" />
+    <Compile Include="Model\Mutations\MutationSession.cs" />
+    <Compile Include="Model\Mutations\NoTypesSelectedException.cs" />
+    <Compile Include="Model\Mutations\Operators\MEFOperatorLoader.cs" />
+    <Compile Include="Model\Mutations\Operators\OperatorNode.cs" />
+    <Compile Include="Model\Mutations\Operators\OperatorsManager.cs" />
+    <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
+    <Compile Include="Model\Mutations\Types\SolutionTypesManager.cs" />
+    <Compile Include="Model\Mutations\Types\TypeNode.cs" />
+    <Compile Include="Model\Tests\Services\ITestService.cs" />
+    <Compile Include="Model\Tests\Services\MsTestService.cs" />
+    <Compile Include="Model\Tests\Services\MsTestWrapper.cs" />
+    <Compile Include="Model\Tests\Services\NUnitTestService.cs" />
+    <Compile Include="Model\Tests\Services\NUnitWrapper.cs" />
+    <Compile Include="Model\Tests\TestsContainer.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeClass.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeMethod.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeNamespace.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeState.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestTreeNode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\ILMutationsViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\UnitTestsViewModel.cs" />
+    <Compile Include="Views\Abstract\IILMutationsView.cs" />
+    <Compile Include="Views\Abstract\IMainControl.cs" />
+    <Compile Include="Views\Abstract\IUnitTestsView.cs" />
+    <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
+    <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
+    <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Views\Converters\CloningConverter.cs" />
+    <Compile Include="Views\Converters\Converter.cs" />
+    <Compile Include="Views\Converters\DebugConverter.cs" />
+    <Compile Include="Views\Converters\FalseToVisibilityConverter.cs" />
+    <Compile Include="Views\Converters\NotNullToVisibilityConverter.cs" />
+    <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
+    <Compile Include="Views\Converters\ValueConverterGroup.cs" />
+    <Compile Include="Views\ILMutationsView.xaml.cs">
+      <DependentUpon>ILMutationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProgressControl.xaml.cs">
+      <DependentUpon>ProgressControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TestsTree.xaml.cs">
+      <DependentUpon>TestsTree.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UnitTestsView.xaml.cs">
+      <DependentUpon>UnitTestsView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Views\ILMutationsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ProgressControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TestsTree.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UnitTestsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
+      <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
+      <Name>VisualMutator.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
+      <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
+      <Name>VisualMutator.MvcMutations</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Resources\assembly.png" />
+    <Resource Include="Views\Resources\mutation.png" />
+    <Resource Include="Views\Resources\namespace.png" />
+    <Resource Include="Views\Resources\type.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

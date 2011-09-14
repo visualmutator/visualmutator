@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.VSPackage", "VisualMutator.VSPackage\VisualMutator.VSPackage.csproj", "{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5794DB15-7ADA-4EBB-AB56-F608A1090FF4} = {5794DB15-7ADA-4EBB-AB56-F608A1090FF4}
+		{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598} = {ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5595361A-79C0-4ADD-A571-4453346CB09E}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,6 +23,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication2", "ConsoleApplication2\ConsoleApplication2.csproj", "{C834CA92-EFD1-4118-8EAA-48BD890AB9B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.OperatorTests", "VisualMutator.OperatorTests\VisualMutator.OperatorTests.csproj", "{81498B98-B208-44F7-AF7E-6E1583D47D88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator", "VisualMutator\VisualMutator.csproj", "{B40A493B-C264-423D-B5C7-14E120B4D358}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -98,6 +104,16 @@ Global
 		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{81498B98-B208-44F7-AF7E-6E1583D47D88}.Release|x86.ActiveCfg = Release|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B40A493B-C264-423D-B5C7-14E120B4D358}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
