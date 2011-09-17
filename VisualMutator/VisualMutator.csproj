@@ -120,6 +120,7 @@
     <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
     <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
+    <Compile Include="Model\Mutations\MutantsFileManager.cs" />
     <Compile Include="Model\Mutations\MutationSession.cs" />
     <Compile Include="Model\Mutations\NoTypesSelectedException.cs" />
     <Compile Include="Model\Mutations\Operators\MEFOperatorLoader.cs" />

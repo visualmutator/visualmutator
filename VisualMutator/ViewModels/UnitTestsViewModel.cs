@@ -14,11 +14,15 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
     public class UnitTestsViewModel : ViewModel<IUnitTestsView>
     {
+        private bool _areTestsLoading;
+
         private bool _areTestsRunning;
+
+        private BasicCommand _commandDeleteMutant;
 
         private ICommand _commandRunTests;
 
-        private Infrastructure.BetterObservableCollection<MutationSession> _mutants;
+        private BetterObservableCollection<MutationSession> _mutants;
 
         private string _resultText;
 
@@ -28,16 +32,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
         private bool _testCurrentSolution;
 
-        private Infrastructure.BetterObservableCollection<TestNodeNamespace> _testNamespaces;
+        private BetterObservableCollection<TestNodeNamespace> _testNamespaces;
 
         public UnitTestsViewModel(IUnitTestsView view, BetterObservableCollection<MutationSession> mutants)
             : base(view)
         {
-            TestNamespaces = new Infrastructure.BetterObservableCollection<TestNodeNamespace>();
+            TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
             _mutants = mutants;
         }
 
-        public Infrastructure.BetterObservableCollection<MutationSession> Mutants
+        public BetterObservableCollection<MutationSession> Mutants
         {
             set
             {
@@ -85,8 +89,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-        private BasicCommand _commandDeleteMutant;
-
+       
         public BasicCommand CommandDeleteMutant
         {
             get
@@ -95,14 +98,11 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
             set
             {
-                if (_commandDeleteMutant != value)
-                {
-                    _commandDeleteMutant = value;
-                    this.RaisePropertyChanged(() => CommandDeleteMutant);
-                }
+                SetAndRise(ref _commandDeleteMutant, value, () => CommandDeleteMutant);
             }
         }
-        public Infrastructure.BetterObservableCollection<TestNodeNamespace> TestNamespaces
+
+        public BetterObservableCollection<TestNodeNamespace> TestNamespaces
         {
             set
             {
@@ -134,8 +134,6 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
             }
         }
 
-        private bool _areTestsLoading;
-
         public bool AreTestsLoading
         {
             set
@@ -151,6 +149,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
                 return _areTestsLoading;
             }
         }
+
         public bool AreTestsRunning
         {
             set

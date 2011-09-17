@@ -39,6 +39,41 @@
         void SaveSettingsFile();
     }
 
+    public class TestOperator : IMutationOperator
+    {
+        public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
+        {
+            int i = 0;
+            foreach (var typeDefinition in types)
+            {
+                typeDefinition.Name = "TestTypeName"+i++;
+            }
+            return new MutationResultDetails
+            {
+                ModifiedMethods = new List<string>(),
+                
+            };
+        }
+
+        public string Name
+        {
+            get
+            {
+                return "TestName";
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return "TestDescription";
+            }
+        }
+    }
+
+
+
     public class MutantsContainer : IMutantsContainer
     {
         private readonly BetterObservableCollection<MutationSession> _generatedMutants;
@@ -47,45 +82,32 @@
 
         private readonly ITypesManager _typesManager;
 
-        private readonly IVisualStudioConnection _visualStudio;
-
-        private readonly IAssemblyReaderWriter _assemblyReaderWriter;
+        private readonly IMutantsFileManager _mutantsFileManager;
 
         private readonly IFactory<DateTime> _dateTimeNowFactory;
 
-        private readonly IDirectory _directory;
 
-        private readonly IFile _file;
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         public MutantsContainer(
             IOperatorsManager operatorsManager,
             ITypesManager typesManager,
-            IVisualStudioConnection visualStudio,
-            IAssemblyReaderWriter assemblyReaderWriter,
-            IFactory<DateTime> dateTimeNowFactory,
-            IDirectory directory, IFile file
+            IMutantsFileManager mutantsFileManager,
+            IFactory<DateTime> dateTimeNowFactory
+
             )
         {
             _operatorsManager = operatorsManager;
             _typesManager = typesManager;
-            _visualStudio = visualStudio;
-            _assemblyReaderWriter = assemblyReaderWriter;
+            _mutantsFileManager = mutantsFileManager;
             _dateTimeNowFactory = dateTimeNowFactory;
-            _directory = directory;
-            _file = file;
+
 
             _generatedMutants = new BetterObservableCollection<MutationSession>();
         }
 
-        public string SessionsFile
-        {
-            get
-            {
-                string path = _visualStudio.GetMutantsRootFolderPath();
-                return Path.Combine(path, "mutants.xml");
-            }
-        }
-
+ 
         public IOperatorsManager OperatorsManager
         {
             get
@@ -116,10 +138,7 @@
 
             IEnumerable<OperatorNode> operators = _operatorsManager.GetActiveOperators();
 
-            Action<MethodDefinition> operatorProgessLog = method =>
-            {
-                mutationLog("--- Mutating method: " + method.Name + " in type: "+method.DeclaringType.Name);
-            };
+        
 
             var list = new List<MutationResultDetails>();
             foreach (OperatorNode mutationOperator in operators)
@@ -129,7 +148,8 @@
                 list.Add(result);
             }
 
-           // IEnumerable<IEnumerable<TypeDefinition>> enumerable = list.Select(r => r.ModifiedMethods.GroupBy(m => m.DeclaringType).Select(g => g.Key));
+           // IEnumerable<IEnumerable<TypeDefinition>> enumerable = list.Select(r => r.ModifiedMethods
+            //.GroupBy(m => m.DeclaringType).Select(g => g.Key));
 
             var session = new MutationSession
             {
@@ -140,78 +160,28 @@
                 Assemblies = new List<string>(),
             };
             mutationLog("Saving mutant...");
-            StoreMutant(session);
 
+            IEnumerable<AssemblyDefinition> assemblies = _typesManager.GetLoadedAssemblies();
+
+            _mutantsFileManager.StoreMutant(session, assemblies);
             return session;
 
 
         }
 
-
-        public string MutantDirectoryPath(MutationSession mutant)
-        {
-            string path = _visualStudio.GetMutantsRootFolderPath();
-            return Path.Combine(path, mutant.Name + " - " 
-                + mutant.DateOfCreation.ToString("dd.MM.yy, HH.mm.ss"));
-            
-        }
-
-
-        public void StoreMutant(MutationSession mutant)
-        {
-            IEnumerable<AssemblyDefinition> assemblies = _typesManager.GetLoadedAssemblies();
-
-            string mutantDirectoryPath = MutantDirectoryPath(mutant);
-            _directory.CreateDirectory(mutantDirectoryPath);
-            foreach (AssemblyDefinition assemblyDefinition in assemblies)
-            {
-                string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
-                _assemblyReaderWriter.WriteAssembly(assemblyDefinition,file); 
-                mutant.Assemblies.Add(file);   
-            }
-            var refer = _visualStudio.GetReferencedAssemblies();
-            foreach (var referenced in refer)
-            {
-                string destination = Path.Combine(mutantDirectoryPath , Path.GetFileName(referenced));
-                _file.Copy(referenced, destination, overwrite:true);
-            }
-        }
-
-
-
-
         public void LoadSessions()
         {
-            if (File.Exists(SessionsFile))
-            {
-                var ser = new XmlSerializer(typeof(List<MutationSession>));
-                using (var file = new StreamReader(SessionsFile))
-                {
-                    try
-                    {
-                        var list = (List<MutationSession>)ser.Deserialize(file);
-                        foreach (MutationSession session in list)
-                        {
-                            _generatedMutants.Add(session);
-                        }
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        _log.Error("Invalid mutants file.", e);
-                    }
-                }
-            }
+            _generatedMutants.ReplaceRange(_mutantsFileManager.LoadSessions());
+   
         }
 
         public void DeleteMutant(MutationSession mutant)
         {
             _generatedMutants.Remove(mutant);
-            SaveSettingsFile();
+            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
 
-            string dir = MutantDirectoryPath(mutant);
-            _directory.Delete(dir);
+            _mutantsFileManager.DeleteMutantFiles(mutant);
 
-            
         }
 
         public void Clear()
@@ -221,14 +191,7 @@
 
         public void SaveSettingsFile()
         {
-            var ser = new XmlSerializer(typeof(List<MutationSession>));
-
-            using (var file = new StreamWriter(SessionsFile))
-            {
-                ser.Serialize(file, _generatedMutants.ToList());
-            }
+            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
         }
-
-
     }
 }

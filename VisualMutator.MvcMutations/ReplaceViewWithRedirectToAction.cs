@@ -38,19 +38,25 @@
         public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
              var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));
-
+             MethodDefinition me = GetRedirectToActionMethod(module);
             IEnumerable<MutationTarget> mutationTargets = controllers.SelectMany(GetMutationTargets).ToList();
             foreach (MutationTarget target in mutationTargets)
             {
        
-                var istr = target.InstructionToReplace;
+                var callInstr = target.InstructionToReplace;
 
                 ILProcessor proc = target.MethodToModify.Body.GetILProcessor();
+                var method = (MethodReference)callInstr.Operand;
 
-                MethodDefinition me = GetRedirectToActionMethod(module);
+                
+           
+                foreach (var t in method.Parameters)
+                {
+                    proc.Remove(callInstr.Previous);
+                }
 
-                proc.InsertBefore(istr, Instruction.Create(OpCodes.Ldstr, target.MethodToRedirectTo.Name));
-                proc.Replace(istr, Instruction.Create(OpCodes.Call, module.Import(me)));
+                proc.InsertBefore(callInstr, Instruction.Create(OpCodes.Ldstr, target.MethodToRedirectTo.Name));
+                proc.Replace(callInstr, Instruction.Create(OpCodes.Call, module.Import(me)));
             }
 
             var result = new MutationResultDetails
@@ -75,8 +81,7 @@
 
             foreach (var methodToModify in methodsToModify)
             {
-                var instr = FindValidViewCallInstruction(methodToModify);
-
+                
                 MethodDefinition methodToRedirectTo = controller.Methods
                 .FirstOrDefault(m =>
                     m != methodToModify
@@ -84,19 +89,19 @@
                     && m.Parameters.Count == 0
                     && m.ReturnType.FullName==("System.Web.Mvc.ActionResult"));
 
-                if (instr != null && methodToRedirectTo != null)
+                if (methodToRedirectTo != null)
                 {
-                    var target = new MutationTarget
+                    foreach (var instr in FindValidViewCallInstruction(methodToModify))
                     {
-                        MethodToModify = methodToModify,
-                        MethodToRedirectTo = methodToRedirectTo,
-                        InstructionToReplace = instr
-                    };
-
-                    list.Add(target);
+                        var target = new MutationTarget
+                        {
+                            MethodToModify = methodToModify,
+                            MethodToRedirectTo = methodToRedirectTo,
+                            InstructionToReplace = instr
+                        };
+                        list.Add(target);
+                    }
                 }
-
-
             }
 
             return list;
@@ -141,24 +146,52 @@
             }
         }
 
-        private static Instruction FindValidViewCallInstruction(MethodDefinition methodToModify)
+        private static IEnumerable<Instruction> FindValidViewCallInstruction(MethodDefinition methodToModify)
         {
-            var ii= methodToModify.Body.Instructions
-                .FirstOrDefault(i =>
-                {
-                    if (i.OpCode == OpCodes.Call)
-                    {
-                        var method = ((MethodReference)i.Operand);
-                        if (method.DeclaringType.FullName == "System.Web.Mvc.Controller"
-                            && method.Name == "View")
-                          //  && method.Parameters.Count == 0)
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-            return ii;
+            return from Instruction instruction in methodToModify.Body.Instructions
+            where instruction.OpCode == OpCodes.Call
+            let method = ((MethodReference)instruction.Operand)
+            where method.DeclaringType.FullName == "System.Web.Mvc.Controller"
+                  && method.Name == "View" && HasProperParameters(instruction, method, methodToModify)
+            select instruction;
+           
+        }
+
+        private static bool HasProperParameters(Instruction callInstruction, MethodReference method, MethodDefinition methodToModify)
+        {
+
+            Instruction currentInstr = callInstruction.Previous;
+
+            var validOpcodes = new List<OpCode>
+            {
+                OpCodes.Ldstr,
+                OpCodes.Ldloc,
+                OpCodes.Ldloc_S,
+                OpCodes.Ldloc_0,
+                OpCodes.Ldloc_1,
+                OpCodes.Ldloc_2,
+                OpCodes.Ldloc_3,
+                OpCodes.Ldarg,
+                OpCodes.Ldarg_S,
+                OpCodes.Ldarg_0,
+                OpCodes.Ldarg_1,
+                OpCodes.Ldarg_2,
+                OpCodes.Ldarg_3,    
+                OpCodes.Ldnull,
+
+            };
+
+            var list = new List<Instruction>();
+            foreach (var x in method.Parameters)
+            {
+                list.Add(currentInstr);
+                currentInstr = currentInstr.Previous;
+            }
+
+            var sss = list.Select(i => i.OpCode).All(validOpcodes.Contains);
+
+            return sss;
+
         }
     }
 

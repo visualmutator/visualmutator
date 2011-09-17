@@ -10,8 +10,11 @@
     {
         public const string TestAssembliesFolder = @"..\..\TestAssemblies";
 
-        public static string NerdDinner3AssemblyPath 
-            = Path.Combine(TestAssembliesFolder, @"NerdDinner3-Debug\NerdDinner.dll");
+     
+        public static readonly string NerdDinner3Directory
+            = Path.Combine(TestAssembliesFolder, @"NerdDinner3-Debug");
+        public static readonly string NerdDinner3AssemblyName
+         =  @"NerdDinner.dll";
 
 
     }

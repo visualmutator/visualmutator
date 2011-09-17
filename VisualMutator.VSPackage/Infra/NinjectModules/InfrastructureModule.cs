@@ -29,11 +29,8 @@
         {
             Kernel.Bind<IMessageService>().To<MessageService>();
             Kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>().InSingletonScope();
-            Kernel.Bind<FileSystemService>().ToSelf().InSingletonScope();
-            Kernel.Bind<IFile>().To<FileService>().InSingletonScope();
-            Kernel.Bind<IDirectory>().To<DirectoryService>().InSingletonScope();
-
-
+            Kernel.Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
+       
             Kernel.Bind<ApplicationController>().ToSelf().InSingletonScope();
             Kernel.Bind<IMainControl>().To<MainControl>().InSingletonScope();
             Kernel.Bind<MainWindowViewModel>().ToSelf().InSingletonScope();

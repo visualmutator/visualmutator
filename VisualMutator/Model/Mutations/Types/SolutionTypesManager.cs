@@ -20,7 +20,7 @@
 
         IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths);
 
-        IEnumerable<TypeDefinition> GetIncludedTypes();
+        ICollection<TypeDefinition> GetIncludedTypes();
 
         IEnumerable<AssemblyDefinition> GetLoadedAssemblies();
     }
@@ -54,9 +54,9 @@
             return _loadedAssemblies;
         }
 
-        public IEnumerable<TypeDefinition> GetIncludedTypes()
+        public ICollection<TypeDefinition> GetIncludedTypes()
         {
-            return _types.Where(t => (bool)t.IsIncluded).Select(t => t.TypeDefinition);
+            return _types.Where(t => (bool)t.IsIncluded).Select(t => t.TypeDefinition).ToList();
         }
 
         public IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths)
@@ -84,7 +84,7 @@
             foreach (var types in typesGroups)
             {
                 var assemblyNode = new AssemblyNode(types.Key);
-                GroupTypes(assemblyNode, "", types);
+                GroupTypes(assemblyNode, "", types.ToList());
 
                 root.Children.Add(assemblyNode);
                 _assemblyTreeNodes.Add(assemblyNode);
@@ -96,12 +96,12 @@
         }
      
         public void GroupTypes(GenericNode parent,
-                               string currentNamespace, IEnumerable<TypeDefinition> types)
+                               string currentNamespace, ICollection<TypeDefinition> types)
         {
             var groupsByNamespace = types.Where(t => t.Namespace != currentNamespace &&
                                                      t.Namespace.StartsWith(currentNamespace))
                 .OrderBy(t => t.Namespace)
-                .GroupBy(t => ExtractNextNamespacePart(t.Namespace, currentNamespace));
+                .GroupBy(t => ExtractNextNamespacePart(t.Namespace, currentNamespace)).ToList();
 
             var leafTypes = types.Where(t => t.Namespace == currentNamespace)
                 .OrderBy(t => t.Name);
@@ -110,14 +110,14 @@
             {
                 var singleGroup = groupsByNamespace.Single();
                 parent.Name = ConcatNamespace(parent.Name, singleGroup.Key);
-                GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup);
+                GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup.ToList());
             }
             else
             {
                 foreach (var typesGroup in groupsByNamespace)
                 {
                     var node = new TypeNamespaceNode(parent, typesGroup.Key);
-                    GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup);
+                    GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup.ToList());
                     parent.Children.Add(node);
                 }
 

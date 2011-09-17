@@ -9,8 +9,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem
     using System.Text;
 
     using FileUtils;
+    using FileUtils.Impl;
 
-    public class FileSystemService
+    public interface IFileSystem
+    {
+        IFile File { get; }
+
+        IDirectory Directory { get; }
+    }
+
+    public class FileSystemService : IFileSystem
     {
         private readonly IFile _file;
 
@@ -32,10 +40,10 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem
             }
         }
         
-        public FileSystemService(IFile file, IDirectory directory)
+        public FileSystemService()
         {
-            _file = file;
-            _directory = directory;
+            _file = new FileService();
+            _directory = new DirectoryService();
         }
     }
 }
