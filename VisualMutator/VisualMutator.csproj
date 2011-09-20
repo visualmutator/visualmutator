@@ -94,10 +94,13 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\ILMutationsController.cs" />
     <Compile Include="Controllers\UnitTestsController.cs" />
+    <Compile Include="Infrastructure\Comparers\CollectionComparer.cs" />
+    <Compile Include="Infrastructure\Comparers\Comparers.cs" />
+    <Compile Include="Infrastructure\Comparers\FuncComparer.cs" />
+    <Compile Include="Infrastructure\Comparers\KeyComparer.cs" />
     <Compile Include="Infrastructure\EventLogger.cs" />
     <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
     <Compile Include="Infrastructure\Factories\IFactory.cs" />
-    <Compile Include="Infrastructure\Factories\StaticFactory.cs" />
     <Compile Include="Infrastructure\FileSystem\DirectoryService.cs" />
     <Compile Include="Infrastructure\FileSystem\FileService.cs" />
     <Compile Include="Infrastructure\FileSystem\FileSystemService.cs" />

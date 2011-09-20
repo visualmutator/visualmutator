@@ -170,7 +170,7 @@
             Task.Factory.StartNew(() =>
             {
                 IEnumerable<string> paths = _visualStudio.GetProjectPaths();
-                return _typesManager.BuildTypesTree(paths);
+                return _typesManager.GetTypesFromAssemblies(paths);
             }).ContinueWith(prev =>
             {
                 try

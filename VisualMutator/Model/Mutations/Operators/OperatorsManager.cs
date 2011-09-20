@@ -17,7 +17,7 @@
 
         void LoadOperators();
 
-        IEnumerable<OperatorNode> GetActiveOperators();
+        IEnumerable<IMutationOperator> GetActiveOperators();
     }
 
     public class OperatorsManager : IOperatorsManager
@@ -54,10 +54,10 @@
             root.IsIncluded = true;
         }
 
-        public IEnumerable<OperatorNode> GetActiveOperators()
+        public IEnumerable<IMutationOperator> GetActiveOperators()
         {
             return OperatorPackages.SelectMany(pack => pack.Operators)
-                .Where(oper => oper.IsLeafIncluded);
+                .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator);
         }
     }
 }

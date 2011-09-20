@@ -18,7 +18,7 @@
     {
         IEnumerable<AssemblyNode> AssemblyTreeNodes { get; }
 
-        IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths);
+        IEnumerable<AssemblyNode> GetTypesFromAssemblies(IEnumerable<string> projectsPaths);
 
         ICollection<TypeDefinition> GetIncludedTypes();
 
@@ -59,21 +59,15 @@
             return _types.Where(t => (bool)t.IsIncluded).Select(t => t.TypeDefinition).ToList();
         }
 
-        public IEnumerable<AssemblyNode> BuildTypesTree(IEnumerable<string> projectsPaths)
+        public IEnumerable<AssemblyNode> GetTypesFromAssemblies(IEnumerable<string> projectsPaths)
         {
-            _loadedAssemblies = new List<AssemblyDefinition>();
-            foreach (var assembly in projectsPaths)
-            {
-                try
-                {
-                    _loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
-                }
-                catch (FileNotFoundException e)
-                {
-                    _log.Info("ReadAssembly failed. ", e);
-                }
-            }
- 
+            LoadAssemblies(projectsPaths);
+
+            return BuildTree();
+        }
+
+        private IEnumerable<AssemblyNode> BuildTree()
+        {
             var typesGroups = _loadedAssemblies.SelectMany(ad => ad.MainModule.Types)
                 .Where(t => t.Name != "<Module>").GroupBy(t => t.Module.Assembly.Name.Name);
 
@@ -94,7 +88,23 @@
 
             return _assemblyTreeNodes;
         }
-     
+
+        private void LoadAssemblies(IEnumerable<string> projectsPaths)
+        {
+            _loadedAssemblies = new List<AssemblyDefinition>();
+            foreach (var assembly in projectsPaths)
+            {
+                try
+                {
+                    _loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
+                }
+                catch (FileNotFoundException e)
+                {
+                    _log.Info("ReadAssembly failed. ", e);
+                }
+            }
+        }
+
         public void GroupTypes(GenericNode parent,
                                string currentNamespace, ICollection<TypeDefinition> types)
         {

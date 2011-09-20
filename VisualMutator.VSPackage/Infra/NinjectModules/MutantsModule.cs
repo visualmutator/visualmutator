@@ -24,6 +24,7 @@
 
 
             Kernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
+            Kernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
 
            
            // Kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();

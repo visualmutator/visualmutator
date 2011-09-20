@@ -36,9 +36,9 @@
             
             var td = new TypeDefinition("ns2", "Class1", TypeAttributes.Public);
 
-            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
-            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
-            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
+            td.Methods.Add(CecilUtils.CreateMethodDefinition("Test1", td));
+            td.Methods.Add(CecilUtils.CreateMethodDefinition("Test2", td));
+            td.Methods.Add(CecilUtils.CreateMethodDefinition("Test3", td));
           //  AssemblyDefinition assembly = TestWrapperMocking.CreateAssembly("Ass", new[] { td });
 
             //  var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
@@ -126,9 +126,9 @@
 
             var td = new TypeDefinition("ns2", "Class1", TypeAttributes.Public);
 
-            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test1", td));
-            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test2", td));
-            td.Methods.Add(TestWrapperMocking.CreateMethodDefinition("Test3", td));
+            td.Methods.Add(CecilUtils.CreateMethodDefinition("Test1", td));
+            td.Methods.Add(CecilUtils.CreateMethodDefinition("Test2", td));
+            td.Methods.Add(CecilUtils.CreateMethodDefinition("Test3", td));
             //  AssemblyDefinition assembly = TestWrapperMocking.CreateAssembly("Ass", new[] { td });
 
             //  var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);

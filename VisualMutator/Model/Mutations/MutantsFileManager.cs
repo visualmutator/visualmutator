@@ -19,17 +19,15 @@
 
     public interface IMutantsFileManager
     {
-        string MutantDirectoryPath(MutationSession mutant);
 
         void StoreMutant(MutationSession mutant, IEnumerable<AssemblyDefinition> assemblies);
 
-        string SessionsFile { get; }
 
-        List<MutationSession> LoadSessions();
+        IEnumerable<MutationSession> LoadSessions();
 
         void DeleteMutantFiles(MutationSession mutant);
 
-        void SaveSettingsFile(IList<MutationSession> mutants);
+        void SaveSettingsFile(IEnumerable<MutationSession> mutants);
     }
 
     public class MutantsFileManager : IMutantsFileManager
@@ -65,21 +63,22 @@
 
         public void StoreMutant(MutationSession mutant, IEnumerable<AssemblyDefinition> assemblies)
         {
-            
-
             string mutantDirectoryPath = MutantDirectoryPath(mutant);
             _fs.Directory.CreateDirectory(mutantDirectoryPath);
-            foreach (AssemblyDefinition assemblyDefinition in assemblies)
-            {
-                string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
-                _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
-                mutant.Assemblies.Add(file);
-            }
+
             var refer = _visualStudio.GetReferencedAssemblies();
             foreach (var referenced in refer)
             {
                 string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(referenced));
                 _fs.File.Copy(referenced, destination, overwrite: true);
+            }
+
+            foreach (AssemblyDefinition assemblyDefinition in assemblies)
+            {
+                string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
+                _fs.File.Delete(file);
+                _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
+                mutant.Assemblies.Add(file);
             }
         }
 
@@ -94,7 +93,7 @@
 
         
 
-        public List<MutationSession> LoadSessions()
+        public IEnumerable<MutationSession> LoadSessions()
         {
             if (File.Exists(SessionsFile))
             {
@@ -126,7 +125,7 @@
 
         }
 
-        public void SaveSettingsFile(IList<MutationSession> mutants)
+        public void SaveSettingsFile(IEnumerable<MutationSession> mutants)
         {
             var ser = new XmlSerializer(typeof(List<MutationSession>));
 

@@ -1,9 +1,9 @@
 ﻿namespace VisualMutator.Tests
 {
-    using System;
+    #region Usings
+
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     using Mono.Cecil;
 
@@ -13,29 +13,18 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
-    using VisualMutator.Tests.UnitTesting;
     using VisualMutator.Tests.Util;
+
+    #endregion
 
     [TestFixture]
     public class SolutionTypesTests
     {
-        public Mock<IAssemblyReaderWriter> MockAssemblyReaderWriter(IEnumerable<KeyValuePair<string,AssemblyDefinition>> assemblies)
-        {
-            var mock = new Mock<IAssemblyReaderWriter>();
-            foreach (var pair in assemblies)
-            {
-                var pair1 = pair;
-                mock.Setup(_ => _.ReadAssembly(pair1.Key)).Returns(pair.Value);
-            }
-            return mock;
-        }
-        
-
+    
 
         [Test]
         public void Test1()
         {
-            
             var a = TypeAttributes.Public;
             var list = new List<TypeDefinition>
             {
@@ -53,51 +42,43 @@
                 new TypeDefinition("One.Two.YYY.Four", "Type12", a),
                 new TypeDefinition("One.ZZZ.YYY.Four", "Type13", a),
                 new TypeDefinition("One.ZZZ.YYY.Four", "Type14", a),
-
             };
 
             string path = @"C:\TestAssembly.dll";
-            var dict = new Dictionary<string, AssemblyDefinition>();
-            dict.Add(path, TestWrapperMocking.CreateAssembly("TestAssembly", list));
 
-            var mock = MockAssemblyReaderWriter(dict);
+            var mock = new Mock<IAssemblyReaderWriter>();
+
+            var assembly = CecilUtils.CreateAssembly("TestAssembly", list);
+            mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);
+
             var manager = new SolutionTypesManager(mock.Object);
 
-            manager.BuildTypesTree(new[] { path });
-
+            // Act
+            manager.GetTypesFromAssemblies(new[] { path });
+            
+            // Assert
+            CollectionAssert.AreEquivalent(manager.GetIncludedTypes(), list);
+            manager.GetLoadedAssemblies().Single().ShouldEqual(assembly);
 
             var one = manager.AssemblyTreeNodes.Single().Children.Single();
-
             one.Children.Count.ShouldEqual(5);
-
             var two = one.Children.Single(_ => _.Name == "Two");
-
             two.Children.Count.ShouldEqual(3);
-
-
-            var  merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
-
+            var merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
             merged.Children.Count.ShouldEqual(2);
-
         }
 
         [Test]
         public void Test2()
         {
-
             var manager = new SolutionTypesManager(null);
 
-           
             manager.ExtractNextNamespacePart("One.Two.Three.Four.Five", "").ShouldEqual("One");
             manager.ExtractNextNamespacePart("One.Two.Three", "").ShouldEqual("One");
             manager.ExtractNextNamespacePart("One", "").ShouldEqual("One");
 
             manager.ExtractNextNamespacePart("One.Two.Three.Four.Five", "One.Two").ShouldEqual("Three");
             manager.ExtractNextNamespacePart("One.Two.Three", "One.Two").ShouldEqual("Three");
-         
-
-
         }
     }
 }
-

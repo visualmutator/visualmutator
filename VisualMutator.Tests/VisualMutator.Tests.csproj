@@ -62,7 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
+    <Compile Include="Mutations\MutantsContainerTests.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
+    <Compile Include="Util\CecilUtils.cs" />
     <Compile Include="Util\TestUtils.cs" />
     <Compile Include="MonoCecilTests.cs" />
     <Compile Include="UnitTesting\MsTestServiceTests.cs" />
@@ -77,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
+      <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
+      <Name>VisualMutator.Extensibility</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
       <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
       <Name>VisualMutator.MvcMutations</Name>

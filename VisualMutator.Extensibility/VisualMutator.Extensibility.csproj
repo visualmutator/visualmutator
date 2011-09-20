@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CecilExtensions.cs" />
     <Compile Include="IMutationOperator.cs" />
     <Compile Include="IOperatorsPack.cs" />
     <Compile Include="MutationResultDetails.cs" />

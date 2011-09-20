@@ -7,7 +7,6 @@
     using System.IO;
 
     using System.Linq;
-    using System.Text;
 
     using EnvDTE;
 
@@ -35,7 +34,9 @@
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
             _buildEvents = ((Events2)_dte.Events).BuildEvents;
 
+          //  _dte.Solution.Projects.
             //  _dte.
+           
         }
 
         public void Initialize()
@@ -68,6 +69,12 @@
         }
 
 
+        public void OpenFile(string className)
+        {
+            IEnumerable<ProjectItem> projectItems = _dte.Solution.Cast<Project>()
+                .SelectMany(p => p.ProjectItems.Cast<ProjectItem>()).ToList();
+            ProjectItem projectItem = projectItems.First(i => i.Name == className);
+        }
 
         public BuildEvents BuildEvents
         {
@@ -106,7 +113,7 @@
             var list = new List<string>();
             foreach (Project project in chosenProjects)
             {
-                IEnumerable<Property> properties = project.Properties.Cast<Property>();
+                IEnumerable<Property> properties = project.Properties.Cast<Property>().ToList();
 
                 var localPath = (string)properties
                                             .Single(prop => prop.Name == "LocalPath").Value;
@@ -124,7 +131,7 @@
         }
         public IEnumerable<string> GetReferencedAssemblies()
         {
-            var projects = GetProjectPaths();
+            var projects = GetProjectPaths().ToList();
            // string binDir = Path.GetDirectoryName(projects.First());
             var list = new List<string>();
             foreach (var binDir in projects.Select(p => Path.GetDirectoryName(p)))
@@ -186,26 +193,6 @@
                 (string)
                 _dte.Solution.Properties.Cast<Property>().Single(p => p.Name == "Path").Value;
             return Directory.GetParent(slnPath).CreateSubdirectory("visal_mutator_mutants").FullName;
-        }
-
-        public string Test()
-        {
-            if (_dte.Solution.IsOpen)
-            {
-                var sb = new StringBuilder();
-                foreach (Property pro in _dte.Solution.Properties.Cast<Property>())
-                {
-                    try
-                    {
-                        sb.AppendLine(pro.Name + " --- " + pro.Value);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-                return sb.ToString();
-            }
-            return "";
         }
     }
 }

@@ -39,38 +39,7 @@
         void SaveSettingsFile();
     }
 
-    public class TestOperator : IMutationOperator
-    {
-        public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
-        {
-            int i = 0;
-            foreach (var typeDefinition in types)
-            {
-                typeDefinition.Name = "TestTypeName"+i++;
-            }
-            return new MutationResultDetails
-            {
-                ModifiedMethods = new List<string>(),
-                
-            };
-        }
 
-        public string Name
-        {
-            get
-            {
-                return "TestName";
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return "TestDescription";
-            }
-        }
-    }
 
 
 
@@ -136,15 +105,15 @@
 
             ModuleDefinition module = types.First().Module;
 
-            IEnumerable<OperatorNode> operators = _operatorsManager.GetActiveOperators();
+            IEnumerable<IMutationOperator> operators = _operatorsManager.GetActiveOperators();
 
         
 
             var list = new List<MutationResultDetails>();
-            foreach (OperatorNode mutationOperator in operators)
+            foreach (IMutationOperator mutationOperator in operators)
             {
-                mutationLog("Applying operator: " + mutationOperator.Operator.Name);
-                var result = mutationOperator.Operator.Mutate(module, types);
+                mutationLog("Applying operator: " + mutationOperator.Name);
+                var result = mutationOperator.Mutate(module, types);
                 list.Add(result);
             }
 

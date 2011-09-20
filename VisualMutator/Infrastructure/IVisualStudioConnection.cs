@@ -23,8 +23,6 @@ namespace VisualMutator.Infrastructure
 
         string GetMutantsRootFolderPath();
 
-        string Test();
-
         IEnumerable<string> GetReferencedAssemblies();
 
         event Action OnBuildBegin;
@@ -36,5 +34,7 @@ namespace VisualMutator.Infrastructure
         event Action SolutionAfterClosing;
 
         void Initialize();
+
+        void OpenFile(string className);
     }
 }

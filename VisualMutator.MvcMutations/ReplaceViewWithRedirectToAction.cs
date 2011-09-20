@@ -111,21 +111,12 @@
 
         public MethodDefinition  GetRedirectToActionMethod(ModuleDefinition currentModule)
         {
-            AssemblyNameReference ass =
-                      currentModule.AssemblyReferences.FirstOrDefault(x => x.Name == "System.Web.Mvc" 
-                          && x.Version == Version.Parse("3.0.0.0"));
-            if (ass == null)
-            {
-                ass = currentModule.AssemblyReferences.FirstOrDefault(x => x.Name == "System.Web.Mvc"
-                              && x.Version == Version.Parse("2.0.0.0"));
-            }
-            AssemblyDefinition def = currentModule.AssemblyResolver.Resolve(ass);
+            var mvcModule = CecilExtensions.GetAspNetMvcModule(currentModule);
 
 
-            return
-                def.MainModule.Types.Single(t => t.FullName == "System.Web.Mvc.Controller")
-                    .Methods.Single(m => m.FullName == "System.Web.Mvc.RedirectToRouteResult System.Web.Mvc.Controller::RedirectToAction(System.String)");
-                 
+            return mvcModule.Types.Single(t => t.FullName == "System.Web.Mvc.Controller")
+                    .Methods.Single(m => m.FullName ==
+        "System.Web.Mvc.RedirectToRouteResult System.Web.Mvc.Controller::RedirectToAction(System.String)");     
         }
 
 
@@ -195,39 +186,5 @@
         }
     }
 
-    internal static class Mixin
-    {
-        public static bool IsOfType(this TypeDefinition type, string fullName)
-        {
-            TypeDefinition currentType = type;
-
-            for (int i = 0; i < 10000; i++)
-            {
-                if (currentType.FullName == "<Module>" || !currentType.IsClass)
-                {
-                    return false;
-                }
-                string str = currentType.BaseType.FullName;
-                if (str == fullName)
-                {
-                    return true;
-                }
-                if (str == "System.Object")
-                {
-                    return false;
-                }
-
-                try
-                {
-                    currentType = currentType.BaseType.Resolve();
-                }
-                catch (AssemblyResolutionException)
-                {
-                    return false;
-                }
-                
-            }
-            throw new InvalidOperationException();
-        }
-    };
+  
 }
