@@ -39,11 +39,12 @@
    
         public static IEnumerable<T> Each<T>(this IEnumerable<T> collection, Action<T> action)
         {
-            foreach (T item in collection)
+            var coll = collection.ToList();
+            foreach (T item in coll)
             {
                 action(item);
             }
-            return collection;
+            return coll;
         }
         public static string InQuotes(this string str)
         {

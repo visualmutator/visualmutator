@@ -2,8 +2,7 @@
 {
     using System;
 
-    using log4net;
-
+   
     public interface IMessageService
     {
         void ShowMessage(object owner, string message);

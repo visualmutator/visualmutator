@@ -9,12 +9,15 @@
     {
         private readonly Func<T, T, bool> _comparer;
 
-        public FuncComparer(Func<T, T, bool> comparer)
+        private readonly Func<T,int> _getHashCode;
+
+        public FuncComparer(Func<T, T, bool> comparer, Func<T,int> getHashCode)
         {
             if (comparer == null)
                 throw new ArgumentNullException("comparer");
 
             _comparer = comparer;
+            _getHashCode = getHashCode;
         }
 
         public bool Equals(T x, T y)
@@ -24,7 +27,7 @@
 
         public int GetHashCode(T obj)
         {
-            throw new NotSupportedException();
+            return _getHashCode(obj);
         }
     }
 }

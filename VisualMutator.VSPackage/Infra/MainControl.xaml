@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
-
              xmlns:Shell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.10.0"
              xmlns:Views1="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views;assembly=VisualMutator"
              xmlns:ViewModels1="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels;assembly=VisualMutator"

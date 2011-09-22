@@ -15,18 +15,13 @@
 
             for (int i = 0; i < 10000; i++)
             {
-                if (currentType.FullName == "<Module>" || !currentType.IsClass)
+                if (currentType.FullName == "<Module>" || !currentType.IsClass || currentType.FullName == "System.Object")
                 {
                     return false;
                 }
-                string str = currentType.BaseType.FullName;
-                if (str == fullName)
+                if (currentType.FullName == fullName)
                 {
                     return true;
-                }
-                if (str == "System.Object")
-                {
-                    return false;
                 }
 
                 try

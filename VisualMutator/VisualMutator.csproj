@@ -94,34 +94,11 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\ILMutationsController.cs" />
     <Compile Include="Controllers\UnitTestsController.cs" />
-    <Compile Include="Infrastructure\Comparers\CollectionComparer.cs" />
-    <Compile Include="Infrastructure\Comparers\Comparers.cs" />
-    <Compile Include="Infrastructure\Comparers\FuncComparer.cs" />
-    <Compile Include="Infrastructure\Comparers\KeyComparer.cs" />
-    <Compile Include="Infrastructure\EventLogger.cs" />
     <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
     <Compile Include="Infrastructure\Factories\IFactory.cs" />
-    <Compile Include="Infrastructure\FileSystem\DirectoryService.cs" />
-    <Compile Include="Infrastructure\FileSystem\FileService.cs" />
-    <Compile Include="Infrastructure\FileSystem\FileSystemService.cs" />
-    <Compile Include="Infrastructure\FileSystem\IDirectory.cs" />
-    <Compile Include="Infrastructure\FileSystem\IFile.cs" />
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Infrastructure\TreeNode.cs" />
-    <Compile Include="Infrastructure\Utility.cs" />
-    <Compile Include="Infrastructure\WpfUtils\BasicCommand.cs" />
-    <Compile Include="Infrastructure\WpfUtils\BetterObservableCollection.cs" />
-    <Compile Include="Infrastructure\WpfUtils\Controller.cs" />
-    <Compile Include="Infrastructure\WpfUtils\EventListeners.cs" />
-    <Compile Include="Infrastructure\WpfUtils\Execute.cs" />
-    <Compile Include="Infrastructure\WpfUtils\IEventNotifier.cs" />
-    <Compile Include="Infrastructure\WpfUtils\IView.cs" />
-    <Compile Include="Infrastructure\WpfUtils\Messages\IMessageService.cs" />
-    <Compile Include="Infrastructure\WpfUtils\Messages\MessageService.cs" />
-    <Compile Include="Infrastructure\WpfUtils\Messages\MessageServiceExtensions.cs" />
-    <Compile Include="Infrastructure\WpfUtils\ModelElement.cs" />
-    <Compile Include="Infrastructure\WpfUtils\ViewModel.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
     <Compile Include="Model\Mutations\MutantsFileManager.cs" />
     <Compile Include="Model\Mutations\MutationSession.cs" />
@@ -208,6 +185,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
+      <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
+      <Name>CommonUtilityInfrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>

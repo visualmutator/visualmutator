@@ -13,6 +13,7 @@
     using Mono.Collections.Generic;
 
     using VisualMutator.Extensibility;
+    using VisualMutator.Infrastructure.Comparers;
 
     #endregion
 
@@ -23,13 +24,19 @@
         public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
 
-            var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));
+            var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller")).ToList();
             var list = new List<Tuple<MethodDefinition, MethodDefinition>>();
             foreach (var controllerType in controllers)
             {
-                var validGroups = controllerType.Methods.GroupBy(m => m.Parameters, 
+
+                var l1 = controllerType.Methods
+                    .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList();
+
+                var l2 = l1
+                    .GroupBy(m => m.Parameters,  new ParametersComparer()).ToList();
+                 var validGroups = l2   .Where(g => g.Count() >= 2).ToList();
              //       new FuncComparer<Collection<ParameterDefinition>>((c1,c2)=>Colle))
-               // Where(g => g.Count() >= 2).ToList();
+               // 
                 
                 foreach (var group in validGroups)
                 {
@@ -68,16 +75,16 @@
 
 
 
-        public MethodDefinition GetActionNameAttribute(ModuleDefinition currentModule)
+        public MethodReference GetActionNameAttribute(ModuleDefinition currentModule)
         {
             var mvcModule = CecilExtensions.GetAspNetMvcModule(currentModule);
 
-
+            
             var attr = mvcModule.Types.Single(t => t.FullName == "System.Web.Mvc.ActionNameAttribute");
-            return attr.Methods.Single(m => m.FullName ==
+            var method = attr.Methods.Single(m => m.FullName ==
         "System.Void System.Web.Mvc.ActionNameAttribute::.ctor(System.String)");
-
-         
+            return currentModule.Import(method);
+       
         }
 
 
@@ -96,37 +103,30 @@
                 return "..";
             }
         }
-        private class FuncComparer<T> : IEqualityComparer<T>
+        public class ParametersComparer : IEqualityComparer<Collection<ParameterDefinition>>
+    
         {
-            private readonly Func<T, T, bool> _comparer;
 
-            public FuncComparer(Func<T, T, bool> comparer)
+            public ParametersComparer()
             {
-                if (comparer == null)
-                    throw new ArgumentNullException("comparer");
 
-                _comparer = comparer;
             }
 
-            public bool Equals(T x, T y)
+            public bool Equals(Collection<ParameterDefinition> first, Collection<ParameterDefinition> second)
             {
-                return _comparer(x, y);
+                if(first.Count != second.Count)
+                {
+                    return false;
+                }
+                return !first.Where((t, i) => t.ParameterType.FullName != second[i].ParameterType.FullName).Any();
             }
 
-            public int GetHashCode(T obj)
+            public int GetHashCode(Collection<ParameterDefinition> enumerable)
             {
-                throw new NotSupportedException();
+                return enumerable.Aggregate(17, (sum, one) => 7 * sum + one.ParameterType.FullName.GetHashCode());
             }
+
         }
-
-        private static class Comparers
-        {
-            public static FuncComparer<T> Func<T>(Func<T, T, bool> comparer)
-            {
-                return new FuncComparer<T>(comparer);
-            }
-        }
-
 
     }
 
