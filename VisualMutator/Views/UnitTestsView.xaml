@@ -38,7 +38,7 @@
 
             </Grid.ColumnDefinitions>
             <ComboBox  Grid.Column="0" VerticalContentAlignment="Center"  
-                       ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant}" DisplayMemberPath="Name"/>
+                       ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant, Mode=TwoWay}" DisplayMemberPath="Name"/>
 
             <ProgressBar Grid.Column="0" Opacity="0.5" Visibility="{Binding AreTestsRunning, 
                 Converter={StaticResource BoolToVisibilityConverter} }" IsIndeterminate="True" />

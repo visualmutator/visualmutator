@@ -7,7 +7,8 @@
     using System.Reflection;
     using System.Threading.Tasks;
 
-   
+    using CommonUtilityInfrastructure.WpfUtils;
+
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
@@ -16,6 +17,7 @@
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
 
     using VisualMutator.Infrastructure;
+    using VisualMutator.Views;
 
     using log4net;
 
@@ -24,6 +26,8 @@
     public class ILMutationsController : Controller
     {
         private readonly IExecute _execute;
+
+        private readonly IEventService _eventService;
 
         private readonly IMessageService _messageService;
 
@@ -46,8 +50,8 @@
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
             IMessageService messageService,
-            IExecute execute
-            )
+            IExecute execute,
+            IEventService eventService)
         {
             _viewModel = viewModel;
             _visualStudio = visualStudio;
@@ -56,6 +60,7 @@
             _operatorsManager = operatorsManager;
             _messageService = messageService;
             _execute = execute;
+            _eventService = eventService;
 
             _viewModel.CommandMutate = new BasicCommand(Mutate, CanExecute);
             _viewModel.CommandMutate.UpdateOnCollectionChanged(_viewModel, _viewModel.Assemblies);
@@ -69,6 +74,25 @@
 
             _viewModel.Assemblies = new BetterObservableCollection<AssemblyNode>();
             _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
+
+            _viewModel.CommandManageMutants = new BasicCommand(ManageMutants);
+            _viewModel.CommandLoadLastMutant = new BasicCommand(LoadLastMutant);
+
+           
+        }
+
+        private void LoadLastMutant()
+        {
+            _eventService.Publish(new LoadLastCreatedMutantEventArgs());
+            _eventService.Publish(new SwitchToUnitTestsTabEventArgs());
+
+
+        }
+
+        public void ManageMutants()
+        {
+            var mutantsManagementViewModel = new MutantsManagementViewModel(new MutantsManagementView());
+            mutantsManagementViewModel.Show();
         }
 
         public ILMutationsViewModel ILMutationsVm
@@ -194,5 +218,7 @@
                 }
             }, _execute.GuiScheduler);
         }
+
+        
     }
 }

@@ -9,16 +9,16 @@
 
     public class MainWindowViewModel : ViewModel<IMainControl>
     {
-        private object _iLMutationsView;
+        private IView _iLMutationsView;
 
-        private object _unitTestsView;
+        private IView _unitTestsView;
 
         public MainWindowViewModel(IMainControl view)
             : base(view)
         {
         }
 
-        public object ILMutationsView
+        public IView ILMutationsView
         {
             set
             {
@@ -31,7 +31,7 @@
             }
         }
 
-        public object UnitTestsView
+        public IView UnitTestsView
         {
             set
             {
@@ -41,6 +41,21 @@
             get
             {
                 return _unitTestsView;
+            }
+        }
+
+
+        private int _selectedTab;
+
+        public int SelectedTab
+        {
+            get
+            {
+                return _selectedTab;
+            }
+            set
+            {
+                SetAndRise(ref _selectedTab, value, () => SelectedTab);
             }
         }
     }

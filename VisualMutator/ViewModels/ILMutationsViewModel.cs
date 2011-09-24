@@ -134,19 +134,16 @@
         }
 
         private bool _isMutationOngoing;
+
         public bool IsMutationOngoing
         {
-            set
-            {
-                if (_isMutationOngoing != value)
-                {
-                    _isMutationOngoing = value;
-                    RaisePropertyChanged(() => IsMutationOngoing);
-                }
-            }
             get
             {
                 return _isMutationOngoing;
+            }
+            set
+            {
+                SetAndRise(ref _isMutationOngoing, value, () => IsMutationOngoing);
             }
         }
         public bool IsVisible
@@ -161,6 +158,34 @@
             }
         }
 
+
+        private BasicCommand _commandLoadLastMutant;
+
+        public BasicCommand CommandLoadLastMutant
+        {
+            get
+            {
+                return _commandLoadLastMutant;
+            }
+            set
+            {
+                SetAndRise(ref _commandLoadLastMutant, value, () => CommandLoadLastMutant);
+            }
+        }
+
+        private BasicCommand _commandManageMutants;
+
+        public BasicCommand CommandManageMutants
+        {
+            get
+            {
+                return _commandManageMutants;
+            }
+            set
+            {
+                SetAndRise(ref _commandManageMutants, value, () => CommandManageMutants);
+            }
+        }
         public void ClearMutationLog()
         {
             View.ClearMutationLog();

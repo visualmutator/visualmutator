@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="VisualMutator.Views.TabbedView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
+             xmlns:ViewModels1="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels" mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <TabControl d:DataContext="{d:DesignInstance ViewModels1:MainWindowViewModel}" SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
+        <TabItem Header="Mutations">
+            <Views:ILMutationsView Content="{Binding ILMutationsView}"/>
+        </TabItem>
+        
+        <TabItem Header="Unit Tests">
+            <Views:UnitTestsView Content="{Binding UnitTestsView}"/>
+        </TabItem>
+        
+    </TabControl>
+</UserControl>

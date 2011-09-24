@@ -67,6 +67,7 @@
     <Compile Include="WpfUtils\BetterObservableCollection.cs" />
     <Compile Include="WpfUtils\Controller.cs" />
     <Compile Include="WpfUtils\EventListeners.cs" />
+    <Compile Include="WpfUtils\EventService.cs" />
     <Compile Include="WpfUtils\Execute.cs" />
     <Compile Include="WpfUtils\IEventNotifier.cs" />
     <Compile Include="WpfUtils\IView.cs" />

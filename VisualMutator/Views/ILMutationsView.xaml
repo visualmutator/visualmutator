@@ -6,8 +6,8 @@
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
              xmlns:Mutations="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations"
              xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
-             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views" mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views" mc:Ignorable="d" d:DesignHeight="300"
+             d:DesignWidth="300">
 
   <UserControl.Resources>
     <Style TargetType="Button">
@@ -58,8 +58,8 @@
         <ColumnDefinition/>
         <ColumnDefinition/>
       </Grid.ColumnDefinitions>
-      <Button Grid.Column="0" Grid.Row="0" Content="Refresh" Command="{Binding CommandRefresh}"/>
-      <Button Grid.Column="1" Grid.Row="0" Content="Mutate" Command="{Binding CommandMutate}"/>
+      <Button Grid.Column="0" Grid.Row="0" Content="Manage mutants..." Command="{Binding CommandManageMutants}"/>
+      <Button Grid.Column="1" Grid.Row="0" Content="Create new mutant" Command="{Binding CommandMutate}"/>
 
       <TextBlock Grid.Column="0" Grid.Row="1" Text="Types in solution:"/>
       <TextBlock Grid.Column="1" Grid.Row="1" Text="Available mutations:"/>
@@ -76,8 +76,7 @@
 
       <Grid.Resources>
 
-        <HierarchicalDataTemplate DataType="{x:Type Mutations:AssemblyNode}"
-                                  ItemsSource="{Binding Path=Children}">
+        <HierarchicalDataTemplate DataType="{x:Type Mutations:AssemblyNode}" ItemsSource="{Binding Path=Children}">
           <DockPanel>
             <Image Source="Resources/assembly.png"/>
             <CheckBox IsChecked="{Binding IsIncluded}"/>
@@ -86,8 +85,7 @@
 
         </HierarchicalDataTemplate>
 
-        <HierarchicalDataTemplate DataType="{x:Type Mutations:TypeNamespaceNode}"
-                                  ItemsSource="{Binding Path=Children}">
+        <HierarchicalDataTemplate DataType="{x:Type Mutations:TypeNamespaceNode}" ItemsSource="{Binding Path=Children}">
           <DockPanel>
             <Image Source="Resources/namespace.png"/>
             <CheckBox IsChecked="{Binding IsIncluded}"/>
@@ -106,21 +104,20 @@
 
       </Grid.Resources>
 
-            <TreeView Grid.Column="0" ItemsSource="{Binding Assemblies}" Visibility="{Binding AreTypesLoading, 
+      <TreeView Grid.Column="0" ItemsSource="{Binding Assemblies}"
+                Visibility="{Binding AreTypesLoading, 
                 Converter={Converters:FalseToVisibilityConverter}}"/>
 
-            <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
+      <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
                              Visibility="{Binding AreTypesLoading, 
                 Converter={Converters:BoolToVisibilityConverter}}"/>
 
-
-            <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
+      <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
 
       <TreeView Grid.Column="2" ItemsSource="{Binding MutationPackages}">
 
         <TreeView.Resources>
-          <HierarchicalDataTemplate DataType="{x:Type Mutations:PackageNode}"
-                                    ItemsSource="{Binding Operators}">
+          <HierarchicalDataTemplate DataType="{x:Type Mutations:PackageNode}" ItemsSource="{Binding Operators}">
 
             <DockPanel>
               <Image Source="Resources/mutation.png"/>
@@ -146,8 +143,12 @@
     </Grid>
 
     <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
-        <ProgressBar Grid.Row="3" Grid.ColumnSpan="2" Opacity="0.5" IsIndeterminate="True"
-                 Visibility="{Binding IsMutationOngoing, Converter={ Converters:BoolToVisibilityConverter }}"/>
+
+   
+    <Button Grid.Row="3" Grid.ColumnSpan="2" Margin="0" HorizontalAlignment="Right" Content="Load created mutant" 
+            Command="{Binding CommandLoadLastMutant}"/>
+    <ProgressBar Grid.Row="3" Grid.ColumnSpan="2" IsIndeterminate="True"
+                Visibility="{Binding IsMutationOngoing, Converter={ Converters:BoolToVisibilityConverter }}"/>
     <TextBox Grid.Row="4" Grid.ColumnSpan="2" Name="MutationLogBox"/>
 
   </Grid>

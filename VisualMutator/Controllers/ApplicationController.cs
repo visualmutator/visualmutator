@@ -7,7 +7,8 @@
     using System.Windows;
     using System.Windows.Threading;
 
-   
+    using CommonUtilityInfrastructure.WpfUtils;
+
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
@@ -18,44 +19,51 @@
 
     #endregion
 
-    public class ApplicationController
+    public class ApplicationController : IHandler<SwitchToUnitTestsTabEventArgs>
     {
         private readonly ILMutationsController _ilMutationsController;
 
-        private readonly MainWindowViewModel _mainWindowVm;
+        private readonly MainWindowViewModel _viewModel;
 
         private readonly UnitTestsController _unitTestsController;
 
         private readonly IVisualStudioConnection _visualStudio;
 
         private readonly IMessageService _messageService;
+
+        private readonly IEventService _eventService;
+
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public ApplicationController(
-            MainWindowViewModel mainWindowVm,
+            MainWindowViewModel viewModel,
             ILMutationsController ilMutationsController,
             UnitTestsController unitTestsController,
             IVisualStudioConnection visualStudio,
-            IMessageService messageService
-            )
+            IMessageService messageService,
+            IEventService eventService)
         {
-            _mainWindowVm = mainWindowVm;
+            _viewModel = viewModel;
             _ilMutationsController = ilMutationsController;
             _unitTestsController = unitTestsController;
             _visualStudio = visualStudio;
             _messageService = messageService;
+            _eventService = eventService;
 
-            _mainWindowVm.ILMutationsView = _ilMutationsController.ILMutationsVm.View;
-            _mainWindowVm.UnitTestsView = _unitTestsController.UnitTestsVm.View;
+            _viewModel.ILMutationsView = _ilMutationsController.ILMutationsVm.View;
+            _viewModel.UnitTestsView = _unitTestsController.UnitTestsVm.View;
 
             HookGlobalExceptionHandlers();
-            //  _unitTestsController.Mutants = _ilMutationsController.GeneratedMutants;
+
+            _eventService.Subscribe(this);
+         
         }
 
         public object Shell
         {
             get
             {
-                return _mainWindowVm.View;
+                return _viewModel.View;
             }
         }
 
@@ -65,8 +73,8 @@
 
             _visualStudio.SolutionOpened += ActivateOnSolutionOpened;
             _visualStudio.SolutionAfterClosing += DeactivateOnSolutionClosed;
-            
 
+            _viewModel.SelectedTab = 0;
 
         }
         public void HookGlobalExceptionHandlers()
@@ -103,6 +111,11 @@
         {
             _ilMutationsController.Deactivate();
             _unitTestsController.Deactivate();
+        }
+
+        public void Handle(SwitchToUnitTestsTabEventArgs message)
+        {
+            _viewModel.SelectedTab = 1;
         }
     }
 }

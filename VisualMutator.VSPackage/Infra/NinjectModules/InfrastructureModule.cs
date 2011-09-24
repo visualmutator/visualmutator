@@ -5,6 +5,8 @@
     using System.Linq;
     using System.Text;
 
+    using CommonUtilityInfrastructure.WpfUtils;
+
     using FileUtils;
     using FileUtils.Impl;
 
@@ -27,13 +29,16 @@
         
         public override void Load()
         {
-            Kernel.Bind<IMessageService>().To<MessageService>();
+            Kernel.Bind<IMessageService>().To<MessageService>().InSingletonScope();
+            Kernel.Bind<IEventService>().To<EventService>().InSingletonScope();
+
             Kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>().InSingletonScope();
             Kernel.Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
        
             Kernel.Bind<ApplicationController>().ToSelf().InSingletonScope();
             Kernel.Bind<IMainControl>().To<MainControl>().InSingletonScope();
             Kernel.Bind<MainWindowViewModel>().ToSelf().InSingletonScope();
+     
 
 
             var exe = new Execute();

@@ -14,6 +14,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using NUnit.Core;
     using NUnit.Core.Filters;
@@ -32,15 +33,16 @@
 
     using log4net;
 
-    using Controller = PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Controller;
-
+   
     #endregion
 
-    public class UnitTestsController : Controller
+    public class UnitTestsController : Controller, IHandler<LoadLastCreatedMutantEventArgs>
     {
         private BasicCommand _commandRunTests;
 
         private readonly IExecute _execute;
+
+        private readonly IEventService _eventService;
 
         private readonly IMessageService _messageBoxService;
 
@@ -52,34 +54,34 @@
 
         private readonly UnitTestsViewModel _viewModel;
 
-        private readonly IVisualStudioConnection _visualStudioConnection;
 
         private BasicCommand _reloadTestList;
         private BasicCommand _showTestDetails;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public UnitTestsController(
             IUnitTestsView view,
-            IVisualStudioConnection visualStudioConnection,
             IMessageService messageBoxService,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
-            IExecute execute
-
+            IExecute execute,
+            IEventService eventService
             )
         {
    
-            _visualStudioConnection = visualStudioConnection;
             _messageBoxService = messageBoxService;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _execute = execute;
+            _eventService = eventService;
 
-             _testMap = new Dictionary<string, TestTreeNode>();
+            _testMap = new Dictionary<string, TestTreeNode>();
 
             _viewModel = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
             InitViewModel();
 
+            _eventService.Subscribe(this);
         }
 
 
@@ -103,10 +105,16 @@
             _viewModel.CommandDeleteMutant.UpdateOnChanged(_viewModel, () => _viewModel.SelectedMutant);
 
 
-
             _viewModel.CommandRunTests = _commandRunTests;
 
-
+            _viewModel.EventListeners.AddCollectionChangedEventHandler(_viewModel.Mutants, ()=>
+            {
+                if (_viewModel.SelectedMutant == null)
+                {
+                    _viewModel.SelectedMutant = _viewModel.Mutants.LastOrDefault();
+                }  
+            });
+           
         }
 
 
@@ -206,6 +214,13 @@
 
         }
 
-       
+        public void Handle(LoadLastCreatedMutantEventArgs message)
+        {
+            MutationSession last = _viewModel.Mutants.LastOrDefault();
+            if (last != null)
+            {
+                _viewModel.SelectedMutant = last;
+            }
+        }
     }
 }
