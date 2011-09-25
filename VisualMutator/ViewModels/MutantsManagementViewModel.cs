@@ -1,7 +1,6 @@
 ﻿namespace VisualMutator.ViewModels
 {
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.Mutations;
     using VisualMutator.Views;
@@ -66,6 +65,20 @@
             set
             {
                 SetAndRise(ref _commandRemoveAll, value, () => CommandRemoveAll);
+            }
+        }
+
+        private MutationSession _selectedMutant;
+
+        public MutationSession SelectedMutant
+        {
+            get
+            {
+                return _selectedMutant;
+            }
+            set
+            {
+                SetAndRise(ref _selectedMutant, value, () => SelectedMutant);
             }
         }
 

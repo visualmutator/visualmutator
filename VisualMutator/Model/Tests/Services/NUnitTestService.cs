@@ -8,11 +8,11 @@
     using System.Reflection;
     using System.Threading;
 
+    using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
+
     using NUnit.Core;
     using NUnit.Util;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
 
     using VisualMutator.Model.Tests.TestsTree;
 

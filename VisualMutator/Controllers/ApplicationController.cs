@@ -8,8 +8,7 @@
     using System.Windows.Threading;
 
     using CommonUtilityInfrastructure.WpfUtils;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using VisualMutator.Controllers.EventMessages;
     using VisualMutator.Infrastructure;

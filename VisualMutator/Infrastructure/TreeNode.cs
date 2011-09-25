@@ -3,11 +3,10 @@
     #region Usings
 
     using System.Collections.Generic;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-
     using System.Linq;
+
+    using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     #endregion
     public class LeafNode<TParent, TThis> :Node, IHasParent<TParent, TThis>

@@ -9,16 +9,10 @@
     using System.Windows;
     using System.Windows.Threading;
 
-    using FileUtils;
-    using FileUtils.Impl;
-
     using Ninject;
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
 

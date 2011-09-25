@@ -1,16 +1,7 @@
 ﻿
 
-namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem
+namespace CommonUtilityInfrastructure.FileSystem
 {
-
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    using FileUtils;
-    using FileUtils.Impl;
-
     public interface IFileSystem
     {
         IFile File { get; }

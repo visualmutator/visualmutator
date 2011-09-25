@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils
+﻿namespace CommonUtilityInfrastructure.WpfUtils
 {
     #region Usings
 
@@ -6,7 +6,6 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq.Expressions;
-  
 
     #endregion
 

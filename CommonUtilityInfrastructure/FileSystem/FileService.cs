@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Security.AccessControl;
-using System.Text;
-
-namespace FileUtils.Impl
+﻿namespace CommonUtilityInfrastructure.FileSystem
 {
-   
+    using System;
+    using System.IO;
+    using System.Security.AccessControl;
+    using System.Text;
+
     public class FileService : IFile
     {
         public void AppendAllText(string path, string contents, Encoding encoding)

@@ -3,15 +3,15 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
+
     using Mono.Cecil;
 
     using Moq;
 
     using NUnit.Core;
     using NUnit.Framework;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
 
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;

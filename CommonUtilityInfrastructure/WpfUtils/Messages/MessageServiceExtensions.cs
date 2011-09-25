@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages
+﻿namespace CommonUtilityInfrastructure.WpfUtils.Messages
 {
     #region Usings
 

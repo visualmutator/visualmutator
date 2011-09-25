@@ -6,7 +6,8 @@
     using System.Linq;
     using System.Windows.Input;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Infrastructure;
 

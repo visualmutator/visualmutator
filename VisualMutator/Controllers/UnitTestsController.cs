@@ -9,9 +9,7 @@
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure.WpfUtils;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using VisualMutator.Controllers.EventMessages;
     using VisualMutator.Model.Mutations;

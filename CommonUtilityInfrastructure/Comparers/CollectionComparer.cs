@@ -1,8 +1,7 @@
-﻿namespace VisualMutator.Infrastructure.Comparers
+﻿namespace CommonUtilityInfrastructure.Comparers
 {
     #region Usings
 
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 

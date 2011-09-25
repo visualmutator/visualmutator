@@ -8,9 +8,9 @@
     using System.Reflection;
     using System.Xml.Linq;
 
-    using Mono.Cecil;
+    using CommonUtilityInfrastructure;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using Mono.Cecil;
 
     using VisualMutator.Model.Tests.TestsTree;
 

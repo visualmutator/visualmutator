@@ -2,7 +2,7 @@
 {
     #region Usings
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     #endregion
 

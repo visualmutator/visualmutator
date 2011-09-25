@@ -1,4 +1,4 @@
-namespace VisualMutator.Infrastructure.Comparers
+namespace CommonUtilityInfrastructure.Comparers
 {
     using System;
 

@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils
+﻿namespace CommonUtilityInfrastructure.WpfUtils
 {
     public abstract class Controller
     {

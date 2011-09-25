@@ -8,8 +8,6 @@
 
     using NUnit.Framework;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-
     using VisualMutator.Infrastructure.Factories;
 
     #endregion

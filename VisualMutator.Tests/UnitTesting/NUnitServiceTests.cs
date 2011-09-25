@@ -4,14 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
+
     using Mono.Collections.Generic;
 
     using Moq;
 
     using NUnit.Core;
     using NUnit.Framework;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
 
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;

@@ -5,7 +5,7 @@
     using System.Windows;
     using System.Windows.Controls;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     #endregion
 

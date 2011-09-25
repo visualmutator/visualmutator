@@ -13,7 +13,6 @@
     using Mono.Collections.Generic;
 
     using VisualMutator.Extensibility;
-    using VisualMutator.Infrastructure.Comparers;
 
     #endregion
 

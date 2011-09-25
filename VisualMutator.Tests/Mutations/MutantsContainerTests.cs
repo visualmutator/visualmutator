@@ -11,8 +11,6 @@
 
     using NUnit.Framework;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;

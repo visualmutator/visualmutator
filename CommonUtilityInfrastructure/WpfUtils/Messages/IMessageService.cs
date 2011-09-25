@@ -1,8 +1,7 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages
+﻿namespace CommonUtilityInfrastructure.WpfUtils.Messages
 {
     using System;
 
-   
     public interface IMessageService
     {
         void ShowMessage(object owner, string message);

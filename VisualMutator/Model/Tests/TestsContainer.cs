@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure;
 
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;

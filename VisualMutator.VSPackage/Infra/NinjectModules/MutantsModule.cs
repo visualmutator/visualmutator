@@ -7,7 +7,6 @@
 
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
 
     using VisualMutator.Controllers;

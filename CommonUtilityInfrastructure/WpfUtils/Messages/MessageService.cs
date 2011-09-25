@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages
+﻿namespace CommonUtilityInfrastructure.WpfUtils.Messages
 {
     #region Usings
 
@@ -6,7 +6,6 @@
     using System.Globalization;
     using System.Windows;
 
-  
     #endregion
 
     public class MessageService : IMessageService

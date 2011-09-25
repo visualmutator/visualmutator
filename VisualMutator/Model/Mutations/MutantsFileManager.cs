@@ -7,9 +7,9 @@
     using System.Reflection;
     using System.Xml.Serialization;
 
-    using Mono.Cecil;
+    using CommonUtilityInfrastructure.FileSystem;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem;
+    using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations.Types;

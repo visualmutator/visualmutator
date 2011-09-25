@@ -6,7 +6,7 @@
     using System.Text;
     using System.Xml.Linq;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure;
 
     using VisualMutator.Infrastructure;
 

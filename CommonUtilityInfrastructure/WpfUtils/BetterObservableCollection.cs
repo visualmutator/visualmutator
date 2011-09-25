@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
+﻿namespace CommonUtilityInfrastructure.WpfUtils
 {
     #region Usings
 

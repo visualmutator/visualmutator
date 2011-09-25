@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Security.AccessControl;
-
-namespace FileUtils.Impl
+﻿namespace CommonUtilityInfrastructure.FileSystem
 {
+    using System;
+    using System.IO;
+    using System.Security.AccessControl;
+
     public class DirectoryService : IDirectory
     {
         public DirectoryInfo CreateDirectory(string path, DirectorySecurity security)

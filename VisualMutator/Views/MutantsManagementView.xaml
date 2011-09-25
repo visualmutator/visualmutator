@@ -9,7 +9,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources\Global.xaml" />
+                <ResourceDictionary Source="Resources/Global.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -19,15 +19,15 @@
         
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition  Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition  Height="Auto"/>
         </Grid.RowDefinitions>
         
         
-        <ListView Grid.Column="0"  Grid.Row="0" SelectionMode="Extended" ItemsSource="{Binding Mutants}">
+        <ListView Grid.Column="0"  Grid.Row="0" SelectionMode="Single" ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant}" >
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -39,15 +39,19 @@
             </ListView.View>
         </ListView>
 
-        <StackPanel Grid.Column="1"  Grid.Row="0"  >
+        <DockPanel  Grid.Column="1"  Grid.Row="0">
+            <StackPanel  DockPanel.Dock="Top">
 
-            <Button Content="Remove" Command="{Binding CommandRemove}"/>
-            <Button Content="Remove All" Command="{Binding CommandRemoveAll}" />
+                <Button Content="Remove" Command="{Binding CommandRemove}"/>
+                <Button Content="Remove All" Command="{Binding CommandRemoveAll}" />
 
-        </StackPanel>
+            </StackPanel>
+            <Button DockPanel.Dock="Bottom" VerticalAlignment="Bottom"
+                    Content="Close" Command="{Binding CommandClose}"/>
 
-        <Button  Grid.Column="1"  Grid.Row="1" Content="Close" Command="{Binding CommandClose}"/>
+        </DockPanel>
         
+      
         
     </Grid>
 </Window>

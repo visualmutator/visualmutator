@@ -5,17 +5,13 @@
     using System.Linq;
     using System.Text;
 
+    using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure.WpfUtils;
-
-    using FileUtils;
-    using FileUtils.Impl;
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using Ninject;
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
 

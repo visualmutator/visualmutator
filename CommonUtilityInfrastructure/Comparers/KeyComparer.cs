@@ -1,9 +1,7 @@
-﻿namespace VisualMutator.Infrastructure.Comparers
+﻿namespace CommonUtilityInfrastructure.Comparers
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     public class KeyComparer<T> : IEqualityComparer<T>
     {

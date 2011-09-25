@@ -4,8 +4,7 @@
 
     using System.Windows;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;

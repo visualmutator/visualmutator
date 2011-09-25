@@ -11,8 +11,6 @@
 
     using NUnit.Framework;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
-
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;

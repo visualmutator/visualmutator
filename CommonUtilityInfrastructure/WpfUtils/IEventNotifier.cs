@@ -1,14 +1,8 @@
 ﻿
 
-namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils
+namespace CommonUtilityInfrastructure.WpfUtils
 {
-
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Text;
-
 
     public interface IEventNotifier : INotifyPropertyChanged
     {

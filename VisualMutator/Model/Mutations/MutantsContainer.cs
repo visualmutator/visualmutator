@@ -7,9 +7,9 @@
     using System.Linq;
     using System.Reflection;
 
-    using Mono.Cecil;
+    using CommonUtilityInfrastructure.WpfUtils;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using Mono.Cecil;
 
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure.Factories;

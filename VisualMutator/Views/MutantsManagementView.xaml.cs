@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace VisualMutator.Views
 {
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     public interface IMutantsManagementView : IView
    {

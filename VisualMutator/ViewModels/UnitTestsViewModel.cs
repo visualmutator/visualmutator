@@ -4,8 +4,7 @@ namespace VisualMutator.ViewModels
 
     using System.Windows.Input;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.TestsTree;

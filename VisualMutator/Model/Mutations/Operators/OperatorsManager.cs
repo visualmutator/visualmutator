@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Extensibility;
 
