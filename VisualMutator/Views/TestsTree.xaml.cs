@@ -1,11 +1,11 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views
+﻿namespace VisualMutator.Views
 {
     #region Usings
 
     using System.Windows.Controls;
     using System.Windows.Input;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+    using VisualMutator.Views.Abstract;
 
     #endregion
 

@@ -7,6 +7,8 @@
     using Ninject;
     using Ninject.Syntax;
 
+    using VisualMutator.Infrastructure.Factories;
+
     #endregion
 
     public class NinjectFactory<TObject> : IFactory<TObject>

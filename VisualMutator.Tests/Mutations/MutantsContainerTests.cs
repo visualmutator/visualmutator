@@ -12,9 +12,11 @@
     using NUnit.Framework;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
     using VisualMutator.Extensibility;
+    using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Operators;
+    using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Tests.Util;
 
     [TestFixture]

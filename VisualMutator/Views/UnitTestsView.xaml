@@ -1,12 +1,10 @@
-﻿<UserControl x:Class="PiotrTrzpil.VisualMutator_VSPackage.Views.UnitTestsView"
+﻿<UserControl x:Class="VisualMutator.Views.UnitTestsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
-             xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
-             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
-              mc:Ignorable="d" d:DesignHeight="322"
+             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
+             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d" d:DesignHeight="322"
              d:DesignWidth="624">
 
   <UserControl.Resources>

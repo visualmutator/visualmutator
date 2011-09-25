@@ -11,8 +11,7 @@
 
     using NUnit.Framework;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
-
+    using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Tests.Util;
 
     #endregion

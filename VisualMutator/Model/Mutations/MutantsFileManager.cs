@@ -1,19 +1,18 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
     using System.Xml.Serialization;
 
     using Mono.Cecil;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem;
 
     using VisualMutator.Infrastructure;
+    using VisualMutator.Model.Mutations.Types;
 
     using log4net;
 

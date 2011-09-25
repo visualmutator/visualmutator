@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views
+﻿namespace VisualMutator.Views
 {
     #region Usings
 

@@ -8,7 +8,7 @@
     using System.Windows;
     using System.Windows.Controls;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+    using VisualMutator.Views.Abstract;
 
     #endregion
 

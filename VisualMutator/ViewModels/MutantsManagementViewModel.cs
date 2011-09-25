@@ -1,14 +1,9 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
+﻿namespace VisualMutator.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
 
+    using VisualMutator.Model.Mutations;
     using VisualMutator.Views;
 
     public class MutantsManagementViewModel : ViewModel<IMutantsManagementView>

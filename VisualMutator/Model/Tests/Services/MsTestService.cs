@@ -1,21 +1,18 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.Services
 {
     #region Usings
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Windows;
     using System.Xml.Linq;
 
     using Mono.Cecil;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
+
+    using VisualMutator.Model.Tests.TestsTree;
 
     using log4net;
 

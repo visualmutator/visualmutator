@@ -1,10 +1,7 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.Services
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Runtime.Serialization;
-    using System.Text;
 
     [Serializable]
     public class MsTestException : Exception

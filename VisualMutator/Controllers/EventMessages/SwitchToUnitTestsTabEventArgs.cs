@@ -1,9 +1,6 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Controllers
+﻿namespace VisualMutator.Controllers.EventMessages
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     public class SwitchToUnitTestsTabEventArgs : EventArgs
     {

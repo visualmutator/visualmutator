@@ -1,4 +1,4 @@
-namespace PiotrTrzpil.VisualMutator_VSPackage.Controllers
+namespace VisualMutator.Controllers.EventMessages
 {
     using System;
 

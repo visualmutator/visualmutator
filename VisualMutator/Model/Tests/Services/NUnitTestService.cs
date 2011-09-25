@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.Services
 {
     #region Usings
 
@@ -9,11 +9,12 @@
     using System.Threading;
 
     using NUnit.Core;
-    using NUnit.Core.Filters;
     using NUnit.Util;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
+
+    using VisualMutator.Model.Tests.TestsTree;
 
     using log4net;
 

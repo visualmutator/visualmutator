@@ -1,4 +1,4 @@
-namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
+namespace VisualMutator.ViewModels
 {
     #region Usings
 
@@ -6,9 +6,10 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+
+    using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Tests.TestsTree;
+    using VisualMutator.Views.Abstract;
 
     #endregion
 

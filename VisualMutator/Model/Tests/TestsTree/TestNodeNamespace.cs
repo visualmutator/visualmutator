@@ -1,8 +1,8 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.TestsTree
 {
     #region Usings
 
-    using System.Collections.ObjectModel;
+    
 
     #endregion
 

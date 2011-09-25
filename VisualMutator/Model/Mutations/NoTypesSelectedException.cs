@@ -1,4 +1,4 @@
-namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+namespace VisualMutator.Model.Mutations
 {
     using System;
     using System.Runtime.Serialization;

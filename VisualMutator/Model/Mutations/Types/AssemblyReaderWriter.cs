@@ -1,10 +1,5 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Types
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     using Mono.Cecil;
 
     public interface IAssemblyReaderWriter

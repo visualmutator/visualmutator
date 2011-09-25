@@ -9,11 +9,14 @@
     using Ninject.Activation;
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+
+    using VisualMutator.Controllers;
+    using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.Services;
+    using VisualMutator.ViewModels;
+    using VisualMutator.Views;
+    using VisualMutator.Views.Abstract;
 
     public class UnitTestsModule : NinjectModule 
     {

@@ -1,10 +1,11 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Operators
 {
     #region Usings
 
     using System.Collections.Generic;
 
     using VisualMutator.Extensibility;
+    using VisualMutator.Infrastructure;
 
     #endregion
     public class FakeOperatorPackageRootNode : FakeRootNode<FakeOperatorPackageRootNode, PackageNode>

@@ -1,18 +1,13 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Reactive;
-    using System.Threading;
     using System.Threading.Tasks;
 
-    using NUnit.Core;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
+
+    using VisualMutator.Model.Tests.Services;
+    using VisualMutator.Model.Tests.TestsTree;
 
     public interface ITestsContainer
     {

@@ -1,14 +1,14 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.TestsTree
 {
     #region Usings
 
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
+
+    using VisualMutator.Infrastructure;
 
     #endregion
 

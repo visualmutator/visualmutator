@@ -1,9 +1,10 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
+﻿namespace VisualMutator.ViewModels
 {
     #region Usings
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
+
+    using VisualMutator.Views.Abstract;
 
     #endregion
 

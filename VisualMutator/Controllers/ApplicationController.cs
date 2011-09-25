@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Controllers
+﻿namespace VisualMutator.Controllers
 {
     #region Usings
 
@@ -10,10 +10,10 @@
     using CommonUtilityInfrastructure.WpfUtils;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
 
+    using VisualMutator.Controllers.EventMessages;
     using VisualMutator.Infrastructure;
+    using VisualMutator.ViewModels;
 
     using log4net;
 

@@ -1,13 +1,11 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     using Mono.Cecil;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
+    using VisualMutator.Model.Mutations.Types;
 
     public class AssemblyScanResult
     {

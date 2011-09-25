@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Types
 {
     #region Usings
 
@@ -9,6 +9,8 @@
     using System.Reflection;
 
     using Mono.Cecil;
+
+    using VisualMutator.Infrastructure;
 
     using log4net;
 

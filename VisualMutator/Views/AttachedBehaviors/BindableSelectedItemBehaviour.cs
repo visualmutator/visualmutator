@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views.AttachedBehaviors
+﻿namespace VisualMutator.Views.AttachedBehaviors
 {
     #region Usings
 

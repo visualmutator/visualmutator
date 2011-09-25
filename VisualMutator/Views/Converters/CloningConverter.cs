@@ -1,13 +1,9 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views.Converters
+﻿namespace VisualMutator.Views.Converters
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
-    using System.Text;
     using System.Windows;
     using System.Windows.Data;
-
 
     [ValueConversion(typeof(Freezable), typeof(Freezable))]
     internal class CloningConverter : IValueConverter

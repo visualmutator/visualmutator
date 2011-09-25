@@ -7,11 +7,14 @@
 
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
+
+    using VisualMutator.Controllers;
+    using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Operators;
+    using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.Views;
 
     public class MutantsModule : NinjectModule 
     {

@@ -1,13 +1,10 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Types
 {
     #region Usings
 
-    using System.Collections.Generic;
-
     using Mono.Cecil;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+    using VisualMutator.Infrastructure;
 
     #endregion
     public class AssemblyNode : GenericNode

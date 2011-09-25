@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
-             xmlns:ViewModels1="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels" mc:Ignorable="d" 
+             xmlns:ViewModels1="clr-namespace:VisualMutator.ViewModels" xmlns:Views="clr-namespace:VisualMutator.Views"
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <TabControl d:DataContext="{d:DesignInstance ViewModels1:MainWindowViewModel}" SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
         <TabItem Header="Mutations">

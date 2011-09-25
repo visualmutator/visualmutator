@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Views.Converters
+﻿namespace VisualMutator.Views.Converters
 {
     #region Usings
 
@@ -7,7 +7,7 @@
     using System.Windows.Data;
     using System.Windows.Media;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
+    using VisualMutator.Model.Tests.TestsTree;
 
     #endregion
 

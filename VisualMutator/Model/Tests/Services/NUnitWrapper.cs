@@ -1,9 +1,8 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+﻿namespace VisualMutator.Model.Tests.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
 
     using NUnit.Core;
     using NUnit.Util;

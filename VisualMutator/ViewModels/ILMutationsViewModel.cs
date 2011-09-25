@@ -1,14 +1,15 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.ViewModels
+﻿namespace VisualMutator.ViewModels
 {
     #region Usings
 
     using System.Windows;
-    using System.Windows.Input;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views;
+
+    using VisualMutator.Model.Mutations.Operators;
+    using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.Views;
 
     #endregion
 

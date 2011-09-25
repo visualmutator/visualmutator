@@ -1,39 +1,27 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Controllers
+﻿namespace VisualMutator.Controllers
 {
     #region Usings
 
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.IO;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Reflection;
-    using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure.WpfUtils;
 
-    using NUnit.Core;
-    using NUnit.Core.Filters;
-    using NUnit.Util;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
-    using VisualMutator.Infrastructure;
+    using VisualMutator.Controllers.EventMessages;
+    using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.TestsTree;
+    using VisualMutator.ViewModels;
+    using VisualMutator.Views.Abstract;
 
     using log4net;
 
-   
     #endregion
 
     public class UnitTestsController : Controller, IHandler<LoadLastCreatedMutantEventArgs>

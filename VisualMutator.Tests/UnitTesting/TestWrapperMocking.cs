@@ -12,7 +12,7 @@
     using NUnit.Core;
     using NUnit.Util;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
+    using VisualMutator.Model.Tests.Services;
 
     public static class TestWrapperMocking
     {

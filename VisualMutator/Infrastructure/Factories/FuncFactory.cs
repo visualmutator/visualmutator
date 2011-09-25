@@ -1,4 +1,4 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
+﻿namespace VisualMutator.Infrastructure.Factories
 {
     #region Usings
 

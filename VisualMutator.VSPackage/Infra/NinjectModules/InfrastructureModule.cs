@@ -13,16 +13,16 @@
     using Ninject;
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Controllers;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.FileSystem;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
-    using PiotrTrzpil.VisualMutator_VSPackage.ViewModels;
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
+    using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
+    using VisualMutator.ViewModels;
+    using VisualMutator.Views.Abstract;
 
     public class InfrastructureModule : NinjectModule 
     {

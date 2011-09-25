@@ -1,13 +1,10 @@
 ﻿
 
-namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Tests
+namespace VisualMutator.Model.Tests.Services
 {
-
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+
+    using VisualMutator.Model.Tests.TestsTree;
 
     public interface ITestService
     {

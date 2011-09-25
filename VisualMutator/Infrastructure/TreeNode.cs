@@ -1,15 +1,14 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model.Mutations
+﻿namespace VisualMutator.Infrastructure
 {
     #region Usings
 
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.ComponentModel;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
+
     using System.Linq;
+
     #endregion
     public class LeafNode<TParent, TThis> :Node, IHasParent<TParent, TThis>
         where TThis : LeafNode<TParent, TThis>, IHasParent<TParent, TThis>

@@ -12,8 +12,10 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.WpfUtils.Messages;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model.Tests;
 
+    using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.Services;
+    using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Tests.Util;
 
     [TestFixture]
