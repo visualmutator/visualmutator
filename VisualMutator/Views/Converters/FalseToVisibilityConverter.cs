@@ -10,13 +10,12 @@
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class FalseToVisibilityConverter : Converter<FalseToVisibilityConverter, bool, Visibility>
     {
-        
-        protected override Visibility Convert(bool value)
+        public override Visibility Convert(bool value)
         {
             return !value ? Visibility.Visible : Visibility.Hidden;
         }
 
-        protected override bool ConvertBack(Visibility value)
+        public override bool ConvertBack(Visibility value)
         {
             throw new NotSupportedException();
         }

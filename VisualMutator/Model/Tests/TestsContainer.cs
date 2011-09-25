@@ -72,7 +72,6 @@
                     return ns;
 
                 }).ToList();
-            //Note: ToList() is important! Lack of it causes somehow to duplicate TestNodeNamespace objects..
             
             _testsRootNode.Children.AddRange(namespaces);
           

@@ -26,6 +26,8 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
     using PiotrTrzpil.VisualMutator_VSPackage.Views.Abstract;
 
+    using VisualMutator;
+
     #endregion
 
     public class Bootstrapper
@@ -42,8 +44,16 @@
         {
             Log4NetConfig.Execute();
             _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+            EnsureApplicationResources();
         }
-
+        public static void EnsureApplicationResources()
+        {
+            if (Application.Current == null)
+            {
+                // create the Application object
+                new App();
+            }
+        }
 
         public Bootstrapper()
         {

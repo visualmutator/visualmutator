@@ -7,6 +7,9 @@
     using System.Text;
     using System.Windows.Data;
     using System.Windows.Markup;
+
+  
+
     public abstract class Converter<TConverter, TConvertValue, TConvertBackValue> : MarkupExtension, IValueConverter
   where TConverter : class, new()
     {
@@ -29,8 +32,8 @@
             return ConvertBack((TConvertBackValue)value);
         }
 
-        protected abstract TConvertBackValue Convert(TConvertValue value);
-        protected abstract TConvertValue ConvertBack(TConvertBackValue value);
+        public abstract TConvertBackValue Convert(TConvertValue value);
+        public abstract TConvertValue ConvertBack(TConvertBackValue value);
     }
 
     public abstract class ParameterConverter<TConverter, TConvertValue, TConvertBackValue, TParameter> : MarkupExtension, IValueConverter

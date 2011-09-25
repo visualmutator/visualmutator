@@ -4,19 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.ViewModels"
-             
              xmlns:Converters="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views.Converters"
-         
              xmlns:Views="clr-namespace:PiotrTrzpil.VisualMutator_VSPackage.Views"
               mc:Ignorable="d" d:DesignHeight="322"
              d:DesignWidth="624">
 
   <UserControl.Resources>
-    <Converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+    
         <Style TargetType="TextBlock">
             <Setter Property="Margin" Value="5,2,5,2" />
         </Style>
-        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+   
   </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
@@ -37,11 +35,12 @@
                 <ColumnDefinition Width="Auto"/>
 
             </Grid.ColumnDefinitions>
-            <ComboBox  Grid.Column="0" VerticalContentAlignment="Center"  
+            <ComboBox  Grid.Column="0" VerticalContentAlignment="Center" 
+                       IsEnabled="{Binding AreTestsLoading, Converter={Converters:FalseToVisibilityConverter}}" 
                        ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant, Mode=TwoWay}" DisplayMemberPath="Name"/>
 
             <ProgressBar Grid.Column="0" Opacity="0.5" Visibility="{Binding AreTestsRunning, 
-                Converter={StaticResource BoolToVisibilityConverter} }" IsIndeterminate="True" />
+                Converter={ Converters:BoolToVisibilityConverter} }" IsIndeterminate="True" />
             
             <DockPanel Grid.Column="1">
 
@@ -53,7 +52,7 @@
       
 
     <Grid Grid.Row="1"
-          Visibility="{Binding SelectedMutant,  Converter={StaticResource NotNullToVisibilityConverter}}">
+          Visibility="{Binding SelectedMutant,  Converter={Converters:NotNullToVisibilityConverter}}">
 
       <Grid.RowDefinitions>
         <RowDefinition Height="25"/>

@@ -8,15 +8,15 @@
     using System.Windows;
     using System.Windows.Data;
     [ValueConversion(typeof(object), typeof(Visibility))]
-    public class NotNullToVisibilityConverter : IValueConverter
+    public class NotNullToVisibilityConverter : Converter<NotNullToVisibilityConverter, object, Visibility>
     {
         
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override Visibility Convert(object value)
         {
             return value != null ? Visibility.Visible : Visibility.Hidden;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object ConvertBack(Visibility value)
         {
             throw new NotSupportedException();
         }
