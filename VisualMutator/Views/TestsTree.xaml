@@ -7,7 +7,8 @@
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
              xmlns:TestsTree="clr-namespace:VisualMutator.Model.Tests.TestsTree"
              xmlns:AttachedBehaviors="clr-namespace:VisualMutator.Views.AttachedBehaviors"
-             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d" d:DesignHeight="116"
+             xmlns:Views="clr-namespace:VisualMutator.Views" xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
+             mc:Ignorable="d" d:DesignHeight="116"
              d:DesignWidth="365">
 
   <UserControl.Resources>

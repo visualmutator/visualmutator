@@ -43,23 +43,7 @@
                 return _nUnitWrapper;
             }
         }
-/*
-        private TestFilter MakeNameFilter(ICollection<ITest> tests)
-        {
-            if (tests == null || tests.Count == 0)
-            {
-                return TestFilter.Empty;
-            }
 
-            var nameFilter = new NameFilter();
-            foreach (ITest test in tests)
-            {
-                nameFilter.Add(test.TestName);
-            }
-
-            return nameFilter;
-        }
-*/
         public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
         {
             TestMap.Clear();
@@ -67,7 +51,7 @@
             using (var job = new TestsLoadJob(this, assemblies))
             {
                 job.Subscribe(arg => tests = BuildTestTree(arg),
-                    ex => _messageService.ShowError(ex,_log));
+                    ex => _messageService.ShowFatalError(ex,_log));
             }
 
             if (tests == null)
@@ -91,12 +75,23 @@
                     node.Message = result.Message;
                     list.Add(node);
                 },
-                ex => _messageService.ShowError(ex, _log),
-                eventObj.Set);
+                onError: ex => _messageService.ShowFatalError(ex, _log),
+                onCompleted: () =>
+                {
+                    
+                    eventObj.Set();
+                });
 
                 eventObj.Wait();
+               
             }
             return list;
+        }
+
+        public override void UnloadTests()
+        {
+            
+            _nUnitWrapper.UnloadProject();
         }
 
         private IEnumerable<TestNodeClass> BuildTestTree(ITest test)
@@ -188,24 +183,14 @@
                 }
                 catch (Exception e)
                 {
-                    _service._messageService.ShowError(e, _service._log);
+                    _service._messageService.ShowFatalError(e, _service._log);
                 }
             }
 
             private void TestLoadFailedHandler(TestEventArgs sArgs)
             {
-                _service._messageService.ShowError(sArgs.Exception, _service._log);
-                //                try
-                //                {
-                //                    _observer.OnError(sArgs.Exception);
-                //                }
-                //                catch (Exception e)
-                //                {
-                //                    
-                //
-                //                    throw;
-                //                }
-                //                
+                _service._messageService.ShowFatalError(sArgs.Exception, _service._log);
+            
             }
         }
 
@@ -218,8 +203,8 @@
             private IDisposable _testFinished;
 
             private IObserver<TestResult> _observer;
-
-          //  private IDisposable _suiteFinished;
+ //  private IDisposable _suiteFinished;
+         
 
             public TestsRunJob(NUnitTestService service)
             {
@@ -239,13 +224,7 @@
                 _observer = observer;
 
                 _testFinished = _service.TestLoader.TestFinished.Subscribe(TestFinished);
-                /*
-                _suiteFinished = Observable.FromEvent<TestEventArgs>(
-                    _service.TestLoader.Events, "SuiteFinished")
-                    .Select(e => e.EventArgs.Result)
-                    .Where(result => result.Test.TestType == "TestFixture")
-                    .Subscribe(_observer.OnNext);
-                */
+               
                 _runFinished = _service.TestLoader.RunFinished.Subscribe(RunFinished);
                 _service.TestLoader.RunTests();
                 return this;

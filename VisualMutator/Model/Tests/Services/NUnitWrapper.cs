@@ -3,9 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
+
+    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using NUnit.Core;
     using NUnit.Util;
+
+    using log4net;
 
     public interface INUnitWrapper
     {
@@ -20,10 +25,14 @@
         void LoadTests(IEnumerable<string> assemblies);
 
         void RunTests();
+
+        void UnloadProject();
     }
 
     public class NUnitWrapper : INUnitWrapper
     {
+        private readonly IMessageService _messageService;
+
         private TestLoader _testLoader;
 
         private IObservable<ITest> _testLoaded;
@@ -34,9 +43,20 @@
 
         private IObservable<TestResult> _testFinished;
 
-        public NUnitWrapper()
+        private IObservable<Exception> _projectLoadFailed;
+
+        private IObservable<Exception> _projectUnloadFailed;
+
+        private IObservable<Exception> _testReloadFailed;
+
+        private IObservable<Exception> _testUnloadFailed;
+
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public NUnitWrapper(IMessageService messageService)
         {
-            
+            _messageService = messageService;
+
             ServiceManager.Services.AddService(new SettingsService());
             ServiceManager.Services.AddService(new DomainManager());
             ServiceManager.Services.AddService(new RecentFilesService());
@@ -47,31 +67,59 @@
             ServiceManager.Services.AddService(new TestAgency());
 
             _testLoader = new TestLoader();
-
+            
 
             _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")
                     .Select(e => e.EventArgs.Test);
-
-            _testLoadFailed = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "TestLoadFailed")
-                .Select(e => e.EventArgs);
 
 
             _testFinished = Observable.FromEvent<TestEventArgs>(
                 _testLoader.Events, "TestFinished")
                 .Select(e => e.EventArgs.Result);
-            /*
-            _suiteFinished = Observable.FromEvent<TestEventArgs>(
-                _service.TestLoader.Events, "SuiteFinished")
-                .Select(e => e.EventArgs.Result)
-                .Where(result => result.Test.TestType == "TestFixture")
-                .Subscribe(_observer.OnNext);
-            */
+
+           
             _runFinished = Observable.FromEvent<TestEventArgs>(
                 _testLoader.Events, "RunFinished")
                 .Select(e => e.EventArgs.Result);
 
+            _runFinished = Observable.FromEvent<TestEventArgs>(
+                _testLoader.Events, "RunFinished")
+                .Select(e => e.EventArgs.Result);
+
+
+            _testLoadFailed = Observable.FromEvent<TestEventArgs>(
+                _testLoader.Events, "TestLoadFailed")
+                .Select(e => e.EventArgs);
+         
+            _testReloadFailed = Observable.FromEvent<TestEventArgs>(
+              _testLoader.Events, "TestReloadFailed")
+              .Select(e => e.EventArgs.Exception);            
+            
+            _testUnloadFailed = Observable.FromEvent<TestEventArgs>(
+              _testLoader.Events, "TestUnloadFailed")
+              .Select(e => e.EventArgs.Exception);
+
+            _projectLoadFailed = Observable.FromEvent<TestEventArgs>(
+                _testLoader.Events, "ProjectLoadFailed")
+                .Select(e => e.EventArgs.Exception);
+
+            _projectUnloadFailed = Observable.FromEvent<TestEventArgs>(
+                _testLoader.Events, "ProjectUnloadFailed")
+                .Select(e => e.EventArgs.Exception);
+
+
+            _testReloadFailed.Subscribe(HandleException);
+            _testUnloadFailed.Subscribe(HandleException);
+            _projectLoadFailed.Subscribe(HandleException);
+            _projectUnloadFailed.Subscribe(HandleException);
+
         }
+
+        private void HandleException(Exception e)
+        {
+            _messageService.ShowFatalError(e, _log);
+        }
+        
         public void LoadTests(IEnumerable<string> assemblies)
         {
             _testLoader.NewProject();
@@ -86,6 +134,11 @@
         {
             
             _testLoader.RunTests();
+        }
+
+        public void UnloadProject()
+        {
+            _testLoader.UnloadProject();
         }
 
         public IObservable<TestResult> RunFinished

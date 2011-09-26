@@ -173,19 +173,7 @@
             }
         }
 
-        private BasicCommand _commandManageMutants;
-
-        public BasicCommand CommandManageMutants
-        {
-            get
-            {
-                return _commandManageMutants;
-            }
-            set
-            {
-                SetAndRise(ref _commandManageMutants, value, () => CommandManageMutants);
-            }
-        }
+     
         public void ClearMutationLog()
         {
             View.ClearMutationLog();

@@ -6,16 +6,20 @@
 
     using CommonUtilityInfrastructure;
 
+    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;
 
     public interface ITestsContainer
     {
-        IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> assemblies);
+        IEnumerable<TestNodeNamespace> LoadTests(MutationSession mutant);
 
         void RunTests();
 
-        TestsRootNode TestsRootNode { get; }
+ 
+        void UnloadTests();
+
+        MutationSession CurrentMutant { get; }
     }
 
     public class TestsContainer : ITestsContainer
@@ -24,14 +28,15 @@
 
         private TestsRootNode _testsRootNode;
 
-        public TestsRootNode TestsRootNode
+        private MutationSession _currentMutant;
+
+        public MutationSession CurrentMutant
         {
             get
             {
-                return _testsRootNode;
+                return _currentMutant;
             }
         }
-    
 
         public TestsContainer(NUnitTestService nunit, MsTestService ms)
         {
@@ -42,22 +47,25 @@
 
            
         }
-
-        public void Initialize()
+        public TestsRootNode TestsRootNode
         {
-           
-
+            get
+            {
+                return _testsRootNode;
+            }
         }
+    
+       
 
-        
 
-        public IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> assemblies)
+        public IEnumerable<TestNodeNamespace> LoadTests(MutationSession mutant)
         {
+            _currentMutant = mutant;
             _testsRootNode = new TestsRootNode();
 
             IEnumerable<TestNodeNamespace> namespaces =
                 _testServices.AsParallel()
-                .SelectMany(s => s.LoadTests(assemblies))
+                .SelectMany(s => s.LoadTests(mutant.Assemblies))
                 .GroupBy(classNode => classNode.Namespace)
                 .Select(group =>
                 {
@@ -75,6 +83,8 @@
             return namespaces;
         }
 
+
+
         public void RunTests()
         {   
             _testsRootNode.State = TestNodeState.Running;
@@ -82,8 +92,21 @@
             {
                 service.RunTests();
             });
-
-
         }
+
+
+        public void UnloadTests()
+        {
+            if (_currentMutant != null)
+            {
+                foreach (ITestService testService in _testServices)
+                {
+                    testService.UnloadTests();
+                }
+                _currentMutant = null;
+            }
+            
+        }
+
     }
 }

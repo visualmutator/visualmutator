@@ -2,6 +2,7 @@ namespace VisualMutator.ViewModels
 {
     #region Usings
 
+    using System.Collections.ObjectModel;
     using System.Windows.Input;
 
     using CommonUtilityInfrastructure.WpfUtils;
@@ -22,7 +23,7 @@ namespace VisualMutator.ViewModels
 
         private ICommand _commandRunTests;
 
-        private BetterObservableCollection<MutationSession> _mutants;
+        private ReadOnlyObservableCollection<MutationSession> _mutants;
 
         private string _resultText;
 
@@ -34,14 +35,36 @@ namespace VisualMutator.ViewModels
 
         private BetterObservableCollection<TestNodeNamespace> _testNamespaces;
 
-        public UnitTestsViewModel(IUnitTestsView view, BetterObservableCollection<MutationSession> mutants)
+        private BasicCommand _showTestDetails;
+
+        public UnitTestsViewModel(IUnitTestsView view, ReadOnlyObservableCollection<MutationSession> mutants)
             : base(view)
         {
             TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
             _mutants = mutants;
+
+            _showTestDetails = new BasicCommand(ShowTestDetails);
+            _showTestDetails.ExecuteOnChanged(this, () => SelectedTestItem);
+
+        }
+        public void ShowTestDetails()
+        {
+            var method = SelectedTestItem as TestNodeMethod;
+            if (method != null && method.HasResults)
+            {
+                ResultText = method.Message;
+            }
+            else
+            {
+                ResultText = "";
+            }
         }
 
-        public BetterObservableCollection<MutationSession> Mutants
+
+
+
+
+        public ReadOnlyObservableCollection<MutationSession> Mutants
         {
             set
             {
@@ -195,6 +218,20 @@ namespace VisualMutator.ViewModels
             get
             {
                 return _resultText;
+            }
+        }
+
+        private BasicCommand _commandManageMutants;
+
+        public BasicCommand CommandManageMutants
+        {
+            get
+            {
+                return _commandManageMutants;
+            }
+            set
+            {
+                SetAndRise(ref _commandManageMutants, value, () => CommandManageMutants);
             }
         }
     }

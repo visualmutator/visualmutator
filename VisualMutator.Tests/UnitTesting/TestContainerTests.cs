@@ -13,6 +13,7 @@
     using NUnit.Core;
     using NUnit.Framework;
 
+    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;
@@ -60,9 +61,12 @@
 
             var container = new TestsContainer(nUnitTestService, msTestService);
 
+            var mutant = new MutationSession
+            {
+                Assemblies = new List<string> { "a" },
+            };
 
-
-            var namespaces = container.LoadTests(new[]{"a"});
+            var namespaces = container.LoadTests(mutant);
 
             var ns = namespaces.Single();
             ns.Children.Count.ShouldEqual(2);

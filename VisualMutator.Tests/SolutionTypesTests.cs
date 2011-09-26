@@ -11,6 +11,7 @@
 
     using NUnit.Framework;
 
+    using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Tests.Util;
 
@@ -50,10 +51,14 @@
             var assembly = CecilUtils.CreateAssembly("TestAssembly", list);
             mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);
 
-            var manager = new SolutionTypesManager(mock.Object);
+
+            var m = new Mock<IVisualStudioConnection>();
+            m.Setup(_ => _.GetProjectPaths()).Returns(new[] { path });
+
+            var manager = new SolutionTypesManager(mock.Object, m.Object);
 
             // Act
-            manager.GetTypesFromAssemblies(new[] { path });
+            manager.GetTypesFromAssemblies();
             
             // Assert
             CollectionAssert.AreEquivalent(manager.GetIncludedTypes(), list);
@@ -70,7 +75,7 @@
         [Test]
         public void Test2()
         {
-            var manager = new SolutionTypesManager(null);
+            var manager = new SolutionTypesManager(null, null);
 
             manager.ExtractNextNamespacePart("One.Two.Three.Four.Five", "").ShouldEqual("One");
             manager.ExtractNextNamespacePart("One.Two.Three", "").ShouldEqual("One");

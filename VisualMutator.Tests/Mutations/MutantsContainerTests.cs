@@ -15,6 +15,7 @@
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.Model.Tests;
     using VisualMutator.Tests.Util;
 
     [TestFixture]

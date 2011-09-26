@@ -6,4 +6,34 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+
+
+    <Style TargetType="TreeViewItem">
+        <Setter Property="IsExpanded" Value="True"/>
+    </Style>
+
+    <Style TargetType="Image">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Stretch" Value="None"/>
+        <Setter Property="Margin" Value="0,0,2,0"/>
+    </Style>
+    <Style TargetType="CheckBox">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="3,0,3,0"/>
+    </Style>
+    <Style TargetType="ComboBox">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="3"/>
+        <Setter Property="Height" Value="25"/>
+    </Style>
+    <Style TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="3,0,3,0"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Padding" Value="3"/>
+    </Style>
+    
+ 
 </ResourceDictionary>

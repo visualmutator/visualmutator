@@ -110,6 +110,12 @@
             }
 
         }
+
+        public override void UnloadTests()
+        {
+            
+        }
+
         public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc)
         {
        

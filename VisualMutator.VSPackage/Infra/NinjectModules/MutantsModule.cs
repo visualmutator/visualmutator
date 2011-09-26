@@ -13,6 +13,7 @@
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.ViewModels;
     using VisualMutator.Views;
 
     public class MutantsModule : NinjectModule 
@@ -21,7 +22,7 @@
         {
 
             Kernel.Bind<IILMutationsView>().To<ILMutationsView>().InSingletonScope();
-            Kernel.Bind<ILMutationsController>().ToSelf().InSingletonScope();
+            Kernel.Bind<MutantsCreationController>().ToSelf().InSingletonScope();
 
 
 
@@ -31,13 +32,18 @@
            
            // Kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();
 
+            Kernel.Bind<MutantsManagementController>().ToSelf().AndFromFactory();
+            Kernel.Bind<MutantsManagementViewModel>().ToSelf();
+            Kernel.Bind<IMutantsManagementView>().To<MutantsManagementView>();
+
+
 
             Kernel.Bind<IAssemblyReaderWriter>().To<AssemblyReaderWriter>().InSingletonScope();
             Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
             Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
             Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
 
-            Kernel.InjectFuncFactory<DateTime>(() => DateTime.Now);
+            Kernel.InjectFuncFactory(() => DateTime.Now);
 
         }
     }

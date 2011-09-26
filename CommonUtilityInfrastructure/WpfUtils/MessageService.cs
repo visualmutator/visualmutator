@@ -6,8 +6,25 @@
     using System.Globalization;
     using System.Windows;
 
-    #endregion
+    using log4net;
 
+    #endregion
+       public interface IMessageService
+    {
+        void ShowMessage(object owner, string message);
+
+        void ShowWarning(object owner, string message);
+
+        void ShowError(object owner, string message);
+
+        bool? ShowQuestion(object owner, string message);
+
+        bool ShowYesNoQuestion(object owner, string message);
+
+        void ShowError(object exception, Exception message);
+
+     
+    }
     public class MessageService : IMessageService
     {
         private static MessageBoxResult MessageBoxResult
@@ -199,6 +216,68 @@
             }
         }
 
-     
+    }
+
+    public static class MessageServiceExtensions
+    {
+        public static void ShowMessage(this IMessageService service, string message)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            service.ShowMessage(null, message);
+        }
+
+        public static void ShowWarning(this IMessageService service, string message)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            service.ShowWarning(null, message);
+        }
+
+        public static void ShowFatalError(this IMessageService service, string message, ILog log)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            log.Error(message);
+            service.ShowError(null, message);
+        }
+
+        public static bool? ShowQuestion(this IMessageService service, string message)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            return service.ShowQuestion(null, message);
+        }
+
+        public static bool ShowYesNoQuestion(this IMessageService service, string message)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            return service.ShowYesNoQuestion(null, message);
+        }
+
+        public static void ShowFatalError(this IMessageService service, Exception exception, ILog log)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+
+
+            log.Error("Exception occurred.", exception);
+            service.ShowError(null, exception);
+
+
+        }
     }
 }

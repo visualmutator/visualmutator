@@ -1,5 +1,7 @@
 ﻿namespace VisualMutator.ViewModels
 {
+    using System.Collections.ObjectModel;
+
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.Mutations;
@@ -7,14 +9,27 @@
 
     public class MutantsManagementViewModel : ViewModel<IMutantsManagementView>
     {
-        public MutantsManagementViewModel(IMutantsManagementView view):base(view)
+        private readonly IMutantsContainer _mutantsContainer;
+
+        public MutantsManagementViewModel(
+            IMutantsManagementView view,
+            IMutantsContainer mutantsContainer)
+            :base(view)
         {
-            
+            _mutantsContainer = mutantsContainer;
+            CommandClose = new BasicCommand(Close);
+
+            Mutants = _mutantsContainer.GeneratedMutants;
         }
 
-        private BetterObservableCollection<MutationSession> _mutants;
+        public void Close()
+        {
+            View.Close();
+        }
 
-        public BetterObservableCollection<MutationSession> Mutants
+        private ReadOnlyObservableCollection<MutationSession> _mutants;
+
+        public ReadOnlyObservableCollection<MutationSession> Mutants
         {
             get
             {

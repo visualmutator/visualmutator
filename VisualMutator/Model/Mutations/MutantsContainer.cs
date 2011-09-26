@@ -4,6 +4,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reflection;
 
@@ -15,6 +16,7 @@
     using VisualMutator.Infrastructure.Factories;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.Model.Tests;
 
     using log4net;
 
@@ -22,9 +24,11 @@
 
     public interface IMutantsContainer
     {
-        IOperatorsManager OperatorsManager { get; }
 
-        BetterObservableCollection<MutationSession> GeneratedMutants { get; }
+        ReadOnlyObservableCollection<MutationSession> GeneratedMutants
+        {
+            get;
+        }
 
         MutationSession GenerateMutant(string name, Action<string> mutationLog);
 
@@ -34,7 +38,9 @@
 
         void Clear();
 
-        void SaveSettingsFile();
+        void DeleteAllMutants();
+
+        void AddMutant(MutationSession result);
     }
 
 
@@ -53,6 +59,7 @@
 
         private readonly IFactory<DateTime> _dateTimeNowFactory;
 
+   
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -62,32 +69,23 @@
             ITypesManager typesManager,
             IMutantsFileManager mutantsFileManager,
             IFactory<DateTime> dateTimeNowFactory
-
             )
         {
             _operatorsManager = operatorsManager;
             _typesManager = typesManager;
             _mutantsFileManager = mutantsFileManager;
             _dateTimeNowFactory = dateTimeNowFactory;
-
+       
 
             _generatedMutants = new BetterObservableCollection<MutationSession>();
         }
 
- 
-        public IOperatorsManager OperatorsManager
-        {
-            get
-            {
-                return _operatorsManager;
-            }
-        }
 
-        public BetterObservableCollection<MutationSession> GeneratedMutants
+        public ReadOnlyObservableCollection<MutationSession> GeneratedMutants
         {
             get
             {
-                return _generatedMutants;
+                return new ReadOnlyObservableCollection<MutationSession>(_generatedMutants);
             }
         }
 
@@ -138,12 +136,14 @@
 
         public void LoadSessions()
         {
+      
             _generatedMutants.ReplaceRange(_mutantsFileManager.LoadSessions());
    
         }
 
         public void DeleteMutant(MutationSession mutant)
         {
+            
             _generatedMutants.Remove(mutant);
             _mutantsFileManager.SaveSettingsFile(_generatedMutants);
 
@@ -153,11 +153,32 @@
 
         public void Clear()
         {
+           
            _generatedMutants.Clear();
         }
 
         public void SaveSettingsFile()
         {
+            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
+        }
+
+        public void DeleteAllMutants()
+        {
+
+            foreach (MutationSession mutant in _generatedMutants)
+            {
+                
+                _mutantsFileManager.DeleteMutantFiles(mutant);
+            }
+            
+           
+            _generatedMutants.Clear();
+            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
+        }
+
+        public void AddMutant(MutationSession result)
+        {
+            _generatedMutants.Add(result);
             _mutantsFileManager.SaveSettingsFile(_generatedMutants);
         }
     }

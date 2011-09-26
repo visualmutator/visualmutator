@@ -20,7 +20,7 @@
     {
         IEnumerable<AssemblyNode> AssemblyTreeNodes { get; }
 
-        IEnumerable<AssemblyNode> GetTypesFromAssemblies(IEnumerable<string> projectsPaths);
+        IEnumerable<AssemblyNode> GetTypesFromAssemblies();
 
         ICollection<TypeDefinition> GetIncludedTypes();
 
@@ -32,15 +32,20 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAssemblyReaderWriter _assemblyReaderWriter;
 
+        private readonly IVisualStudioConnection _visualStudio;
+
         private IList<AssemblyNode> _assemblyTreeNodes;
 
         private ICollection<AssemblyDefinition> _loadedAssemblies;
 
         private IList<TypeNode> _types;
 
-        public SolutionTypesManager(IAssemblyReaderWriter assemblyReaderWriter)
+        public SolutionTypesManager(
+            IAssemblyReaderWriter assemblyReaderWriter,
+            IVisualStudioConnection visualStudio)
         {
             _assemblyReaderWriter = assemblyReaderWriter;
+            _visualStudio = visualStudio;
         }
 
         public IEnumerable<AssemblyNode> AssemblyTreeNodes
@@ -61,9 +66,12 @@
             return _types.Where(t => (bool)t.IsIncluded).Select(t => t.TypeDefinition).ToList();
         }
 
-        public IEnumerable<AssemblyNode> GetTypesFromAssemblies(IEnumerable<string> projectsPaths)
+        public IEnumerable<AssemblyNode> GetTypesFromAssemblies()
         {
-            LoadAssemblies(projectsPaths);
+
+            IEnumerable<string> paths = _visualStudio.GetProjectPaths();
+
+            LoadAssemblies(paths);
 
             return BuildTree();
         }

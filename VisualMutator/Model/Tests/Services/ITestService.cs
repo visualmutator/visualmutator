@@ -11,6 +11,8 @@ namespace VisualMutator.Model.Tests.Services
         IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
 
         List<TestNodeMethod> RunTests();
+
+        void UnloadTests();
     }
 
     public abstract class AbstractTestService : ITestService
@@ -18,6 +20,8 @@ namespace VisualMutator.Model.Tests.Services
         public abstract IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
 
         public abstract List<TestNodeMethod> RunTests();
+
+        public abstract void UnloadTests();
 
         protected AbstractTestService()
         {

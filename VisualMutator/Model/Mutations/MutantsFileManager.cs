@@ -117,9 +117,9 @@
         }
         public void DeleteMutantFiles(MutationSession mutant)
         {
-            
+           
             string dir = MutantDirectoryPath(mutant);
-            _fs.Directory.Delete(dir);
+            _fs.Directory.Delete(dir, recursive:true);
 
 
         }

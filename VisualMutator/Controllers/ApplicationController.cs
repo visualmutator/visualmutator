@@ -20,7 +20,7 @@
 
     public class ApplicationController : IHandler<SwitchToUnitTestsTabEventArgs>
     {
-        private readonly ILMutationsController _ilMutationsController;
+        private readonly MutantsCreationController _mutantsCreationController;
 
         private readonly MainWindowViewModel _viewModel;
 
@@ -36,20 +36,20 @@
 
         public ApplicationController(
             MainWindowViewModel viewModel,
-            ILMutationsController ilMutationsController,
+            MutantsCreationController mutantsCreationController,
             UnitTestsController unitTestsController,
             IVisualStudioConnection visualStudio,
             IMessageService messageService,
             IEventService eventService)
         {
             _viewModel = viewModel;
-            _ilMutationsController = ilMutationsController;
+            _mutantsCreationController = mutantsCreationController;
             _unitTestsController = unitTestsController;
             _visualStudio = visualStudio;
             _messageService = messageService;
             _eventService = eventService;
 
-            _viewModel.ILMutationsView = _ilMutationsController.ILMutationsVm.View;
+            _viewModel.ILMutationsView = _mutantsCreationController.ILMutationsVm.View;
             _viewModel.UnitTestsView = _unitTestsController.UnitTestsVm.View;
 
             HookGlobalExceptionHandlers();
@@ -72,9 +72,21 @@
 
             _visualStudio.SolutionOpened += ActivateOnSolutionOpened;
             _visualStudio.SolutionAfterClosing += DeactivateOnSolutionClosed;
-
+            _visualStudio.OnBuildBegin += BuildEvents_OnBuildBegin;
+            _visualStudio.OnBuildDone += BuildEvents_OnBuildDone;
             _viewModel.SelectedTab = 0;
 
+        }
+
+       
+
+        private void BuildEvents_OnBuildBegin()
+        {
+         // _unitTestsController.
+        }
+        private void BuildEvents_OnBuildDone()
+        {
+            _unitTestsController.RefreshTestList();
         }
         public void HookGlobalExceptionHandlers()
         {
@@ -86,7 +98,7 @@
         private void Current_DispatcherUnhandledException(
             object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            _messageService.ShowError(e.Exception,_log );
+            _messageService.ShowFatalError(e.Exception,_log );
             e.Handled = true;
         }
 
@@ -96,19 +108,19 @@
             var exception = (Exception)e.ExceptionObject;
 
 
-            _messageService.ShowError(exception, _log);
+            _messageService.ShowFatalError(exception, _log);
 
         }
 
 
         private void ActivateOnSolutionOpened()
         {
-            _ilMutationsController.Initialize();
+            _mutantsCreationController.Initialize();
             _unitTestsController.Initialize();
         }
         private void DeactivateOnSolutionClosed()
         {
-            _ilMutationsController.Deactivate();
+            _mutantsCreationController.Deactivate();
             _unitTestsController.Deactivate();
         }
 

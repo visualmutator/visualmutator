@@ -19,6 +19,8 @@ namespace VisualMutator.Views
     public interface IMutantsManagementView : IView
    {
         bool? ShowDialog();
+
+        void Close();
    }
    public partial class MutantsManagementView : Window, IMutantsManagementView
     {

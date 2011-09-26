@@ -3,54 +3,71 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
-             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d" d:DesignHeight="322"
-             d:DesignWidth="624">
+             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" xmlns:Views="clr-namespace:VisualMutator.Views"
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" d:DesignHeight="322" d:DesignWidth="624">
 
   <UserControl.Resources>
-    
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="5,2,5,2" />
-        </Style>
-   
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Resources/Global.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
   </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="25"/>
-            <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="4"/>
       <RowDefinition/>
       <RowDefinition Height="4"/>
-            <RowDefinition Height="100"/>
+      <RowDefinition Height="100"/>
     </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+    <Grid Grid.Row="0">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="Auto"/>
 
-            </Grid.ColumnDefinitions>
-            <ComboBox  Grid.Column="0" VerticalContentAlignment="Center" 
-                       IsEnabled="{Binding AreTestsLoading, Converter={Converters:FalseToVisibilityConverter}}" 
-                       ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant, Mode=TwoWay}" DisplayMemberPath="Name"/>
+      </Grid.ColumnDefinitions>
 
-            <ProgressBar Grid.Column="0" Opacity="0.5" Visibility="{Binding AreTestsRunning, 
-                Converter={ Converters:BoolToVisibilityConverter} }" IsIndeterminate="True" />
-            
-            <DockPanel Grid.Column="1">
+      <ComboBox Grid.Column="0" VerticalContentAlignment="Center"
+                IsEnabled="{Binding AreTestsLoading, Converter={Converters:FalseToVisibilityConverter}}"
+                ItemsSource="{Binding Mutants}" SelectedItem="{Binding SelectedMutant, Mode=TwoWay}">
 
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock>
+              <TextBlock.Text>
+                <MultiBinding StringFormat="{}{1} - {0}">
+                  <Binding Path="Name"></Binding>
+                  <Binding Path="DateOfCreation"></Binding>
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
 
-                <Button  Content="Delete" Command="{Binding CommandDeleteMutant}"/>
-                <Button  Content="Run Tests" Command="{Binding CommandRunTests}"/>
-            </DockPanel>
-        </Grid>
-      
+      </ComboBox>
 
-    <Grid Grid.Row="1"
-          Visibility="{Binding SelectedMutant,  Converter={Converters:NotNullToVisibilityConverter}}">
+      <ProgressBar Grid.Column="0" Opacity="0.5"
+                   Visibility="{Binding AreTestsRunning, 
+                Converter={ Converters:BoolToVisibilityConverter} }"
+                   IsIndeterminate="True"/>
+
+      <DockPanel Grid.Column="1">
+        <Button Content="Delete" Command="{Binding CommandDeleteMutant}"/>
+        <Button HorizontalAlignment="Right" Content="Manage..."
+                Command="{Binding CommandManageMutants}"/>
+
+        <Button Content="Run Tests" Command="{Binding CommandRunTests}"/>
+      </DockPanel>
+
+    </Grid>
+
+    <Grid Grid.Row="1" Visibility="{Binding SelectedMutant,  Converter={Converters:NotNullToVisibilityConverter}}">
 
       <Grid.RowDefinitions>
         <RowDefinition Height="25"/>
@@ -74,13 +91,12 @@
       <TextBlock Grid.Row="3" Grid.Column="1" Text=""/>
     </Grid>
 
-   
     <Views:TestsTree Grid.Row="3"/>
 
     <GridSplitter Grid.Row="4" Width="Auto" HorizontalAlignment="Stretch"/>
 
     <ScrollViewer Grid.Row="5">
-            <TextBlock FontSize="14" TextWrapping="Wrap"  Text="{Binding SelectedTestItem.Message}"/>
+      <TextBlock FontSize="14" TextWrapping="Wrap" Text="{Binding SelectedTestItem.Message}"/>
     </ScrollViewer>
 
   </Grid>
