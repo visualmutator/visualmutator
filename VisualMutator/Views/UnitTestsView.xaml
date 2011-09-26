@@ -41,7 +41,7 @@
           <DataTemplate>
             <TextBlock>
               <TextBlock.Text>
-                <MultiBinding StringFormat="{}{1} - {0}">
+                <MultiBinding StringFormat="{}{0} - {1}">
                   <Binding Path="Name"></Binding>
                   <Binding Path="DateOfCreation"></Binding>
                 </MultiBinding>

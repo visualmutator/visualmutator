@@ -24,7 +24,7 @@
 
         private readonly MainWindowViewModel _viewModel;
 
-        private readonly UnitTestsController _unitTestsController;
+        private readonly TestingAndManagingController _testingAndManagingController;
 
         private readonly IVisualStudioConnection _visualStudio;
 
@@ -37,20 +37,20 @@
         public ApplicationController(
             MainWindowViewModel viewModel,
             MutantsCreationController mutantsCreationController,
-            UnitTestsController unitTestsController,
+            TestingAndManagingController testingAndManagingController,
             IVisualStudioConnection visualStudio,
             IMessageService messageService,
             IEventService eventService)
         {
             _viewModel = viewModel;
             _mutantsCreationController = mutantsCreationController;
-            _unitTestsController = unitTestsController;
+            _testingAndManagingController = testingAndManagingController;
             _visualStudio = visualStudio;
             _messageService = messageService;
             _eventService = eventService;
 
             _viewModel.ILMutationsView = _mutantsCreationController.ILMutationsVm.View;
-            _viewModel.UnitTestsView = _unitTestsController.UnitTestsVm.View;
+            _viewModel.UnitTestsView = _testingAndManagingController.UnitTestsVm.View;
 
             HookGlobalExceptionHandlers();
 
@@ -86,7 +86,7 @@
         }
         private void BuildEvents_OnBuildDone()
         {
-            _unitTestsController.RefreshTestList();
+            _testingAndManagingController.RefreshTestList();
         }
         public void HookGlobalExceptionHandlers()
         {
@@ -116,12 +116,12 @@
         private void ActivateOnSolutionOpened()
         {
             _mutantsCreationController.Initialize();
-            _unitTestsController.Initialize();
+            _testingAndManagingController.Initialize();
         }
         private void DeactivateOnSolutionClosed()
         {
             _mutantsCreationController.Deactivate();
-            _unitTestsController.Deactivate();
+            _testingAndManagingController.Deactivate();
         }
 
         public void Handle(SwitchToUnitTestsTabEventArgs message)

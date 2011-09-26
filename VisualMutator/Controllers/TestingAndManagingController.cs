@@ -24,7 +24,7 @@
 
     #endregion
 
-    public class UnitTestsController : Controller, IHandler<LoadLastCreatedMutantEventArgs>
+    public class TestingAndManagingController : Controller, IHandler<LoadLastCreatedMutantEventArgs>
     {
         private BasicCommand _commandRunTests;
 
@@ -34,7 +34,7 @@
 
         private readonly Services _services;
 
-        private readonly IFactory<MutantsManagementController> _mutantsMgmtControllerfactory;
+        private readonly IFactory<MutantsManagementViewModel> _mutantsManagementfactory;
 
         private readonly UnitTestsViewModel _viewModel;
 
@@ -43,19 +43,19 @@
    
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public UnitTestsController(
+        public TestingAndManagingController(
             IUnitTestsView view,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             Services services,
-            IFactory<MutantsManagementController> mutantsMgmtControllerfactory)
+            IFactory<MutantsManagementViewModel> mutantsManagementfactory)
         {
    
         
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _services = services;
-            _mutantsMgmtControllerfactory = mutantsMgmtControllerfactory;
+            _mutantsManagementfactory = mutantsManagementfactory;
 
             _viewModel = new UnitTestsViewModel(view, _mutantsContainer.GeneratedMutants);
             InitViewModel();
@@ -93,8 +93,10 @@
         }
         public void ManageMutants()
         {
-            var c = _mutantsMgmtControllerfactory.Create();
-            c.Initialize(this);
+            var vm = _mutantsManagementfactory.Create();
+            vm.CommandRemove = new BasicCommand(() => DeleteMutant(vm.SelectedMutant));
+            vm.CommandRemoveAll = new BasicCommand(DeleteAllMutants);
+            vm.Show();
         }
 
         public void Initialize()

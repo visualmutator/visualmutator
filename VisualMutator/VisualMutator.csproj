@@ -99,8 +99,7 @@
     <Compile Include="Controllers\EventMessages\SwitchToUnitTestsTabEventArgs.cs" />
     <Compile Include="Controllers\MutantsCreationController.cs" />
     <Compile Include="Controllers\EventMessages\LoadLastCreatedMutantEventArgs.cs" />
-    <Compile Include="Controllers\MutantsManagementController.cs" />
-    <Compile Include="Controllers\UnitTestsController.cs" />
+    <Compile Include="Controllers\TestingAndManagingController.cs" />
     <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
     <Compile Include="Infrastructure\Factories\IFactory.cs" />
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />

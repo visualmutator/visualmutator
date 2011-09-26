@@ -32,8 +32,8 @@
            
            // Kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();
 
-            Kernel.Bind<MutantsManagementController>().ToSelf().AndFromFactory();
-            Kernel.Bind<MutantsManagementViewModel>().ToSelf();
+        
+            Kernel.Bind<MutantsManagementViewModel>().ToSelf().AndFromFactory();
             Kernel.Bind<IMutantsManagementView>().To<MutantsManagementView>();
 
 

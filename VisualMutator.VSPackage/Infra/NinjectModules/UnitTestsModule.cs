@@ -22,7 +22,7 @@
     {
         public override void Load()
         {
-            Kernel.Bind<UnitTestsController>().ToSelf().InSingletonScope();
+            Kernel.Bind<TestingAndManagingController>().ToSelf().InSingletonScope();
             Kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
             Kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
             
