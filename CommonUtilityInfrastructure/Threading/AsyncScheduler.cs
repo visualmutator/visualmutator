@@ -91,7 +91,11 @@
                 }
                 else
                 {
-                    onGuiPacked();
+                    if (onGuiPacked != null)
+                    {
+                        onGuiPacked();
+                    }
+                    
                 }
             }
             catch (Exception e)

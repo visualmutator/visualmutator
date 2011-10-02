@@ -28,14 +28,11 @@
             foreach (var controllerType in controllers)
             {
 
-                var l1 = controllerType.Methods
-                    .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList();
-
-                var l2 = l1
-                    .GroupBy(m => m.Parameters,  new ParametersComparer()).ToList();
-                 var validGroups = l2   .Where(g => g.Count() >= 2).ToList();
-             //       new FuncComparer<Collection<ParameterDefinition>>((c1,c2)=>Colle))
-               // 
+                var validGroups = controllerType.Methods
+                    .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList()
+                    .GroupBy(m => m.Parameters,  new ParametersComparer()).ToList()
+                  .Where(g => g.Count() >= 2).ToList();
+           
                 
                 foreach (var group in validGroups)
                 {
@@ -67,12 +64,7 @@
 
         }
 
-        private void MutateRoute(Instruction ldstrRouteInstr)
-        {
-            ldstrRouteInstr.Operand = "MutatedString";
-        }
-
-
+      
 
         public MethodReference GetActionNameAttribute(ModuleDefinition currentModule)
         {
@@ -91,7 +83,7 @@
         {
             get
             {
-                return "Mutate route.";
+                return "Swap Action Names";
             }
         }
 
@@ -99,17 +91,13 @@
         {
             get
             {
-                return "..";
+                return "Swaps the names of two actions.";
             }
         }
         public class ParametersComparer : IEqualityComparer<Collection<ParameterDefinition>>
     
         {
 
-            public ParametersComparer()
-            {
-
-            }
 
             public bool Equals(Collection<ParameterDefinition> first, Collection<ParameterDefinition> second)
             {

@@ -42,12 +42,6 @@
         <ColumnDefinition/>
       </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-               
-                <Button Content="Create new mutant" Command="{Binding CommandMutate}"/>
-
-            </StackPanel>
-
            
       <TextBlock Grid.Column="0" Grid.Row="1" Text="Types in solution:"/>
       <TextBlock Grid.Column="1" Grid.Row="1" Text="Available mutations:"/>
@@ -132,9 +126,14 @@
 
     <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
 
-   
-    <Button Grid.Row="3" Grid.ColumnSpan="2" Margin="0" HorizontalAlignment="Right" Content="Load created mutant" 
-            Command="{Binding CommandLoadLastMutant}"/>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+
+            <Button  Content="Create new mutant" Command="{Binding CommandMutate}" />
+            <Button  Margin="0" Content="Load created mutant"   Command="{Binding CommandLoadLastMutant}"/>
+        </StackPanel>
+
+       
     <ProgressBar Grid.Row="3" Grid.ColumnSpan="2" IsIndeterminate="True"
                 Visibility="{Binding IsMutationOngoing, Converter={ Converters:BoolToVisibilityConverter }}"/>
     <TextBox Grid.Row="4" Grid.ColumnSpan="2" Name="MutationLogBox"/>

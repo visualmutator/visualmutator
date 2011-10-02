@@ -53,9 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeRoute.cs" />
-    <Compile Include="SwapActionNames.cs" />
-    <Compile Include="ReplaceViewWithRedirectToAction.cs" />
+    <Compile Include="Operators\ChangeRoute.cs" />
+    <Compile Include="Operators\SwapActionNames.cs" />
+    <Compile Include="Operators\ReplaceViewWithRedirectToAction.cs" />
     <Compile Include="MvcMutationOperatorPack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
