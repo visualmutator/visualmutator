@@ -42,17 +42,17 @@
         {
             if (Application.Current == null)
             {
-                // create the Application object
+    
                 new App();
             }
+          
         }
 
         public Bootstrapper()
         {
             _log.Info("Starting bootstrapper.");
 
-            _log.Error("Error Test");
-
+            
             try
             {
              //   _log.Info("Configuring assembly resolve.");

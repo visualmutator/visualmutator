@@ -7,6 +7,7 @@
     using System.IO;
 
     using System.Linq;
+    using System.Reflection;
 
     using EnvDTE;
 
@@ -16,6 +17,8 @@
     using Microsoft.Win32;
 
     using VisualMutator.Infrastructure;
+
+    using log4net;
 
     #endregion
 
@@ -27,6 +30,16 @@
         private readonly SolutionEvents _solutionEvents;
 
         private BuildEvents _buildEvents;
+
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public bool IsSolutionOpen
+        {
+            get
+            {
+                return _dte.Solution.IsOpen;
+            }
+        }
 
         public VisualStudioConnection()
         {
@@ -46,25 +59,30 @@
 
             _solutionEvents.Opened += _solutionEvents_Opened;
             _solutionEvents.AfterClosing += _solutionEvents_AfterClosing;
+         
         }
 
         void _solutionEvents_AfterClosing()
         {
+            _log.Info("Solution closed.");
             OnSolutionAfterClosing();
         }
 
         void _solutionEvents_Opened()
         {
+            _log.Info("Solution opened.");
             OnSolutionOpened();
         }
 
         void _buildEvents_OnBuildDone(vsBuildScope Scope, vsBuildAction Action)
         {
+            _log.Info("Build begin.");
             OnOnBuildDone();
         }
 
         void _buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
         {
+            _log.Info("Build done.");
             OnOnBuildBegin();
         }
 

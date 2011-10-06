@@ -41,10 +41,14 @@
         public static ModuleDefinition GetAspNetMvcModule(ModuleDefinition currentModule)
         {
             var mvcModules = currentModule.AssemblyReferences.Where(x => x.Name == "System.Web.Mvc").ToList();
-            AssemblyNameReference refer = 
+            AssemblyNameReference refer =
                 mvcModules.FirstOrDefault(x => x.Version == Version.Parse("3.0.0.0"))
-                ?? mvcModules.First(x => x.Version == Version.Parse("2.0.0.0"));
-
+             ?? mvcModules.FirstOrDefault(x => x.Version == Version.Parse("2.0.0.0"));
+            if (refer == null)
+            {
+                throw new ReferencedAssemblyNotFoundException("Valid ASP.NET MVC assembly is not referenced by the project. Only versions 2 and 3 are supported.");
+            }
+       
 
             return currentModule.AssemblyResolver.Resolve(refer).MainModule;
 

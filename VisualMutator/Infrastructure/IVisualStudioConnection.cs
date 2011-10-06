@@ -18,7 +18,8 @@ namespace VisualMutator.Infrastructure
             get;
         }
 
-     
+        bool IsSolutionOpen { get; }
+
         IEnumerable<string> GetProjectPaths();
 
         string GetMutantsRootFolderPath();

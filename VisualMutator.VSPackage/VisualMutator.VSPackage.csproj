@@ -178,6 +178,14 @@
       <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
       <Name>CommonUtilityInfrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
+      <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
+      <Name>VisualMutator.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
+      <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
+      <Name>VisualMutator.MvcMutations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
       <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
       <Name>VisualMutator</Name>

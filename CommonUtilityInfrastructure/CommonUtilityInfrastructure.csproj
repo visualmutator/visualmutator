@@ -63,7 +63,8 @@
     <Compile Include="FileSystem\IFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services.cs" />
-    <Compile Include="Threading\AsyncScheduler.cs" />
+    <Compile Include="Threading\NonFatalWrappedException.cs" />
+    <Compile Include="Threading\Threading.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WpfUtils\BasicCommand.cs" />
     <Compile Include="WpfUtils\BetterObservableCollection.cs" />

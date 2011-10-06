@@ -68,6 +68,7 @@
 
         public void Initialize()
         {
+            _log.Info("Initializing package...");
             _visualStudio.Initialize();
 
             _visualStudio.SolutionOpened += ActivateOnSolutionOpened;
@@ -75,6 +76,11 @@
             _visualStudio.OnBuildBegin += BuildEvents_OnBuildBegin;
             _visualStudio.OnBuildDone += BuildEvents_OnBuildDone;
             _viewModel.SelectedTab = 0;
+
+            if (_visualStudio.IsSolutionOpen)
+            {
+                ActivateOnSolutionOpened();
+            }
 
         }
 
@@ -86,7 +92,8 @@
         }
         private void BuildEvents_OnBuildDone()
         {
-            _testingAndManagingController.RefreshTestList();
+            _mutantsCreationController.RefreshTypes();
+            
         }
         public void HookGlobalExceptionHandlers()
         {

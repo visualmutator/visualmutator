@@ -15,15 +15,13 @@
 
         void ShowWarning(object owner, string message);
 
-        void ShowError(object owner, string message);
+        void ShowFatalError(object owner, string message);
 
         bool? ShowQuestion(object owner, string message);
 
         bool ShowYesNoQuestion(object owner, string message);
 
-        void ShowError(object exception, Exception message);
-
-     
+           void ShowError(object owner, string message);
     }
     public class MessageService : IMessageService
     {
@@ -97,7 +95,7 @@
             }
         }
 
-        public void ShowError(object owner, string message)
+        public void ShowFatalError(object owner, string message)
         {
             var ownerWindow = owner as Window;
             if (ownerWindow != null)
@@ -122,7 +120,31 @@
                     MessageBoxOptions);
             }
         }
-
+        public void ShowError(object owner, string message)
+        {
+            var ownerWindow = owner as Window;
+            if (ownerWindow != null)
+            {
+                MessageBox.Show(
+                    ownerWindow,
+                    message,
+                    "",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation,
+                    MessageBoxResult,
+                    MessageBoxOptions);
+            }
+            else
+            {
+                MessageBox.Show(
+                    message,
+                    "",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation,
+                    MessageBoxResult,
+                    MessageBoxOptions);
+            }
+        }
         public bool? ShowQuestion(object owner, string message)
         {
             var ownerWindow = owner as Window;
@@ -190,32 +212,7 @@
             return result == MessageBoxResult.Yes;
         }
 
-        public void ShowError(object owner, Exception ex)
-        {
-            var ownerWindow = owner as Window;
-            if (ownerWindow != null)
-            {
-                MessageBox.Show(
-                    ownerWindow,
-                    ex.ToString(),
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                MessageBox.Show(
-                    ex.ToString(),
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
-        }
-
+        
     }
 
     public static class MessageServiceExtensions
@@ -245,7 +242,7 @@
                 throw new ArgumentNullException("service");
             }
             log.Error(message);
-            service.ShowError(null, message);
+            service.ShowFatalError(null, message);
         }
 
         public static bool? ShowQuestion(this IMessageService service, string message)
@@ -274,10 +271,20 @@
             }
 
 
-            log.Error("Exception occurred.", exception);
-            service.ShowError(null, exception);
+            log.Error("Fatal error occurred.", exception);
+            service.ShowFatalError(null, exception.ToString());
 
 
+        }
+
+        public static void ShowError(this IMessageService service, Exception exception, ILog log)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            log.Error("Error occurred.", exception);
+            service.ShowError(null, exception.Message);
         }
     }
 }

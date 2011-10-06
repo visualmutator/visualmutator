@@ -37,7 +37,7 @@
                 Name = "File",
                 AppendToFile = true,
                 File = Path.Combine(directory,fileName),
-                Layout = new XmlLayout(),
+                Layout = new PatternLayout("%-5level [%thread] - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline%newline%newline%newline"),
                 Threshold = threshold
             };
 

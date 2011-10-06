@@ -106,11 +106,29 @@
         
 
             var list = new List<MutationResultDetails>();
+
+
             foreach (IMutationOperator mutationOperator in operators)
             {
                 mutationLog("Applying operator: " + mutationOperator.Name);
-                var result = mutationOperator.Mutate(module, types);
-                list.Add(result);
+
+                MutationResultDetails result = null;
+                try
+                {
+                    result = mutationOperator.Mutate(module, types);
+                    
+                }
+                catch (Exception e)
+                {
+                   // _log.Error("Operator exception: ", e);
+                    mutationLog("Operator threw an exception: " + e);
+                   // _log.Error("Mutation failed.");
+                    throw new MutationException("Mutation failed.", e);
+                }
+                if (result != null)
+                {
+                    list.Add(result);
+                }
             }
 
            // IEnumerable<IEnumerable<TypeDefinition>> enumerable = list.Select(r => r.ModifiedMethods
@@ -157,11 +175,7 @@
            _generatedMutants.Clear();
         }
 
-        public void SaveSettingsFile()
-        {
-            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
-        }
-
+  
         public void DeleteAllMutants()
         {
 

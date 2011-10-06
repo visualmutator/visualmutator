@@ -1,28 +1,23 @@
-﻿namespace CommonUtilityInfrastructure.Threading
+namespace CommonUtilityInfrastructure.Threading
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
-    using System.Text;
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure.WpfUtils;
     using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using log4net;
-
     public interface IThreading
     {
         void ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null);
 
-        void InvokeOnGui( Action onGui);
+        void InvokeOnGui(Action onGui);
 
         Action<T> ActionOnGui<T>(Action<T> onGui);
 
         void ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null);
     }
-
     public class Threading : IThreading
     {
         private readonly IExecute _execute;
@@ -76,18 +71,28 @@
             }, _execute.GuiScheduler);
         }
 
-        public void ContinueWithMethod(Exception prevException, Action onGuiPacked, Action onException, Action onFinally)
+        public void ContinueWithMethod(AggregateException aggregateException, Action onGuiPacked, Action onException, Action onFinally)
         {
-
+            
             try
             {
-                if (prevException != null)
+                if (aggregateException != null)
                 {
+                    var prevException = aggregateException.InnerException;
                     if (onException != null)
                     {
                         onException();
                     }
-                    _messageService.ShowFatalError(prevException, _log);
+                    var nonFatalWrapped = prevException as NonFatalWrappedException;
+                    if (nonFatalWrapped != null)
+                    {
+                        _messageService.ShowError(nonFatalWrapped.InnerException, _log);
+                    }
+                    else
+                    {
+                        _messageService.ShowFatalError(prevException, _log);
+                    }
+                    
                 }
                 else
                 {
@@ -119,5 +124,4 @@
 
         }
     }
-
 }

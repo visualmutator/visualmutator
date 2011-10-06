@@ -120,12 +120,25 @@
             _services.Threading.ScheduleAsync(
                 () =>
                 {
-                    return _mutantsContainer.GenerateMutant("Mutant", mutationLog);
+                    try
+                    {
+                        return _mutantsContainer.GenerateMutant("Mutant", mutationLog);
+                    }
+                    catch (MutationException e)
+                    {
+                        
+                        throw new NonFatalWrappedException(e);
+                    }
+                    
                 },
                 onGui: result =>
                 {
                     _mutantsContainer.AddMutant(result);
                     _viewModel.MutationLog("Mutation complete.");
+                },
+                onException: () =>
+                {
+                    _viewModel.MutationLog("Mutation failed.");
                 },
                 onFinally: () => _viewModel.IsMutationOngoing = false);
 
