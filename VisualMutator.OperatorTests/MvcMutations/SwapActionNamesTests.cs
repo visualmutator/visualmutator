@@ -27,7 +27,7 @@
      
             var mutator = new SwapActionNames();
 
-            mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
+         //   mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
 
 
 

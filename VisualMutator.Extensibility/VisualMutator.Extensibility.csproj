@@ -57,9 +57,11 @@
     <Compile Include="IMutationOperator.cs" />
     <Compile Include="IOperatorsPack.cs" />
     <Compile Include="MutationResultDetails.cs" />
+    <Compile Include="MutationTarget.cs" />
     <Compile Include="PackageInfoAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferencedAssemblyNotFoundException.cs" />
+    <Compile Include="AssembliesToMutateFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

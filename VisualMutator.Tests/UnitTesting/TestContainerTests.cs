@@ -13,6 +13,7 @@
     using NUnit.Core;
     using NUnit.Framework;
 
+    using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;
@@ -66,9 +67,9 @@
                 Assemblies = new List<string> { "a" },
             };
 
-            var namespaces = container.LoadTests(mutant);
+            TestSession session = container.LoadTests(mutant);
 
-            var ns = namespaces.Single();
+            TestNodeNamespace ns = (TestNodeNamespace)session.TestsRootNode.Children.Single();
             ns.Children.Count.ShouldEqual(2);
             
             Assert.IsNotNull(ns.Parent);
@@ -83,8 +84,8 @@
 
 
 
-            container.TestsRootNode.State = TestNodeState.Running;
-            Assert.IsTrue(ReferenceEquals(container.TestsRootNode.Children.Single(), ns));
+            session.TestsRootNode.State = TestNodeState.Running;
+            Assert.IsTrue(ReferenceEquals(session.TestsRootNode.Children.Single(), ns));
             
 
             ns.State.ShouldEqual(TestNodeState.Running);

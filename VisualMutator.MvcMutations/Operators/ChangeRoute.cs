@@ -17,7 +17,7 @@
     [Export(typeof(IMutationOperator))]
     public class ChangeRoute : IMutationOperator
     {
-      
+      /*
         public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
            
@@ -65,7 +65,7 @@
 
             return null;
         }
-
+        */
         private void MutateRoute(Instruction ldstrRouteInstr)
         {
             ldstrRouteInstr.Operand = "MutatedString";
@@ -90,6 +90,17 @@
                 return "..";
             }
         }
+
+        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
+        {
+            throw new NotImplementedException();
+        }
+
 
     }
 

@@ -20,11 +20,7 @@
 
     public class ApplicationController : IHandler<SwitchToUnitTestsTabEventArgs>
     {
-        private readonly MutantsCreationController _mutantsCreationController;
-
-        private readonly MainWindowViewModel _viewModel;
-
-        private readonly TestingAndManagingController _testingAndManagingController;
+        private readonly MutationResultsController _mutationResultsController;
 
         private readonly IVisualStudioConnection _visualStudio;
 
@@ -35,22 +31,16 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public ApplicationController(
-            MainWindowViewModel viewModel,
-            MutantsCreationController mutantsCreationController,
-            TestingAndManagingController testingAndManagingController,
+            MutationResultsController mutationResultsController,
             IVisualStudioConnection visualStudio,
             IMessageService messageService,
             IEventService eventService)
         {
-            _viewModel = viewModel;
-            _mutantsCreationController = mutantsCreationController;
-            _testingAndManagingController = testingAndManagingController;
+            _mutationResultsController = mutationResultsController;
             _visualStudio = visualStudio;
             _messageService = messageService;
             _eventService = eventService;
 
-            _viewModel.ILMutationsView = _mutantsCreationController.ILMutationsVm.View;
-            _viewModel.UnitTestsView = _testingAndManagingController.UnitTestsVm.View;
 
             HookGlobalExceptionHandlers();
 
@@ -62,7 +52,7 @@
         {
             get
             {
-                return _viewModel.View;
+                return _mutationResultsController.ViewModel.View;
             }
         }
 
@@ -75,7 +65,7 @@
             _visualStudio.SolutionAfterClosing += DeactivateOnSolutionClosed;
             _visualStudio.OnBuildBegin += BuildEvents_OnBuildBegin;
             _visualStudio.OnBuildDone += BuildEvents_OnBuildDone;
-            _viewModel.SelectedTab = 0;
+        
 
             if (_visualStudio.IsSolutionOpen)
             {
@@ -92,7 +82,7 @@
         }
         private void BuildEvents_OnBuildDone()
         {
-            _mutantsCreationController.RefreshTypes();
+           // _mutantsCreationController.RefreshTypes();
             
         }
         public void HookGlobalExceptionHandlers()
@@ -114,7 +104,6 @@
         {
             var exception = (Exception)e.ExceptionObject;
 
-
             _messageService.ShowFatalError(exception, _log);
 
         }
@@ -122,18 +111,18 @@
 
         private void ActivateOnSolutionOpened()
         {
-            _mutantsCreationController.Initialize();
-            _testingAndManagingController.Initialize();
+            _mutationResultsController.Initialize();
+           //// _testingAndManagingController.Initialize();
         }
         private void DeactivateOnSolutionClosed()
         {
-            _mutantsCreationController.Deactivate();
-            _testingAndManagingController.Deactivate();
+            _mutationResultsController.Deactivate();
+           // _testingAndManagingController.Deactivate();
         }
 
         public void Handle(SwitchToUnitTestsTabEventArgs message)
         {
-            _viewModel.SelectedTab = 1;
+        //    _viewModel.SelectedTab = 1;
         }
     }
 }

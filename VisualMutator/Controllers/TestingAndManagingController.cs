@@ -120,7 +120,7 @@
                 },
                 onGui: result =>
                 {
-                    _viewModel.TestNamespaces.ReplaceRange(result);
+                    _viewModel.TestNamespaces.ReplaceRange(result.TestsRootNode.Children.Cast<TestNodeNamespace>());
                 },
                 onFinally: () => _viewModel.AreTestsLoading = false);
 
@@ -133,9 +133,9 @@
             _viewModel.AreTestsRunning = true;
 
            
-            _services.Threading.ScheduleAsync(
-                () => _testsContainer.RunTests(),
-                onFinally: () => _viewModel.AreTestsRunning = false);
+         //   _services.Threading.ScheduleAsync(
+       //         () => _testsContainer.RunTests(),
+         //       onFinally: () => _viewModel.AreTestsRunning = false);
 
 
         }

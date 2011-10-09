@@ -66,7 +66,7 @@
             ServiceManager.Services.AddService(new AddinManager());
             ServiceManager.Services.AddService(new TestAgency());
 
-            _testLoader = new TestLoader();
+            _testLoader = (TestLoader)ServiceManager.Services.GetService(typeof(TestLoader));
             
 
             _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")

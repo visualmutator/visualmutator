@@ -22,9 +22,13 @@
         {
 
             Kernel.Bind<IILMutationsView>().To<ILMutationsView>().InSingletonScope();
-            Kernel.Bind<MutantsCreationController>().ToSelf().InSingletonScope();
+            Kernel.Bind<MutantsCreationController>().ToSelf().AndFromFactory();
+            Kernel.Bind<MutantsCreationViewModel>().ToSelf();
+            Kernel.Bind<IMutantsCreationView>().To<MutantsCreationWindow>();
 
-
+            Kernel.Bind<MutationResultsController>().ToSelf().InSingletonScope();
+            Kernel.Bind<MutationResultsViewModel>().ToSelf();
+            Kernel.Bind<IMutationResultsView>().To<MutationResultsView>();
 
             Kernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
             Kernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();

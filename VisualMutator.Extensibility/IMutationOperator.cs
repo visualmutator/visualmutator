@@ -12,12 +12,16 @@ namespace VisualMutator.Extensibility
 
     public interface IMutationOperator
     {
-        MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types);
+      //  MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types);
 
         string Name { get; }
 
         string Description { get; }
 
+   
+        IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types);
 
+        MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, 
+                                                                AssembliesToMutateFactory assembliesFactory);
     }
 }

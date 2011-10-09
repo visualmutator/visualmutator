@@ -109,8 +109,10 @@
     </Compile>
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\EventMessages\SwitchToUnitTestsTabEventArgs.cs" />
+    <Compile Include="Controllers\Mutant.cs" />
     <Compile Include="Controllers\MutantsCreationController.cs" />
     <Compile Include="Controllers\EventMessages\LoadLastCreatedMutantEventArgs.cs" />
+    <Compile Include="Controllers\MutationResultsController.cs" />
     <Compile Include="Controllers\TestingAndManagingController.cs" />
     <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
     <Compile Include="Infrastructure\Factories\IFactory.cs" />
@@ -144,7 +146,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\ILMutationsViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\MutantsCreationViewModel.cs" />
     <Compile Include="ViewModels\MutantsManagementViewModel.cs" />
+    <Compile Include="ViewModels\MutationResultsViewModel.cs" />
     <Compile Include="ViewModels\UnitTestsViewModel.cs" />
     <Compile Include="Views\Abstract\IILMutationsView.cs" />
     <Compile Include="Views\Abstract\IMainControl.cs" />
@@ -179,6 +183,9 @@
     </Compile>
     <Compile Include="Views\UnitTestsView.xaml.cs">
       <DependentUpon>UnitTestsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MutationResultsView.xaml.cs">
+      <DependentUpon>MutationResultsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +228,10 @@
     <Page Include="Views\UnitTestsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MutationResultsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

@@ -11,11 +11,7 @@
 
     public class MutationSession
     {
-        public List<MutationResultDetails> UsedOperators
-        {
-            get;
-            set;
-        }
+    
 
         public string Name { get; set; }
 

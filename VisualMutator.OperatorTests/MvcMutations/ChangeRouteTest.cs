@@ -27,7 +27,7 @@
      
             var mutator = new ChangeRoute();
 
-            mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
+          //  mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
 
             assembly.Write(assemblyFile.FilePath);
 

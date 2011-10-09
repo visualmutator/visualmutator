@@ -23,6 +23,7 @@
     {
         public class TestOperator : IMutationOperator
         {
+            /*
             public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
             {
                 int i = 0;
@@ -32,11 +33,11 @@
                 }
                 return new MutationResultDetails
                 {
-                    ModifiedMethods = new List<string>(),
+                //    ModifiedMethods = new List<string>(),
 
                 };
             }
-
+            */
             public string Name
             {
                 get
@@ -52,8 +53,20 @@
                     return "TestDescription";
                 }
             }
-        }
 
+            public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+            {
+                throw new NotImplementedException();
+            }
+
+            public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
+            {
+                throw new NotImplementedException();
+            }
+
+         
+        }
+        /*
         [Test]
         public void Test1()
         {
@@ -93,7 +106,7 @@
 
 
             Assert.IsTrue(types.All(t => t.Name.StartsWith("MutatedTypeName")));
-        }
+        }*/
     }
 }
 

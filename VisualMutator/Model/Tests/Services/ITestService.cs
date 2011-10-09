@@ -8,31 +8,12 @@ namespace VisualMutator.Model.Tests.Services
 
     public interface ITestService
     {
-        IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
+        IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, TestSession testSession);
 
-        List<TestNodeMethod> RunTests();
+        List<TestNodeMethod> RunTests(TestSession testSession);
 
         void UnloadTests();
     }
 
-    public abstract class AbstractTestService : ITestService
-    {
-        public abstract IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies);
-
-        public abstract List<TestNodeMethod> RunTests();
-
-        public abstract void UnloadTests();
-
-        protected AbstractTestService()
-        {
-            TestMap = new Dictionary<string, TestNodeMethod>();
-        }
-
-        public IDictionary<string, TestNodeMethod> TestMap
-        {
-            get;
-            set;
-        }
-
-    }
+  
 }

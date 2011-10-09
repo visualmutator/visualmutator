@@ -17,30 +17,123 @@
     [Export(typeof(IMutationOperator))]
     public class ReplaceViewWithRedirectToAction : IMutationOperator
     {
-        
-        class MutationTarget
+     
+        private class ThisMutationTarget : InstructionMutationTarget
         {
-            public MethodDefinition MethodToModify
+            public ThisMutationTarget(MethodDefinition method, Instruction instr)
+                : base(method, instr)
             {
-                get;
-                set;
             }
-            public MethodDefinition MethodToRedirectTo
+
+            public string MethodToRedirectToFullName
             {
                 get;
                 set;
             }
 
-            public Instruction InstructionToReplace { get; set; }
+        }
+
+        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        {
+            var list = new List<ThisMutationTarget>();
+            var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));
+ 
+            foreach (var controller in controllers)
+            {
+                var methodsToModify = controller.Methods
+                  .Where(m =>
+                      !m.IsAbstract &&
+                      m.ReturnType.FullName == "System.Web.Mvc.ActionResult");
+
+             
+                foreach (var methodToModify in methodsToModify)
+                {
+
+                    MethodDefinition methodToRedirectTo = controller.Methods
+                    .FirstOrDefault(m =>
+                        m != methodToModify
+                        && m.IsPublic
+                        && m.Parameters.Count == 0
+                        && m.ReturnType.FullName == ("System.Web.Mvc.ActionResult"));
+
+                    if (methodToRedirectTo != null)
+                    {
+                        foreach (var instr in FindValidViewCallInstruction(methodToModify))
+                        {
+                            var target = new ThisMutationTarget(methodToModify, instr)
+                            {
+                                MethodToRedirectToFullName = methodToRedirectTo.FullName,
+                            };
+                            list.Add(target);
+                        }
+                    }
+                }
+            }
+            
+            return list;
         }
 
 
+
+        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, 
+            AssembliesToMutateFactory assembliesFactory)
+        {
+            var results = new MutationResultsCollection();
+
+            foreach (ThisMutationTarget target in targets.Cast<ThisMutationTarget>())
+            {
+
+                var assemblies = assembliesFactory.GetNewCopy();
+                var methodToModify = target.GetMethod(assemblies);
+                var methodToRedirectTo = methodToModify.DeclaringType.Methods
+                    .Single(m => m.FullName == target.MethodToRedirectToFullName);
+
+
+                var callInstr = methodToModify.Body.Instructions[target.InstructionOffset];
+
+
+                MethodDefinition redirectToActionMethod = GetRedirectToActionMethod(methodToModify.DeclaringType.Module);
+
+
+                ILProcessor proc = methodToModify.Body.GetILProcessor();
+                var method = (MethodReference)callInstr.Operand;
+
+
+
+                foreach (var _ in method.Parameters)
+                {
+                    proc.Remove(callInstr.Previous);
+                }
+
+                proc.InsertBefore(callInstr, Instruction.Create(OpCodes.Ldstr, methodToRedirectTo.Name));
+
+
+                proc.Replace(callInstr, Instruction.Create(OpCodes.Call, 
+                    methodToModify.DeclaringType.Module.Import(redirectToActionMethod)));
+
+                var result = new MutationResult
+                {
+                    MutatedAssemblies = assemblies,
+                    MutationTarget = target
+                };
+
+                results.MutationResults.Add(result);
+            }
+
+
+            return results;
+
+
+        }
+
+
+        /*
         public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
              var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));
              MethodDefinition me = GetRedirectToActionMethod(module);
-            IEnumerable<MutationTarget> mutationTargets = controllers.SelectMany(GetMutationTargets).ToList();
-            foreach (MutationTarget target in mutationTargets)
+             IEnumerable<ThisMutationTarget> mutationTargets = controllers.SelectMany(GetMutationTargets).ToList();
+             foreach (ThisMutationTarget target in mutationTargets)
             {
        
                 var callInstr = target.InstructionToReplace;
@@ -68,16 +161,16 @@
             return result;
 
         }
+       
 
-
-        private IEnumerable<MutationTarget> GetMutationTargets(TypeDefinition controller)
+        private IEnumerable<ThisMutationTarget> GetMutationTargets(TypeDefinition controller)
         {
             var methodsToModify = controller.Methods
                    .Where(m =>
                        !m.IsAbstract &&
                        m.ReturnType.FullName == "System.Web.Mvc.ActionResult");
 
-            var list = new List<MutationTarget>();
+            var list = new List<ThisMutationTarget>();
 
             foreach (var methodToModify in methodsToModify)
             {
@@ -93,11 +186,11 @@
                 {
                     foreach (var instr in FindValidViewCallInstruction(methodToModify))
                     {
-                        var target = new MutationTarget
+                        var target = new ThisMutationTarget
                         {
-                            MethodToModify = methodToModify,
-                            MethodToRedirectTo = methodToRedirectTo,
-                            InstructionToReplace = instr
+                            MethodFullName = methodToModify.FullName,
+                            MethodToRedirectToFullName = methodToRedirectTo.FullName,
+                            InstructionOffset = instr.Offset
                         };
                         list.Add(target);
                     }
@@ -107,7 +200,7 @@
             return list;
 
         }
-
+         */
 
         public MethodDefinition  GetRedirectToActionMethod(ModuleDefinition currentModule)
         {

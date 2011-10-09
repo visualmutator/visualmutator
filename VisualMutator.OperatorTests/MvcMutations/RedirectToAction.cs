@@ -74,7 +74,7 @@ namespace VisualMutator.OperatorTests
 
             var mutator = new ReplaceViewWithRedirectToAction();
 
-            mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
+          //  mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
 
             assembly.Write(assemblyFile.FilePath);
 

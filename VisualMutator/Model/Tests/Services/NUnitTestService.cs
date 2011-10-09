@@ -20,7 +20,7 @@
 
     #endregion
 
-    public class NUnitTestService : AbstractTestService
+    public class NUnitTestService : ITestService
     {
         private readonly INUnitWrapper _nUnitWrapper;
 
@@ -44,13 +44,14 @@
             }
         }
 
-        public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
+
+        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, TestSession testSession)
         {
-            TestMap.Clear();
+       
             IEnumerable<TestNodeClass> tests = null;
             using (var job = new TestsLoadJob(this, assemblies))
             {
-                job.Subscribe(arg => tests = BuildTestTree(arg),
+                job.Subscribe(arg => tests = BuildTestTree(arg, testSession),
                     ex => _messageService.ShowFatalError(ex,_log));
             }
 
@@ -62,7 +63,7 @@
             return tests;
         }
 
-        public override List<TestNodeMethod> RunTests()
+        public List<TestNodeMethod> RunTests(TestSession testSession)
         {
             var list = new List<TestNodeMethod>();
             using (var eventObj = new ManualResetEventSlim())
@@ -70,17 +71,13 @@
             {
                 job.Subscribe(result =>
                 {
-                    TestNodeMethod node = TestMap[result.Test.TestName.UniqueName];
+                    TestNodeMethod node = testSession.TestMap[result.Test.TestName.UniqueName];
                     node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
                     node.Message = result.Message;
                     list.Add(node);
                 },
                 onError: ex => _messageService.ShowFatalError(ex, _log),
-                onCompleted: () =>
-                {
-                    
-                    eventObj.Set();
-                });
+                onCompleted: eventObj.Set);
 
                 eventObj.Wait();
                
@@ -88,19 +85,18 @@
             return list;
         }
 
-        public override void UnloadTests()
+        public void UnloadTests()
         {
             
             _nUnitWrapper.UnloadProject();
         }
 
-        private IEnumerable<TestNodeClass> BuildTestTree(ITest test)
+        private IEnumerable<TestNodeClass> BuildTestTree(ITest test, TestSession testSession)
         {
             var list = new List<TestNodeClass>();
             IEnumerable<ITest> classes = GetTestClasses(test).ToList();
 
-            foreach (ITest testClass in classes.Where(c => c.Tests != null
-                                                           && c.Tests.Count != 0))
+            foreach (ITest testClass in classes.Where(c => c.Tests != null && c.Tests.Count != 0))
             {
                 var c = new TestNodeClass(testClass.TestName.Name)
                 {
@@ -111,7 +107,7 @@
                 {
                     var m = new TestNodeMethod(c, testMethod.TestName.Name);
                     c.Children.Add(m);
-                    TestMap.Add(testMethod.TestName.UniqueName, m);
+                    testSession.TestMap.Add(testMethod.TestName.UniqueName, m);
                 }
 
                 //TestMap.Add(testClass.TestName.UniqueName, c);

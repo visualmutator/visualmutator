@@ -16,23 +16,15 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface IMutantsCreationView : IView
+    public interface IMutationResultsView : IView
     {
-        bool? ShowDialog();
-
-        void Close();
         
     }
-
-    /// <summary>
-    /// Interaction logic for MutantsCreationWindow.xaml
-    /// </summary>
-    public partial class MutantsCreationWindow : Window, IMutantsCreationView
+    public partial class MutationResultsView : UserControl, IMutationResultsView
     {
-        public MutantsCreationWindow()
+        public MutationResultsView()
         {
             InitializeComponent();
-         
         }
     }
 }

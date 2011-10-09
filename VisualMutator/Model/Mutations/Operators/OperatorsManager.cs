@@ -13,11 +13,10 @@
 
     public interface IOperatorsManager
     {
-        BetterObservableCollection<PackageNode> OperatorPackages { get; set; }
 
-        void LoadOperators();
+        IList<PackageNode> LoadOperators();
 
-        IEnumerable<IMutationOperator> GetActiveOperators();
+
     }
 
     public class OperatorsManager : IOperatorsManager
@@ -28,14 +27,13 @@
         public OperatorsManager(IOperatorLoader loader)
         {
             _loader = loader;
-            OperatorPackages = new BetterObservableCollection<PackageNode>();
+           
         }
 
-        public BetterObservableCollection<PackageNode> OperatorPackages { get; set; }
-
-        public void LoadOperators()
+      
+        public IList<PackageNode> LoadOperators()
         {
-            OperatorPackages.Clear();
+            var list = new List<PackageNode>();
 
             var root = new FakeOperatorPackageRootNode("Root");
 
@@ -49,15 +47,17 @@
                     package.Operators.Add(operatorNode);
                 }
                 root.Children.Add(package);
-                OperatorPackages.Add(package);
+                list.Add(package);
             }
             root.IsIncluded = true;
+
+            return list;
         }
 
-        public IEnumerable<IMutationOperator> GetActiveOperators()
-        {
-            return OperatorPackages.SelectMany(pack => pack.Operators)
-                .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator);
-        }
+        //public IEnumerable<IMutationOperator> GetActiveOperators()
+       // {
+           // return OperatorPackages.SelectMany(pack => pack.Operators)
+          //      .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator);
+       // }
     }
 }

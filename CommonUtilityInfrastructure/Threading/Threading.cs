@@ -10,13 +10,13 @@ namespace CommonUtilityInfrastructure.Threading
     using log4net;
     public interface IThreading
     {
-        void ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null);
+        Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null);
 
         void InvokeOnGui(Action onGui);
 
         Action<T> ActionOnGui<T>(Action<T> onGui);
 
-        void ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null);
+        Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null);
     }
     public class Threading : IThreading
     {
@@ -44,9 +44,9 @@ namespace CommonUtilityInfrastructure.Threading
                 _execute.OnUIThread(() => onGui(param));
             };
         }
-        public void ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null)
+        public Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null)
         {
-            Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 onBackground();
 
@@ -58,9 +58,9 @@ namespace CommonUtilityInfrastructure.Threading
 
         }
 
-        public void ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null  )
+        public Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null)
         {
-            Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(() =>
             {
                 return onBackground();
 

@@ -19,7 +19,7 @@
     [Export(typeof(IMutationOperator))]
     public class SwapActionNames : IMutationOperator
     {
-        
+        /*
         public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
 
@@ -63,7 +63,7 @@
 
 
         }
-
+        */
       
 
         public MethodReference GetActionNameAttribute(ModuleDefinition currentModule)
@@ -94,6 +94,19 @@
                 return "Swaps the names of two actions.";
             }
         }
+
+        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
+        {
+            throw new NotImplementedException();
+        }
+
+  
+  
         public class ParametersComparer : IEqualityComparer<Collection<ParameterDefinition>>
     
         {

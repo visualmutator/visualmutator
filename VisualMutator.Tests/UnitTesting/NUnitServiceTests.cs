@@ -54,7 +54,7 @@
         }
 
 
-
+        /*
         [Test]
         public void LoadingTests()
         {
@@ -118,7 +118,7 @@
            classes.Single().State.ShouldEqual(TestNodeState.Failure);
         }
 
-
+        */
 
     }
 }

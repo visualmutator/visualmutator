@@ -26,7 +26,7 @@
             
         }
 
-
+        /*
         [Test]
         public void LoadingTests()
         {
@@ -83,7 +83,7 @@
 
 
         }
-
+        
         [Test]
         public void RunningTestsNormally()
         {
@@ -168,7 +168,7 @@
             var methods = w.ReadTestMethodsFromAssembly(@"C:\Users\SysOp\Documents\Visual Studio 2010\Projects\MusicRename\MusicRename.Tests\bin\Debug\MusicRename.Tests.dll");
 
         }
-
+        */
     }
 }
 

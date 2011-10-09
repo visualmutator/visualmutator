@@ -4,6 +4,8 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
 
@@ -12,7 +14,10 @@
     using CommonUtilityInfrastructure.WpfUtils;
     using CommonUtilityInfrastructure.WpfUtils.Messages;
 
+    using Mono.Cecil;
+
     using VisualMutator.Controllers.EventMessages;
+    using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.Factories;
     using VisualMutator.Model.Mutations;
@@ -25,6 +30,25 @@
 
     #endregion
 
+    public class MutationSessionChoices
+    {
+        public IList<IMutationOperator> SelectedOperators
+        {
+            get;
+            set;
+        }
+
+        public IList<AssemblyDefinition> Assemblies
+        {
+            get; set;
+        }
+
+        public IList<TypeDefinition> SelectedTypes
+        {
+            get;
+            set;
+        }
+    }
     public class MutantsCreationController : Controller
     {
       
@@ -37,12 +61,14 @@
 
         private readonly ITypesManager _typesManager;
 
-        private readonly ILMutationsViewModel _viewModel;
+        private readonly MutantsCreationViewModel _viewModel;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public MutationSessionChoices Result { get; set; }
+
         public MutantsCreationController(
-            ILMutationsViewModel viewModel,
+            MutantsCreationViewModel viewModel,
             IMutantsContainer mutantsContainer,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
@@ -54,27 +80,20 @@
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
             _services = services;
-           
-          
-            _viewModel.CommandMutate = new BasicCommand(Mutate, CanExecute);
-            _viewModel.CommandMutate.UpdateOnCollectionChanged(_viewModel, _viewModel.Assemblies);
-            _viewModel.CommandMutate.UpdateOnChanged(_viewModel, () => _viewModel.IsMutationOngoing);
-            _viewModel.CommandMutate.UpdateOnChanged(_viewModel, () => _viewModel.AreTypesLoading);
 
-            _viewModel.CommandRefresh = new BasicCommand(Refresh, CanExecute);
-            _viewModel.CommandMutate.UpdateOnCollectionChanged(_viewModel, _viewModel.Assemblies);
-            _viewModel.CommandMutate.UpdateOnChanged(_viewModel, () => _viewModel.IsMutationOngoing);
-            _viewModel.CommandMutate.UpdateOnChanged(_viewModel, () => _viewModel.AreTypesLoading);
 
-            _viewModel.Assemblies = new BetterObservableCollection<AssemblyNode>();
-            _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
+            _viewModel.CommandCreateMutants = new BasicCommand(StoreChoicesResults, () => _viewModel.Assemblies != null
+                && _viewModel.MutationPackages != null);
+            _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.Assemblies);
+            _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.MutationPackages);
+      
 
-           
-            _viewModel.CommandLoadLastMutant = new BasicCommand(LoadLastMutant);
+           // _viewModel.Assemblies = new BetterObservableCollection<AssemblyNode>();
+          //  _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
 
            
         }
-
+        /*
         public void LoadLastMutant()
         {
             _services.EventPassing.Publish(new LoadLastCreatedMutantEventArgs());
@@ -82,31 +101,33 @@
 
 
         }
-
+        */
        
 
-        private bool CanExecute()
-        {
-            return _viewModel.Assemblies.Count != 0 && !_viewModel.IsMutationOngoing && !_viewModel.AreTypesLoading;
-        }
-
-        public void Initialize()
-        {
-            _operatorsManager.LoadOperators();
-            _viewModel.IsVisible = true;
-            _mutantsContainer.LoadSessions();
-            Refresh();
-        }
-
-        public void Deactivate()
+        public void Run()
         {
             
-            _viewModel.IsVisible = false;
-            _viewModel.Assemblies.Clear();
-            _mutantsContainer.Clear();
-           
+            _services.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
+                packages => _viewModel.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
+
+            _services.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
+                assemblies => _viewModel.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
+
+            _viewModel.ShowDialog();
+        }
+        public void StoreChoicesResults()
+        {
+            Result = new MutationSessionChoices
+            {
+                SelectedOperators = _viewModel.MutationPackages.SelectMany(pack => pack.Operators)
+                                 .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator).ToList(),
+                Assemblies = _viewModel.Assemblies.Select(a => a.AssemblyDefinition).ToList(),
+                SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.Assemblies)
+            };
+            _viewModel.Close();
         }
 
+        /*
         public void Mutate()
         {
             
@@ -143,14 +164,10 @@
                 onFinally: () => _viewModel.IsMutationOngoing = false);
 
            
-        }
+        }*/
 
-        public void Refresh()
-        {
-            RefreshTypes();
-            
-        }
-
+       
+        /*
         public void RefreshTypes()
         {
             _viewModel.AreTypesLoading = true;
@@ -168,15 +185,8 @@
               onFinally: () =>_viewModel.AreTypesLoading = false);
 
         }
+        */
 
-
-        public ILMutationsViewModel ILMutationsVm
-        {
-            get
-            {
-                return _viewModel;
-            }
-        }
-
+       
     }
 }

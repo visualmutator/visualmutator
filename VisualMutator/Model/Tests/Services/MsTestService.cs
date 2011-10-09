@@ -18,7 +18,7 @@
 
     #endregion
 
-    public class MsTestService : AbstractTestService
+    public class MsTestService : ITestService
     {
         private readonly IMsTestWrapper _msTestWrapper;
 
@@ -34,14 +34,14 @@
             _msTestLoader = msTestLoader;
         }
 
-        public override IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies)
+        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, TestSession testSession)
         {
-            TestMap.Clear();
+          
          
             var result = _msTestLoader.ScanAssemblies(assemblies);
             _assembliesWithTests = result.AssembliesWithTests;
 
-            return CreateTree(result.TestMethods);
+            return CreateTree(result.TestMethods, testSession);
         }
         /*
                 private IEnumerable<MethodDefinition>
@@ -64,7 +64,7 @@
                     return list;
                 }
                 */
-        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods)
+        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods, TestSession testSession)
         {
             var groupsByClass = methods.GroupBy(m => m.DeclaringType);
             //     .GroupBy(groupByType => groupByType.Key.Namespace);
@@ -87,7 +87,7 @@
                     c.Children.Add(m);
 
                     string id = type.FullName + "," + method.Name;
-                    TestMap.Add(id, m);
+                    testSession.TestMap.Add(id, m);
                 }
 
                 //TestMap.Add(type.FullName, c);
@@ -97,12 +97,12 @@
             return list;
         }
 
-        public override List<TestNodeMethod> RunTests()
+        public List<TestNodeMethod> RunTests(TestSession testSession)
         {
             if (_assembliesWithTests.Any())
             {
                 XDocument results = _msTestWrapper.RunMsTest(_assembliesWithTests);
-                return ReadTestResults(results).ToList();
+                return ReadTestResults(results, testSession).ToList();
             }
             else
             {
@@ -111,12 +111,12 @@
 
         }
 
-        public override void UnloadTests()
+        public void UnloadTests()
         {
             
         }
 
-        public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc)
+        public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc, TestSession testSession)
         {
        
             foreach (XElement testResult in doc.Root.DescendantsAnyNs("UnitTestResult"))
@@ -131,7 +131,7 @@
 
                 string fullClassName = longClassName.Substring(0, longClassName.IndexOf(","));
 
-                TestNodeMethod node = TestMap[fullClassName + "," + methodName];
+                TestNodeMethod node = testSession.TestMap[fullClassName + "," + methodName];
 
                 node.State = TranslateTestResultStatus(testResult.Attribute("outcome").Value);
 

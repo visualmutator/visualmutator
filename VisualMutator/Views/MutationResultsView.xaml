@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="VisualMutator.Views.MutationResultsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
+             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" mc:Ignorable="d" 
+             d:DesignHeight="488" d:DesignWidth="393">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Global.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid d:DataContext="{d:DesignInstance ViewModels:MutationResultsViewModel}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition  Height="Auto"/>
+            <RowDefinition  />
+            <RowDefinition Height="5" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+
+
+        <Grid Grid.Row="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            
+            <Button Grid.Row="0" Content="Create new mutants" Command="{Binding CommandCreateNewMutants}"/>
+
+            <DockPanel Grid.Row="1">
+                <TextBlock Text="{Binding OperationsStateDescription}" />
+                <Button Content="Stop all operations" Command="{Binding CommandStop}"/>     
+            </DockPanel>
+
+            <ProgressBar  Grid.Row="2"  Visibility="{Binding AreOperationsOngoing, 
+                Converter={Converters:BoolToVisibilityConverter}}" IsIndeterminate="True"/>
+
+
+        </Grid>
+        
+        
+        
+        <ListView Grid.Row="1" SelectionMode="Single" 
+                  ItemsSource="{Binding Operators}" SelectedItem="{Binding SelectedOperator}" >
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="Name"
+                          DisplayMemberBinding="{Binding Name, Mode=TwoWay}"/>
+                        <GridViewColumn  Header="Number of mutants" DisplayMemberBinding="{Binding Mutants.Count}"/>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+
+        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
+
+        
+        
+        <Grid  Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock  Grid.Row="0" Text="Mutants for selected operator:"/>
+            
+            <TextBlock  Grid.Row="1" Text="Alive:"/>
+            
+            
+            <Grid  Grid.Row="2">
+               
+
+
+                <ListBox ItemsSource="{Binding SelectedOperator.Mutants}" SelectedItem="{Binding SelectedMutant}">
+
+                </ListBox>
+
+            </Grid>
+
+            
+        </Grid>
+
+    </Grid>
+</UserControl>

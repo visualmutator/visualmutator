@@ -58,13 +58,13 @@
             var manager = new SolutionTypesManager(mock.Object, m.Object);
 
             // Act
-            manager.GetTypesFromAssemblies();
-            
-            // Assert
-            CollectionAssert.AreEquivalent(manager.GetIncludedTypes(), list);
-            manager.GetLoadedAssemblies().Single().ShouldEqual(assembly);
+            var assemblies = manager.GetTypesFromAssemblies();
 
-            var one = manager.AssemblyTreeNodes.Single().Children.Single();
+            // Assert
+            CollectionAssert.AreEquivalent(manager.GetIncludedTypes(assemblies), list);
+            assemblies.Select(t => t.AssemblyDefinition).Single().ShouldEqual(assembly);
+
+            var one = assemblies.Single().Children.Single();
             one.Children.Count.ShouldEqual(5);
             var two = one.Children.Single(_ => _.Name == "Two");
             two.Children.Count.ShouldEqual(3);

@@ -1,4 +1,5 @@
-﻿namespace VisualMutator.Model.Mutations.Types
+﻿using System.Collections;
+namespace VisualMutator.Model.Mutations.Types
 {
     #region Usings
 
@@ -18,13 +19,12 @@
 
     public interface ITypesManager
     {
-        IEnumerable<AssemblyNode> AssemblyTreeNodes { get; }
+       
+        IList<AssemblyNode> GetTypesFromAssemblies();
 
-        IEnumerable<AssemblyNode> GetTypesFromAssemblies();
+        IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
 
-        ICollection<TypeDefinition> GetIncludedTypes();
-
-        IEnumerable<AssemblyDefinition> GetLoadedAssemblies();
+  
     }
 
     public class SolutionTypesManager : ITypesManager
@@ -34,12 +34,7 @@
 
         private readonly IVisualStudioConnection _visualStudio;
 
-        private IList<AssemblyNode> _assemblyTreeNodes;
-
-        private ICollection<AssemblyDefinition> _loadedAssemblies;
-
-        private IList<TypeNode> _types;
-
+   
         public SolutionTypesManager(
             IAssemblyReaderWriter assemblyReaderWriter,
             IVisualStudioConnection visualStudio)
@@ -48,71 +43,82 @@
             _visualStudio = visualStudio;
         }
 
-        public IEnumerable<AssemblyNode> AssemblyTreeNodes
+
+        public IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
         {
-            get
+            var namespaces = assemblies.Where(ass => ass.IsIncluded == true)
+                .SelectMany(ass => ass.Children).Cast<TypeNamespaceNode>();
+
+            return namespaces.Where(ns => ns.IsIncluded == true).SelectMany(GetIncluded).ToList();
+        }
+        private ICollection<TypeDefinition> GetIncluded(TypeNamespaceNode ns)
+        {
+            var list = new List<TypeDefinition>();
+            foreach (GenericNode genericNode in ns.Children)
             {
-                return _assemblyTreeNodes;
+                var nsNode = genericNode as TypeNamespaceNode;
+                if (nsNode != null)
+                {
+                    list.AddRange(GetIncluded(nsNode));
+                }
+                else
+                {
+                    var typeNode = (TypeNode)genericNode;
+                    if ((bool)typeNode.IsIncluded)
+                    {
+                        list.Add(typeNode.TypeDefinition);
+                    }
+                }
             }
+            return list;
         }
 
-        public IEnumerable<AssemblyDefinition> GetLoadedAssemblies()
-        {
-            return _loadedAssemblies;
-        }
-
-        public ICollection<TypeDefinition> GetIncludedTypes()
-        {
-            return _types.Where(t => (bool)t.IsIncluded).Select(t => t.TypeDefinition).ToList();
-        }
-
-        public IEnumerable<AssemblyNode> GetTypesFromAssemblies()
+        public IList<AssemblyNode> GetTypesFromAssemblies()
         {
 
             IEnumerable<string> paths = _visualStudio.GetProjectPaths();
 
-            LoadAssemblies(paths);
+            var ass = LoadAssemblies(paths);
 
-            return BuildTree();
+            return BuildTree(ass);
         }
 
-        private IEnumerable<AssemblyNode> BuildTree()
+        private IList<AssemblyNode> BuildTree(IEnumerable<AssemblyDefinition> loadedAssemblies)
         {
-            var typesGroups = _loadedAssemblies.SelectMany(ad => ad.MainModule.Types)
-                .Where(t => t.Name != "<Module>").GroupBy(t => t.Module.Assembly.Name.Name);
-
-            _assemblyTreeNodes = new List<AssemblyNode>();
-            _types = new List<TypeNode>();
+       
+            var assemblyTreeNodes = new List<AssemblyNode>();
+          
             var root = new FakeNode();
 
-            foreach (var types in typesGroups)
+            foreach (var assembly in loadedAssemblies)
             {
-                var assemblyNode = new AssemblyNode(types.Key);
-                GroupTypes(assemblyNode, "", types.ToList());
+                var assemblyNode = new AssemblyNode(assembly.Name.Name, assembly);
+                GroupTypes(assemblyNode, "", assembly.MainModule.Types.Where(t => t.Name != "<Module>").ToList());
 
                 root.Children.Add(assemblyNode);
-                _assemblyTreeNodes.Add(assemblyNode);
+                assemblyTreeNodes.Add(assemblyNode);
             }
 
             root.IsIncluded = true;
 
-            return _assemblyTreeNodes;
+            return assemblyTreeNodes;
         }
 
-        private void LoadAssemblies(IEnumerable<string> projectsPaths)
+        private IEnumerable<AssemblyDefinition> LoadAssemblies(IEnumerable<string> projectsPaths)
         {
-            _loadedAssemblies = new List<AssemblyDefinition>();
+            var loadedAssemblies = new List<AssemblyDefinition>();
             foreach (var assembly in projectsPaths)
             {
                 try
                 {
-                    _loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
+                    loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
                 }
                 catch (FileNotFoundException e)
                 {
                     _log.Info("ReadAssembly failed. ", e);
                 }
             }
+            return loadedAssemblies;
         }
 
         public void GroupTypes(GenericNode parent,
@@ -145,7 +151,7 @@
                 {
                     var typeNode = new TypeNode(parent, typeDefinition.Name, typeDefinition);
                     parent.Children.Add(typeNode);
-                    _types.Add(typeNode);
+                  
                 }
             }
         }

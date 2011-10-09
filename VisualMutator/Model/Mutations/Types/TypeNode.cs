@@ -9,13 +9,22 @@
     #endregion
     public class AssemblyNode : GenericNode
     {
+        private AssemblyDefinition _assemblyDefinition;
+        
 
-        public AssemblyNode(string name)
+        public AssemblyNode(string name, AssemblyDefinition assemblyDefinition)
             : base(null, name, true)
         {
-
+            _assemblyDefinition = assemblyDefinition;
         }
 
+        public AssemblyDefinition AssemblyDefinition
+        {
+            get
+            {
+                return _assemblyDefinition;
+            }
+        }
     }
 
     public class TypeNamespaceNode : GenericNode

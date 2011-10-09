@@ -2,14 +2,37 @@ namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
 
-    public class MutationResultDetails
+    using Mono.Cecil;
+
+    public class MutationResultsCollection
     {
-        public List<string> ModifiedMethods
+
+
+        public IList<MutationResult> MutationResults
+        {
+            get;
+            set;
+        }
+    }
+
+
+    public class MutationResult
+    {
+
+
+        public IEnumerable<AssemblyDefinition> MutatedAssemblies
         {
             get;
             set;
         }
 
-        
+        public MutationTarget MutationTarget
+        {
+            get;
+            set;
+        }
+
     }
+
+
 }
