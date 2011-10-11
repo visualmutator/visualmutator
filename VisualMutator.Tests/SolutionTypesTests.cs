@@ -20,10 +20,8 @@
     [TestFixture]
     public class SolutionTypesTests
     {
-    
 
-        [Test]
-        public void Test1()
+        private static List<TypeDefinition> CreateTypeDefinitions()
         {
             var a = TypeAttributes.Public;
             var list = new List<TypeDefinition>
@@ -42,7 +40,49 @@
                 new TypeDefinition("One.Two.YYY.Four", "Type12", a),
                 new TypeDefinition("One.ZZZ.YYY.Four", "Type13", a),
                 new TypeDefinition("One.ZZZ.YYY.Four", "Type14", a),
+                new TypeDefinition("Other", "Type15", a),
             };
+            return list;
+        }
+
+
+        [Test]
+        public void GetTypesFromAssemblies_Creates_Valid_Tree()
+        {
+            var list = CreateTypeDefinitions();
+
+            string path = @"C:\TestAssembly.dll";
+
+            var mock = new Mock<IAssemblyReaderWriter>();
+
+            var assembly = CecilUtils.CreateAssembly("TestAssembly", list);
+            mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);
+
+
+            var m = new Mock<IVisualStudioConnection>();
+            m.Setup(_ => _.GetProjectPaths()).Returns(new[] { path });
+
+            var manager = new SolutionTypesManager(mock.Object, m.Object);
+
+            // Act
+            var assemblies = manager.GetTypesFromAssemblies();
+
+            // Assert
+            assemblies.Select(t => t.AssemblyDefinition).Single().ShouldEqual(assembly);
+
+            assemblies.Single().Children.Count.ShouldEqual(2);
+
+            var one = assemblies.Single().Children.First();
+            one.Children.Count.ShouldEqual(5);
+            var two = one.Children.Single(_ => _.Name == "Two");
+            two.Children.Count.ShouldEqual(3);
+            var merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
+            merged.Children.Count.ShouldEqual(2);
+        }
+        [Test]
+        public void GetIncludedTypes_Test()
+        {
+            var list = CreateTypeDefinitions();
 
             string path = @"C:\TestAssembly.dll";
 
@@ -62,18 +102,10 @@
 
             // Assert
             CollectionAssert.AreEquivalent(manager.GetIncludedTypes(assemblies), list);
-            assemblies.Select(t => t.AssemblyDefinition).Single().ShouldEqual(assembly);
 
-            var one = assemblies.Single().Children.Single();
-            one.Children.Count.ShouldEqual(5);
-            var two = one.Children.Single(_ => _.Name == "Two");
-            two.Children.Count.ShouldEqual(3);
-            var merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
-            merged.Children.Count.ShouldEqual(2);
         }
-
         [Test]
-        public void Test2()
+        public void ExtractNextNamespacePart_Test()
         {
             var manager = new SolutionTypesManager(null, null);
 

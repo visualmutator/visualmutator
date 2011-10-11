@@ -1,5 +1,7 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
+    #region Usings
+
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -10,9 +12,11 @@
 
     using VisualMutator.Infrastructure;
 
+    #endregion
+
     public interface IMsTestWrapper
     {
-      //  IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly);
+        //  IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly);
 
         XDocument RunMsTest(IEnumerable<string> assemblies);
     }
@@ -25,62 +29,40 @@
         {
             _visualStudio = visualStudio;
         }
-        /*
-        public IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly)
-        {
-            AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(assembly);
-            IEnumerable<TypeDefinition> types =
-                ad.MainModule.Types.Where(
-                    t =>
-                    t.CustomAttributes.Any(
-                        a =>
-                        a.AttributeType.FullName ==
-                        @"Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute")).ToList();
 
-            return types.SelectMany(t => t.Methods).Where(
-                m => m.CustomAttributes.Any(
-                    a =>
-                    a.AttributeType.FullName ==
-                    @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));
-        }
-        */
-        
         public XDocument RunMsTest(IEnumerable<string> assemblies)
         {
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(Path.Combine(_visualStudio.InstallPath, @"Common7\IDE\MSTest.exe"));
-
-
             string settingsPath = TestSettings();
             string resultsFile = Path.GetTempFileName();
 
-        
-             File.Delete(resultsFile);
-
-
+            File.Delete(resultsFile);
 
             var arguments = new StringBuilder();
             arguments.Append(@"-noisolation" + " ");
-            arguments.Append(@"-testsettings:" +settingsPath.InQuotes()+ " ");
+            arguments.Append(@"-testsettings:" + settingsPath.InQuotes() + " ");
 
             foreach (string assembly in assemblies)
             {
                 arguments.Append(@"-testcontainer:" + assembly.InQuotes() + " ");
             }
 
-            
             arguments.Append(@"-resultsfile:" + resultsFile.InQuotes());
 
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(Path.Combine(_visualStudio.InstallPath, @"Common7\IDE\MSTest.exe"))
+            {   
+                Arguments = arguments.ToString(), 
+                WindowStyle = ProcessWindowStyle.Hidden, 
+                CreateNoWindow = true, 
+                UseShellExecute = false, 
+                RedirectStandardOutput = true 
+            };
 
-            p.StartInfo.Arguments = arguments.ToString();
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
             p.Start();
+
             StreamReader sr = p.StandardOutput;
             string consoleOutput = sr.ReadToEnd();
-           
+
             p.WaitForExit();
 
             try
@@ -91,18 +73,12 @@
             {
                 throw new MsTestException(consoleOutput, e);
             }
-            
-
-
         }
-
-
-
 
         private string TestSettings()
         {
             string content =
-@"<?xml version=""1.0"" encoding=""UTF-8""?>
+                @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <TestSettings
   id=""906380a7-c058-43a6-8f36-966013e5a9eb""
   name=""UnitTests""
@@ -116,10 +92,7 @@
 
             File.WriteAllText(path, content);
 
-     
             return path;
         }
-
-
     }
 }

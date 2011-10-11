@@ -46,40 +46,11 @@ namespace VisualMutator.Model.Mutations.Types
 
         public IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
         {
-          //  var namespaces = assemblies.Where(ass => ass.IsIncluded ?? true)
-          //      .SelectMany(ass => ass.Children).Cast<TypeNamespaceNode>();
-
-           // return namespaces
-
             return assemblies
-                .Where(ass => ass.IsIncluded ?? true)
-                .SelectMany(ass => ass.Children).Cast<TypeNamespaceNode>()
-                .Where(ns => ns.IsIncluded ?? true)
-                .SelectMany(GetIncluded)
-                .ToList();
+                .SelectManyRecursive<GenericNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
+                .Cast<TypeNode>().Select(type=>type.TypeDefinition).ToList();
         }
-        private ICollection<TypeDefinition> GetIncluded(TypeNamespaceNode ns)
-        {
-            var list = new List<TypeDefinition>();
-            foreach (GenericNode genericNode in ns.Children)
-            {
-                var nsNode = genericNode as TypeNamespaceNode;
-                if (nsNode != null)
-                {
-                    list.AddRange(GetIncluded(nsNode));
-                }
-                else
-                {
-                    var typeNode = (TypeNode)genericNode;
-                    if ((bool)typeNode.IsIncluded)
-                    {
-                        list.Add(typeNode.TypeDefinition);
-                    }
-                }
-            }
-            return list;
-        }
-
+       
         public IList<AssemblyNode> GetTypesFromAssemblies()
         {
 
@@ -90,6 +61,22 @@ namespace VisualMutator.Model.Mutations.Types
             return BuildTree(ass);
         }
 
+        private IEnumerable<AssemblyDefinition> LoadAssemblies(IEnumerable<string> projectsPaths)
+        {
+            var loadedAssemblies = new List<AssemblyDefinition>();
+            foreach (var assembly in projectsPaths)
+            {
+                try
+                {
+                    loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
+                }
+                catch (FileNotFoundException e)
+                {
+                    _log.Info("ReadAssembly failed. ", e);
+                }
+            }
+            return loadedAssemblies;
+        }
         private IList<AssemblyNode> BuildTree(IEnumerable<AssemblyDefinition> loadedAssemblies)
         {
        
@@ -111,43 +98,30 @@ namespace VisualMutator.Model.Mutations.Types
             return assemblyTreeNodes;
         }
 
-        private IEnumerable<AssemblyDefinition> LoadAssemblies(IEnumerable<string> projectsPaths)
-        {
-            var loadedAssemblies = new List<AssemblyDefinition>();
-            foreach (var assembly in projectsPaths)
-            {
-                try
-                {
-                    loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
-                }
-                catch (FileNotFoundException e)
-                {
-                    _log.Info("ReadAssembly failed. ", e);
-                }
-            }
-            return loadedAssemblies;
-        }
 
-        public void GroupTypes(GenericNode parent,
-                               string currentNamespace, ICollection<TypeDefinition> types)
+        public void GroupTypes(GenericNode parent, string currentNamespace, ICollection<TypeDefinition> types)
         {
-            var groupsByNamespace = types.Where(t => t.Namespace != currentNamespace &&
-                                                     t.Namespace.StartsWith(currentNamespace))
+            var groupsByNamespaces = types
+                .Where(t => t.Namespace != currentNamespace)
                 .OrderBy(t => t.Namespace)
-                .GroupBy(t => ExtractNextNamespacePart(t.Namespace, currentNamespace)).ToList();
+                .GroupBy(t => ExtractNextNamespacePart(t.Namespace, currentNamespace))
+                .ToList();
 
-            var leafTypes = types.Where(t => t.Namespace == currentNamespace)
-                .OrderBy(t => t.Name);
+            var leafTypes = types
+                .Where(t => t.Namespace == currentNamespace)
+                .OrderBy(t => t.Name)
+                .ToList();
 
-            if (currentNamespace != "" && groupsByNamespace.Count() == 1 && !leafTypes.Any())
+            // Maybe we can merge namespace nodes:
+            if (currentNamespace != "" && groupsByNamespaces.Count == 1 && !leafTypes.Any())
             {
-                var singleGroup = groupsByNamespace.Single();
+                var singleGroup = groupsByNamespaces.Single();
                 parent.Name = ConcatNamespace(parent.Name, singleGroup.Key);
                 GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup.ToList());
             }
             else
             {
-                foreach (var typesGroup in groupsByNamespace)
+                foreach (var typesGroup in groupsByNamespaces)
                 {
                     var node = new TypeNamespaceNode(parent, typesGroup.Key);
                     GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup.ToList());
@@ -156,8 +130,7 @@ namespace VisualMutator.Model.Mutations.Types
 
                 foreach (TypeDefinition typeDefinition in leafTypes)
                 {
-                    var typeNode = new TypeNode(parent, typeDefinition.Name, typeDefinition);
-                    parent.Children.Add(typeNode);
+                    parent.Children.Add(new TypeNode(parent, typeDefinition.Name, typeDefinition));
                   
                 }
             }

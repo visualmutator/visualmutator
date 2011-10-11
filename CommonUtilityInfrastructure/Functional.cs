@@ -1,4 +1,4 @@
-﻿namespace CommonUtilityInfrastructure
+﻿namespace System.Linq
 {
     using System;
     using System.Collections.Generic;
@@ -92,8 +92,9 @@
                 return source.Where(predicate).SelectMany(Y<TSource, IEnumerable<TSource>>
                     (f => obj =>
                     {
-                        var s = selector(obj).Where(predicate).SelectMany(f);
-                        return s.Any() ? s : s.Prepend(obj);
+                        var children = selector(obj)?? new List<TSource>();
+                        var selected = children.Where(predicate).SelectMany(f);
+                        return selected.Any() ? selected : selected.Prepend(obj);
                     }));
             }
 

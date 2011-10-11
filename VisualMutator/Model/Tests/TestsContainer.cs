@@ -60,6 +60,8 @@
                 return TestsRootNode.Children.Cast<TestNodeNamespace>();
             } 
         }
+
+        public IList<string> AssembliesWithTests { get; set; }
     }
     public interface ITestsContainer
     {

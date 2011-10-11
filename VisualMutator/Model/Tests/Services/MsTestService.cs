@@ -24,8 +24,7 @@
 
         private readonly IMsTestLoader _msTestLoader;
 
-        private IEnumerable<string> _assembliesWithTests;
-
+   
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public MsTestService(IMsTestWrapper msTestWrapper, IMsTestLoader msTestLoader)
@@ -39,35 +38,15 @@
           
          
             var result = _msTestLoader.ScanAssemblies(assemblies);
-            _assembliesWithTests = result.AssembliesWithTests;
-
+          
+            testSession.AssembliesWithTests = result.AssembliesWithTests.ToList();
             return CreateTree(result.TestMethods, testSession);
         }
-        /*
-                private IEnumerable<MethodDefinition>
-                    ScanAssemblies(IEnumerable<string> assemblies, out IEnumerable<string> assembliesWithTests)
-                {
-                    var list = new List<MethodDefinition>();
-                    var withTests = new List<string>();
-                    foreach (string assembly in assemblies)
-                    {
-                        var methods = _msTestWrapper.ReadTestMethodsFromAssembly(assembly);
-
-                        list.AddRange(methods);
-
-                        if (methods.Any())
-                        {
-                            withTests.Add(assembly);
-                        }
-                    }
-                    assembliesWithTests = withTests;
-                    return list;
-                }
-                */
+    
         public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods, TestSession testSession)
         {
             var groupsByClass = methods.GroupBy(m => m.DeclaringType);
-            //     .GroupBy(groupByType => groupByType.Key.Namespace);
+          
 
             var list = new List<TestNodeClass>();
 
@@ -90,7 +69,7 @@
                     testSession.TestMap.Add(id, m);
                 }
 
-                //TestMap.Add(type.FullName, c);
+          
                 list.Add(c);
             }
 
@@ -99,9 +78,9 @@
 
         public List<TestNodeMethod> RunTests(TestSession testSession)
         {
-            if (_assembliesWithTests.Any())
+            if (testSession.AssembliesWithTests.Any())//TODO: needed?
             {
-                XDocument results = _msTestWrapper.RunMsTest(_assembliesWithTests);
+                XDocument results = _msTestWrapper.RunMsTest(testSession.AssembliesWithTests);
                 return ReadTestResults(results, testSession).ToList();
             }
             else
