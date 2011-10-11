@@ -46,10 +46,17 @@ namespace VisualMutator.Model.Mutations.Types
 
         public IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
         {
-            var namespaces = assemblies.Where(ass => ass.IsIncluded == true)
-                .SelectMany(ass => ass.Children).Cast<TypeNamespaceNode>();
+          //  var namespaces = assemblies.Where(ass => ass.IsIncluded ?? true)
+          //      .SelectMany(ass => ass.Children).Cast<TypeNamespaceNode>();
 
-            return namespaces.Where(ns => ns.IsIncluded == true).SelectMany(GetIncluded).ToList();
+           // return namespaces
+
+            return assemblies
+                .Where(ass => ass.IsIncluded ?? true)
+                .SelectMany(ass => ass.Children).Cast<TypeNamespaceNode>()
+                .Where(ns => ns.IsIncluded ?? true)
+                .SelectMany(GetIncluded)
+                .ToList();
         }
         private ICollection<TypeDefinition> GetIncluded(TypeNamespaceNode ns)
         {

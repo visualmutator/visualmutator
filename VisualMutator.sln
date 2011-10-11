@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator", "VisualMuta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtilityInfrastructure", "CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj", "{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtilityInfrastructure.Tests", "CommonUtilityInfrastructure.Tests\CommonUtilityInfrastructure.Tests.csproj", "{FC3B11AE-6D1B-4732-B126-D01B282279F2}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = VisualMutator.vsmdi
@@ -126,6 +128,16 @@ Global
 		{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FC3B11AE-6D1B-4732-B126-D01B282279F2}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
