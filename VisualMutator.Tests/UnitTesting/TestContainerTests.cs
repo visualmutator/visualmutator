@@ -59,14 +59,12 @@
 
             var nUnitTestService = new NUnitTestService(nUnitWrapperMock.Object, new Mock<IMessageService>().Object);
             var msTestService = new MsTestService(null, msTestLoaderMock.Object);
-
-            var container = new TestsContainer(nUnitTestService, msTestService);
-
-            var mutant = new MutationSession
-            {
-                Assemblies = new List<string> { "a" },
-            };
-
+            //TODO: poprawic
+            var container = new TestsContainer(nUnitTestService, msTestService, null);
+         
+            var mutant = new StoredMutantInfo("tmp");
+            mutant.AssembliesPaths.Add( "a");
+       
             TestSession session = container.LoadTests(mutant);
 
             TestNodeNamespace ns = (TestNodeNamespace)session.TestsRootNode.Children.Single();

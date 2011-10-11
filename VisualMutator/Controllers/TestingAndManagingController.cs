@@ -78,8 +78,8 @@
             _commandReloadTestList = new BasicCommand(RefreshTestList, () => _viewModel.SelectedMutant != null);
             _commandReloadTestList.ExecuteOnChanged(_viewModel, () => _viewModel.SelectedMutant);
 
-            _viewModel.CommandDeleteMutant = new BasicCommand(DeleteMutant, () => _viewModel.SelectedMutant != null);
-            _viewModel.CommandDeleteMutant.UpdateOnChanged(_viewModel, () => _viewModel.SelectedMutant);
+          //  _viewModel.CommandDeleteMutant = new BasicCommand(DeleteMutant, () => _viewModel.SelectedMutant != null);
+         //   _viewModel.CommandDeleteMutant.UpdateOnChanged(_viewModel, () => _viewModel.SelectedMutant);
 
 
             _viewModel.EventListeners.AddCollectionChangedEventHandler(_viewModel.Mutants, ()=>
@@ -94,8 +94,8 @@
         public void ManageMutants()
         {
             var vm = _mutantsManagementfactory.Create();
-            vm.CommandRemove = new BasicCommand(() => DeleteMutant(vm.SelectedMutant));
-            vm.CommandRemoveAll = new BasicCommand(DeleteAllMutants);
+           // vm.CommandRemove = new BasicCommand(() => DeleteMutant(vm.SelectedMutant));
+         //   vm.CommandRemoveAll = new BasicCommand(DeleteAllMutants);
             vm.Show();
         }
 
@@ -139,12 +139,13 @@
 
 
         }
+        /*
         public void DeleteMutant()
         {
             DeleteMutant(_viewModel.SelectedMutant);
         }
-
-        public void DeleteMutant(MutationSession mutant)
+        
+        public void DeleteMutant(StoredMutantInfo mutant)
         {
             if (_testsContainer.CurrentMutant == mutant)
             {
@@ -168,7 +169,7 @@
             _mutantsContainer.DeleteAllMutants();
 
         }
-
+        */
        
         public void Handle(LoadLastCreatedMutantEventArgs message)
         {

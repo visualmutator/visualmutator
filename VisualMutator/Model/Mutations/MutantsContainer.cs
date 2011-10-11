@@ -27,23 +27,13 @@
     public interface IMutantsContainer
     {
 
-        ReadOnlyObservableCollection<MutationSession> GeneratedMutants
+        ReadOnlyObservableCollection<StoredMutantInfo> GeneratedMutants
         {
             get;
         }
 
-        MutationSession GenerateMutant(string name, Action<string> mutationLog);
-
-        void LoadSessions();
-
-        void DeleteMutant(MutationSession selectedMutant);
-
-        void Clear();
-
-        void DeleteAllMutants();
-
-        void AddMutant(MutationSession result);
-
+    
+     
         ExecutedOperator GenerateMutantsForOperator(MutationSessionChoices choices, IMutationOperator op);
     }
 
@@ -53,7 +43,7 @@
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly BetterObservableCollection<MutationSession> _generatedMutants;
+        private readonly BetterObservableCollection<StoredMutantInfo> _generatedMutants;
 
         private readonly IOperatorsManager _operatorsManager;
 
@@ -81,21 +71,21 @@
             _dateTimeNowFactory = dateTimeNowFactory;
        
 
-            _generatedMutants = new BetterObservableCollection<MutationSession>();
+            _generatedMutants = new BetterObservableCollection<StoredMutantInfo>();
         }
 
 
-        public ReadOnlyObservableCollection<MutationSession> GeneratedMutants
+        public ReadOnlyObservableCollection<StoredMutantInfo> GeneratedMutants
         {
             get
             {
-                return new ReadOnlyObservableCollection<MutationSession>(_generatedMutants);
+                return new ReadOnlyObservableCollection<StoredMutantInfo>(_generatedMutants);
             }
         }
 
 
 
-        public MutationSession GenerateMutant(string name, Action<string> mutationLog)
+        public StoredMutantInfo GenerateMutant(string name, Action<string> mutationLog)
         {
             /*
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
@@ -158,22 +148,8 @@
             throw new NotImplementedException();
         }
 
-        public void LoadSessions()
-        {
       
-            _generatedMutants.ReplaceRange(_mutantsFileManager.LoadSessions());
-   
-        }
 
-        public void DeleteMutant(MutationSession mutant)
-        {
-            
-            _generatedMutants.Remove(mutant);
-            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
-
-            _mutantsFileManager.DeleteMutantFiles(mutant);
-
-        }
 
         public void Clear()
         {
@@ -182,25 +158,12 @@
         }
 
   
-        public void DeleteAllMutants()
-        {
 
-            foreach (MutationSession mutant in _generatedMutants)
-            {
-                
-                _mutantsFileManager.DeleteMutantFiles(mutant);
-            }
-            
-           
-            _generatedMutants.Clear();
-            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
-        }
 
-        public void AddMutant(MutationSession result)
-        {
-            _generatedMutants.Add(result);
-            _mutantsFileManager.SaveSettingsFile(_generatedMutants);
-        }
+
+
+
+
 
         public ExecutedOperator GenerateMutantsForOperator(MutationSessionChoices choices, IMutationOperator op)
         {
@@ -234,6 +197,9 @@
             }
             return list;
         }
+
+
+
 
 
 

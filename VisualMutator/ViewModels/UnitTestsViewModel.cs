@@ -23,11 +23,11 @@ namespace VisualMutator.ViewModels
 
         private ICommand _commandRunTests;
 
-        private ReadOnlyObservableCollection<MutationSession> _mutants;
+        private ReadOnlyObservableCollection<StoredMutantInfo> _mutants;
 
         private string _resultText;
 
-        private MutationSession _selectedMutant;
+        private StoredMutantInfo _selectedMutant;
 
         private TestTreeNode _selectedTestItem;
 
@@ -37,7 +37,7 @@ namespace VisualMutator.ViewModels
 
         private BasicCommand _showTestDetails;
 
-        public UnitTestsViewModel(IUnitTestsView view, ReadOnlyObservableCollection<MutationSession> mutants)
+        public UnitTestsViewModel(IUnitTestsView view, ReadOnlyObservableCollection<StoredMutantInfo> mutants)
             : base(view)
         {
             TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
@@ -64,7 +64,7 @@ namespace VisualMutator.ViewModels
 
 
 
-        public ReadOnlyObservableCollection<MutationSession> Mutants
+        public ReadOnlyObservableCollection<StoredMutantInfo> Mutants
         {
             set
             {
@@ -80,7 +80,7 @@ namespace VisualMutator.ViewModels
             }
         }
 
-        public MutationSession SelectedMutant
+        public StoredMutantInfo SelectedMutant
         {
             set
             {

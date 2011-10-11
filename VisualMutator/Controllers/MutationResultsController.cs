@@ -74,8 +74,10 @@
 
             var tasks = choices.SelectedOperators.Select(op =>
             {
-                return _services.Threading.ScheduleAsync(() => _mutantsContainer.GenerateMutantsForOperator(choices, op),
+                return _services.Threading.ScheduleAsync(() => 
+                    _mutantsContainer.GenerateMutantsForOperator(choices, op),
                     operatorWithMutants => _viewModel.Operators.Add(operatorWithMutants));
+
             }).ToArray();
 
 

@@ -27,9 +27,9 @@
             View.Close();
         }
 
-        private ReadOnlyObservableCollection<MutationSession> _mutants;
+        private ReadOnlyObservableCollection<StoredMutantInfo> _mutants;
 
-        public ReadOnlyObservableCollection<MutationSession> Mutants
+        public ReadOnlyObservableCollection<StoredMutantInfo> Mutants
         {
             get
             {
@@ -83,9 +83,9 @@
             }
         }
 
-        private MutationSession _selectedMutant;
+        private StoredMutantInfo _selectedMutant;
 
-        public MutationSession SelectedMutant
+        public StoredMutantInfo SelectedMutant
         {
             get
             {

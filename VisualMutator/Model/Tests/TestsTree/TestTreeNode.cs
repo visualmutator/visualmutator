@@ -117,11 +117,7 @@
      
         private void UpdateStateBasedOnChildren()
         {
-           // var values = new List<TestNodeState> { TestNodeState.Failure, TestNodeState.Inconclusive, TestNodeState.Success };
-
-          //  TestNodeState state = Children.Cast<TestTreeNode>().Select(n => n.State)
-          //      .Aggregate((one, two) =>  values.IndexOf(one) != -1 &&  values.IndexOf(one) < values.IndexOf(two) ? one : two);
-            var children = Children.Cast<TestTreeNode>();
+            var children = Children.Cast<TestTreeNode>().ToList();
 
             if(children.All(_ => _.HasResults))
             {

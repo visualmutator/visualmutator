@@ -54,10 +54,6 @@
             return list;
         }
 
-        //public IEnumerable<IMutationOperator> GetActiveOperators()
-       // {
-           // return OperatorPackages.SelectMany(pack => pack.Operators)
-          //      .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator);
-       // }
+  
     }
 }

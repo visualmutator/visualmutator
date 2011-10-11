@@ -122,7 +122,7 @@
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
     <Compile Include="Model\Mutations\MutantsFileManager.cs" />
     <Compile Include="Model\Mutations\MutationException.cs" />
-    <Compile Include="Model\Mutations\MutationSession.cs" />
+    <Compile Include="Model\Mutations\StoredMutantInfo.cs" />
     <Compile Include="Model\Mutations\NoTypesSelectedException.cs" />
     <Compile Include="Model\Mutations\Operators\MEFOperatorLoader.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorNode.cs" />
@@ -138,6 +138,7 @@
     <Compile Include="Model\Tests\Services\NUnitTestService.cs" />
     <Compile Include="Model\Tests\Services\NUnitWrapper.cs" />
     <Compile Include="Model\Tests\TestsContainer.cs" />
+    <Compile Include="Model\Tests\TestSession.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeClass.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeMethod.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeNamespace.cs" />

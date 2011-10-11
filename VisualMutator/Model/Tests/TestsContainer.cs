@@ -2,90 +2,44 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure;
 
+    using Mono.Cecil;
+
     using VisualMutator.Controllers;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;
-    public class TestSession
-    {
-        private IDictionary<string, TestNodeMethod> _testMap;
 
-        private List<TestNodeClass> _testClassses;
-
-
-        private TestsRootNode _testsRootNode;
-
-        public TestSession()
-        {
-            _testMap = new Dictionary<string, TestNodeMethod>();
-            _testClassses = new List<TestNodeClass>();
-        
-            _testsRootNode = new TestsRootNode();
-        }
-
-        public IDictionary<string, TestNodeMethod> TestMap
-        {
-            get
-            {
-                return _testMap;
-            }
-        }
-
-        public List<TestNodeClass> TestClassses
-        {
-            get
-            {
-                return _testClassses;
-            }
-        }
-
-      
-        public TestsRootNode TestsRootNode
-        {
-            get
-            {
-                return _testsRootNode;
-            }
-        }
-
-        public IEnumerable<TestNodeNamespace> TestNamespaces
-        { 
-            get
-            {
-                return TestsRootNode.Children.Cast<TestNodeNamespace>();
-            } 
-        }
-
-        public IList<string> AssembliesWithTests { get; set; }
-    }
     public interface ITestsContainer
     {
-        TestSession LoadTests(MutationSession mutant);
+        TestSession LoadTests(StoredMutantInfo mutant);
 
         void RunTests(TestSession testSession);
 
  
         void UnloadTests();
 
-        MutationSession CurrentMutant { get; }
+        StoredMutantInfo CurrentMutant { get; }
 
         object RunTestsForMutant(Mutant mut);
     }
 
     public class TestsContainer : ITestsContainer
     {
+        private readonly IMutantsFileManager _mutantsFileManager;
+
         private readonly IEnumerable<ITestService> _testServices;
 
       
 
-        private MutationSession _currentMutant;
+        private StoredMutantInfo _currentMutant;
 
-        public MutationSession CurrentMutant
+        public StoredMutantInfo CurrentMutant
         {
             get
             {
@@ -93,25 +47,32 @@
             }
         }
 
-        public object RunTestsForMutant(Mutant mut)
+      
+
+        public TestsContainer(NUnitTestService nunit, MsTestService ms,
+            IMutantsFileManager mutantsFileManager)
         {
-
-
-            throw new NotImplementedException();
-        }
-
-        public TestsContainer(NUnitTestService nunit, MsTestService ms)
-        {
+            _mutantsFileManager = mutantsFileManager;
             _testServices = new List<ITestService>
             {
                 nunit,ms
             };
-
-           
         }
-        
 
-        public TestSession LoadTests(MutationSession mutant)
+        public object RunTestsForMutant(Mutant mutant)
+        {
+            StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(mutant);
+
+            TestSession testSession = LoadTests(storedMutantInfo);
+
+            RunTests(testSession);
+
+            _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
+            throw new NotImplementedException();
+        }
+
+
+        public TestSession LoadTests(StoredMutantInfo mutant)
         {
             if (mutant == null)
             {
@@ -122,12 +83,12 @@
 
             var testSession = new TestSession();
 
-            var testClassses = _testServices
-                .SelectMany(s => s.LoadTests(mutant.Assemblies, testSession));
+            IEnumerable<TestNodeClass> testClassses = _testServices
+                .SelectMany(s => s.LoadTests(mutant.AssembliesPaths, testSession));
 
             testSession.TestClassses.AddRange(testClassses);
 
-            var testNamespaces = testSession.TestClassses
+            List<TestNodeNamespace> testNamespaces = testSession.TestClassses
                 .GroupBy(classNode => classNode.Namespace)
                 .Select(group =>
                 {
