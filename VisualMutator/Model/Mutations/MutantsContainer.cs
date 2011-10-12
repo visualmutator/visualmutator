@@ -45,31 +45,15 @@
     {
         private readonly BetterObservableCollection<StoredMutantInfo> _generatedMutants;
 
-        private readonly IOperatorsManager _operatorsManager;
 
-        private readonly ITypesManager _typesManager;
-
-        private readonly IMutantsFileManager _mutantsFileManager;
-
-        private readonly IFactory<DateTime> _dateTimeNowFactory;
-
-   
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
         public MutantsContainer(
-            IOperatorsManager operatorsManager,
-            ITypesManager typesManager,
-            IMutantsFileManager mutantsFileManager,
-            IFactory<DateTime> dateTimeNowFactory
             )
         {
-            _operatorsManager = operatorsManager;
-            _typesManager = typesManager;
-            _mutantsFileManager = mutantsFileManager;
-            _dateTimeNowFactory = dateTimeNowFactory;
-       
+ 
 
             _generatedMutants = new BetterObservableCollection<StoredMutantInfo>();
         }
@@ -84,10 +68,10 @@
         }
 
 
-
+        /*
         public StoredMutantInfo GenerateMutant(string name, Action<string> mutationLog)
         {
-            /*
+            
             IEnumerable<TypeDefinition> types = _typesManager.GetIncludedTypes();
             if (!types.Any())
             {
@@ -144,11 +128,11 @@
             _mutantsFileManager.StoreMutant(session, assemblies);
             return session;
 
-            */
+            
             throw new NotImplementedException();
         }
 
-      
+      */
 
 
         public void Clear()

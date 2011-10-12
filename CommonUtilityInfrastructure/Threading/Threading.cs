@@ -1,6 +1,8 @@
 namespace CommonUtilityInfrastructure.Threading
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
 
@@ -17,6 +19,8 @@ namespace CommonUtilityInfrastructure.Threading
         Action<T> ActionOnGui<T>(Action<T> onGui);
 
         Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null);
+
+        void ContinueOnGuiWhenAll(IEnumerable<Task> tasks, Action onGui);
     }
     public class Threading : IThreading
     {
@@ -44,6 +48,11 @@ namespace CommonUtilityInfrastructure.Threading
                 _execute.OnUIThread(() => onGui(param));
             };
         }
+        public void ContinueOnGuiWhenAll(IEnumerable<Task> tasks, Action onGui)
+        {
+            new TaskFactory(_execute.GuiScheduler).ContinueWhenAll(tasks.ToArray(), t2 => onGui());
+        }
+
         public Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null)
         {
             return Task.Factory.StartNew(() =>

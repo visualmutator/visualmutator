@@ -11,6 +11,7 @@
 
     using NUnit.Framework;
 
+    using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
@@ -38,11 +39,19 @@
                 };
             }
             */
+
+            class ThisMutationTarget : MutationTarget
+            {
+                public ThisMutationTarget(MethodDefinition method)
+                    : base(method)
+                {
+                }
+            }
             public string Name
             {
                 get
                 {
-                    return "TestName";
+                    return "TestOperatorName";
                 }
             }
 
@@ -50,63 +59,78 @@
             {
                 get
                 {
-                    return "TestDescription";
+                    return "TestOperatorDescription";
                 }
             }
 
             public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
             {
-                throw new NotImplementedException();
+                yield return new MutationTarget(types.Single(t => t.Name == "Type1").Methods.Single());
+                yield return new MutationTarget(types.Single(t => t.Name == "Type3").Methods.Single());
+
             }
 
             public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
             {
-                throw new NotImplementedException();
+                int i = 0;
+                var results = new MutationResultsCollection();
+                foreach (var mutationTarget in targets)
+                {
+                    var assemblyDefinitions = assembliesFactory.GetNewCopy();
+                    mutationTarget.GetMethod(assemblyDefinitions).Name = "MutatedMethodName" + i++;
+                    
+                    results.MutationResults.Add(new MutationResult
+                    {
+                        MutatedAssemblies = assemblyDefinitions,
+                        MutationTarget = mutationTarget
+                    });
+                }
+
+                return results;
+
             }
 
          
         }
-        /*
+        
         [Test]
         public void Test1()
         {
-
+            var t1 = CecilUtils.CreateTypeDefinition("ns1", "Type1");
+            var t2 = CecilUtils.CreateTypeDefinition("ns1", "Type2");
+            var t3 = CecilUtils.CreateTypeDefinition("ns1", "Type3");
+            
             var types = new List<TypeDefinition>
             {
-                CecilUtils.CreateTypeDefinition("ns1", "Type1"),
-                CecilUtils.CreateTypeDefinition("ns1", "Type2"),
-                CecilUtils.CreateTypeDefinition("ns1", "Type3"),
+                t1,t2,t3
             };
 
             var assembly = CecilUtils.CreateAssembly("ass", types);
             var assemblies = new[] { assembly };
 
-            var operatorsManagerMock = new Mock<IOperatorsManager>();
-            operatorsManagerMock.Setup(_ => _.GetActiveOperators()).Returns(new[] { new TestOperator(), });
-
-            var typesManagerMock = new Mock<ITypesManager>();
-            typesManagerMock.Setup(_=>_.GetIncludedTypes()).Returns(assembly.MainModule.Types);
-            typesManagerMock.Setup(_ => _.GetLoadedAssemblies()).Returns(assemblies);
+            t1.Methods.Add(CecilUtils.CreateMethodDefinition("Method1", t1));
+            t3.Methods.Add(CecilUtils.CreateMethodDefinition("Method2", t3));
 
 
-            var mutantsFileManager = new Mock<IMutantsFileManager>();
+            var mutantsContainer = new MutantsContainer();
 
-            var mutantsContainer = new MutantsContainer(
-                operatorsManagerMock.Object,
-                typesManagerMock.Object,
-                mutantsFileManager.Object,
-                Factory.DateTime(DateTime.MinValue));
-
+            var choices = new MutationSessionChoices
+            {
+                Assemblies = assemblies,
+                SelectedTypes = types, 
+                SelectedOperators = new[] { new TestOperator() }
+            };
             // Act
-            var session = mutantsContainer.GenerateMutant("testName", str=> { });
+            var executedOperator = mutantsContainer.GenerateMutantsForOperator(choices, choices.SelectedOperators.Single());
 
             // Assert
-            mutantsFileManager.Verify(_ => _.StoreMutant(session, assemblies));
-
-
+            executedOperator.Name.ShouldEqual("TestOperatorName");
+            executedOperator.Mutants.Count().ShouldEqual(2);
+            executedOperator.Mutants.First().MutatedAssemblies.Single()
+                .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName1");
 
             Assert.IsTrue(types.All(t => t.Name.StartsWith("MutatedTypeName")));
-        }*/
+        }
     }
 }
 

@@ -3,6 +3,7 @@
     #region Usings
 
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Windows.Data;
     using System.Windows.Media;
@@ -12,22 +13,22 @@
     #endregion
 
     [ValueConversion(typeof(TestNodeState), typeof(Brush))]
-    public class TestStatusToFillConverter : IValueConverter
+    public class TestStatusToFillConverter : Converter<TestStatusToFillConverter, TestNodeState, Brush>
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override Brush Convert(TestNodeState st)
         {
-            var st = (TestNodeState)value;
-
-            return st == TestNodeState.Inactive  ? Brushes.Gainsboro
+        
+            Brush result = st == TestNodeState.Inactive  ? Brushes.Gainsboro
                     : st == TestNodeState.Failure ? Brushes.Red 
                     : st == TestNodeState.Inconclusive ? Brushes.Orange
                     : st == TestNodeState.Success ? Brushes.Green
                     : st == TestNodeState.Running ? Brushes.Blue 
-                    : Binding.DoNothing;
+                    : null;
+            Debug.Assert(result != null);
+            return result;
         }
 
-        public object ConvertBack(
-            object value, Type targetType, object parameter, CultureInfo culture)
+        public override TestNodeState ConvertBack( Brush br  )
         {
             throw new InvalidOperationException();
         }

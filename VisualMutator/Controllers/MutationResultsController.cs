@@ -69,8 +69,10 @@
             mutantsCreationController.Run();
             MutationSessionChoices choices = mutantsCreationController.Result;
 
-            _viewModel.OperationsStateDescription = "Creating mutants...";
+
             _viewModel.AreOperationsOngoing = true;
+            _viewModel.OperationsStateDescription = "Creating mutants...";
+            
 
             var tasks = choices.SelectedOperators.Select(op =>
             {
@@ -81,18 +83,26 @@
             }).ToArray();
 
 
-            Task.Factory.ContinueWhenAll(tasks, tasks2 => RunTests());
+            _services.Threading.ContinueOnGuiWhenAll(tasks, () => RunTests());
         }
 
 
         public void RunTests()
         {
             _viewModel.OperationsStateDescription = "Running tests...";
-           /* var tasks = _viewModel.Operators.SelectMany(op => op.Mutants).Select(mut =>
+            var tasks = _viewModel.Operators.SelectMany(op => op.Mutants).Select(mut =>
             {
-            //    return _services.Threading.ScheduleAsync(() => _testsContainer.RunTestsForMutant(mut),
-                   // operatorWithMutants => _viewModel.Operators.Add(operatorWithMutants));
-            }).ToArray();*/
+                return _services.Threading.ScheduleAsync(() => _testsContainer.RunTestsForMutant(mut));
+
+            }).ToArray();
+
+            _services.Threading.ContinueOnGuiWhenAll(tasks, () =>
+            {
+                _viewModel.OperationsStateDescription = "Finished";
+                _viewModel.AreOperationsOngoing = false;
+            });
+
+            
         }
 
         public void Stop()

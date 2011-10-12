@@ -12,11 +12,27 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Global.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyleForListView">
+                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType={x:Type ListViewItem}}, Path=DataContext.ResultState,
+                Converter={Converters:MutantResultStateToFillConverter}}"/>
+            </Style>
+            <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyleForListBox">
+                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType={x:Type ListBoxItem}}, Path=DataContext.ResultState,
+                Converter={Converters:MutantResultStateToFillConverter}}"/>
+            </Style>
+            
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid d:DataContext="{d:DesignInstance ViewModels:MutationResultsViewModel}">
 
+        <Grid.Resources>
+           
+            
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition  Height="Auto"/>
             <RowDefinition  />
@@ -29,7 +45,7 @@
         <Grid Grid.Row="0">
 
             <Grid.RowDefinitions>
-                <RowDefinition  Height="Auto"/>
+                <RowDefinition  />
                 <RowDefinition  />
                 <RowDefinition />
             </Grid.RowDefinitions>
@@ -38,11 +54,11 @@
             <Button Grid.Row="0" Content="Create new mutants" Command="{Binding CommandCreateNewMutants}"/>
 
             <DockPanel Grid.Row="1">
-                <TextBlock Text="{Binding OperationsStateDescription}" />
+                <TextBlock HorizontalAlignment="Stretch" Text="{Binding OperationsStateDescription}" />
                 <Button Content="Stop all operations" Command="{Binding CommandStop}"/>     
             </DockPanel>
 
-            <ProgressBar  Grid.Row="2"  Visibility="{Binding AreOperationsOngoing, 
+            <ProgressBar Height="25" Grid.Row="2"  Visibility="{Binding AreOperationsOngoing, 
                 Converter={Converters:BoolToVisibilityConverter}}" IsIndeterminate="True"/>
 
 
@@ -55,12 +71,24 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="Name"
+                        <GridViewColumn Header="Status">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Rectangle Style="{StaticResource MutationStateRectangleStyleForListView}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                      <GridViewColumn Header="Name"
                           DisplayMemberBinding="{Binding Name, Mode=TwoWay}"/>
-                        <GridViewColumn  Header="Number of mutants" DisplayMemberBinding="{Binding Mutants.Count}"/>
+                        <GridViewColumn  Header="Number of mutants" DisplayMemberBinding="{Binding Mutants.Count}">
+                           
+                        </GridViewColumn>
                     </GridView.Columns>
+                    
                 </GridView>
+                
             </ListView.View>
+           
         </ListView>
 
 
@@ -71,7 +99,7 @@
         <Grid  Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition  Height="Auto"/>
-                <RowDefinition  />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
@@ -81,11 +109,23 @@
             
             
             <Grid  Grid.Row="2">
-               
-
-
+          
                 <ListBox ItemsSource="{Binding SelectedOperator.Mutants}" SelectedItem="{Binding SelectedMutant}">
+                    <ListBox.ItemTemplate>
 
+
+
+                        <DataTemplate>
+                            <DockPanel>
+                                <Rectangle Style="{StaticResource MutationStateRectangleStyleForListBox}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DockPanel>
+                            
+                        </DataTemplate>
+
+                    </ListBox.ItemTemplate>
+                    
+             
                 </ListBox>
 
             </Grid>

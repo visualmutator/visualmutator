@@ -2,9 +2,13 @@ namespace VisualMutator.Controllers
 {
     using System.Collections.Generic;
 
+    using CommonUtilityInfrastructure.WpfUtils;
+
     using Mono.Cecil;
 
-    public class Mutant
+    using VisualMutator.Model.Mutations;
+
+    public class Mutant : ModelElement
     {
         private readonly IEnumerable<AssemblyDefinition> _mutatedAssemblies;
 
@@ -13,6 +17,20 @@ namespace VisualMutator.Controllers
             get
             {
                 return _mutatedAssemblies;
+            }
+        }
+
+        private MutantResultState _resultState;
+
+        public MutantResultState ResultState
+        {
+            get
+            {
+                return _resultState;
+            }
+            set
+            {
+                SetAndRise(ref _resultState, value, () => ResultState);
             }
         }
 

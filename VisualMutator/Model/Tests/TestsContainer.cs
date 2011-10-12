@@ -26,7 +26,7 @@
 
         StoredMutantInfo CurrentMutant { get; }
 
-        object RunTestsForMutant(Mutant mut);
+        Mutant RunTestsForMutant(Mutant mutant);
     }
 
     public class TestsContainer : ITestsContainer
@@ -59,7 +59,7 @@
             };
         }
 
-        public object RunTestsForMutant(Mutant mutant)
+        public Mutant RunTestsForMutant(Mutant mutant)
         {
             StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(mutant);
 
@@ -68,7 +68,7 @@
             RunTests(testSession);
 
             _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
-            throw new NotImplementedException();
+            return mutant;
         }
 
 

@@ -3,10 +3,14 @@ namespace VisualMutator.Extensibility
     using System.Collections.Generic;
 
     using Mono.Cecil;
+    using Mono.Collections.Generic;
 
     public class MutationResultsCollection
     {
-
+        public MutationResultsCollection()
+        {
+            MutationResults = new List<MutationResult>();
+        }
 
         public IList<MutationResult> MutationResults
         {

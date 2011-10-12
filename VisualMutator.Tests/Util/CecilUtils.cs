@@ -13,7 +13,15 @@
 
         public static MethodDefinition CreateMethodDefinition(string name, TypeDefinition type)
         {
+       
             var s = new TypeReference("System", "Void", null, null);
+
+            if (type.Module != null)
+            {
+
+                s = type.Module.Import(typeof(void));
+            }
+
             return new MethodDefinition(name, MethodAttributes.Public, s)
             {
                 DeclaringType = type

@@ -119,6 +119,7 @@
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Infrastructure\TreeNode.cs" />
+    <Compile Include="Model\Mutations\MutantResultState.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
     <Compile Include="Model\Mutations\MutantsFileManager.cs" />
     <Compile Include="Model\Mutations\MutationException.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />
     <Compile Include="Views\Converters\Converter.cs" />
+    <Compile Include="Views\Converters\MutantResultStateToFillConverter.cs" />
     <Compile Include="Views\Converters\DebugConverter.cs" />
     <Compile Include="Views\Converters\FalseToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\NotNullToVisibilityConverter.cs" />

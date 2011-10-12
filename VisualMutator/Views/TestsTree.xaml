@@ -21,15 +21,25 @@
         </PipedConverters:ValueConverterGroup> -->
 
 
+      
+    <Style TargetType="Image">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="SnapsToDevicePixels" Value="True"/>
+      <Setter Property="Stretch" Value="None"/>
+      <Setter Property="Margin" Value="0,0,2,0"/>
+    </Style>
+    <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
         <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
-      <Setter Property="Height" Value="10"/>
-      <Setter Property="Width" Value="10"/>
-      <Setter Property="Margin" Value="0,0,5,0"/>
-      <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Margin" Value="0,0,5,0"/>
+            <Setter Property="Stroke" Value="Black"/>
             <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
                 AncestorType={x:Type TreeViewItem}}, Path=DataContext.State,
-                Converter={StaticResource TestStatusToFillConverter}}"/>
-      
+                Converter={Converters:TestStatusToFillConverter}}"/>
+
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
                 AncestorType={x:Type TreeViewItem}}, Path=DataContext.State}" Value="Running">
@@ -40,7 +50,7 @@
                                     <DiscreteObjectKeyFrame Value="{x:Static Visibility.Visible}" />
                                     <DiscreteObjectKeyFrame Value="{x:Static Visibility.Hidden}" />
                                 </ObjectAnimationUsingKeyFrames>
-                                 
+
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
@@ -49,16 +59,6 @@
             </Style.Triggers>
 
         </Style>
-    <Style TargetType="Image">
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="HorizontalAlignment" Value="Left"/>
-      <Setter Property="SnapsToDevicePixels" Value="True"/>
-      <Setter Property="Stretch" Value="None"/>
-      <Setter Property="Margin" Value="0,0,2,0"/>
-    </Style>
-    <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-
- 
     </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">

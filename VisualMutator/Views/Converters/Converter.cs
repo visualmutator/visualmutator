@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Views.Converters
 {
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Windows.Data;
     using System.Windows.Markup;
@@ -14,6 +15,11 @@
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
+#if DEBUG
+            Debug.Assert(this.GetType().Equals(typeof(TConverter)));
+          
+#endif
+
             return _converter ?? (_converter = new TConverter());
         }
 
