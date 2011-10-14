@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\EventMessages\SwitchToUnitTestsTabEventArgs.cs" />
+    <Compile Include="Controllers\ExecutedOperator.cs" />
     <Compile Include="Controllers\Mutant.cs" />
     <Compile Include="Controllers\MutantsCreationController.cs" />
     <Compile Include="Controllers\EventMessages\LoadLastCreatedMutantEventArgs.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Model\Mutations\Operators\MEFOperatorLoader.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorsManager.cs" />
+    <Compile Include="Model\Mutations\MutationNode.cs" />
     <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
     <Compile Include="Model\Mutations\Types\SolutionTypesManager.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />

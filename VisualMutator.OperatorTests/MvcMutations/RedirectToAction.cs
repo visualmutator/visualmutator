@@ -75,12 +75,13 @@ namespace VisualMutator.OperatorTests
             });
             var mutator = new ReplaceViewWithRedirectToAction();
             var mutationSessionChoices = new MutationSessionChoices
-            { 
+            {
+                SelectedOperators = new[] { mutator },
                 Assemblies = new[] { assembly },
                 SelectedTypes = assembly.MainModule.Types 
             };
             MutantsContainer mutantsContainer = new MutantsContainer();
-            var executedOperator = mutantsContainer.GenerateMutantsForOperator(mutationSessionChoices, mutator);
+            var executedOperator = mutantsContainer.GenerateMutantsForOperators(mutationSessionChoices).Single();
 
             executedOperator.Mutants.Single(mut =>
             {

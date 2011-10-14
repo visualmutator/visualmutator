@@ -16,6 +16,8 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.ViewModels;
+
     public interface IMutationResultsView : IView
     {
         
@@ -26,5 +28,14 @@ namespace VisualMutator.Views
         {
             InitializeComponent();
         }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var vm = this.DataContext as MutationResultsViewModel;
+            vm.SelectedMutationTreeItem = e.NewValue;
+        }
     }
+
+   
+
 }

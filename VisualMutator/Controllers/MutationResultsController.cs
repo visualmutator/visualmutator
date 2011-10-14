@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -10,35 +11,13 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.Factories;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.ViewModels;
-
-    public class ExecutedOperator : ModelElement
-    {
-        public List<Mutant> Mutants { get; set; }
-
-        private MutantResultState _resultState;
-
-        public MutantResultState ResultState
-        {
-            get
-            {
-                return _resultState;
-            }
-            set
-            {
-                SetAndRise(ref _resultState, value, () => ResultState);
-            }
-        }
-
-        public string Name
-        {
-            get; set;
-        }
-    }
 
     public class MutationResultsController : Controller
     {
@@ -73,10 +52,11 @@
             _viewModel.CommandStop.UpdateOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
 
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
+
+            _viewModel.TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
+            
         }
 
-       
-        
 
         public void CreateMutants()
         {
@@ -91,16 +71,17 @@
                 _viewModel.OperationsStateDescription = "Creating mutants...";
 
 
-                var tasks = choices.SelectedOperators.Select(op =>
+                _services.Threading.ScheduleAsync(() =>
                 {
-                    return _services.Threading.ScheduleAsync(() =>
-                        _mutantsContainer.GenerateMutantsForOperator(choices, op),
-                        operatorWithMutants => _viewModel.Operators.Add(operatorWithMutants));
+                    return _mutantsContainer.GenerateMutantsForOperators(choices);
 
-                }).ToArray();
+                },executed=>
+                {
+                    _viewModel.Operators.ReplaceRange(executed);
+                    RunTests();
+                });
 
-
-                _services.Threading.ContinueOnGuiWhenAll(tasks, () => RunTests());
+                
             }
 
            

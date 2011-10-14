@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
-             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" mc:Ignorable="d" 
+             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
+             xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
+             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d" 
              d:DesignHeight="488" d:DesignWidth="393">
 
     <UserControl.Resources>
@@ -18,9 +20,13 @@
                 AncestorType={x:Type ListViewItem}}, Path=DataContext.ResultState,
                 Converter={Converters:MutantResultStateToFillConverter}}"/>
             </Style>
-            <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyleForListBox">
+            <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyle">
+                <Setter Property="Height" Value="10"/>
+                <Setter Property="Width" Value="10"/>
+                <Setter Property="Margin" Value="0,0,5,0"/>
+                <Setter Property="Stroke" Value="Black"/>
                 <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType={x:Type ListBoxItem}}, Path=DataContext.ResultState,
+                AncestorType={x:Type TreeViewItem}}, Path=DataContext.State,
                 Converter={Converters:MutantResultStateToFillConverter}}"/>
             </Style>
             
@@ -68,9 +74,38 @@
 
 
         </Grid>
+
+
+
+        <TreeView Grid.Row="1" ItemsSource="{Binding Operators}" SelectedItemChanged="TreeView_SelectedItemChanged">
+
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type Controllers:ExecutedOperator}"
+                                    ItemsSource="{Binding Children}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
+
+                        <TextBlock Text="{Binding Name}"/>
+                    </DockPanel>
+                </HierarchicalDataTemplate>
+
+                <DataTemplate DataType="{x:Type Controllers:Mutant}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DockPanel>
+                </DataTemplate>
+
+
+            </TreeView.Resources>
+
         
-        
-        
+        </TreeView>
+
+
+<!--
+
+
         <ListView Grid.Row="1" SelectionMode="Single" 
                   ItemsSource="{Binding Operators}" SelectedItem="{Binding SelectedOperator}" >
             <ListView.View>
@@ -97,14 +132,18 @@
             </ListView.View>
            
         </ListView>
-
+-->
 
         <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
 
         
         
         <Grid  Grid.Row="3">
-            <Grid.RowDefinitions>
+
+            <Views:TestsTree />
+
+
+            <!--    <Grid.RowDefinitions>
                 <RowDefinition  Height="Auto"/>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
@@ -136,7 +175,7 @@
                 </ListBox>
 
             </Grid>
-
+-->
             
         </Grid>
 

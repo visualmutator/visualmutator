@@ -33,6 +33,8 @@
     {
         private readonly IMutantsFileManager _mutantsFileManager;
 
+        private readonly CommonUtilityInfrastructure.Services _services;
+
         private readonly IEnumerable<ITestService> _testServices;
 
       
@@ -50,9 +52,10 @@
       
 
         public TestsContainer(NUnitTestService nunit, MsTestService ms,
-            IMutantsFileManager mutantsFileManager)
+            IMutantsFileManager mutantsFileManager, CommonUtilityInfrastructure.Services services)
         {
             _mutantsFileManager = mutantsFileManager;
+            _services = services;
             _testServices = new List<ITestService>
             {
                 nunit,ms
@@ -61,15 +64,24 @@
 
         public Mutant RunTestsForMutant(Mutant mutant)
         {
+            mutant.State = MutantResultState.Tested;
             StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(mutant);
 
             TestSession testSession = LoadTests(storedMutantInfo);
+
+
+
+            _services.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
 
             RunTests(testSession);
 
 
             UnloadTests();
             _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
+
+
+            mutant.State = testSession.TestsRootNode.State == TestNodeState.Failure
+                               ? MutantResultState.Killed : MutantResultState.Live;
             return mutant;
         }
 

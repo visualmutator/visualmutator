@@ -3,6 +3,7 @@
     #region Usings
 
     using System;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Windows.Threading;
 
@@ -54,6 +55,11 @@
             {
                 return _view;
             }
+        }
+
+        public void AddListener<T>(Expression<Func<T>> propertyExpression, Action action )
+        {
+            EventListeners.Add(this, propertyExpression.PropertyName(),action);
         }
     }
 }

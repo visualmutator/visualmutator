@@ -7,10 +7,19 @@ namespace VisualMutator.Controllers
     using Mono.Cecil;
 
     using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.TestsTree;
 
-    public class Mutant : ModelElement
+    public class Mutant : MutationNode
     {
         private readonly IEnumerable<AssemblyDefinition> _mutatedAssemblies;
+
+        public Mutant(MutationNode parent, IEnumerable<AssemblyDefinition> mutatedAssemblies)
+            : base(parent, "Mutant", false)
+        {
+            _mutatedAssemblies = mutatedAssemblies;
+        }
+
 
         public IEnumerable<AssemblyDefinition> MutatedAssemblies
         {
@@ -20,19 +29,6 @@ namespace VisualMutator.Controllers
             }
         }
 
-        private MutantResultState _resultState;
-
-        public MutantResultState ResultState
-        {
-            get
-            {
-                return _resultState;
-            }
-            set
-            {
-                SetAndRise(ref _resultState, value, () => ResultState);
-            }
-        }
 
         private string _stateDescription;
 
@@ -47,9 +43,20 @@ namespace VisualMutator.Controllers
                 SetAndRise(ref _stateDescription, value, () => StateDescription);
             }
         }
-        public Mutant(IEnumerable<AssemblyDefinition> mutatedAssemblies)
+
+        private TestSession _testSession;
+
+        public TestSession TestSession
         {
-            _mutatedAssemblies = mutatedAssemblies;
+            get
+            {
+                return _testSession;
+            }
+            set
+            {
+                SetAndRise(ref _testSession, value, () => TestSession);
+            }
         }
+
     }
 }

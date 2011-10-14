@@ -21,6 +21,7 @@
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.TestsTree;
 
     using log4net;
 
@@ -36,7 +37,7 @@
 
     
      
-        ExecutedOperator GenerateMutantsForOperator(MutationSessionChoices choices, IMutationOperator op);
+        IList<ExecutedOperator> GenerateMutantsForOperators(MutationSessionChoices choices);
     }
 
 
@@ -151,31 +152,39 @@
 
 
 
-        public ExecutedOperator GenerateMutantsForOperator(MutationSessionChoices choices, IMutationOperator op)
+      
+
+        public IList<ExecutedOperator> GenerateMutantsForOperators(MutationSessionChoices choices)
         {
-           
-            var list = Write(choices.Assemblies);
-
-            var assemblies = Read(list);
-
-            var typeDefinitions = 
-                choices.SelectedTypes.Select(t1 =>
-                       assemblies.SelectMany(a => a.MainModule.Types)
-                         .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
-                             && t1.FullName == t2.FullName));
-
-            var targets = op.FindTargets(typeDefinitions);
-
-            var results = op.CreateMutants(targets,
-                new AssembliesToMutateFactory(() => Read(list)));
-
-            return new ExecutedOperator
+            var executedOperators = new List<ExecutedOperator>();
+            var root = new MutationRootNode();
+            
+            foreach (var op in choices.SelectedOperators)
             {
-               // ResultState = MutantResultState.NoState
-                Name = op.Name,
-                Mutants = results.MutationResults.Select(res => new Mutant(res.MutatedAssemblies)).ToList()
-            };
+                IList<MemoryStream> memoryStreams = Write(choices.Assemblies);
 
+                IList<AssemblyDefinition> assemblies = Read(memoryStreams);
+
+                IEnumerable<TypeDefinition> typeDefinitions =
+                    choices.SelectedTypes.Select(t1 =>
+                           assemblies.SelectMany(a => a.MainModule.Types)
+                             .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
+                                 && t1.FullName == t2.FullName));
+
+                var targets = op.FindTargets(typeDefinitions);
+
+                var executedOperator = new ExecutedOperator(root, op.Name);
+                var children = op.CreateMutants(targets,
+                    new AssembliesToMutateFactory(() => Read(memoryStreams)))
+                    .MutationResults.Select(res => new Mutant(executedOperator, res.MutatedAssemblies));
+
+                
+                executedOperator.Children.AddRange(children);
+                executedOperators.Add(executedOperator);
+                root.Children.Add(executedOperator);
+               
+            }
+            return executedOperators;
         }
 
         private IList<MemoryStream> Write(IEnumerable<AssemblyDefinition> assemblies)

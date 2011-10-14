@@ -61,7 +61,7 @@
         </Style>
     </UserControl.Resources>
 
-  <Grid d:DataContext="{d:DesignInstance ViewModels:UnitTestsViewModel}">
+    <Grid d:DataContext="{d:DesignInstance ViewModels:MutationResultsViewModel}">
 
  
 
@@ -99,18 +99,6 @@
 
         </TreeView.Resources>
 
-        <TreeView.ItemContainerStyle>
-          <Style TargetType="{x:Type TreeViewItem}">
-            <Setter Property="AttachedBehaviors:MouseDoubleClickBehavior.MouseDoubleClick"
-                    Value="{Binding CommandRunTest}"/>
-            <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
-          </Style>
-        </TreeView.ItemContainerStyle>
-
-        <i:Interaction.Behaviors>
-          <AttachedBehaviors:BindableSelectedItemBehaviour
-SelectedItem="{Binding SelectedTestItem, Mode=TwoWay}"/>
-        </i:Interaction.Behaviors>
 
       </TreeView>
 

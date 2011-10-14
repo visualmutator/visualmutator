@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
 
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Controllers;
+    using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 
     public class MutationResultsViewModel : ViewModel<IMutationResultsView>
@@ -15,8 +18,44 @@
         public MutationResultsViewModel(IMutationResultsView view)
             : base(view)
         {
-            
+            AddListener(() => SelectedMutationTreeItem, SelectedMutationItemChanged);
         }
+
+
+
+        private void SelectedMutationItemChanged()
+        {
+            
+            var mutant = SelectedMutationTreeItem as Mutant;
+            if (mutant != null)
+            {
+
+                if (mutant.TestSession != null)
+                {
+                    TestNamespaces.ReplaceRange(mutant.TestSession.TestNamespaces);
+                }
+                else
+                {
+                    TestNamespaces.Clear();
+                    EventListeners.Add(mutant, MutantPropertyChanged);
+                }
+                var prevMutant = _previousSelectedMutationTreeItem as Mutant;
+                if (prevMutant != null)
+                {
+                    EventListeners.Remove(prevMutant, MutantPropertyChanged);
+                }
+            }
+            _previousSelectedMutationTreeItem = SelectedMutationTreeItem;
+        }
+
+        private void MutantPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "TestSession")
+            {
+                TestNamespaces.ReplaceRange(((Mutant)sender).TestSession.TestNamespaces);
+            }
+        }
+
 
         private bool _areOperationsOngoing;
 
@@ -89,20 +128,7 @@
             }
         }
 
-        private Mutant _selectedMutant;
-
-        public Mutant SelectedMutant
-        {
-            get
-            {
-                return _selectedMutant;
-            }
-            set
-            {
-                SetAndRise(ref _selectedMutant, value, () => SelectedMutant);
-            }
-        }
-
+     
         private string _operationsStateDescription;
 
         public string OperationsStateDescription
@@ -132,6 +158,23 @@
             }
         }
 
+        private BetterObservableCollection<TestNodeNamespace> _testNamespaces;
+
+        public BetterObservableCollection<TestNodeNamespace> TestNamespaces
+        {
+            get
+            {
+                return _testNamespaces;
+            }
+            set
+            {
+                SetAndRise(ref _testNamespaces, value, () => TestNamespaces);
+            }
+        }
+       
+
+
+
         private double _testingProgress;
 
         public double TestingProgress
@@ -159,6 +202,22 @@
             _currentMutant++;
             TestingProgress = (_currentMutant / _numberOfMutants) *100;
           
+        }
+
+        private object _selectedMutationTreeItem;
+
+        private object _previousSelectedMutationTreeItem;
+
+        public object SelectedMutationTreeItem
+        {
+            get
+            {
+                return _selectedMutationTreeItem;
+            }
+            set
+            {
+                SetAndRise(ref _selectedMutationTreeItem, value, () => SelectedMutationTreeItem);
+            }
         }
     }
 }
