@@ -16,9 +16,23 @@
     using VisualMutator.Model.Tests;
     using VisualMutator.ViewModels;
 
-    public class ExecutedOperator
+    public class ExecutedOperator : ModelElement
     {
         public List<Mutant> Mutants { get; set; }
+
+        private MutantResultState _resultState;
+
+        public MutantResultState ResultState
+        {
+            get
+            {
+                return _resultState;
+            }
+            set
+            {
+                SetAndRise(ref _resultState, value, () => ResultState);
+            }
+        }
 
         public string Name
         {
@@ -51,11 +65,12 @@
             _testsContainer = testsContainer;
             _services = services;
 
-            _viewModel.CommandCreateNewMutants = new BasicCommand(CreateMutants, () => !_viewModel.AreOperationsOngoing);
-            _viewModel.CommandCreateNewMutants.ExecuteOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
+            _viewModel.CommandCreateNewMutants = new BasicCommand(CreateMutants,
+                () => !_viewModel.AreOperationsOngoing);
+            _viewModel.CommandCreateNewMutants.UpdateOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
 
             _viewModel.CommandStop = new BasicCommand(Stop, () => _viewModel.AreOperationsOngoing);
-            _viewModel.CommandStop.ExecuteOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
+            _viewModel.CommandStop.UpdateOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
 
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
         }
@@ -67,40 +82,60 @@
         {
             var mutantsCreationController = _mutantsCreationFactory.Create();
             mutantsCreationController.Run();
-            MutationSessionChoices choices = mutantsCreationController.Result;
-
-
-            _viewModel.AreOperationsOngoing = true;
-            _viewModel.OperationsStateDescription = "Creating mutants...";
             
-
-            var tasks = choices.SelectedOperators.Select(op =>
+            if (mutantsCreationController.HasResults)
             {
-                return _services.Threading.ScheduleAsync(() => 
-                    _mutantsContainer.GenerateMutantsForOperator(choices, op),
-                    operatorWithMutants => _viewModel.Operators.Add(operatorWithMutants));
+                MutationSessionChoices choices = mutantsCreationController.Result;
 
-            }).ToArray();
+                _viewModel.AreOperationsOngoing = true;
+                _viewModel.OperationsStateDescription = "Creating mutants...";
 
 
-            _services.Threading.ContinueOnGuiWhenAll(tasks, () => RunTests());
+                var tasks = choices.SelectedOperators.Select(op =>
+                {
+                    return _services.Threading.ScheduleAsync(() =>
+                        _mutantsContainer.GenerateMutantsForOperator(choices, op),
+                        operatorWithMutants => _viewModel.Operators.Add(operatorWithMutants));
+
+                }).ToArray();
+
+
+                _services.Threading.ContinueOnGuiWhenAll(tasks, () => RunTests());
+            }
+
+           
         }
 
 
         public void RunTests()
         {
             _viewModel.OperationsStateDescription = "Running tests...";
-            var tasks = _viewModel.Operators.SelectMany(op => op.Mutants).Select(mut =>
+
+            var allMutants = _viewModel.Operators.SelectMany(op => op.Mutants).ToList();
+            _viewModel.InitTestingProgress(allMutants.Count);
+            _services.Threading.ScheduleAsync(() =>
             {
-                return _services.Threading.ScheduleAsync(() => _testsContainer.RunTestsForMutant(mut));
-
-            }).ToArray();
-
-            _services.Threading.ContinueOnGuiWhenAll(tasks, () =>
+                foreach (var mutant in allMutants)
+                {
+                    _testsContainer.RunTestsForMutant(mutant);
+                    _viewModel.UpdateTestingProgress();
+                }
+            }, () =>
             {
                 _viewModel.OperationsStateDescription = "Finished";
                 _viewModel.AreOperationsOngoing = false;
             });
+            //var tasks = _viewModel.Operators.SelectMany(op => op.Mutants).Select(mut =>
+            //{
+            //    return _services.Threading.ScheduleAsyncSequential(() => _testsContainer.RunTestsForMutant(mut));
+
+            //}).ToArray();
+
+            //_services.Threading.ContinueOnGuiWhenAll(tasks, () =>
+            //{
+            //    _viewModel.OperationsStateDescription = "Finished";
+            //    _viewModel.AreOperationsOngoing = false;
+            //});
 
             
         }
@@ -112,13 +147,14 @@
 
         public void Initialize()
         {
-            
+            _viewModel.IsVisible = true;
         }
 
         public void Deactivate()
         {
             Stop();
             Clean();
+            _viewModel.IsVisible = false;
         }
 
         private void Clean()

@@ -96,14 +96,14 @@
         <TreeView Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Assemblies}"/>
 
         <Views:ProgressControl Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding Assemblies, Converter={Converters:NotNullToVisibilityConverter}}"/>
+                               Visibility="{Binding Assemblies, Converter={Converters:NullToVisibilityConverter}}"/>
 
 
 
         <TreeView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding MutationPackages}"/>
 
         <Views:ProgressControl Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding MutationPackages, Converter={Converters:NotNullToVisibilityConverter}}"/>
+                               Visibility="{Binding MutationPackages, Converter={Converters:NullToVisibilityConverter}}"/>
 
 
 

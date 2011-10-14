@@ -2,10 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
 
     using Mono.Cecil;
+    using Mono.Cecil.Cil;
 
     public static class CecilExtensions
     {
@@ -37,6 +39,11 @@
             throw new InvalidOperationException();
         }
 
+        public static Instruction GetInstructionAtOffset(this MethodBody body, int offset)
+        {
+            
+            return body.Instructions.Single(i => i.Offset == offset);
+        }
 
         public static ModuleDefinition GetAspNetMvcModule(ModuleDefinition currentModule)
         {
@@ -53,6 +60,5 @@
             return currentModule.AssemblyResolver.Resolve(refer).MainModule;
 
         }
-
     }
 }

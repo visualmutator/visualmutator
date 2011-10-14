@@ -12,6 +12,9 @@ namespace VisualMutator.OperatorTests
 
     using NUnit.Framework;
 
+    using VisualMutator.Controllers;
+    using VisualMutator.Extensibility;
+    using VisualMutator.Model.Mutations;
     using VisualMutator.MvcMutations;
     using VisualMutator.Tests.Util;
 
@@ -70,36 +73,43 @@ namespace VisualMutator.OperatorTests
                 }
                 return false;
             });
-
-
             var mutator = new ReplaceViewWithRedirectToAction();
+            var mutationSessionChoices = new MutationSessionChoices
+            { 
+                Assemblies = new[] { assembly },
+                SelectedTypes = assembly.MainModule.Types 
+            };
+            MutantsContainer mutantsContainer = new MutantsContainer();
+            var executedOperator = mutantsContainer.GenerateMutantsForOperator(mutationSessionChoices, mutator);
 
-          //  mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
-
-            assembly.Write(assemblyFile.FilePath);
-
-            var assembly2 = AssemblyDefinition.ReadAssembly(assemblyFile.FilePath);
-
-            var dinnersController2 = assembly2.MainModule.Types.Single(t => t.Name == "DinnersController");
-
-            var createMethod2 = dinnersController2.Methods.Single(m => m.Name == "Create" && m.Parameters.Count == 1);
-
-            var instr3 = createMethod2.Body.Instructions.Where(i =>
+            executedOperator.Mutants.Single(mut =>
             {
-                if (i.OpCode == OpCodes.Call)
+                var assembly2 = mut.MutatedAssemblies.Single();
+
+                var dinnersController2 = assembly2.MainModule.Types.Single(t => t.Name == "DinnersController");
+
+                var createMethod2 = dinnersController2.Methods.Single(m => m.Name == "Create" && m.Parameters.Count == 1);
+
+                var instr3 = createMethod2.Body.Instructions.Where(i =>
                 {
-                    var method = ((MethodReference)i.Operand);
-                    if (method.DeclaringType.FullName == "System.Web.Mvc.Controller"
-                        && method.Name == "RedirectToAction")
-                    //  && method.Parameters.Count == 0)
+                    if (i.OpCode == OpCodes.Call)
                     {
-                        return true;
+                        var method = ((MethodReference)i.Operand);
+                        if (method.DeclaringType.FullName == "System.Web.Mvc.Controller"
+                            && method.Name == "RedirectToAction")
+                        //  && method.Parameters.Count == 0)
+                        {
+                            return true;
+                        }
                     }
-                }
-                return false;
+                    return false;
+                });
+
+                return instr3.Count()==(2);
             });
 
-            instr3.Count().ShouldEqual(2);
+     
+
 
 
                 

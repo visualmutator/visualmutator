@@ -34,6 +34,19 @@ namespace VisualMutator.Controllers
             }
         }
 
+        private string _stateDescription;
+
+        public string StateDescription
+        {
+            get
+            {
+                return _stateDescription;
+            }
+            set
+            {
+                SetAndRise(ref _stateDescription, value, () => StateDescription);
+            }
+        }
         public Mutant(IEnumerable<AssemblyDefinition> mutatedAssemblies)
         {
             _mutatedAssemblies = mutatedAssemblies;

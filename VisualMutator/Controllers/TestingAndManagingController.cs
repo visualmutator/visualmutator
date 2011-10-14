@@ -112,7 +112,7 @@
 
             _viewModel.AreTestsLoading = true;
             _viewModel.TestNamespaces.Clear();
-
+            /*
             _services.Threading.ScheduleAsync(
                  () =>
                 {
@@ -123,7 +123,7 @@
                     _viewModel.TestNamespaces.ReplaceRange(result.TestsRootNode.Children.Cast<TestNodeNamespace>());
                 },
                 onFinally: () => _viewModel.AreTestsLoading = false);
-
+            */
         }
        
 

@@ -5,12 +5,12 @@
     using System.Windows.Data;
 
     [ValueConversion(typeof(object), typeof(Visibility))]
-    public class NullToVisibilityConverter : Converter<NullToVisibilityConverter, object, Visibility>
+    public class NotNullToVisibilityConverter : Converter<NotNullToVisibilityConverter, object, Visibility>
     {
         
         public override Visibility Convert(object value)
         {
-            return value == null ? Visibility.Visible : Visibility.Hidden;
+            return value != null ? Visibility.Visible : Visibility.Hidden;
         }
 
         public override object ConvertBack(Visibility value)

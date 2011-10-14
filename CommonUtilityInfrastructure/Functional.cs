@@ -74,8 +74,7 @@
         } 
 
 
-   
-
+     
         public static IEnumerable<TSource> SelectManyRecursive<TSource>( this IEnumerable<TSource> source,
             Func<TSource, IEnumerable<TSource>> selector, Func<TSource, bool> predicate = null, bool leafsOnly = false)
         {

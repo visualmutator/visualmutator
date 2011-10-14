@@ -13,6 +13,8 @@
 
     using Mono.Cecil;
 
+    using NUnit.Core;
+
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure.Factories;
@@ -151,35 +153,50 @@
 
         public ExecutedOperator GenerateMutantsForOperator(MutationSessionChoices choices, IMutationOperator op)
         {
-            var stream = new MemoryStream();
-            foreach (var assemblyDefinition in choices.Assemblies)
-            {
-                assemblyDefinition.Write(stream);
-            }
+           
+            var list = Write(choices.Assemblies);
 
-            var targets = op.FindTargets(choices.SelectedTypes);
+            var assemblies = Read(list);
 
-            var results = op.CreateMutants(targets, 
-                new AssembliesToMutateFactory(() => Read(stream, choices.Assemblies.Count)));
+            var typeDefinitions = 
+                choices.SelectedTypes.Select(t1 =>
+                       assemblies.SelectMany(a => a.MainModule.Types)
+                         .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
+                             && t1.FullName == t2.FullName));
+
+            var targets = op.FindTargets(typeDefinitions);
+
+            var results = op.CreateMutants(targets,
+                new AssembliesToMutateFactory(() => Read(list)));
 
             return new ExecutedOperator
             {
+               // ResultState = MutantResultState.NoState
                 Name = op.Name,
                 Mutants = results.MutationResults.Select(res => new Mutant(res.MutatedAssemblies)).ToList()
             };
 
         }
 
-
-        private IList<AssemblyDefinition> Read(Stream stream, int count)
+        private IList<MemoryStream> Write(IEnumerable<AssemblyDefinition> assemblies)
         {
-            stream.Position = 0;
-            var list = new List<AssemblyDefinition>();
-            for (int i = 0; i < count; i++)
+            return assemblies.Select(assemblyDefinition =>
             {
-                list.Add(AssemblyDefinition.ReadAssembly(stream));
-            }
-            return list;
+                var stream = new MemoryStream();
+                assemblyDefinition.Write(stream);
+                return stream;
+
+            }).ToList();
+        }
+
+        private IList<AssemblyDefinition> Read(IEnumerable<MemoryStream> streams)
+        {
+            return streams.Select( stream =>
+            {
+                stream.Position = 0;
+                return AssemblyDefinition.ReadAssembly(stream);
+
+            }).ToList();
         }
 
 

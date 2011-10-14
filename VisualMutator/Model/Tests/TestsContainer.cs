@@ -17,7 +17,7 @@
 
     public interface ITestsContainer
     {
-        TestSession LoadTests(StoredMutantInfo mutant);
+       // TestSession LoadTests(StoredMutantInfo mutant);
 
         void RunTests(TestSession testSession);
 
@@ -67,6 +67,8 @@
 
             RunTests(testSession);
 
+
+            UnloadTests();
             _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
             return mutant;
         }

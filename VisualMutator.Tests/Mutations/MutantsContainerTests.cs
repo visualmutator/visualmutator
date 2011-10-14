@@ -24,29 +24,6 @@
     {
         public class TestOperator : IMutationOperator
         {
-            /*
-            public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
-            {
-                int i = 0;
-                foreach (var typeDefinition in types)
-                {
-                    typeDefinition.Name = "MutatedTypeName" + i++;
-                }
-                return new MutationResultDetails
-                {
-                //    ModifiedMethods = new List<string>(),
-
-                };
-            }
-            */
-
-            class ThisMutationTarget : MutationTarget
-            {
-                public ThisMutationTarget(MethodDefinition method)
-                    : base(method)
-                {
-                }
-            }
             public string Name
             {
                 get
@@ -81,6 +58,7 @@
                     
                     results.MutationResults.Add(new MutationResult
                     {
+                       
                         MutatedAssemblies = assemblyDefinitions,
                         MutationTarget = mutationTarget
                     });
@@ -127,9 +105,9 @@
             executedOperator.Name.ShouldEqual("TestOperatorName");
             executedOperator.Mutants.Count().ShouldEqual(2);
             executedOperator.Mutants.First().MutatedAssemblies.Single()
-                .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName1");
+                .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
 
-            Assert.IsTrue(types.All(t => t.Name.StartsWith("MutatedTypeName")));
+         
         }
     }
 }

@@ -160,6 +160,8 @@
     <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />
     <Compile Include="Views\Converters\Converter.cs" />
+    <Compile Include="Views\Converters\ZeroToTrueConverter.cs" />
+    <Compile Include="Views\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\MutantResultStateToFillConverter.cs" />
     <Compile Include="Views\Converters\DebugConverter.cs" />
     <Compile Include="Views\Converters\FalseToVisibilityConverter.cs" />

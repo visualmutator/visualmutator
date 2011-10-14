@@ -116,5 +116,49 @@
                 SetAndRise(ref _operationsStateDescription, value, () => OperationsStateDescription);
             }
         }
+
+
+        private bool _isVisible;
+
+        public bool IsVisible
+        {
+            get
+            {
+                return _isVisible;
+            }
+            set
+            {
+                SetAndRise(ref _isVisible, value, () => IsVisible);
+            }
+        }
+
+        private double _testingProgress;
+
+        public double TestingProgress
+        {
+            get
+            {
+                return _testingProgress;
+            }
+            set
+            {
+                SetAndRise(ref _testingProgress, value, () => TestingProgress);
+            }
+        }
+
+        private double _numberOfMutants;
+        private double _currentMutant;
+        public void InitTestingProgress(int count)
+        {
+            _numberOfMutants = count;
+            _currentMutant = 0;
+        }
+
+        public void UpdateTestingProgress()
+        {
+            _currentMutant++;
+            TestingProgress = (_currentMutant / _numberOfMutants) *100;
+          
+        }
     }
 }

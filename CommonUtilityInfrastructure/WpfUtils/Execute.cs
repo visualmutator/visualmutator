@@ -4,6 +4,7 @@
 
     using System;
     using System.Threading.Tasks;
+    using System.Threading.Tasks.Schedulers;
     using System.Windows;
     using System.Windows.Threading;
 
@@ -14,6 +15,10 @@
         void OnUIThread(Action action);
 
         TaskScheduler GuiScheduler { get; }
+
+        TaskScheduler ThreadPoolScheduler { get; }
+
+        TaskScheduler LimitedThreadPoolScheduler(int degree);
     }
 
     public class Execute : IExecute
@@ -33,6 +38,17 @@
             {
                 return _guiScheduler;
             }
+        }
+        public TaskScheduler ThreadPoolScheduler
+        {
+            get
+            {
+                return TaskScheduler.Default;
+            }
+        }
+        public TaskScheduler LimitedThreadPoolScheduler(int degree)
+        {
+            return new LimitedConcurrencyLevelTaskScheduler(degree);
         }
 
         public void InitializeWithDispatcher()

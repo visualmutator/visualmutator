@@ -61,16 +61,27 @@
             ServiceManager.Services.AddService(new DomainManager());
             ServiceManager.Services.AddService(new RecentFilesService());
             ServiceManager.Services.AddService(new ProjectService());
-            ServiceManager.Services.AddService(new TestLoader());
             ServiceManager.Services.AddService(new AddinRegistry());
             ServiceManager.Services.AddService(new AddinManager());
             ServiceManager.Services.AddService(new TestAgency());
 
-            _testLoader = (TestLoader)ServiceManager.Services.GetService(typeof(TestLoader));
-            
+            _testLoader = new TestLoader(); //(TestLoader)ServiceManager.Services.GetService(typeof(TestLoader));
+
 
             _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")
-                    .Select(e => e.EventArgs.Test);
+                .Where(e => e.EventArgs.Test != null).Select(e => e.EventArgs.Test);
+                   // {
+                  //      if(e.EventArgs.Test != null)
+                  //      {
+                  //          return e.EventArgs.Test;
+                            //throw new InvalidOperationException("test is null", e.EventArgs.Exception);
+                   //     }
+                       // else
+                       // {
+                        // /   return e.EventArgs.Test;
+                       // }
+                        
+                   // });
 
 
             _testFinished = Observable.FromEvent<TestEventArgs>(

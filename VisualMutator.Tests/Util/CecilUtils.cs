@@ -6,8 +6,9 @@
     using System.Text;
 
     using Mono.Cecil;
+    using Mono.Cecil.Cil;
 
-    public class CecilUtils
+    public static class CecilUtils
     {
   
 
@@ -24,13 +25,14 @@
 
             return new MethodDefinition(name, MethodAttributes.Public, s)
             {
-                DeclaringType = type
+                DeclaringType = type,
+                
             };
         }
 
         public static AssemblyDefinition CreateAssembly(string assemblyName, IEnumerable<TypeDefinition> types)
         {
-            var assembly = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition(assemblyName, new Version()),
+            var assembly = AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition(assemblyName, new Version(4,4)),
                 "TestModule", ModuleKind.Console);
             foreach (var typeDefinition in types)
             {

@@ -5,11 +5,12 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
+    using System.Diagnostics;
     using System.Linq;
-
+ 
     using Mono.Cecil;
     using Mono.Cecil.Cil;
-
+    using Mono.Cecil.Rocks;
     using VisualMutator.Extensibility;
 
     #endregion
@@ -20,15 +21,15 @@
      
         private class ThisMutationTarget : InstructionMutationTarget
         {
-            public ThisMutationTarget(MethodDefinition method, Instruction instr)
-                : base(method, instr)
+            public ThisMutationTarget(MethodDefinition method, int instrOffset, MethodDefinition toRedirect)
+                : base(method, instrOffset)
             {
+                MethodToRedirectToFullName = toRedirect.FullName;
             }
 
             public string MethodToRedirectToFullName
             {
-                get;
-                set;
+                get; private set;
             }
 
         }
@@ -58,14 +59,7 @@
 
                     if (methodToRedirectTo != null)
                     {
-                        foreach (var instr in FindValidViewCallInstruction(methodToModify))
-                        {
-                            var target = new ThisMutationTarget(methodToModify, instr)
-                            {
-                                MethodToRedirectToFullName = methodToRedirectTo.FullName,
-                            };
-                            list.Add(target);
-                        }
+                        list.AddRange(FindValidViewCallInstructions(methodToModify, methodToRedirectTo));
                     }
                 }
             }
@@ -73,7 +67,18 @@
             return list;
         }
 
-
+        private IEnumerable<ThisMutationTarget> FindValidViewCallInstructions(MethodDefinition methodToModify, 
+            MethodDefinition methodToRedirectTo)
+        {
+    
+            var a = from _ in methodToModify.Body.Instructions.Select((instruction, index)=> new {instruction, index})
+            where _.instruction.OpCode == OpCodes.Call
+            let method = ((MethodReference)_.instruction.Operand)
+            where method.DeclaringType.FullName == "System.Web.Mvc.Controller"
+                  && method.Name == "View" && HasProperParameters(methodToModify, _.instruction, method )
+                    select new ThisMutationTarget(methodToModify, _.index, methodToRedirectTo);
+            return a;
+        }
 
         public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, 
             AssembliesToMutateFactory assembliesFactory)
@@ -88,9 +93,21 @@
                 var methodToRedirectTo = methodToModify.DeclaringType.Methods
                     .Single(m => m.FullName == target.MethodToRedirectToFullName);
 
+                methodToModify.Body.SimplifyMacros();
 
+                if (target.InstructionOffset == 209)
+                {
+                    Debug.WriteLine("##############");
+                    Debug.WriteLine("##############");
+                    Debug.WriteLine("##############");
+                    foreach (var instruction in methodToModify.Body.Instructions)
+                    {
+                        Debug.WriteLine(instruction);
+                    }
+                }
+              //  var callInstr = methodToModify.Body.GetInstructionAtOffset(target.InstructionOffset);
                 var callInstr = methodToModify.Body.Instructions[target.InstructionOffset];
-
+                
 
                 MethodDefinition redirectToActionMethod = GetRedirectToActionMethod(methodToModify.DeclaringType.Module);
 
@@ -118,6 +135,8 @@
                 };
 
                 results.MutationResults.Add(result);
+
+                methodToModify.Body.OptimizeMacros();
             }
 
 
@@ -229,20 +248,53 @@
                 return "Replaces previous ActionResult with RedirectToAction.";
             }
         }
-
-        private static IEnumerable<Instruction> FindValidViewCallInstruction(MethodDefinition methodToModify)
+        /*
+        private static IEnumerable<Instruction> FindValidViewCallInstructions(MethodDefinition methodToModify)
         {
-            return from Instruction instruction in methodToModify.Body.Instructions
-            where instruction.OpCode == OpCodes.Call
-            let method = ((MethodReference)instruction.Operand)
+            int i = 0;
+            foreach (var instr in methodToModify.Body.Instructions)
+            {
+                if (instr.OpCode == OpCodes.Call)
+                {
+                    var method = ((MethodReference)instr.Operand);
+                    if (method.DeclaringType.FullName == "System.Web.Mvc.Controller"
+                        && method.Name == "View" && HasProperParameters(methodToModify, instr, method))
+                    {
+                        var target = new ThisMutationTarget(methodToModify, instr)
+                        {
+                            MethodToRedirectToFullName = methodToRedirectTo.FullName,
+                        };
+                    }
+                }
+                i++;
+            }
+            methodToModify.Body.Instructions.Select((instruction, index)=> new {instruction, index})
+                .Where( _ => _.instruction.OpCode == OpCodes.Call)
+
+            var a = from _ in methodToModify.Body.Instructions.Select((instruction, index)=> new {instruction, index})
+            where _.instruction.OpCode == OpCodes.Call
+            let method = ((MethodReference)_.instruction.Operand)
             where method.DeclaringType.FullName == "System.Web.Mvc.Controller"
-                  && method.Name == "View" && HasProperParameters(instruction, method, methodToModify)
-            select instruction;
-           
+                  && method.Name == "View" && HasProperParameters(methodToModify, _.instruction, method )
+            select _.instruction;
+            return a;
         }
-
-        private static bool HasProperParameters(Instruction callInstruction, MethodReference method, MethodDefinition methodToModify)
+        */
+        private static bool HasProperParameters(MethodDefinition methodToModify, Instruction callInstruction, MethodReference method )
         {
+            methodToModify.Body.SimplifyMacros();
+
+            if (callInstruction.Offset == 209)
+            {
+                Debug.WriteLine("##############");
+                Debug.WriteLine("##############");
+                Debug.WriteLine("##############");
+                foreach (var instruction in methodToModify.Body.Instructions)
+                {
+                    Debug.WriteLine(instruction);
+                }
+            }
+
 
             Instruction currentInstr = callInstruction.Previous;
 
@@ -250,17 +302,7 @@
             {
                 OpCodes.Ldstr,
                 OpCodes.Ldloc,
-                OpCodes.Ldloc_S,
-                OpCodes.Ldloc_0,
-                OpCodes.Ldloc_1,
-                OpCodes.Ldloc_2,
-                OpCodes.Ldloc_3,
                 OpCodes.Ldarg,
-                OpCodes.Ldarg_S,
-                OpCodes.Ldarg_0,
-                OpCodes.Ldarg_1,
-                OpCodes.Ldarg_2,
-                OpCodes.Ldarg_3,    
                 OpCodes.Ldnull,
 
             };
@@ -274,6 +316,7 @@
 
             var sss = list.Select(i => i.OpCode).All(validOpcodes.Contains);
 
+            methodToModify.Body.OptimizeMacros();
             return sss;
 
         }

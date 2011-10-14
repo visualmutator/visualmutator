@@ -67,6 +67,14 @@
 
         public MutationSessionChoices Result { get; set; }
 
+        public bool HasResults
+        {
+            get
+            {
+                return Result != null;
+            }
+        }
+
         public MutantsCreationController(
             MutantsCreationViewModel viewModel,
             IMutantsContainer mutantsContainer,

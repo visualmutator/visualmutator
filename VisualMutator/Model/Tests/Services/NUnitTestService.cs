@@ -118,6 +118,8 @@
 
         private IEnumerable<ITest> GetTestClasses(ITest test)
         {
+           //TODO: return new[] { test }.SelectManyRecursive(t => t.Tests != null ? t.Tests.Cast<ITest>() : new ITest[0])
+           //     .Where(t => t.TestType == "TestFixture");
             var list = new List<ITest>();
             GetTestClassesInternal(list, test);
             return list;

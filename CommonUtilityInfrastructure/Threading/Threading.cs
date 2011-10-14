@@ -20,7 +20,13 @@ namespace CommonUtilityInfrastructure.Threading
 
         Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null);
 
-        void ContinueOnGuiWhenAll(IEnumerable<Task> tasks, Action onGui);
+        void ContinueOnGuiWhenAll(ICollection<Task> tasks, Action onGui);
+
+        Task ScheduleAsyncSequential(Action onBackground, Action onGui = null, 
+                                                     Action onException = null, Action onFinally = null);
+
+        Task ScheduleAsyncSequential<T>(Func<T> onBackground, 
+                                                        Action<T> onGui, Action onException = null, Action onFinally = null);
     }
     public class Threading : IThreading
     {
@@ -48,37 +54,67 @@ namespace CommonUtilityInfrastructure.Threading
                 _execute.OnUIThread(() => onGui(param));
             };
         }
-        public void ContinueOnGuiWhenAll(IEnumerable<Task> tasks, Action onGui)
+        public void ContinueOnGuiWhenAll(ICollection<Task> tasks, Action onGui)
         {
-            new TaskFactory(_execute.GuiScheduler).ContinueWhenAll(tasks.ToArray(), t2 => onGui());
+            if (tasks.Count != 0)
+            {
+                new TaskFactory(_execute.GuiScheduler).ContinueWhenAll(tasks.ToArray(), t2 => onGui());
+            }
+            
         }
 
-        public Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null)
+        public Task ScheduleAsync(Action onBackground, Action onGui = null,
+            Action onException = null, Action onFinally = null )
         {
-            return Task.Factory.StartNew(() =>
-            {
-                onBackground();
+            return new TaskFactory(_execute.ThreadPoolScheduler)
+                .StartNew(onBackground)
+                .ContinueWith(prev =>
+                {
+                    ContinueWithMethod(prev.Exception, onGui, onException, onFinally);
 
-            }).ContinueWith(prev =>
-            {
-                ContinueWithMethod(prev.Exception, onGui, onException, onFinally);
-
-            }, _execute.GuiScheduler);
+                }, _execute.GuiScheduler);
 
         }
 
-        public Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null)
+        public Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, 
+            Action onException = null, Action onFinally = null)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                return onBackground();
+            return new TaskFactory(_execute.ThreadPoolScheduler)
+                .StartNew(onBackground)
+                .ContinueWith(prev =>
+                {
+                    ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
 
-            }).ContinueWith(prev =>
-            {
-                ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
-
-            }, _execute.GuiScheduler);
+                }, _execute.GuiScheduler);
+        
         }
+
+        public Task ScheduleAsyncSequential(Action onBackground, Action onGui = null, 
+            Action onException = null, Action onFinally = null)
+        {
+            return new TaskFactory(_execute.LimitedThreadPoolScheduler(1))
+                .StartNew(onBackground)
+                .ContinueWith(prev =>
+                {
+                    ContinueWithMethod(prev.Exception, onGui, onException, onFinally);
+
+                }, _execute.GuiScheduler);
+
+        }
+
+        public Task ScheduleAsyncSequential<T>(Func<T> onBackground, 
+            Action<T> onGui, Action onException = null, Action onFinally = null)
+        {
+            return new TaskFactory(_execute.LimitedThreadPoolScheduler(1))
+                .StartNew(onBackground)
+                .ContinueWith(prev =>
+                {
+                    ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
+
+                }, _execute.GuiScheduler);
+
+        }
+
 
         public void ContinueWithMethod(AggregateException aggregateException, Action onGuiPacked, Action onException, Action onFinally)
         {

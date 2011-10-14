@@ -12,12 +12,12 @@
     {
         public MutationTarget(MethodDefinition method)
         {
-            AssemblyFullName = method.DeclaringType.Module.Assembly.FullName;
+            AssemblyName = method.DeclaringType.Module.Assembly.Name.Name;
             TypeFullName = method.DeclaringType.FullName;
             MethodFullName = method.FullName;
         }
 
-        public string AssemblyFullName
+        public string AssemblyName
         {
             get;
             set;
@@ -36,18 +36,20 @@
 
         public MethodDefinition GetMethod(IEnumerable<AssemblyDefinition> assemblies)
         {
-            return assemblies.Single(a=>a.FullName == AssemblyFullName).MainModule
-                .Types.Single(t => t.FullName == TypeFullName)
-                .Methods.Single(m => m.FullName == MethodFullName);
+            //TODO: Problem with assembly fullname - different versions
+            var aa = assemblies.Single(a => a.Name.Name == AssemblyName).MainModule;
+            var b = aa.Types.Single(t => t.FullName == TypeFullName);
+               var c = b.Methods.Single(m => m.FullName == MethodFullName);
+            return c;
         }
     }
 
     public class InstructionMutationTarget : MutationTarget
     {
-        public InstructionMutationTarget(MethodDefinition method, Instruction instr)
+        public InstructionMutationTarget(MethodDefinition method, int instr)
             : base(method)
         {
-            InstructionOffset = instr.Offset;
+            InstructionOffset = instr;
         }
 
         public int InstructionOffset
