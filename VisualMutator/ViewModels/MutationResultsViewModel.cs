@@ -195,6 +195,7 @@
         {
             _numberOfMutants = count;
             _currentMutant = 0;
+            TestingProgress = 0;
         }
 
         public void UpdateTestingProgress()
@@ -217,6 +218,50 @@
             set
             {
                 SetAndRise(ref _selectedMutationTreeItem, value, () => SelectedMutationTreeItem);
+            }
+        }
+
+
+        private string _mutantsRatio;
+
+        public string MutantsRatio
+        {
+            get
+            {
+                return _mutantsRatio;
+            }
+            set
+            {
+                SetAndRise(ref _mutantsRatio, value, () => MutantsRatio);
+            }
+        }
+
+        private string _mutationScore;
+
+        public string MutationScore
+        {
+            get
+            {
+                return _mutationScore;
+            }
+            set
+            {
+                SetAndRise(ref _mutationScore, value, () => MutationScore);
+            }
+        }
+
+
+        private bool _areMutantsBeingCreated;
+
+        public bool AreMutantsBeingCreated
+        {
+            get
+            {
+                return _areMutantsBeingCreated;
+            }
+            set
+            {
+                SetAndRise(ref _areMutantsBeingCreated, value, () => AreMutantsBeingCreated);
             }
         }
     }

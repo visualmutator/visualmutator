@@ -34,8 +34,9 @@
     </UserControl.Resources>
 
     <Grid d:DataContext="{d:DesignInstance ViewModels:MutationResultsViewModel}" 
-          Visibility="{Binding IsVisible, Converter={Converters:BoolToVisibilityConverter}}">
-
+        
+        >
+        <!-- Visibility="{Binding IsVisible, Converter={Converters:BoolToVisibilityConverter}}"-->
         <Grid.Resources>
            
             
@@ -55,24 +56,38 @@
                 <RowDefinition  />
                 <RowDefinition  />
                 <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
             
-            <Button Grid.Row="0" Content="Create new mutants" Command="{Binding CommandCreateNewMutants}"/>
-
-            <DockPanel Grid.Row="1">
-                <TextBlock HorizontalAlignment="Stretch" Text="{Binding OperationsStateDescription}" />
-                <Button Content="Stop all operations" Command="{Binding CommandStop}"/>     
+            
+            <DockPanel Grid.Row="0">
+                <TextBlock  HorizontalAlignment="Stretch" Text="{Binding OperationsStateDescription}" />
+                <DockPanel Grid.Row="1" HorizontalAlignment="Right">
+                    <Button Grid.Row="0" HorizontalAlignment="Right" Content="Create new mutants" Command="{Binding CommandCreateNewMutants}"/>
+                    <Button Grid.Row="0" HorizontalAlignment="Right" Content="Stop all operations" Command="{Binding CommandStop}"/>
+                </DockPanel>
+              
             </DockPanel>
 
+            <DockPanel Grid.Row="1">
+                <TextBlock  DockPanel.Dock="Left" Text="{Binding MutantsRatio}" />
+                <TextBlock  DockPanel.Dock="Right" Text="{Binding MutationScore}" />
+                
+            </DockPanel>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+            </Grid>
+
             <ProgressBar Height="25" Grid.Row="2"  
-                         Visibility="{Binding AreOperationsOngoing, 
-                                Converter={Converters:BoolToVisibilityConverter}}" 
-                         IsIndeterminate="{Binding RelativeSource={RelativeSource Self}, Path=Value,
-                                Converter={Converters:ZeroToTrueConverter}}"
+                         IsIndeterminate="{Binding AreMutantsBeingCreated}"
                          Value="{Binding TestingProgress}"/>
 
-
+            <TextBlock  Grid.Row="3"  Text="Mutants gruped by operators:" />
         </Grid>
 
 
@@ -92,7 +107,7 @@
                 <DataTemplate DataType="{x:Type Controllers:Mutant}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding StateDescription}"/>
                     </DockPanel>
                 </DataTemplate>
 
@@ -139,8 +154,13 @@
         
         
         <Grid  Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition  />
+            </Grid.RowDefinitions>
 
-            <Views:TestsTree />
+            <TextBlock  Grid.Row="0"  Text="Tests for selected mutant:" />
+            <Views:TestsTree  Grid.Row="1" />
 
 
             <!--    <Grid.RowDefinitions>

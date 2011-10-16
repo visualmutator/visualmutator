@@ -172,11 +172,11 @@
                                  && t1.FullName == t2.FullName));
 
                 var targets = op.FindTargets(typeDefinitions);
-
+                int i = 0;
                 var executedOperator = new ExecutedOperator(root, op.Name);
                 var children = op.CreateMutants(targets,
                     new AssembliesToMutateFactory(() => Read(memoryStreams)))
-                    .MutationResults.Select(res => new Mutant(executedOperator, res.MutatedAssemblies));
+                    .MutationResults.Select(res => new Mutant(i++,executedOperator, res.MutatedAssemblies));
 
                 
                 executedOperator.Children.AddRange(children);

@@ -80,8 +80,18 @@
             _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
 
 
-            mutant.State = testSession.TestsRootNode.State == TestNodeState.Failure
-                               ? MutantResultState.Killed : MutantResultState.Live;
+            if (testSession.TestsRootNode.State == TestNodeState.Failure)
+            {
+                mutant.State = MutantResultState.Killed;
+                mutant.StateDescription = string.Format("Killed by {0} tests", testSession.TestMap.Values
+                    .Count(t=>t.State == TestNodeState.Failure));
+            }
+            else
+            {
+                mutant.State = MutantResultState.Live;
+                mutant.StateDescription = "Live";
+            }
+
             return mutant;
         }
 

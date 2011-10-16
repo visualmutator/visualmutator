@@ -102,9 +102,9 @@
 
       </TreeView>
 
-      <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
+     <!-- <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
                              Visibility="{Binding AreTestsLoading, 
-                Converter={StaticResource BoolToVisibilityConverter} }"/>
+                Converter={StaticResource BoolToVisibilityConverter} }"/>-->
 
 
 

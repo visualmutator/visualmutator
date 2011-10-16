@@ -67,7 +67,9 @@
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
 
+                
                 _viewModel.AreOperationsOngoing = true;
+                _viewModel.AreMutantsBeingCreated = true;
                 _viewModel.OperationsStateDescription = "Creating mutants...";
 
 
@@ -78,6 +80,7 @@
                 },executed=>
                 {
                     _viewModel.Operators.ReplaceRange(executed);
+                    _viewModel.AreMutantsBeingCreated = false;
                     RunTests();
                 });
 
@@ -100,6 +103,11 @@
                 {
                     _testsContainer.RunTestsForMutant(mutant);
                     _viewModel.UpdateTestingProgress();
+
+                    int mutantsKilled = allMutants.Count(m => m.State == MutantResultState.Killed);
+
+                    _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, allMutants.Count);
+                    _viewModel.MutationScore = string.Format("Mutation score: {0}", ((double)mutantsKilled) / allMutants.Count);
                 }
             }, () =>
             {

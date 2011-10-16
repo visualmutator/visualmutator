@@ -20,8 +20,8 @@
         {
 
             Brush result = st == MutantResultState.NoState ? Brushes.Gainsboro
-                    : st == MutantResultState.Killed ? Brushes.Red 
-                    : st == MutantResultState.Live ? Brushes.Green
+                    : st == MutantResultState.Killed ? Brushes.Gray 
+                    : st == MutantResultState.Live ? Brushes.Orange
                     : st == MutantResultState.Tested ? Brushes.Blue 
                     : null;
             Debug.Assert(result != null);

@@ -12,14 +12,24 @@ namespace VisualMutator.Controllers
 
     public class Mutant : MutationNode
     {
+        private readonly int _id;
+
         private readonly IEnumerable<AssemblyDefinition> _mutatedAssemblies;
 
-        public Mutant(MutationNode parent, IEnumerable<AssemblyDefinition> mutatedAssemblies)
+        public Mutant(int id, MutationNode parent, IEnumerable<AssemblyDefinition> mutatedAssemblies)
             : base(parent, "Mutant", false)
         {
+            _id = id;
             _mutatedAssemblies = mutatedAssemblies;
         }
 
+        public int Id
+        {
+            get
+            {
+                return _id;
+            }
+        }
 
         public IEnumerable<AssemblyDefinition> MutatedAssemblies
         {
