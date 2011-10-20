@@ -53,18 +53,22 @@
                 () => !_viewModel.AreOperationsOngoing);
             _viewModel.CommandCreateNewMutants.UpdateOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
 
-            _viewModel.CommandStop = new BasicCommand(Stop, () => _viewModel.AreOperationsOngoing);
+            _viewModel.CommandStop = new BasicCommand(PauseOperations, () => _viewModel.AreOperationsOngoing);
             _viewModel.CommandStop.UpdateOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
+
+            _viewModel.CommandContinue = new BasicCommand(ResumeOperations);//, () => !_viewModel.AreOperationsOngoing);
+         //   _viewModel.CommandContinue.UpdateOnChanged(_viewModel, () => _viewModel.AreOperationsOngoing);
 
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
 
             _viewModel.TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
-            
+            //CSharpLanguage
         }
 
         public void PauseOperations()
         {
             _isPauseRequested = true;
+            _viewModel.OperationsStateDescription = "Pausing...";
         }
         public void ResumeOperations()
         {
@@ -114,7 +118,7 @@
             _viewModel.InitTestingProgress(allMutants.Count);
             _services.Threading.ScheduleAsync(() =>
             {
-                foreach (Mutant mutant in allMutants.Where(m=>!m.TestSession.IsComplete))
+                foreach (Mutant mutant in allMutants.Where(m=>m.TestSession == null || !m.TestSession.IsComplete))
                 {
                     _testsContainer.RunTestsForMutant(mutant);
                     _viewModel.UpdateTestingProgress();
@@ -134,15 +138,16 @@
                 }
                 return true;
             }, 
-            isPaused =>
+            isFinished =>
             {
-                if (isPaused)
+                if (isFinished)
                 {
-                    _viewModel.OperationsStateDescription = "Paused";
+                    _viewModel.OperationsStateDescription = "Finished";
                 }
                 else
                 {
-                    _viewModel.OperationsStateDescription = "Finished";
+                    _viewModel.OperationsStateDescription = "Paused";
+                    
                 }
                 
                 _viewModel.AreOperationsOngoing = false;

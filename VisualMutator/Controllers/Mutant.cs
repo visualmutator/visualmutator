@@ -34,10 +34,10 @@ namespace VisualMutator.Controllers
         }
         protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
-            string stateText = 
-                value == MutantResultState.NoState ? "Waiting..." :
+            string stateText =
+                value == MutantResultState.Waiting ? "Waiting..." :
                 value == MutantResultState.Tested ? "Executing tests..." :
-                value == MutantResultState.Killed ? "Killed by {0} mutants".Formatted() :
+                value == MutantResultState.Killed ? "Killed by {0} mutants".Formatted(NumberOfTestsThatKilled) :
                 value == MutantResultState.Live ? "Live" : null;
             if (stateText == null)
             {

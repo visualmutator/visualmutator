@@ -85,7 +85,19 @@
             }
         }
 
+        private BasicCommand _commandContinue;
 
+        public BasicCommand CommandContinue
+        {
+            get
+            {
+                return _commandContinue;
+            }
+            set
+            {
+                SetAndRise(ref _commandContinue, value, () => CommandContinue);
+            }
+        }
         private BasicCommand _commandStop;
 
         public BasicCommand CommandStop

@@ -176,8 +176,8 @@
                 int i = 0;
                 var executedOperator = new ExecutedOperator(root, op.Name);
 
-                for (int j = 0; j < 20; j++)
-                {
+                //for (int j = 0; j < 20; j++)
+              //  {
                     var children = op.CreateMutants(targets,
                        new AssembliesToMutateFactory(() => Read(memoryStreams)))
                        .MutationResults.Select(res => new Mutant(i++, executedOperator, res.MutatedAssemblies));
@@ -185,14 +185,16 @@
 
                     executedOperator.Children.AddRange(children);
                     
-                }
-                executedOperator.DisplayedText = "{0} - Mutants:{1}"
+               // }
+                executedOperator.DisplayedText = "{0} - Mutants: {1}"
                     .Formatted(executedOperator.Name, executedOperator.Children.Count);
 
+                
                 executedOperators.Add(executedOperator);
                 root.Children.Add(executedOperator);
                
             }
+            root.State = MutantResultState.Waiting;
             return executedOperators;
         }
 

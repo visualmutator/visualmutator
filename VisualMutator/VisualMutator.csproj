@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ILSpy">
+      <HintPath>..\..\..\..\..\..\..\PORTABLE\Programowanie\ILSpy\ILSpy.exe</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
@@ -111,6 +114,7 @@
     <Compile Include="Controllers\EventMessages\SwitchToUnitTestsTabEventArgs.cs" />
     <Compile Include="Controllers\ExecutedOperator.cs" />
     <Compile Include="Controllers\Mutant.cs" />
+    <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Controllers\MutantsCreationController.cs" />
     <Compile Include="Controllers\EventMessages\LoadLastCreatedMutantEventArgs.cs" />
     <Compile Include="Controllers\MutationResultsController.cs" />
@@ -174,6 +178,9 @@
     <Compile Include="Views\ILMutationsView.xaml.cs">
       <DependentUpon>ILMutationsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MutantDetailsView.xaml.cs">
+      <DependentUpon>MutantDetailsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MutantsCreationWindow.xaml.cs">
       <DependentUpon>MutantsCreationWindow.xaml</DependentUpon>
     </Compile>
@@ -204,6 +211,10 @@
     <Page Include="Views\ILMutationsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MutantDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MutantsCreationWindow.xaml">
       <SubType>Designer</SubType>

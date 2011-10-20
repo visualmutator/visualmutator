@@ -62,14 +62,16 @@
                 if (updateChildren && Children != null)
                 {
 
-                    if (value != MutantResultState.NoState)
+                    if (value != MutantResultState.Waiting)
                     {
                         throw new InvalidOperationException("Tried to set invalid state: " + value);
                     }
 
-                    Children.Cast<MutationNode>()
-                        .Each(c => c.SetState(value, updateChildren: true, updateParent: false));
-                    
+                    foreach (var node in Children.Cast<MutationNode>())
+                    {
+                        node.SetState(value, updateChildren: true, updateParent: false);
+                    }
+  
                 }
                 
                 if (updateParent && Parent != null)
