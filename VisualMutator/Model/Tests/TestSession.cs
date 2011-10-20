@@ -56,5 +56,9 @@ namespace VisualMutator.Model.Tests
         }
 
         public IList<string> AssembliesWithTests { get; set; }
+
+        public bool IsComplete
+        {
+            get; set; }
     }
 }

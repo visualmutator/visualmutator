@@ -6,6 +6,8 @@
     using System.Collections.Generic;
     using System.Diagnostics;
 
+    using CommonUtilityInfrastructure;
+
     using NUnit.Framework;
 
     using VisualMutator.Infrastructure.Factories;
@@ -39,6 +41,17 @@
     }
 
 
+    public static class Create
+    {
+
+
+        public static Services TestServices()
+        {
+            return new Services();
+        }
+
+
+    }
 
 
 }

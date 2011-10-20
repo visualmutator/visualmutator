@@ -13,6 +13,7 @@
 
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.Factories;
+    using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests;
@@ -30,6 +31,10 @@
         private readonly ITestsContainer _testsContainer;
 
         private readonly Services _services;
+
+        private MutationTestingSession _currentSession;
+
+        private volatile bool _isPauseRequested;
 
         public MutationResultsController(
             MutationResultsViewModel viewModel,
@@ -57,7 +62,15 @@
             
         }
 
+        public void PauseOperations()
+        {
+            _isPauseRequested = true;
+        }
+        public void ResumeOperations()
+        {
+            RunTests(_currentSession);
 
+        }
         public void CreateMutants()
         {
             var mutantsCreationController = _mutantsCreationFactory.Create();
@@ -72,16 +85,18 @@
                 _viewModel.AreMutantsBeingCreated = true;
                 _viewModel.OperationsStateDescription = "Creating mutants...";
 
-
+                _currentSession = new MutationTestingSession();
                 _services.Threading.ScheduleAsync(() =>
                 {
-                    return _mutantsContainer.GenerateMutantsForOperators(choices);
+                    _currentSession.MutantsGroupedByOperators =  _mutantsContainer.GenerateMutantsForOperators(choices);
+                   
 
-                },executed=>
+                },
+                () =>
                 {
-                    _viewModel.Operators.ReplaceRange(executed);
+                    _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
                     _viewModel.AreMutantsBeingCreated = false;
-                    RunTests();
+                    RunTests(_currentSession);
                 });
 
                 
@@ -91,27 +106,45 @@
         }
 
 
-        public void RunTests()
+        public void RunTests(MutationTestingSession currentSession)
         {
             _viewModel.OperationsStateDescription = "Running tests...";
 
-            var allMutants = _viewModel.Operators.SelectMany(op => op.Mutants).ToList();
+            var allMutants = currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
             _viewModel.InitTestingProgress(allMutants.Count);
             _services.Threading.ScheduleAsync(() =>
             {
-                foreach (var mutant in allMutants)
+                foreach (Mutant mutant in allMutants.Where(m=>!m.TestSession.IsComplete))
                 {
                     _testsContainer.RunTestsForMutant(mutant);
                     _viewModel.UpdateTestingProgress();
 
                     int mutantsKilled = allMutants.Count(m => m.State == MutantResultState.Killed);
 
+
+                    currentSession.MutantsRatio = ((double)mutantsKilled) / allMutants.Count;
                     _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, allMutants.Count);
-                    _viewModel.MutationScore = string.Format("Mutation score: {0}", ((double)mutantsKilled) / allMutants.Count);
+                    _viewModel.MutationScore = string.Format("Mutation score: {0}", currentSession.MutantsRatio);
+
+                    if (_isPauseRequested)
+                    {
+                        _isPauseRequested = false;
+                        return false;
+                    }
                 }
-            }, () =>
+                return true;
+            }, 
+            isPaused =>
             {
-                _viewModel.OperationsStateDescription = "Finished";
+                if (isPaused)
+                {
+                    _viewModel.OperationsStateDescription = "Paused";
+                }
+                else
+                {
+                    _viewModel.OperationsStateDescription = "Finished";
+                }
+                
                 _viewModel.AreOperationsOngoing = false;
             });
             //var tasks = _viewModel.Operators.SelectMany(op => op.Mutants).Select(mut =>

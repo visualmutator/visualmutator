@@ -5,7 +5,7 @@
     using System.Windows.Data;
 
     [ValueConversion(typeof(bool), typeof(Visibility))]
-    public class BoolToVisibilityConverter : Converter<BoolToVisibilityConverter, bool, Visibility>
+    public class TrueToVisibilityConverter : Converter<TrueToVisibilityConverter, bool, Visibility>
     {
         public override Visibility Convert(bool value)
         {

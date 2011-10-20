@@ -264,5 +264,9 @@
                 SetAndRise(ref _areMutantsBeingCreated, value, () => AreMutantsBeingCreated);
             }
         }
+
+        private bool _isPauseRequested;
+
+     
     }
 }

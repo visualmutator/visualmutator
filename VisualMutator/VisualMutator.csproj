@@ -133,6 +133,7 @@
     <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
     <Compile Include="Model\Mutations\Types\SolutionTypesManager.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
+    <Compile Include="Model\MutationTestingSession.cs" />
     <Compile Include="Model\Tests\Services\ITestService.cs" />
     <Compile Include="Model\Tests\Services\MsTestException.cs" />
     <Compile Include="Model\Tests\Services\MsTestLoader.cs" />
@@ -159,7 +160,7 @@
     <Compile Include="Views\Abstract\IUnitTestsView.cs" />
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
-    <Compile Include="Views\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Views\Converters\TrueToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />
     <Compile Include="Views\Converters\Converter.cs" />
     <Compile Include="Views\Converters\ZeroToTrueConverter.cs" />

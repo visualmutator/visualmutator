@@ -9,6 +9,7 @@
     using System.Linq;
     using System.Reflection;
 
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using Mono.Cecil;
@@ -171,15 +172,23 @@
                              .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
                                  && t1.FullName == t2.FullName));
 
-                var targets = op.FindTargets(typeDefinitions);
+                var targets = op.FindTargets(typeDefinitions).ToList();
                 int i = 0;
                 var executedOperator = new ExecutedOperator(root, op.Name);
-                var children = op.CreateMutants(targets,
-                    new AssembliesToMutateFactory(() => Read(memoryStreams)))
-                    .MutationResults.Select(res => new Mutant(i++,executedOperator, res.MutatedAssemblies));
 
-                
-                executedOperator.Children.AddRange(children);
+                for (int j = 0; j < 20; j++)
+                {
+                    var children = op.CreateMutants(targets,
+                       new AssembliesToMutateFactory(() => Read(memoryStreams)))
+                       .MutationResults.Select(res => new Mutant(i++, executedOperator, res.MutatedAssemblies));
+
+
+                    executedOperator.Children.AddRange(children);
+                    
+                }
+                executedOperator.DisplayedText = "{0} - Mutants:{1}"
+                    .Formatted(executedOperator.Name, executedOperator.Children.Count);
+
                 executedOperators.Add(executedOperator);
                 root.Children.Add(executedOperator);
                

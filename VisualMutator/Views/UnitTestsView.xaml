@@ -54,7 +54,7 @@
 
       <ProgressBar Grid.Column="0" Opacity="0.5"
                    Visibility="{Binding AreTestsRunning, 
-                Converter={ Converters:BoolToVisibilityConverter} }"
+                Converter={ Converters:TrueToVisibilityConverter} }"
                    IsIndeterminate="True"/>
 
       <DockPanel Grid.Column="1">

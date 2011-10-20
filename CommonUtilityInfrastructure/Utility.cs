@@ -50,6 +50,10 @@
         {
             return string.Format(@"""{0}""", str);
         }
+        public static string Formatted(this string str, params object[] args)
+        {
+            return string.Format(str, args);
+        }
 
         public static string PropertyName<T>(this Expression<Func<T>> propertyExpression)
         {

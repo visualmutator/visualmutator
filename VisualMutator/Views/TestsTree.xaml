@@ -29,7 +29,7 @@
       <Setter Property="Stretch" Value="None"/>
       <Setter Property="Margin" Value="0,0,2,0"/>
     </Style>
-    <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <Converters:TrueToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
         <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
             <Setter Property="Height" Value="10"/>

@@ -100,14 +100,14 @@
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
 
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding DisplayedText}"/>
                     </DockPanel>
                 </HierarchicalDataTemplate>
 
                 <DataTemplate DataType="{x:Type Controllers:Mutant}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
-                        <TextBlock Text="{Binding StateDescription}"/>
+                        <TextBlock Text="{Binding DisplayedText}"/>
                     </DockPanel>
                 </DataTemplate>
 

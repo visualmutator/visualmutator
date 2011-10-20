@@ -1,7 +1,9 @@
 namespace VisualMutator.Controllers
 {
+    using System;
     using System.Collections.Generic;
 
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using Mono.Cecil;
@@ -30,7 +32,23 @@ namespace VisualMutator.Controllers
                 return _id;
             }
         }
+        protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
+        {
+            string stateText = 
+                value == MutantResultState.NoState ? "Waiting..." :
+                value == MutantResultState.Tested ? "Executing tests..." :
+                value == MutantResultState.Killed ? "Killed by {0} mutants".Formatted() :
+                value == MutantResultState.Live ? "Live" : null;
+            if (stateText == null)
+            {
+                throw new InvalidOperationException();
+            }
 
+            DisplayedText = "#{0} {1}".Formatted(Id, stateText);
+
+
+            base.SetState(value, updateChildren, updateParent);
+        }
         public IEnumerable<AssemblyDefinition> MutatedAssemblies
         {
             get
@@ -39,18 +57,31 @@ namespace VisualMutator.Controllers
             }
         }
 
+        private int _numberOfTestsThatKilled;
 
-        private string _stateDescription;
-
-        public string StateDescription
+        public int NumberOfTestsThatKilled
         {
             get
             {
-                return _stateDescription;
+                return _numberOfTestsThatKilled;
             }
             set
             {
-                SetAndRise(ref _stateDescription, value, () => StateDescription);
+                SetAndRise(ref _numberOfTestsThatKilled, value, () => NumberOfTestsThatKilled);
+            }
+        }
+
+        private string _displayedText;
+
+        public string DisplayedText  
+        {
+            get
+            {
+                return _displayedText;
+            }
+            set
+            {
+                SetAndRise(ref _displayedText, value, () => DisplayedText);
             }
         }
 

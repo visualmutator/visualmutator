@@ -92,7 +92,7 @@
 
       <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
                              Visibility="{Binding AreTypesLoading, 
-                Converter={Converters:BoolToVisibilityConverter}}"/>
+                Converter={Converters:TrueToVisibilityConverter}}"/>
 
       <GridSplitter Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch"/>
 
@@ -135,7 +135,7 @@
 
        
     <ProgressBar Grid.Row="3" Grid.ColumnSpan="2" IsIndeterminate="True"
-                Visibility="{Binding IsMutationOngoing, Converter={ Converters:BoolToVisibilityConverter }}"/>
+                Visibility="{Binding IsMutationOngoing, Converter={ Converters:TrueToVisibilityConverter }}"/>
     <TextBox Grid.Row="4" Grid.ColumnSpan="2" Name="MutationLogBox"/>
 
   </Grid>

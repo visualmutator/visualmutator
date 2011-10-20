@@ -19,5 +19,20 @@ namespace VisualMutator.Controllers
                 return Children.Cast<Mutant>();
             }
         }
+
+
+        private string _displayedText;
+
+        public string DisplayedText
+        {
+            get
+            {
+                return _displayedText;
+            }
+            set
+            {
+                SetAndRise(ref _displayedText, value, () => DisplayedText);
+            }
+        }
     }
 }

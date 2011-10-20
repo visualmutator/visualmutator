@@ -33,11 +33,11 @@
         }
 
      
-        public MutantResultState State
+        public  MutantResultState State
         {
             set
             {
-                SetStatus(value, true, true);
+                SetState(value, true, true);
             }
             get
             {
@@ -52,7 +52,8 @@
                     || State == MutantResultState.Killed);
             }
         }
-        public void SetStatus(MutantResultState value, bool updateChildren, bool updateParent)
+
+        protected virtual void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
             if (_state != value)
             {
@@ -67,7 +68,7 @@
                     }
 
                     Children.Cast<MutationNode>()
-                        .Each(c => c.SetStatus(value, updateChildren: true, updateParent: false));
+                        .Each(c => c.SetState(value, updateChildren: true, updateParent: false));
                     
                 }
                 
@@ -105,7 +106,7 @@
                 {
                     state = MutantResultState.Killed;
                 }
-                SetStatus(state, updateChildren: false, updateParent: true);
+                SetState(state, updateChildren: false, updateParent: true);
             }
   
 

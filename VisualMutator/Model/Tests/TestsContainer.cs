@@ -26,7 +26,7 @@
 
         StoredMutantInfo CurrentMutant { get; }
 
-        Mutant RunTestsForMutant(Mutant mutant);
+        void RunTestsForMutant(Mutant mutant);
     }
 
     public class TestsContainer : ITestsContainer
@@ -62,7 +62,7 @@
             };
         }
 
-        public Mutant RunTestsForMutant(Mutant mutant)
+        public void RunTestsForMutant(Mutant mutant)
         {
             mutant.State = MutantResultState.Tested;
             StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(mutant);
@@ -82,17 +82,19 @@
 
             if (testSession.TestsRootNode.State == TestNodeState.Failure)
             {
+                mutant.NumberOfTestsThatKilled = testSession.TestMap.Values
+                    .Count(t => t.State == TestNodeState.Failure);
+
                 mutant.State = MutantResultState.Killed;
-                mutant.StateDescription = string.Format("Killed by {0} tests", testSession.TestMap.Values
-                    .Count(t=>t.State == TestNodeState.Failure));
+    
             }
             else
             {
                 mutant.State = MutantResultState.Live;
-                mutant.StateDescription = "Live";
+           
             }
 
-            return mutant;
+            mutant.TestSession.IsComplete = true;
         }
 
 
