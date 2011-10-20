@@ -78,6 +78,8 @@
     <Compile Include="WpfUtils\IView.cs" />
     <Compile Include="WpfUtils\MessageService.cs" />
     <Compile Include="WpfUtils\ModelElement.cs" />
+    <Compile Include="WpfUtils\NotifyChangedObservable.cs" />
+    <Compile Include="WpfUtils\PropertyAccessor.cs" />
     <Compile Include="WpfUtils\ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

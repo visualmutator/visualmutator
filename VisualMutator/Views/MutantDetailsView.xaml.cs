@@ -14,14 +14,20 @@ using System.Windows.Shapes;
 
 namespace VisualMutator.Views
 {
+    using CommonUtilityInfrastructure.WpfUtils;
+
     /// <summary>
     /// Interaction logic for MutantDetailsView.xaml
     /// </summary>
-    public partial class MutantDetailsView : UserControl
+    public partial class MutantDetailsView : UserControl, IMutantDetailsView
     {
         public MutantDetailsView()
         {
             InitializeComponent();
         }
+    }
+
+    public interface IMutantDetailsView : IView
+    {
     }
 }

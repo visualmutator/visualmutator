@@ -30,6 +30,8 @@
 
         private readonly ITestsContainer _testsContainer;
 
+        private readonly MutantDetailsController _mutantDetailsController;
+
         private readonly Services _services;
 
         private MutationTestingSession _currentSession;
@@ -41,12 +43,14 @@
             IFactory<MutantsCreationController> mutantsCreationFactory,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
+            MutantDetailsController mutantDetailsController,
             Services services)
         {
             _viewModel = viewModel;
             _mutantsCreationFactory = mutantsCreationFactory;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
+            _mutantDetailsController = mutantDetailsController;
             _services = services;
 
             _viewModel.CommandCreateNewMutants = new BasicCommand(CreateMutants,
@@ -61,7 +65,12 @@
 
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
 
-            _viewModel.TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
+           
+
+            _viewModel.WhenPropertyChanged(() => _viewModel.SelectedMutationTreeItem).OfType<Mutant>()
+                .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant));
+
+            _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;
             //CSharpLanguage
         }
 

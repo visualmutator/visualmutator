@@ -18,43 +18,13 @@
         public MutationResultsViewModel(IMutationResultsView view)
             : base(view)
         {
-            AddListener(() => SelectedMutationTreeItem, SelectedMutationItemChanged);
-        }
+            //AddListener(() => SelectedMutationTreeItem, SelectedMutationItemChanged2);
 
-
-
-        private void SelectedMutationItemChanged()
-        {
             
-            var mutant = SelectedMutationTreeItem as Mutant;
-            if (mutant != null)
-            {
 
-                if (mutant.TestSession != null)
-                {
-                    TestNamespaces.ReplaceRange(mutant.TestSession.TestNamespaces);
-                }
-                else
-                {
-                    TestNamespaces.Clear();
-                    EventListeners.Add(mutant, MutantPropertyChanged);
-                }
-                var prevMutant = _previousSelectedMutationTreeItem as Mutant;
-                if (prevMutant != null)
-                {
-                    EventListeners.Remove(prevMutant, MutantPropertyChanged);
-                }
-            }
-            _previousSelectedMutationTreeItem = SelectedMutationTreeItem;
         }
 
-        private void MutantPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "TestSession")
-            {
-                TestNamespaces.ReplaceRange(((Mutant)sender).TestSession.TestNamespaces);
-            }
-        }
+     
 
 
         private bool _areOperationsOngoing;
@@ -170,21 +140,6 @@
             }
         }
 
-        private BetterObservableCollection<TestNodeNamespace> _testNamespaces;
-
-        public BetterObservableCollection<TestNodeNamespace> TestNamespaces
-        {
-            get
-            {
-                return _testNamespaces;
-            }
-            set
-            {
-                SetAndRise(ref _testNamespaces, value, () => TestNamespaces);
-            }
-        }
-       
-
 
 
         private double _testingProgress;
@@ -276,6 +231,10 @@
                 SetAndRise(ref _areMutantsBeingCreated, value, () => AreMutantsBeingCreated);
             }
         }
+
+        public MutantDetailsViewModel MutantDetailsViewModel
+        {
+            get; set; }
 
         private bool _isPauseRequested;
 
