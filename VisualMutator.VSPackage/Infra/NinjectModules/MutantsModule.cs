@@ -41,6 +41,14 @@
             Kernel.Bind<IMutantsManagementView>().To<MutantsManagementView>();
 
 
+            Kernel.Bind<MutantDetailsController>().ToSelf();
+            Kernel.Bind<MutantDetailsViewModel>().ToSelf();
+            Kernel.Bind<IMutantDetailsView>().To<MutantDetailsView>();
+
+
+
+
+
 
             Kernel.Bind<IAssemblyReaderWriter>().To<AssemblyReaderWriter>().InSingletonScope();
             Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();

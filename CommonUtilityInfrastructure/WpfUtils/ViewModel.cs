@@ -3,6 +3,7 @@
     #region Usings
 
     using System;
+    using System.ComponentModel;
     using System.Linq.Expressions;
     using System.Threading;
     using System.Windows.Threading;
@@ -55,6 +56,15 @@
             {
                 return _view;
             }
+        }
+
+        public NotifyChangedObservable<T> RegisterPropertyChanged<T>(Expression<Func<T>> propertyExpression)
+        {
+            var changedObservable = this.WhenPropertyChanged(propertyExpression);
+            EventListeners.AddReference(changedObservable);
+            
+            return changedObservable;
+
         }
 
         public void AddListener<T>(Expression<Func<T>> propertyExpression, Action action )

@@ -156,9 +156,9 @@
         
         
         <Grid  Grid.Row="3">
-            
-            
-            
+
+
+            <Views:MutantDetailsView Content="{Binding MutantDetailsViewModel.View}"/>
             
 
 

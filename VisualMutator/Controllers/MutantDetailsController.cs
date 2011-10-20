@@ -23,6 +23,10 @@
         public void LoadDetails(Mutant mutant)
         {
             LoadTests(mutant);
+
+            
+
+
         }
 
 

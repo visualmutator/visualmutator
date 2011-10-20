@@ -17,10 +17,15 @@
 
         private readonly ICollection<PropertyChangedEventListener> _propertyListeners;
 
+
+
+        private readonly ICollection<object> _otherReferences;
+
         public EventListeners()
         {
             _propertyListeners = new List<PropertyChangedEventListener>();
             _collectionListeners = new List<CollectionChangedEventListener>();
+            _otherReferences = new List<object>();
         }
 
         public void Add(INotifyPropertyChanged source, PropertyChangedEventHandler handler)
@@ -72,6 +77,11 @@
                 _collectionListeners.Remove(listener);
                 CollectionChangedEventManager.RemoveListener(source, listener);
             }
+        }
+
+        public void AddReference(object obj)
+        {
+            _otherReferences.Add(obj);
         }
     }
 

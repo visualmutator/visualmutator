@@ -62,8 +62,6 @@ namespace CommonUtilityInfrastructure.WpfUtils
 
             return new NotifyChangedObservable<T>(@this, propertyExpression.PropertyName());
  
-           
-            
         }
     }
 

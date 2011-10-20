@@ -65,9 +65,9 @@
 
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
 
-           
 
-            _viewModel.WhenPropertyChanged(() => _viewModel.SelectedMutationTreeItem).OfType<Mutant>()
+
+            _viewModel.RegisterPropertyChanged(() => _viewModel.SelectedMutationTreeItem).OfType<Mutant>()
                 .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant));
 
             _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;

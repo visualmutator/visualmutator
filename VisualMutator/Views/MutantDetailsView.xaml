@@ -10,14 +10,14 @@
         <TextBlock  Grid.Row="0"  Text="Tests for selected mutant:" />
         <TabControl >
             <TabItem Header="Tests">
-                <Views:TestsTree Content="{Binding TestsTree}"/>
+                <Views:TestsTree />
 
               
            
             </TabItem>
 
             <TabItem Header="Mutated Code">
-                <Views:UnitTestsView Content="{Binding UnitTestsView}"/>
+               
             </TabItem>
 
         </TabControl>
