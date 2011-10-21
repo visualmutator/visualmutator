@@ -38,7 +38,7 @@
 
     
      
-        IList<ExecutedOperator> GenerateMutantsForOperators(MutationSessionChoices choices);
+        MutationTestingSession GenerateMutantsForOperators(MutationSessionChoices choices);
     }
 
 
@@ -145,7 +145,6 @@
            _generatedMutants.Clear();
         }
 
-  
 
 
 
@@ -153,18 +152,19 @@
 
 
 
-      
 
-        public IList<ExecutedOperator> GenerateMutantsForOperators(MutationSessionChoices choices)
+
+
+        public MutationTestingSession GenerateMutantsForOperators(MutationSessionChoices choices)
         {
             var executedOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
-            
+            IList<MemoryStream> memoryStreams = Write(choices.Assemblies);
+
+            IList<AssemblyDefinition> assemblies = Read(memoryStreams);
+
             foreach (var op in choices.SelectedOperators)
             {
-                IList<MemoryStream> memoryStreams = Write(choices.Assemblies);
-
-                IList<AssemblyDefinition> assemblies = Read(memoryStreams);
 
                 IEnumerable<TypeDefinition> typeDefinitions =
                     choices.SelectedTypes.Select(t1 =>
@@ -195,7 +195,13 @@
                
             }
             root.State = MutantResultState.Waiting;
-            return executedOperators;
+
+
+            return new MutationTestingSession
+            {
+                MutantsGroupedByOperators = executedOperators,
+                OriginalAssemblies = choices.Assemblies,
+            };
         }
 
         private IList<MemoryStream> Write(IEnumerable<AssemblyDefinition> assemblies)

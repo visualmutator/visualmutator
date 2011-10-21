@@ -13,6 +13,8 @@
 
     using ICSharpCode.ILSpy;
 
+    using Mono.Cecil;
+
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 
@@ -26,22 +28,36 @@
         {
             _viewModel = viewModel;
         }
-        public void LoadDetails(Mutant mutant)
+        public void LoadDetails(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
         {
             LoadTests(mutant);
 
+
+            var originalMethod = mutant.MutationResult.MutationTarget.GetMethod(originalAssemblies);
+            var mutatedMethod = mutant.MutationResult.ModifiedMethod;
+
+
             var cs = new CSharpLanguage();
 
-       
-            var output = new PlainTextOutput();
+            var mutatedOutput = new PlainTextOutput();
+            var originalOutput = new PlainTextOutput();
             var decompilationOptions = new DecompilationOptions();
             decompilationOptions.DecompilerSettings.ShowXmlDocumentation = false;
-            var methodDefinition = mutant.MutationResult.ModifiedMethod;
-            cs.DecompileMethod(methodDefinition, output, decompilationOptions);
 
-            string mutantCode = output.ToString();
+            cs.DecompileMethod(mutatedMethod, mutatedOutput, decompilationOptions);
+            cs.DecompileMethod(originalMethod, originalOutput, decompilationOptions);
 
-         //   CodeAssert.GetDiff(mutantCode)
+
+            string originalString = originalOutput.ToString().Replace("\t", "   ");
+            string mutatedString = mutatedOutput.ToString().Replace("\t", "   ");
+
+
+
+            var codeWithDifference = CodeAssert.GetDiff(originalString, mutatedString);
+          //  codeWithDifference.
+
+            _viewModel.PresentCode(codeWithDifference);
+            //   CodeAssert.GetDiff(mutantCode)
         }
 
 
@@ -101,18 +117,12 @@
             }
         }
 
-        private string _decompiledCode;
+ 
 
-        public string DecompiledCode
+        public void PresentCode(CodeWithDifference codeWithDifference)
         {
-            get
-            {
-                return _decompiledCode;
-            }
-            set
-            {
-                SetAndRise(ref _decompiledCode, value, () => DecompiledCode);
-            }
+            View.PresentCode(codeWithDifference);
+            //View.SetText(codeWithDifference.Code);
         }
     }
 }

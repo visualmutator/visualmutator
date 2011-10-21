@@ -52,7 +52,7 @@
                 SelectedOperators = new[] { new TestOperator() }
             };
             // Act
-            var executedOperator = mutantsContainer.GenerateMutantsForOperators(choices).Single();
+            var executedOperator = mutantsContainer.GenerateMutantsForOperators(choices).MutantsGroupedByOperators.Single();
 
             // Assert
             executedOperator.Name.ShouldEqual("TestOperatorName");

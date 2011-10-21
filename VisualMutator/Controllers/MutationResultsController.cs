@@ -68,7 +68,7 @@
 
 
             _viewModel.RegisterPropertyChanged(() => _viewModel.SelectedMutationTreeItem).OfType<Mutant>()
-                .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant));
+                .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, _currentSession.OriginalAssemblies));
 
             _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;
             //CSharpLanguage
@@ -101,7 +101,7 @@
                 _currentSession = new MutationTestingSession();
                 _services.Threading.ScheduleAsync(() =>
                 {
-                    _currentSession.MutantsGroupedByOperators =  _mutantsContainer.GenerateMutantsForOperators(choices);
+                    _currentSession =  _mutantsContainer.GenerateMutantsForOperators(choices);
                    
 
                 },

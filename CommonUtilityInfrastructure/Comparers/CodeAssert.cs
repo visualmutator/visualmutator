@@ -3,30 +3,63 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Text;
 
     using DiffLib;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    public class CodeAssert
+    public enum LineChangeType
     {
-        public static void AreEqual(string input1, string input2)
+        Add, Remove
+    }
+    public class LineChange
+    {
+        public LineChange(LineChangeType changeType, string text)
         {
-            var diff = new StringWriter();
-            if (!Compare(input1, input2, diff))
-            {
-                Assert.Fail(diff.ToString());
-            }
-        }
-        public static string GetDiff(string input1, string input2)
-        {
-            var diff = new StringWriter();
-            Compare(input1, input2, diff);
-            return diff.ToString();
-            
+            ChangeType = changeType;
+            Text = text;
         }
 
-        static bool Compare(string input1, string input2, StringWriter diff)
+        public LineChangeType ChangeType { get; set; }
+
+        public string Text { get; set; }
+    }
+
+    public class CodeWithDifference
+    {
+        public string Code { get; set; }
+        public List<LineChange> LineChanges
+        {
+            get;
+            set;
+        }
+    }
+
+
+    public class CodeAssert
+    {
+        
+        public static CodeWithDifference GetDiff(string input1, string input2)
+        {
+            
+            var diff = new StringBuilder();
+            var lineChanges = CreateDiff(input1, input2, diff);
+            return new CodeWithDifference
+            {
+                Code = diff.ToString(),
+                LineChanges = lineChanges
+            };
+                
+        }
+
+        static LineChange NewLineChange(LineChangeType type, StringBuilder diff, int startIndex, int endIndex)
+        {
+            string text = diff.ToString().Substring(startIndex, endIndex - startIndex - 2);
+            
+            return new LineChange(type, text);
+        }
+        static List<LineChange> CreateDiff(string input1, string input2, StringBuilder diff)
         {
             var differ = new AlignedDiff<string>(
                 NormalizeAndSplitCode(input1),
@@ -35,44 +68,51 @@
                 new StringSimilarityComparer(),
                 new StringAlignmentFilter());
 
-            bool result = true, ignoreChange;
+           
 
             int line1 = 0, line2 = 0;
 
+
+            var list = new List<LineChange>();
             foreach (var change in differ.Generate())
             {
+                int startIndex=0;
                 switch (change.Change)
                 {
                     case ChangeType.Same:
-                        diff.Write("{0,4} {1,4} ", ++line1, ++line2);
-                        diff.Write("  ");
-                        diff.WriteLine(change.Element1);
+                        diff.AppendFormat("{0,4} {1,4} ", ++line1, ++line2);
+                        diff.AppendFormat("  ");
+                        diff.AppendLine(change.Element1);
                         break;
                     case ChangeType.Added:
-                        diff.Write("     {1,4} ", line1, ++line2);
-                        result &= ignoreChange = ShouldIgnoreChange(change.Element2);
-                        diff.Write(ignoreChange ? "    " : " +  ");
-                        diff.WriteLine(change.Element2);
+                        startIndex = diff.Length;
+                        diff.AppendFormat("     {1,4}  +  ", line1, ++line2);
+                        
+                        diff.AppendLine(change.Element2);
+                        list.Add(NewLineChange(LineChangeType.Add, diff, startIndex, diff.Length));
                         break;
                     case ChangeType.Deleted:
-                        diff.Write("{0,4}      ", ++line1, line2);
-                        result &= ignoreChange = ShouldIgnoreChange(change.Element1);
-                        diff.Write(ignoreChange ? "    " : " -  ");
-                        diff.WriteLine(change.Element1);
+                        startIndex = diff.Length;
+                        diff.AppendFormat("{0,4}       -  ", ++line1, line2);
+                        diff.AppendLine(change.Element1);
+                        list.Add(NewLineChange(LineChangeType.Remove, diff, startIndex, diff.Length));
                         break;
                     case ChangeType.Changed:
-                        diff.Write("{0,4}      ", ++line1, line2);
-                        result = false;
-                        diff.Write("(-) ");
-                        diff.WriteLine(change.Element1);
-                        diff.Write("     {1,4} ", line1, ++line2);
-                        diff.Write("(+) ");
-                        diff.WriteLine(change.Element2);
+                        startIndex = diff.Length;
+                        diff.AppendFormat("{0,4}      ", ++line1, line2);
+                        diff.AppendFormat("(-) ");
+                        diff.AppendLine(change.Element1);
+                        list.Add(NewLineChange(LineChangeType.Remove, diff, startIndex, diff.Length));
+                        startIndex = diff.Length;
+                        diff.AppendFormat("     {1,4} ", line1, ++line2);
+                        diff.AppendFormat("(+) ");
+                        diff.AppendLine(change.Element2);
+                        list.Add(NewLineChange(LineChangeType.Add, diff, startIndex, diff.Length));
                         break;
                 }
             }
 
-            return result;
+            return list;
         }
 
         class CodeLineEqualityComparer : IEqualityComparer<string>

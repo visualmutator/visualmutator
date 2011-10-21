@@ -81,7 +81,7 @@ namespace VisualMutator.OperatorTests
                 SelectedTypes = assembly.MainModule.Types 
             };
             MutantsContainer mutantsContainer = new MutantsContainer();
-            var executedOperator = mutantsContainer.GenerateMutantsForOperators(mutationSessionChoices).Single();
+            var executedOperator = mutantsContainer.GenerateMutantsForOperators(mutationSessionChoices).MutantsGroupedByOperators.Single();
 
             executedOperator.Mutants.Single(mut =>
             {

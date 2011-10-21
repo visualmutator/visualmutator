@@ -18,7 +18,14 @@
             </TabItem>
 
             <TabItem Header="Mutated Code">
-                <TextBox Text="{Binding DecompiledCode}"/>
+                <RichTextBox Name="codeTextBox" FontFamily="Consolas">
+                    <RichTextBox.Resources>
+                        <Style TargetType="{x:Type Paragraph}">
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                    </RichTextBox.Resources>
+
+                </RichTextBox>
             </TabItem>
 
         </TabControl>
