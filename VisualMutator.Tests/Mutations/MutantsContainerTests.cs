@@ -22,54 +22,7 @@
     [TestFixture]
     public class MutantsContainerTests
     {
-        public class TestOperator : IMutationOperator
-        {
-            public string Name
-            {
-                get
-                {
-                    return "TestOperatorName";
-                }
-            }
 
-            public string Description
-            {
-                get
-                {
-                    return "TestOperatorDescription";
-                }
-            }
-
-            public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
-            {
-                yield return new MutationTarget(types.Single(t => t.Name == "Type1").Methods.Single());
-                yield return new MutationTarget(types.Single(t => t.Name == "Type3").Methods.Single());
-
-            }
-
-            public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
-            {
-                int i = 0;
-                var results = new MutationResultsCollection();
-                foreach (var mutationTarget in targets)
-                {
-                    var assemblyDefinitions = assembliesFactory.GetNewCopy();
-                    mutationTarget.GetMethod(assemblyDefinitions).Name = "MutatedMethodName" + i++;
-                    
-                    results.MutationResults.Add(new MutationResult
-                    {
-                       
-                        MutatedAssemblies = assemblyDefinitions,
-                        MutationTarget = mutationTarget
-                    });
-                }
-
-                return results;
-
-            }
-
-         
-        }
         
         [Test]
         public void Test1()
@@ -104,7 +57,7 @@
             // Assert
             executedOperator.Name.ShouldEqual("TestOperatorName");
             executedOperator.Mutants.Count().ShouldEqual(2);
-            executedOperator.Mutants.First().MutatedAssemblies.Single()
+            executedOperator.Mutants.First().MutationResult.MutatedAssemblies.Single()
                 .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
 
          

@@ -95,8 +95,11 @@
                         throw new InvalidOperationException("Tried to set invalid state: " + value);
                     }
 
-                    Children.Cast<TestTreeNode>()
-                        .Each(c => c.SetStatus(value, updateChildren: true, updateParent: false));
+                    foreach (var child in Children.Cast<TestTreeNode>())
+                    {
+                        child.SetStatus(value, updateChildren: true, updateParent: false);
+                    }
+       
                     
                 }
                 

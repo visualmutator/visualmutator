@@ -8,6 +8,7 @@ namespace VisualMutator.Controllers
 
     using Mono.Cecil;
 
+    using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.TestsTree;
@@ -16,13 +17,21 @@ namespace VisualMutator.Controllers
     {
         private readonly int _id;
 
-        private readonly IEnumerable<AssemblyDefinition> _mutatedAssemblies;
+        private readonly MutationResult _mutationResult;
 
-        public Mutant(int id, MutationNode parent, IEnumerable<AssemblyDefinition> mutatedAssemblies)
+        public MutationResult MutationResult
+        {
+            get
+            {
+                return _mutationResult;
+            }
+        }
+
+        public Mutant(int id, MutationNode parent, MutationResult mutationResult)
             : base(parent, "Mutant", false)
         {
             _id = id;
-            _mutatedAssemblies = mutatedAssemblies;
+            _mutationResult = mutationResult;
         }
 
         public int Id
@@ -48,13 +57,6 @@ namespace VisualMutator.Controllers
 
 
             base.SetState(value, updateChildren, updateParent);
-        }
-        public IEnumerable<AssemblyDefinition> MutatedAssemblies
-        {
-            get
-            {
-                return _mutatedAssemblies;
-            }
         }
 
         private int _numberOfTestsThatKilled;

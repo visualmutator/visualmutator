@@ -38,12 +38,12 @@
             Kernel.Bind<IMainControl>().To<MainControl>().InSingletonScope();
             Kernel.Bind<MainWindowViewModel>().ToSelf().InSingletonScope();
             Kernel.Bind<Services>().ToSelf().InSingletonScope();
-     
 
-
-            var exe = new Execute();
+            Kernel.Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
+            
+            var exe = new DispatcherExecute();
             exe.InitializeWithDispatcher();
-            Kernel.Bind<IExecute>().ToConstant(exe);
+            Kernel.Bind<IDispatcherExecute>().ToConstant(exe);
 
         }
     }

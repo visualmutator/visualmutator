@@ -37,15 +37,7 @@
             return obs;
         }
    
-        public static IEnumerable<T> Each<T>(this IEnumerable<T> collection, Action<T> action)
-        {
-            var coll = collection.ToList();
-            foreach (T item in coll)
-            {
-                action(item);
-            }
-            return coll;
-        }
+        
         public static string InQuotes(this string str)
         {
             return string.Format(@"""{0}""", str);

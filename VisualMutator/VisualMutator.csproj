@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DiffLib">
+      <HintPath>..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.Decompiler, Version=1.0.0.1000, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="ILSpy">
       <HintPath>..\..\..\..\..\..\..\PORTABLE\Programowanie\ILSpy\ILSpy.exe</HintPath>
     </Reference>
@@ -119,8 +123,6 @@
     <Compile Include="Controllers\EventMessages\LoadLastCreatedMutantEventArgs.cs" />
     <Compile Include="Controllers\MutationResultsController.cs" />
     <Compile Include="Controllers\TestingAndManagingController.cs" />
-    <Compile Include="Infrastructure\Factories\FuncFactory.cs" />
-    <Compile Include="Infrastructure\Factories\IFactory.cs" />
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Infrastructure\TreeNode.cs" />

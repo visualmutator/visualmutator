@@ -119,7 +119,11 @@
                 .Select(group =>
                 {
                     var ns = new TestNodeNamespace(testSession.TestsRootNode, group.Key);
-                    group.Each(c => c.Parent = ns);
+                    foreach (var nodeClass in group)
+                    {
+                        nodeClass.Parent = ns;
+                    }
+       
                     ns.Children.AddRange(group);
                     return ns;
 

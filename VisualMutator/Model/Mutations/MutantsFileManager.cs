@@ -90,7 +90,7 @@
 
             var result = new StoredMutantInfo(mutantDirectoryPath);
    
-            foreach (AssemblyDefinition assemblyDefinition in mutant.MutatedAssemblies)
+            foreach (AssemblyDefinition assemblyDefinition in mutant.MutationResult.MutatedAssemblies)
             {
                 string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
                 _fs.File.Delete(file);

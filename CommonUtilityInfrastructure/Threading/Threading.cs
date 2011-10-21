@@ -5,6 +5,7 @@ namespace CommonUtilityInfrastructure.Threading
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
+    using System.Threading.Tasks.Schedulers;
 
     using CommonUtilityInfrastructure.WpfUtils;
     using CommonUtilityInfrastructure.WpfUtils.Messages;
@@ -28,21 +29,48 @@ namespace CommonUtilityInfrastructure.Threading
         Task ScheduleAsyncSequential<T>(Func<T> onBackground, 
                                                         Action<T> onGui, Action onException = null, Action onFinally = null);
     }
+
+    public interface IThreadPoolExecute
+    {
+        TaskScheduler ThreadPoolScheduler { get; }
+
+        TaskScheduler LimitedThreadPoolScheduler(int degree);
+    }
+
+    public class ThreadPoolExecute : IThreadPoolExecute
+    {
+        public TaskScheduler ThreadPoolScheduler
+        {
+            get
+            {
+                return TaskScheduler.Default;
+            }
+        }
+        public TaskScheduler LimitedThreadPoolScheduler(int degree)
+        {
+            return new LimitedConcurrencyLevelTaskScheduler(degree);
+        }
+    }
+
     public class Threading : IThreading
     {
-        private readonly IExecute _execute;
+        private readonly IDispatcherExecute _execute;
+
+        private readonly IThreadPoolExecute _threadPoolExecute;
 
         private readonly IMessageService _messageService;
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public Threading(
-            IExecute execute,
-            IMessageService messageService
-            )
+            IDispatcherExecute execute,
+            IThreadPoolExecute threadPoolExecute,
+            IMessageService messageService)
         {
             _execute = execute;
+            _threadPoolExecute = threadPoolExecute;
             _messageService = messageService;
         }
+
         public void InvokeOnGui( Action onGui)
         {
             _execute.OnUIThread(onGui);
@@ -66,7 +94,7 @@ namespace CommonUtilityInfrastructure.Threading
         public Task ScheduleAsync(Action onBackground, Action onGui = null,
             Action onException = null, Action onFinally = null )
         {
-            return new TaskFactory(_execute.ThreadPoolScheduler)
+            return new TaskFactory(_threadPoolExecute.ThreadPoolScheduler)
                 .StartNew(onBackground)
                 .ContinueWith(prev =>
                 {
@@ -75,11 +103,11 @@ namespace CommonUtilityInfrastructure.Threading
                 }, _execute.GuiScheduler);
 
         }
-
+        
         public Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, 
             Action onException = null, Action onFinally = null)
         {
-            return new TaskFactory(_execute.ThreadPoolScheduler)
+            return new TaskFactory(_threadPoolExecute.ThreadPoolScheduler)
                 .StartNew(onBackground)
                 .ContinueWith(prev =>
                 {
@@ -92,7 +120,7 @@ namespace CommonUtilityInfrastructure.Threading
         public Task ScheduleAsyncSequential(Action onBackground, Action onGui = null, 
             Action onException = null, Action onFinally = null)
         {
-            return new TaskFactory(_execute.LimitedThreadPoolScheduler(1))
+            return new TaskFactory(_threadPoolExecute.LimitedThreadPoolScheduler(1))
                 .StartNew(onBackground)
                 .ContinueWith(prev =>
                 {
@@ -105,7 +133,7 @@ namespace CommonUtilityInfrastructure.Threading
         public Task ScheduleAsyncSequential<T>(Func<T> onBackground, 
             Action<T> onGui, Action onException = null, Action onFinally = null)
         {
-            return new TaskFactory(_execute.LimitedThreadPoolScheduler(1))
+            return new TaskFactory(_threadPoolExecute.LimitedThreadPoolScheduler(1))
                 .StartNew(onBackground)
                 .ContinueWith(prev =>
                 {

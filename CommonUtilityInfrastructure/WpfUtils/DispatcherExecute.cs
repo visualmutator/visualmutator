@@ -10,18 +10,16 @@
 
     #endregion
 
-    public interface IExecute
+    public interface IDispatcherExecute
     {
         void OnUIThread(Action action);
 
         TaskScheduler GuiScheduler { get; }
 
-        TaskScheduler ThreadPoolScheduler { get; }
 
-        TaskScheduler LimitedThreadPoolScheduler(int degree);
     }
 
-    public class Execute : IExecute
+    public class DispatcherExecute : IDispatcherExecute
     {
         private Action<Action> _executor = action => action();
 
@@ -39,17 +37,7 @@
                 return _guiScheduler;
             }
         }
-        public TaskScheduler ThreadPoolScheduler
-        {
-            get
-            {
-                return TaskScheduler.Default;
-            }
-        }
-        public TaskScheduler LimitedThreadPoolScheduler(int degree)
-        {
-            return new LimitedConcurrencyLevelTaskScheduler(degree);
-        }
+       
 
         public void InitializeWithDispatcher()
         {

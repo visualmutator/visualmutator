@@ -152,7 +152,11 @@
         }
         protected override void UpdateChildren()
         {
-            Children.Each(c => c.SetIsIncluded(_isIncluded, true, false));
+            foreach (var child in Children)
+            {
+                child.SetIsIncluded(_isIncluded, true, false);
+            }
+          
         }
         
         internal virtual void UpdateIsIncludedBasedOnChildren()
@@ -222,8 +226,11 @@
         protected override void UpdateChildren()
         {
             if(Children != null)
-            Children.Each(c => 
-                c.SetIsIncluded(_isIncluded, updateChildren: true, updateParent: false));
+                foreach (var child in Children)
+                {
+                    child.SetIsIncluded(_isIncluded, updateChildren: true, updateParent: false);
+                }
+    
         }
 
         private void UpdateIsIncludedBasedOnChildren()
@@ -391,7 +398,11 @@
 
                 if (updateChildren && _isIncluded != null)
                 {
-                    Children.Each(c => c.SetIsIncluded(_isIncluded, true, false));
+                    foreach (var child in Children)
+                    {
+                        child.SetIsIncluded(_isIncluded, true, false);
+                    }
+        
                 }
 
                 if (updateParent && _parent != null)
@@ -421,7 +432,11 @@
             where TThis : IHasChildren<TThis, TChildren> 
             where TChildren : Node, IHasParent<TThis, TChildren>
         {
-            @this.Children.Each(c => c.SetIsIncluded(value, true, false));
+    
+            foreach (var child in @this.Children)
+            {
+                child.SetIsIncluded(value, true, false);
+            }
         }
     }
 

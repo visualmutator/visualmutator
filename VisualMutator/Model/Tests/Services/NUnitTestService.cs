@@ -134,7 +134,10 @@
             }
             else
             {
-                tests.Cast<ITest>().Each(t => GetTestClassesInternal(list, t));
+                foreach (var t in tests.Cast<ITest>())
+                {
+                    GetTestClassesInternal(list, t);
+                }
             }
         }
 

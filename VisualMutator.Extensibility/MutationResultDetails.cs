@@ -36,6 +36,7 @@ namespace VisualMutator.Extensibility
             set;
         }
 
+        public MethodDefinition ModifiedMethod { get; set; }
     }
 
 

@@ -131,7 +131,8 @@
                 var result = new MutationResult
                 {
                     MutatedAssemblies = assemblies,
-                    MutationTarget = target
+                    MutationTarget = target,
+                    ModifiedMethod = methodToModify,
                 };
 
                 results.MutationResults.Add(result);

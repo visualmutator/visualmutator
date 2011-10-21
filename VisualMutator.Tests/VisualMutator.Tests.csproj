@@ -61,11 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
+    <Compile Include="Mutations\TestOperator.cs" />
+    <Compile Include="MvcMutations\ChangeRouteTest.cs" />
+    <Compile Include="MvcMutations\RedirectToAction.cs" />
+    <Compile Include="MvcMutations\SwapActionNamesTests.cs" />
+    <Compile Include="MvcMutations\Utils.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
     <Compile Include="Util\CecilUtils.cs" />
-    <Compile Include="Util\TestUtils.cs" />
     <Compile Include="MonoCecilTests.cs" />
     <Compile Include="UnitTesting\MsTestServiceTests.cs" />
     <Compile Include="MutationGeneratorTests.cs" />
@@ -79,6 +84,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonTestInfrastructure\CommonTestInfrastructure.csproj">
+      <Project>{DBFC76B9-C110-4796-9D8A-33AC5BABC833}</Project>
+      <Name>CommonTestInfrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
       <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
       <Name>CommonUtilityInfrastructure</Name>

@@ -180,7 +180,7 @@
               //  {
                     var children = op.CreateMutants(targets,
                        new AssembliesToMutateFactory(() => Read(memoryStreams)))
-                       .MutationResults.Select(res => new Mutant(i++, executedOperator, res.MutatedAssemblies));
+                       .MutationResults.Select(result => new Mutant(i++, executedOperator, result));
 
 
                     executedOperator.Children.AddRange(children);

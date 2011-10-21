@@ -31,9 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DiffLib">
+      <HintPath>..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -52,10 +56,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparers\CodeAssert.cs" />
     <Compile Include="Comparers\CollectionComparer.cs" />
     <Compile Include="Comparers\Comparers.cs" />
     <Compile Include="Comparers\FuncComparer.cs" />
     <Compile Include="Comparers\KeyComparer.cs" />
+    <Compile Include="DependencyInjection\FuncFactory.cs" />
+    <Compile Include="DependencyInjection\IFactory.cs" />
     <Compile Include="FileSystem\DirectoryService.cs" />
     <Compile Include="FileSystem\FileService.cs" />
     <Compile Include="FileSystem\FileSystemService.cs" />
@@ -73,7 +80,7 @@
     <Compile Include="WpfUtils\Controller.cs" />
     <Compile Include="WpfUtils\EventListeners.cs" />
     <Compile Include="WpfUtils\EventService.cs" />
-    <Compile Include="WpfUtils\Execute.cs" />
+    <Compile Include="WpfUtils\DispatcherExecute.cs" />
     <Compile Include="WpfUtils\IEventNotifier.cs" />
     <Compile Include="WpfUtils\IView.cs" />
     <Compile Include="WpfUtils\MessageService.cs" />

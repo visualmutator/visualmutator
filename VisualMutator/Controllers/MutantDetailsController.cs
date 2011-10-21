@@ -2,10 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
 
+    using CommonUtilityInfrastructure.Comparers;
     using CommonUtilityInfrastructure.WpfUtils;
+
+    using ICSharpCode.Decompiler;
+
+    using ICSharpCode.ILSpy;
 
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
@@ -24,9 +30,18 @@
         {
             LoadTests(mutant);
 
-            
+            var cs = new CSharpLanguage();
 
+       
+            var output = new PlainTextOutput();
+            var decompilationOptions = new DecompilationOptions();
+            decompilationOptions.DecompilerSettings.ShowXmlDocumentation = false;
+            var methodDefinition = mutant.MutationResult.ModifiedMethod;
+            cs.DecompileMethod(methodDefinition, output, decompilationOptions);
 
+            string mutantCode = output.ToString();
+
+         //   CodeAssert.GetDiff(mutantCode)
         }
 
 
@@ -85,7 +100,19 @@
                 SetAndRise(ref _testNamespaces, value, () => TestNamespaces);
             }
         }
-       
 
+        private string _decompiledCode;
+
+        public string DecompiledCode
+        {
+            get
+            {
+                return _decompiledCode;
+            }
+            set
+            {
+                SetAndRise(ref _decompiledCode, value, () => DecompiledCode);
+            }
+        }
     }
 }
