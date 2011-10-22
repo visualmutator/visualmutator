@@ -11,16 +11,10 @@
 
     public class StoredMutantInfo
     {
-        private readonly string _directoryPath;
+
         private readonly List<string> _assembliesPaths;
 
-        public string DirectoryPath
-        {
-            get
-            {
-                return _directoryPath;
-            }
-        }
+   
 
         public List<string> AssembliesPaths
         {
@@ -30,9 +24,9 @@
             }
         }
 
-        public StoredMutantInfo(string directoryPath)
+        public StoredMutantInfo()
         {
-            _directoryPath = directoryPath;
+     
             _assembliesPaths = new List<string>();
         }
 

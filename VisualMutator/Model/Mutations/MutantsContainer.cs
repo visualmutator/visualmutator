@@ -176,16 +176,25 @@
                 int i = 0;
                 var executedOperator = new ExecutedOperator(root, op.Name);
 
-                //for (int j = 0; j < 20; j++)
-              //  {
-                    var children = op.CreateMutants(targets,
-                       new AssembliesToMutateFactory(() => Read(memoryStreams)))
-                       .MutationResults.Select(result => new Mutant(i++, executedOperator, result));
+
+                var assembliesFactory = new AssembliesToMutateFactory(() => Read(memoryStreams));
+                for (int j = 0; j < 3; j++)
+                {
+                    var results = op.CreateMutants(targets,assembliesFactory).MutationResults;
+
+                    foreach (var mutationResult in results)
+                    {
+
+                        var mutant = new Mutant(i++, executedOperator, mutationResult);
+
+                         executedOperator.Children.Add(mutant);
+                    }
+                    //   .Select(result => new Mutant(i++, executedOperator, result));
 
 
-                    executedOperator.Children.AddRange(children);
+                   // executedOperator.Children.AddRange(children);
                     
-               // }
+                }
                 executedOperator.DisplayedText = "{0} - Mutants: {1}"
                     .Formatted(executedOperator.Name, executedOperator.Children.Count);
 
@@ -209,7 +218,7 @@
             return assemblies.Select(assemblyDefinition =>
             {
                 var stream = new MemoryStream();
-                assemblyDefinition.Write(stream);
+                assemblyDefinition.Write(stream,new WriterParameters());
                 return stream;
 
             }).ToList();
@@ -220,7 +229,7 @@
             return streams.Select( stream =>
             {
                 stream.Position = 0;
-                return AssemblyDefinition.ReadAssembly(stream);
+                return AssemblyDefinition.ReadAssembly(stream, new ReaderParameters(ReadingMode.Immediate));
 
             }).ToList();
         }

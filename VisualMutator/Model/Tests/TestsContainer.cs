@@ -24,9 +24,11 @@
  
         void UnloadTests();
 
-        StoredMutantInfo CurrentMutant { get; }
+   
 
-        void RunTestsForMutant(Mutant mutant);
+        void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
+
+        TestEnvironmentInfo InitTestEnvironment();
     }
 
     public class TestsContainer : ITestsContainer
@@ -41,15 +43,7 @@
 
         private StoredMutantInfo _currentMutant;
 
-        public StoredMutantInfo CurrentMutant
-        {
-            get
-            {
-                return _currentMutant;
-            }
-        }
-
-      
+     
 
         public TestsContainer(NUnitTestService nunit, MsTestService ms,
             IMutantsFileManager mutantsFileManager, CommonUtilityInfrastructure.Services services)
@@ -62,10 +56,10 @@
             };
         }
 
-        public void RunTestsForMutant(Mutant mutant)
+        public void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
         {
             mutant.State = MutantResultState.Tested;
-            StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(mutant);
+            StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
             TestSession testSession = LoadTests(storedMutantInfo);
 
@@ -97,6 +91,10 @@
             mutant.TestSession.IsComplete = true;
         }
 
+        public TestEnvironmentInfo InitTestEnvironment()
+        {
+            return _mutantsFileManager.InitTestEnvironment();
+        }
 
         public TestSession LoadTests(StoredMutantInfo mutant)
         {

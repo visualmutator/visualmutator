@@ -8,6 +8,7 @@
     using Mono.Cecil;
 
     using VisualMutator.Controllers;
+    using VisualMutator.Model.Mutations;
 
     public class MutationTestingSession
     {
@@ -21,5 +22,7 @@
         public double MutantsRatio { get; set; }
 
         public IList<AssemblyDefinition> OriginalAssemblies { get; set; }
+
+        public TestEnvironmentInfo TestEnvironment { get; set; }
     }
 }

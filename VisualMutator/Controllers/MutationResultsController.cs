@@ -122,14 +122,16 @@
         public void RunTests(MutationTestingSession currentSession)
         {
             _viewModel.OperationsStateDescription = "Running tests...";
-
+            _viewModel.AreOperationsOngoing = true;
             var allMutants = currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
             _viewModel.InitTestingProgress(allMutants.Count);
+            
             _services.Threading.ScheduleAsync(() =>
             {
+                currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
                 foreach (Mutant mutant in allMutants.Where(m=>m.TestSession == null || !m.TestSession.IsComplete))
                 {
-                    _testsContainer.RunTestsForMutant(mutant);
+                    _testsContainer.RunTestsForMutant(currentSession.TestEnvironment, mutant);
                     _viewModel.UpdateTestingProgress();
 
                     int mutantsKilled = allMutants.Count(m => m.State == MutantResultState.Killed);

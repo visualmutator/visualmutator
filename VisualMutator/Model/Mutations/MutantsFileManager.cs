@@ -22,8 +22,10 @@
 
         void DeleteMutantFiles(StoredMutantInfo mutant);
 
-      
-        StoredMutantInfo StoreMutant(Mutant mutant);
+
+        StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
+
+        TestEnvironmentInfo InitTestEnvironment();
     }
 
     public class MutantsFileManager : IMutantsFileManager
@@ -49,36 +51,27 @@
             _fs = fs;
         }
 
-        public string MutantDirectoryPath()
+
+
+        public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironmentInfo,Mutant mutant)
         {
-            return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+            var result = new StoredMutantInfo();
    
-        }
-/*
-        public void StoreMutant(StoredMutantInfo mutant, IEnumerable<AssemblyDefinition> assemblies)
-        {
-            string mutantDirectoryPath = MutantDirectoryPath(mutant);
-            _fs.Directory.CreateDirectory(mutantDirectoryPath);
-
-            var refer = _visualStudio.GetReferencedAssemblies();
-            foreach (var referenced in refer)
+            foreach (AssemblyDefinition assemblyDefinition in mutant.MutationResult.MutatedAssemblies)
             {
-                string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(referenced));
-                _fs.File.Copy(referenced, destination, overwrite: true);
-            }
-
-            foreach (AssemblyDefinition assemblyDefinition in assemblies)
-            {
-                string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
+                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                string file = Path.Combine(testEnvironmentInfo.Directory, assemblyDefinition.Name.Name + ".dll");
                 _fs.File.Delete(file);
                 _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
-                mutant.AssembliesPaths.Add(file);
+                result.AssembliesPaths.Add(file);
             }
-        }*/
-        public StoredMutantInfo StoreMutant(Mutant mutant)
-        {
-            string mutantDirectoryPath = MutantDirectoryPath();
+            return result;
+        }
 
+        public TestEnvironmentInfo InitTestEnvironment()
+        {
+            string mutantDirectoryPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             _fs.Directory.CreateDirectory(mutantDirectoryPath);
 
             var refer = _visualStudio.GetReferencedAssemblies();//TODO: Use mono.cecil
@@ -88,68 +81,24 @@
                 _fs.File.Copy(referenced, destination, overwrite: true); //TODO: Remove overwrite?
             }
 
-            var result = new StoredMutantInfo(mutantDirectoryPath);
-   
-            foreach (AssemblyDefinition assemblyDefinition in mutant.MutationResult.MutatedAssemblies)
-            {
-                string file = Path.Combine(mutantDirectoryPath, assemblyDefinition.Name.Name + ".dll");
-                _fs.File.Delete(file);
-                _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
-                result.AssembliesPaths.Add(file);
-            }
-            return result;
+            return new TestEnvironmentInfo(mutantDirectoryPath);
         }
+
         public void DeleteMutantFiles(StoredMutantInfo mutant)
         {
-            _fs.Directory.Delete(mutant.DirectoryPath, recursive: true);
-        }
-        /*
-        public string SessionsFile
-        {
-            get
-            {
-                string path = _visualStudio.GetMutantsRootFolderPath();
-                return Path.Combine(path, "mutants.xml");
-            }
-        }
-
-        
-
-        public IEnumerable<StoredMutantInfo> LoadSessions()
-        {
-            if (File.Exists(SessionsFile))
-            {
-                var ser = new XmlSerializer(typeof(List<StoredMutantInfo>));
-                using (var file = new StreamReader(SessionsFile))
-                {
-                    try
-                    {
-                        return (List<StoredMutantInfo>)ser.Deserialize(file);
-                        
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        _log.Error("Invalid mutants file.", e);
-                      
-                    }
-
-
-                }
-            }
-            return new List<StoredMutantInfo>();
+           // _fs.Directory.Delete(mutant.DirectoryPath, recursive: true);
         }
        
 
-        public void SaveSettingsFile(IEnumerable<StoredMutantInfo> mutants)
+    }
+
+    public class TestEnvironmentInfo
+    {
+        public TestEnvironmentInfo(string directory)
         {
-            var ser = new XmlSerializer(typeof(List<StoredMutantInfo>));
-
-            using (var file = new StreamWriter(SessionsFile))
-            {
-                ser.Serialize(file, mutants.ToList());
-            }
+            Directory = directory;
         }
-        */
 
+        public string Directory { get; set; }
     }
 }

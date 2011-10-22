@@ -62,7 +62,7 @@
        
             var container = new TestsContainer(nUnitTestService, msTestService, null,Create.TestServices());
          
-            var mutant = new StoredMutantInfo("tmp");
+            var mutant = new StoredMutantInfo();
             mutant.AssembliesPaths.Add( "a");
        
             //Act:
