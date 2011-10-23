@@ -1,4 +1,4 @@
-namespace VisualMutator.Infrastructure
+namespace VisualMutator.Infrastructure.CheckboxedTree
 {
     public interface IHasParent<out TParent, TThis>
         where TParent : IHasChildren<TParent, TThis>

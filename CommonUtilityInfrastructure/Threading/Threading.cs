@@ -5,10 +5,8 @@ namespace CommonUtilityInfrastructure.Threading
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
-    using System.Threading.Tasks.Schedulers;
 
     using CommonUtilityInfrastructure.WpfUtils;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using log4net;
     public interface IThreading

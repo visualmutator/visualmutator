@@ -1,4 +1,4 @@
-namespace VisualMutator.Infrastructure
+namespace VisualMutator.Infrastructure.CheckboxedTree
 {
     using System.Collections.Generic;
     using System.Linq;

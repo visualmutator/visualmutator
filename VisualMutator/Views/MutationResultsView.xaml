@@ -6,7 +6,8 @@
              xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
              xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
-             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d" 
+             xmlns:Views="clr-namespace:VisualMutator.Views"
+             xmlns:Structure="clr-namespace:VisualMutator.Model.Mutations.Structure" mc:Ignorable="d" 
              d:DesignHeight="488" d:DesignWidth="393">
 
     <UserControl.Resources>
@@ -96,7 +97,7 @@
         <TreeView Grid.Row="1" ItemsSource="{Binding Operators}" SelectedItemChanged="TreeView_SelectedItemChanged">
 
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type Controllers:ExecutedOperator}"
+                <HierarchicalDataTemplate DataType="{x:Type Structure:ExecutedOperator}"
                                     ItemsSource="{Binding Children}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
@@ -105,7 +106,7 @@
                     </DockPanel>
                 </HierarchicalDataTemplate>
 
-                <DataTemplate DataType="{x:Type Controllers:Mutant}">
+                <DataTemplate DataType="{x:Type Structure:Mutant}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
                         <TextBlock Text="{Binding DisplayedText}"/>

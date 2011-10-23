@@ -20,6 +20,8 @@ namespace VisualMutator.Views
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Controllers;
+    using VisualMutator.Model.CodeDifference;
+    using VisualMutator.ViewModels;
 
     /// <summary>
     /// Interaction logic for MutantDetailsView.xaml

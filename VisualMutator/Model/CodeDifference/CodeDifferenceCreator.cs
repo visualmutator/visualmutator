@@ -1,12 +1,10 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.CodeDifference
 {
     #region Usings
 
     using System;
     using System.Collections.Generic;
     using System.Text;
-
-    using CommonUtilityInfrastructure.Comparers;
 
     using DiffLib;
 
@@ -15,8 +13,8 @@
 
     using Mono.Cecil;
 
-    using VisualMutator.Controllers;
     using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Structure;
 
     #endregion
 

@@ -1,4 +1,4 @@
-﻿namespace System.Linq
+﻿namespace CommonUtilityInfrastructure
 {
     using System;
     using System.Collections.Generic;
@@ -126,13 +126,19 @@
         {
             if (@switch.HasResult)
             {
-                 throw new InvalidOperationException("Match was already found: " + @switch.Value);
+                if (@switch.Value.Equals(caseValue))
+                {
+                    throw new InvalidOperationException("Match was already found: " + @switch.Value);
+                }
+
+
             }
-            if (@switch.Value.Equals(caseValue))
+            else if (@switch.Value.Equals(caseValue))
             {
                 @switch.Result = action();
                 @switch.HasResult = true;
             }
+            
             return @switch;
         }
         public static ValuedSwitch<T, R> Case<T, R>(this ValuedSwitch<T, R> @switch, T caseValue, R result)

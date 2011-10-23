@@ -17,8 +17,9 @@
 
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
-    using VisualMutator.Infrastructure.Factories;
+    using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Mutations.Operators;
+    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.TestsTree;

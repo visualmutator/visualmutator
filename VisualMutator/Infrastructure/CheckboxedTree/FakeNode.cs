@@ -1,4 +1,4 @@
-namespace VisualMutator.Infrastructure
+namespace VisualMutator.Infrastructure.CheckboxedTree
 {
     public class FakeNode : NormalNode
     {

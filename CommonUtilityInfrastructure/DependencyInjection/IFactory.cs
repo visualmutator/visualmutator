@@ -1,4 +1,4 @@
-namespace VisualMutator.Infrastructure.Factories
+namespace CommonUtilityInfrastructure.DependencyInjection
 {
     public interface IFactory<out TObject>
     {

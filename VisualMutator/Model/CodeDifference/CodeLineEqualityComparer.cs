@@ -1,4 +1,4 @@
-namespace VisualMutator.Model
+namespace VisualMutator.Model.CodeDifference
 {
     using System.Collections.Generic;
 

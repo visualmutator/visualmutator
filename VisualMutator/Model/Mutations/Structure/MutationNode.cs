@@ -1,16 +1,11 @@
-﻿namespace VisualMutator.Model.Tests.TestsTree
+﻿namespace VisualMutator.Model.Mutations.Structure
 {
     #region Usings
 
     using System;
     using System.Linq;
-    using System.Windows.Input;
 
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Infrastructure;
-    using VisualMutator.Model.Mutations;
+    using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
     public class MutationRootNode : MutationNode

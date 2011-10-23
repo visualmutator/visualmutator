@@ -1,9 +1,7 @@
-namespace VisualMutator.Controllers
+namespace VisualMutator.Model.Mutations.Structure
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using VisualMutator.Model.Tests.TestsTree;
 
     public class ExecutedOperator : MutationNode
     {

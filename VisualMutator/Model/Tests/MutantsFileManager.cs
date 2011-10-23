@@ -1,18 +1,15 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Tests
 {
-    using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
-    using System.Xml.Serialization;
 
     using CommonUtilityInfrastructure.FileSystem;
 
     using Mono.Cecil;
 
-    using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
+    using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
 
     using log4net;

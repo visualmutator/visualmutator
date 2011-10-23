@@ -9,12 +9,13 @@
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.DependencyInjection;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Infrastructure;
-    using VisualMutator.Infrastructure.Factories;
     using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.TestsTree;

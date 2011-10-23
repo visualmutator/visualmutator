@@ -9,7 +9,10 @@
     using System.Windows.Data;
     using System.Windows.Media;
 
+    using CommonUtilityInfrastructure;
+
     using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.TestsTree;
 
     #endregion
@@ -21,7 +24,7 @@
         {
 
             return Functional.ValuedSwitch<MutantResultState, Brush>(state)
-                .Case(MutantResultState.NoState, Brushes.Gainsboro)
+                .Case(MutantResultState.Waiting, Brushes.Gainsboro)
                 .Case(MutantResultState.Killed, Brushes.Gray)
                 .Case(MutantResultState.Live, Brushes.Orange)
                 .Case(MutantResultState.Tested, Brushes.Blue)

@@ -9,15 +9,13 @@
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.DependencyInjection;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using Moq;
 
     using NUnit.Framework;
-
-    using VisualMutator.Infrastructure.Factories;
 
     #endregion
 

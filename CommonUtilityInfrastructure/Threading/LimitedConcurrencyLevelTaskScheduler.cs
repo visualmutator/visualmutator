@@ -1,10 +1,10 @@
-﻿namespace System.Threading.Tasks.Schedulers
+﻿namespace CommonUtilityInfrastructure.Threading
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Provides a task scheduler that ensures a maximum concurrency level while

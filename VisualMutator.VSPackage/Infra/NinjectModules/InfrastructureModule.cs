@@ -9,7 +9,6 @@
     using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using Ninject;
     using Ninject.Modules;

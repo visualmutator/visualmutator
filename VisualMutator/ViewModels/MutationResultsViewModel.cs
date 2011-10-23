@@ -10,6 +10,7 @@
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Controllers;
+    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 

@@ -4,7 +4,7 @@
     using System.Linq;
 
     using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using Mono.Cecil;
 

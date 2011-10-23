@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Reflection;
 
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using NUnit.Core;
     using NUnit.Util;

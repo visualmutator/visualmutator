@@ -4,10 +4,10 @@
 
     using System;
 
+    using CommonUtilityInfrastructure.DependencyInjection;
+
     using Ninject;
     using Ninject.Syntax;
-
-    using VisualMutator.Infrastructure.Factories;
 
     #endregion
 

@@ -10,6 +10,7 @@
     using NUnit.Framework;
 
     using VisualMutator.Model;
+    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Mutations;
 
     [TestFixture]

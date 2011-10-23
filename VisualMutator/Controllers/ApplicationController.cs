@@ -8,8 +8,6 @@
     using System.Windows.Threading;
 
     using CommonUtilityInfrastructure.WpfUtils;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
-
 
     using VisualMutator.Infrastructure;
     using VisualMutator.ViewModels;

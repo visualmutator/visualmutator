@@ -1,4 +1,4 @@
-﻿namespace CommonUtilityInfrastructure.WpfUtils.Messages
+﻿namespace CommonUtilityInfrastructure.WpfUtils
 {
     #region Usings
 

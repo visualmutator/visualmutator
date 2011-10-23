@@ -1,10 +1,9 @@
-﻿namespace VisualMutator.Infrastructure
+﻿namespace VisualMutator.Infrastructure.CheckboxedTree
 {
     #region Usings
 
     using System.Linq;
 
-    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
 
     #endregion

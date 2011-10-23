@@ -12,14 +12,12 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
 
     using Mono.Cecil;
 
 
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
-    using VisualMutator.Infrastructure.Factories;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;

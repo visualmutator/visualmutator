@@ -6,6 +6,9 @@ namespace VisualMutator.Model.Mutations
     using System.Linq;
 
     using Mono.Cecil;
+
+    using VisualMutator.Model.Mutations.Structure;
+
     public interface IAssembliesManager
     {
         StoredAssemblies Store(IList<AssemblyDefinition> assemblies);

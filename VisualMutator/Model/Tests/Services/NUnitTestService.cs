@@ -9,7 +9,7 @@
     using System.Threading;
 
     using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils.Messages;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     using NUnit.Core;
     using NUnit.Util;

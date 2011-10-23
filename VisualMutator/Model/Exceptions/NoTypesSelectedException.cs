@@ -1,4 +1,4 @@
-namespace VisualMutator.Model.Mutations
+namespace VisualMutator.Model.Exceptions
 {
     using System;
     using System.Runtime.Serialization;

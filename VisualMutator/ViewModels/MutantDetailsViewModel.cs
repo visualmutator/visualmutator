@@ -1,8 +1,8 @@
-namespace VisualMutator.Controllers
+namespace VisualMutator.ViewModels
 {
-    using CommonUtilityInfrastructure.Comparers;
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 

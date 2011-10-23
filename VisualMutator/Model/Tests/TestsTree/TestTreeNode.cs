@@ -10,6 +10,7 @@
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Infrastructure;
+    using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
 

@@ -4,7 +4,6 @@
 
     using System;
     using System.Threading.Tasks;
-    using System.Threading.Tasks.Schedulers;
     using System.Windows;
     using System.Windows.Threading;
 

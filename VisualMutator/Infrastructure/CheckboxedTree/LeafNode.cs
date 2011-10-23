@@ -1,4 +1,4 @@
-namespace VisualMutator.Infrastructure
+namespace VisualMutator.Infrastructure.CheckboxedTree
 {
     public class LeafNode<TParent, TThis> :Node, IHasParent<TParent, TThis>
         where TThis : LeafNode<TParent, TThis>, IHasParent<TParent, TThis>

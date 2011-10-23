@@ -9,9 +9,12 @@ namespace VisualMutator.Model.Mutations.Types
     using System.Linq;
     using System.Reflection;
 
+    using CommonUtilityInfrastructure;
+
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
+    using VisualMutator.Infrastructure.CheckboxedTree;
 
     using log4net;
 

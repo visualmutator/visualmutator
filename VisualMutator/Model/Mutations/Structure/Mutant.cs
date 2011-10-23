@@ -1,19 +1,12 @@
-namespace VisualMutator.Controllers
+namespace VisualMutator.Model.Mutations.Structure
 {
     using System;
-    using System.Collections.Generic;
 
     using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using Mono.Cecil;
 
     using VisualMutator.Extensibility;
-    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests;
-    using VisualMutator.Model.Tests.TestsTree;
 
-    
     public class Mutant : MutationNode
     {
         private readonly int _id;

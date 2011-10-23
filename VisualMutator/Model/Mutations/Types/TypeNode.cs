@@ -5,6 +5,7 @@
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
+    using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
     public class AssemblyNode : NormalNode

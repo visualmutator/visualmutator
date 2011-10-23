@@ -1,11 +1,8 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Tests
 {
     #region Usings
 
-    using System;
     using System.Collections.Generic;
-
-    using VisualMutator.Extensibility;
 
     #endregion
 
