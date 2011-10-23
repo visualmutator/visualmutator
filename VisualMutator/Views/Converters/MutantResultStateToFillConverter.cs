@@ -5,6 +5,7 @@
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using System.Windows.Data;
     using System.Windows.Media;
 
@@ -19,13 +20,13 @@
         public override Brush Convert(MutantResultState st)
         {
 
-            Brush result = st == MutantResultState.NoState ? Brushes.Gainsboro
-                    : st == MutantResultState.Killed ? Brushes.Gray 
-                    : st == MutantResultState.Live ? Brushes.Orange
-                    : st == MutantResultState.Tested ? Brushes.Blue 
-                    : null;
-            Debug.Assert(result != null);
-            return result;
+            return Functional.ValuedSwitch<MutantResultState, Brush>(st)
+                .Case(MutantResultState.NoState, Brushes.Gainsboro)
+                .Case(MutantResultState.Killed, Brushes.Gray)
+                .Case(MutantResultState.Live, Brushes.Orange)
+                .Case(MutantResultState.Tested, Brushes.Blue)
+                .GetResult();
+
         }
 
         public override MutantResultState ConvertBack(Brush br)

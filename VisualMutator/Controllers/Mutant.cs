@@ -13,25 +13,37 @@ namespace VisualMutator.Controllers
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.TestsTree;
 
+    
     public class Mutant : MutationNode
     {
         private readonly int _id;
 
-        private readonly MutationResult _mutationResult;
+        private readonly MutationTarget _mutationTarget;
 
-        public MutationResult MutationResult
+        private readonly StoredAssemblies _storedAssemblies;
+
+        public StoredAssemblies StoredAssemblies
         {
             get
             {
-                return _mutationResult;
+                return _storedAssemblies;
             }
         }
 
-        public Mutant(int id, MutationNode parent, MutationResult mutationResult)
+        public MutationTarget MutationTarget
+        {
+            get
+            {
+                return _mutationTarget;
+            }
+        }
+
+        public Mutant(int id, MutationNode parent, MutationTarget mutationTarget, StoredAssemblies storedAssemblies)
             : base(parent, "Mutant", false)
         {
             _id = id;
-            _mutationResult = mutationResult;
+            _mutationTarget = mutationTarget;
+            _storedAssemblies = storedAssemblies;
         }
 
         public int Id

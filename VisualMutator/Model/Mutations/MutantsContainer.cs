@@ -2,10 +2,8 @@
 {
     #region Usings
 
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
 
@@ -36,17 +34,13 @@
             get;
         }
 
-    
-     
         MutationTestingSession GenerateMutantsForOperators(MutationSessionChoices choices);
     }
 
-
-
-
-
     public class MutantsContainer : IMutantsContainer
     {
+        private readonly IAssembliesManager _assembliesManager;
+
         private readonly BetterObservableCollection<StoredMutantInfo> _generatedMutants;
 
 
@@ -54,14 +48,13 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public MutantsContainer(
+        public MutantsContainer(IAssembliesManager assembliesManager
             )
         {
- 
+            _assembliesManager = assembliesManager;
 
             _generatedMutants = new BetterObservableCollection<StoredMutantInfo>();
         }
-
 
         public ReadOnlyObservableCollection<StoredMutantInfo> GeneratedMutants
         {
@@ -159,9 +152,9 @@
         {
             var executedOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
-            IList<MemoryStream> memoryStreams = Write(choices.Assemblies);
-
-            IList<AssemblyDefinition> assemblies = Read(memoryStreams);
+           // IList<MemoryStream> memoryStreams = Write(choices.Assemblies);
+            var sourceAssemblies = _assembliesManager.Store(choices.Assemblies);
+            IList<AssemblyDefinition> assemblies = _assembliesManager.Load(sourceAssemblies);
 
             foreach (var op in choices.SelectedOperators)
             {
@@ -177,15 +170,16 @@
                 var executedOperator = new ExecutedOperator(root, op.Name);
 
 
-                var assembliesFactory = new AssembliesToMutateFactory(() => Read(memoryStreams));
+                var assembliesFactory = new AssembliesToMutateFactory(() => _assembliesManager.Load(sourceAssemblies));
                 for (int j = 0; j < 3; j++)
                 {
                     var results = op.CreateMutants(targets,assembliesFactory).MutationResults;
 
                     foreach (var mutationResult in results)
                     {
+                        var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
 
-                        var mutant = new Mutant(i++, executedOperator, mutationResult);
+                        var mutant = new Mutant(i++, executedOperator, mutationResult.MutationTarget, serializedMutant);
 
                          executedOperator.Children.Add(mutant);
                     }
@@ -205,6 +199,7 @@
             }
             root.State = MutantResultState.Waiting;
 
+            _assembliesManager.SessionEnded();
 
             return new MutationTestingSession
             {
@@ -213,26 +208,7 @@
             };
         }
 
-        private IList<MemoryStream> Write(IEnumerable<AssemblyDefinition> assemblies)
-        {
-            return assemblies.Select(assemblyDefinition =>
-            {
-                var stream = new MemoryStream();
-                assemblyDefinition.Write(stream,new WriterParameters());
-                return stream;
-
-            }).ToList();
-        }
-
-        private IList<AssemblyDefinition> Read(IEnumerable<MemoryStream> streams)
-        {
-            return streams.Select( stream =>
-            {
-                stream.Position = 0;
-                return AssemblyDefinition.ReadAssembly(stream, new ReaderParameters(ReadingMode.Immediate));
-
-            }).ToList();
-        }
+  
 
 
 

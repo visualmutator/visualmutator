@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Views
 {
+    using System.Windows;
     using System.Windows.Controls;
 
     /// <summary>
@@ -10,6 +11,8 @@
         public ProgressControl()
         {
             InitializeComponent();
+            HorizontalAlignment = HorizontalAlignment.Center;
+            VerticalAlignment = VerticalAlignment.Center;
         }
     }
 }

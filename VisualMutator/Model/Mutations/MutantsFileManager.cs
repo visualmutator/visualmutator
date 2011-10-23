@@ -28,11 +28,14 @@
         TestEnvironmentInfo InitTestEnvironment();
     }
 
+ 
     public class MutantsFileManager : IMutantsFileManager
     {
         private readonly IVisualStudioConnection _visualStudio;
 
         private readonly IAssemblyReaderWriter _assemblyReaderWriter;
+
+        private readonly IAssembliesManager _assembliesManager;
 
         private readonly IFileSystem _fs;
 
@@ -44,10 +47,12 @@
         public MutantsFileManager(
             IVisualStudioConnection visualStudio,
             IAssemblyReaderWriter assemblyReaderWriter,
+            IAssembliesManager assembliesManager,
             IFileSystem fs)
         {
             _visualStudio = visualStudio;
             _assemblyReaderWriter = assemblyReaderWriter;
+            _assembliesManager = assembliesManager;
             _fs = fs;
         }
 
@@ -57,8 +62,9 @@
         {
 
             var result = new StoredMutantInfo();
-   
-            foreach (AssemblyDefinition assemblyDefinition in mutant.MutationResult.MutatedAssemblies)
+
+            var assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
+            foreach (AssemblyDefinition assemblyDefinition in assemblyDefinitions)
             {
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                 string file = Path.Combine(testEnvironmentInfo.Directory, assemblyDefinition.Name.Name + ".dll");

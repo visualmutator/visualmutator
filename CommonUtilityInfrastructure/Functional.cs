@@ -103,6 +103,90 @@
 
 
         }
+
+        public static Switch<T> Switch<T>(T obj)
+        {
+            return new Switch<T>(obj);
+        }
+
+        public static ValuedSwitch<T, R> ValuedSwitch<T, R>(T obj)
+        {
+            return new ValuedSwitch<T, R>(obj);
+        }
+        public static Switch<T> Case<T>(this Switch<T> @switch, T caseValue, Action action)
+        {
+            if (@switch.Value.Equals(caseValue))
+            {
+                action();
+                @switch.HasResult = true;
+            }
+            return @switch;
+        }
+        public static ValuedSwitch<T, R> Case<T, R>(this ValuedSwitch<T, R> @switch, T caseValue, Func<R> action)
+        {
+            if (@switch.HasResult)
+            {
+                 throw new InvalidOperationException("Match was already found: " + @switch.Value);
+            }
+            if (@switch.Value.Equals(caseValue))
+            {
+                @switch.Result = action();
+                @switch.HasResult = true;
+            }
+            return @switch;
+        }
+        public static ValuedSwitch<T, R> Case<T, R>(this ValuedSwitch<T, R> @switch, T caseValue, R result)
+        {
+            return @switch.Case(caseValue, () => result);
+        }
+        public static R GetResult<T,R>(this ValuedSwitch<T,R> @switch)
+        {
+            if (!@switch.HasResult)
+            {
+                throw new InvalidOperationException("No case matched value: " + @switch.Value);
+            }
+            return @switch.Result;
+        }
+
+        public static void ThrowIfNoMatch<T>(this Switch<T> @switch)
+        {
+            if (!@switch.HasResult)
+            {
+                throw new InvalidOperationException("No case matched value: " + @switch.Value);
+            }
+        }
+    }
+    public class Switch<T>
+    {
+        public Switch(T o)
+        {
+            Value = o;
+        }
+
+        public T Value
+        {
+            get;
+            private set;
+        }
+
+        public bool HasResult { get; set; }
     }
 
+    public class ValuedSwitch<T,R> 
+    {
+        public ValuedSwitch(T o)
+        {
+            Value = o;
+        }
+
+        public T Value
+        {
+            get;
+            private set;
+        }
+
+        public bool HasResult { get; set; }
+
+        public R Result { get; set; }
+    }
 }

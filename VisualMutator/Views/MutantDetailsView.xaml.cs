@@ -19,6 +19,8 @@ namespace VisualMutator.Views
     using CommonUtilityInfrastructure.Comparers;
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.Controllers;
+
     /// <summary>
     /// Interaction logic for MutantDetailsView.xaml
     /// </summary>
@@ -29,6 +31,7 @@ namespace VisualMutator.Views
             InitializeComponent();
             codeTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
             codeTextBox.Document.PageWidth = 1000;
+
 
         //    codeTextBox.FontFamily = new FontFamily("Consolas");
         }
@@ -50,6 +53,13 @@ namespace VisualMutator.Views
 
         }
 
+        public void ClearCode()
+        {
+            var document = codeTextBox.Document;
+            TextRange range = new TextRange(document.ContentStart, document.ContentEnd);
+            range.Text = "";
+        }
+
         public void HighlightRow(FlowDocument document, string text, Color color)
         {
             
@@ -68,10 +78,16 @@ namespace VisualMutator.Views
 
                     textrange.ApplyPropertyValue(TextElement.BackgroundProperty, new SolidColorBrush(color));
 
-                    start = textrange.End; // I'm not sure if this is correct or skips ahead too far, try it out!!!
+                    //start = textrange.End; 
                 }
                 start = start.GetNextContextPosition(LogicalDirection.Forward);
             }
+        }
+
+        private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ((MutantDetailsViewModel)this.DataContext)
+                .SelectedTabHeader = (string)e.AddedItems.Cast<TabItem>().Single().Header;
         }
 
     }
@@ -81,5 +97,7 @@ namespace VisualMutator.Views
       
 
         void PresentCode(CodeWithDifference codeWithDifference);
+
+        void ClearCode();
     }
 }

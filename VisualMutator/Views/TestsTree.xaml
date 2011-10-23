@@ -40,24 +40,6 @@
                 AncestorType={x:Type TreeViewItem}}, Path=DataContext.State,
                 Converter={Converters:TestStatusToFillConverter}}"/>
 
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType={x:Type TreeViewItem}}, Path=DataContext.State}" Value="Running">
-                    <DataTrigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"  Duration="0:0:1" RepeatBehavior="Forever">
-                                    <DiscreteObjectKeyFrame Value="{x:Static Visibility.Visible}" />
-                                    <DiscreteObjectKeyFrame Value="{x:Static Visibility.Hidden}" />
-                                </ObjectAnimationUsingKeyFrames>
-
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.EnterActions>
-                </DataTrigger>
-
-            </Style.Triggers>
-
         </Style>
     </UserControl.Resources>
 

@@ -42,8 +42,9 @@
             t1.Methods.Add(CecilUtils.CreateMethodDefinition("Method1", t1));
             t3.Methods.Add(CecilUtils.CreateMethodDefinition("Method2", t3));
 
+            var assembliesManager = new AssembliesManager();
 
-            var mutantsContainer = new MutantsContainer();
+            var mutantsContainer = new MutantsContainer(assembliesManager);
 
             var choices = new MutationSessionChoices
             {
@@ -57,7 +58,8 @@
             // Assert
             executedOperator.Name.ShouldEqual("TestOperatorName");
             executedOperator.Mutants.Count().ShouldEqual(2);
-            executedOperator.Mutants.First().MutationResult.MutatedAssemblies.Single()
+
+            assembliesManager.Load(executedOperator.Mutants.First().StoredAssemblies).Single()
                 .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
 
          

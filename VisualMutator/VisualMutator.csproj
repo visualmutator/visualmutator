@@ -119,6 +119,7 @@
     <Compile Include="Controllers\ExecutedOperator.cs" />
     <Compile Include="Controllers\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
+    <Compile Include="Controllers\MutantDetailsViewModel.cs" />
     <Compile Include="Controllers\MutantsCreationController.cs" />
     <Compile Include="Controllers\EventMessages\LoadLastCreatedMutantEventArgs.cs" />
     <Compile Include="Controllers\MutationResultsController.cs" />
@@ -126,10 +127,18 @@
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Infrastructure\TreeNode.cs" />
+    <Compile Include="Model\CodeDifference\CodeDifferenceCreator.cs" />
+    <Compile Include="Model\CodeDifference\CodeLineEqualityComparer.cs" />
+    <Compile Include="Model\CodeDifference\CodeWithDifference.cs" />
+    <Compile Include="Model\CodeDifference\LineChange.cs" />
+    <Compile Include="Model\CodeDifference\LineChangeType.cs" />
+    <Compile Include="Model\Mutations\AssembliesManager.cs" />
+    <Compile Include="Model\Mutations\ClearableCacheAssemblyResolver.cs" />
     <Compile Include="Model\Mutations\MutantResultState.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
     <Compile Include="Model\Mutations\MutantsFileManager.cs" />
     <Compile Include="Model\Mutations\MutationException.cs" />
+    <Compile Include="Model\Mutations\StoredAssemblies.cs" />
     <Compile Include="Model\Mutations\StoredMutantInfo.cs" />
     <Compile Include="Model\Mutations\NoTypesSelectedException.cs" />
     <Compile Include="Model\Mutations\Operators\MEFOperatorLoader.cs" />
@@ -289,6 +298,7 @@
     <Resource Include="Views\Resources\namespace.png" />
     <Resource Include="Views\Resources\type.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

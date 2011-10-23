@@ -1,48 +1,64 @@
-﻿namespace CommonUtilityInfrastructure.Comparers
+﻿namespace VisualMutator.Model
 {
+    #region Usings
+
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Text;
+
+    using CommonUtilityInfrastructure.Comparers;
 
     using DiffLib;
 
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using ICSharpCode.Decompiler;
+    using ICSharpCode.ILSpy;
 
-    public enum LineChangeType
+    using Mono.Cecil;
+
+    using VisualMutator.Controllers;
+    using VisualMutator.Model.Mutations;
+
+    #endregion
+
+    public interface ICodeDifferenceCreator
     {
-        Add, Remove
+        CodeWithDifference CreateCodeDifference(Mutant mutant, IList<AssemblyDefinition> originalAssemblies);
     }
-    public class LineChange
+
+    public class CodeDifferenceCreator : ICodeDifferenceCreator
     {
-        public LineChange(LineChangeType changeType, string text)
+        private readonly IAssembliesManager _assembliesManager;
+
+        public CodeDifferenceCreator(IAssembliesManager assembliesManager)
         {
-            ChangeType = changeType;
-            Text = text;
+            _assembliesManager = assembliesManager;
         }
 
-        public LineChangeType ChangeType { get; set; }
-
-        public string Text { get; set; }
-    }
-
-    public class CodeWithDifference
-    {
-        public string Code { get; set; }
-        public List<LineChange> LineChanges
+        public CodeWithDifference CreateCodeDifference(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
         {
-            get;
-            set;
+            var originalMethod = mutant.MutationTarget.GetMethod(originalAssemblies);
+
+            var mutatedAssemblies = _assembliesManager.Load(mutant.StoredAssemblies);
+            var mutatedMethod = mutant.MutationTarget.GetMethod(mutatedAssemblies);
+
+            var cs = new CSharpLanguage();
+
+            var mutatedOutput = new PlainTextOutput();
+            var originalOutput = new PlainTextOutput();
+            var decompilationOptions = new DecompilationOptions();
+            decompilationOptions.DecompilerSettings.ShowXmlDocumentation = false;
+
+            cs.DecompileMethod(mutatedMethod, mutatedOutput, decompilationOptions);
+            cs.DecompileMethod(originalMethod, originalOutput, decompilationOptions);
+
+            string originalString = originalOutput.ToString().Replace("\t", "   ");
+            string mutatedString = mutatedOutput.ToString().Replace("\t", "   ");
+
+            return GetDiff(originalString, mutatedString);
         }
-    }
 
-
-    public class CodeAssert
-    {
-        
-        public static CodeWithDifference GetDiff(string input1, string input2)
+        public CodeWithDifference GetDiff(string input1, string input2)
         {
-            
             var diff = new StringBuilder();
             var lineChanges = CreateDiff(input1, input2, diff);
             return new CodeWithDifference
@@ -50,16 +66,16 @@
                 Code = diff.ToString(),
                 LineChanges = lineChanges
             };
-                
         }
 
-        static LineChange NewLineChange(LineChangeType type, StringBuilder diff, int startIndex, int endIndex)
+        private LineChange NewLineChange(LineChangeType type, StringBuilder diff, int startIndex, int endIndex)
         {
             string text = diff.ToString().Substring(startIndex, endIndex - startIndex - 2);
-            
+
             return new LineChange(type, text);
         }
-        static List<LineChange> CreateDiff(string input1, string input2, StringBuilder diff)
+
+        private List<LineChange> CreateDiff(string input1, string input2, StringBuilder diff)
         {
             var differ = new AlignedDiff<string>(
                 NormalizeAndSplitCode(input1),
@@ -68,15 +84,12 @@
                 new StringSimilarityComparer(),
                 new StringAlignmentFilter());
 
-           
-
             int line1 = 0, line2 = 0;
-
 
             var list = new List<LineChange>();
             foreach (var change in differ.Generate())
             {
-                int startIndex=0;
+                int startIndex = 0;
                 switch (change.Change)
                 {
                     case ChangeType.Same:
@@ -87,7 +100,7 @@
                     case ChangeType.Added:
                         startIndex = diff.Length;
                         diff.AppendFormat("     {1,4}  +  ", line1, ++line2);
-                        
+
                         diff.AppendLine(change.Element2);
                         list.Add(NewLineChange(LineChangeType.Add, diff, startIndex, diff.Length));
                         break;
@@ -115,51 +128,10 @@
             return list;
         }
 
-        class CodeLineEqualityComparer : IEqualityComparer<string>
-        {
-            private IEqualityComparer<string> baseComparer = EqualityComparer<string>.Default;
-
-            public bool Equals(string x, string y)
-            {
-                return baseComparer.Equals(
-                    NormalizeLine(x),
-                    NormalizeLine(y)
-                );
-            }
-
-            public int GetHashCode(string obj)
-            {
-                return baseComparer.GetHashCode(NormalizeLine(obj));
-            }
-        }
-
-        private static string NormalizeLine(string line)
-        {
-            line = line.Trim();
-            var index = line.IndexOf("//");
-            if (index >= 0)
-            {
-                return line.Substring(0, index);
-            }
-            else if (line.StartsWith("#"))
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return line;
-            }
-        }
-
-        private static bool ShouldIgnoreChange(string line)
-        {
-            // for the result, we should ignore blank lines and added comments
-            return NormalizeLine(line) == string.Empty;
-        }
-
-        private static IEnumerable<string> NormalizeAndSplitCode(string input)
+        private IEnumerable<string> NormalizeAndSplitCode(string input)
         {
             return input.Split(new[] { "\r\n", "\n\r", "\n", "\r" }, StringSplitOptions.None);
         }
+
     }
 }

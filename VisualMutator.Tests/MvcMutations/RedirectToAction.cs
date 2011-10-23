@@ -80,12 +80,16 @@ namespace VisualMutator.OperatorTests
                 Assemblies = new[] { assembly },
                 SelectedTypes = assembly.MainModule.Types 
             };
-            MutantsContainer mutantsContainer = new MutantsContainer();
+
+            var assembliesManager = new AssembliesManager();
+
+            MutantsContainer mutantsContainer = new MutantsContainer(assembliesManager);
             var executedOperator = mutantsContainer.GenerateMutantsForOperators(mutationSessionChoices).MutantsGroupedByOperators.Single();
 
             executedOperator.Mutants.Single(mut =>
             {
-                var assembly2 = mut.MutationResult.MutatedAssemblies.Single();
+
+                var assembly2 = assembliesManager.Load(mut.StoredAssemblies).Single();
 
                 var dinnersController2 = assembly2.MainModule.Types.Single(t => t.Name == "DinnersController");
 

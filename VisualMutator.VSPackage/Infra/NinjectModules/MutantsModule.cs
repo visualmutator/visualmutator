@@ -10,6 +10,7 @@
     using PiotrTrzpil.VisualMutator_VSPackage.Views;
 
     using VisualMutator.Controllers;
+    using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
@@ -48,6 +49,9 @@
 
 
 
+            Kernel.Bind<IAssembliesManager>().To<AssembliesManager>().InSingletonScope();
+            Kernel.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
+
 
 
             Kernel.Bind<IAssemblyReaderWriter>().To<AssemblyReaderWriter>().InSingletonScope();
@@ -56,6 +60,8 @@
             Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
 
             Kernel.InjectFuncFactory(() => DateTime.Now);
+
+
 
         }
     }

@@ -4,28 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Views="clr-namespace:VisualMutator.Views" xmlns:ViewModels="clr-namespace:VisualMutator.Controllers"
-             mc:Ignorable="d" 
+             xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid d:DataContext="{d:DesignInstance ViewModels:MutantDetailsViewModel}">
 
         <TextBlock  Grid.Row="0"  Text="Tests for selected mutant:" />
-        <TabControl >
+        <TabControl SelectionChanged="tabControl_SelectionChanged">
             <TabItem Header="Tests">
                 <Views:TestsTree />
 
-              
-           
             </TabItem>
 
-            <TabItem Header="Mutated Code">
-                <RichTextBox Name="codeTextBox" FontFamily="Consolas">
-                    <RichTextBox.Resources>
-                        <Style TargetType="{x:Type Paragraph}">
-                            <Setter Property="Margin" Value="0"/>
-                        </Style>
-                    </RichTextBox.Resources>
+            <TabItem Header="Code">
+                <Grid>
+                    <RichTextBox Name="codeTextBox" FontFamily="Consolas">
+                        <RichTextBox.Resources>
+                            <Style TargetType="{x:Type Paragraph}">
+                                <Setter Property="Margin" Value="0"/>
+                            </Style>
+                        </RichTextBox.Resources>
 
-                </RichTextBox>
+                    </RichTextBox>
+                    <Views:ProgressControl Visibility="{Binding IsCodeLoading, 
+                            Converter={Converters:TrueToVisibilityConverter} }"/>
+                </Grid>
+               
             </TabItem>
 
         </TabControl>

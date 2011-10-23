@@ -9,6 +9,9 @@
 
     using NUnit.Framework;
 
+    using VisualMutator.Model;
+    using VisualMutator.Model.Mutations;
+
     [TestFixture]
     public class Difference
     {
@@ -54,7 +57,7 @@
 
 ";
 
-            var diff = CodeAssert.GetDiff(testMethod, mutatedMethod);
+            var diff = new CodeDifferenceCreator(new AssembliesManager()).GetDiff(testMethod, mutatedMethod);
         }
     }
 }

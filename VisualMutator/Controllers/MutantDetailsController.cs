@@ -5,7 +5,9 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Windows.Controls;
 
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Comparers;
     using CommonUtilityInfrastructure.WpfUtils;
 
@@ -15,51 +17,75 @@
 
     using Mono.Cecil;
 
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.Views;
+    using VisualMutator.Model;
+    using VisualMutator.Model.Mutations;
 
     public class MutantDetailsController : Controller
     {
         private readonly MutantDetailsViewModel _viewModel;
 
+
+
+        private readonly ICodeDifferenceCreator _codeDifferenceCreator;
+
+        private readonly Services _services;
+
         private IDisposable _listenerForCurrentMutant;
 
-        public MutantDetailsController(MutantDetailsViewModel viewModel)
+        private IList<AssemblyDefinition> _currentOriginalAssemblies;
+
+        private Mutant _currentMutant;
+
+        public MutantDetailsController(
+            MutantDetailsViewModel viewModel, 
+            ICodeDifferenceCreator codeDifferenceCreator,
+            Services services)
         {
             _viewModel = viewModel;
+
+            _viewModel.RegisterPropertyChanged(() => _viewModel.SelectedTabHeader).Subscribe(LoadData);
+
+           
+            _codeDifferenceCreator = codeDifferenceCreator;
+            _services = services;
         }
+
+        public void LoadData(string header)
+        {
+
+            if (_currentMutant != null)
+            {
+                Functional.Switch(header)
+               .Case("Tests", () => LoadTests(_currentMutant))
+               .Case("Code", () => LoadCode(_currentMutant, _currentOriginalAssemblies))
+               .ThrowIfNoMatch();
+            }
+           
+        }
+
         public void LoadDetails(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
         {
-            LoadTests(mutant);
+            _currentOriginalAssemblies = originalAssemblies;
+            _currentMutant = mutant;
 
-
-            var originalMethod = mutant.MutationResult.MutationTarget.GetMethod(originalAssemblies);
-            var mutatedMethod = mutant.MutationResult.ModifiedMethod;
-
-
-            var cs = new CSharpLanguage();
-
-            var mutatedOutput = new PlainTextOutput();
-            var originalOutput = new PlainTextOutput();
-            var decompilationOptions = new DecompilationOptions();
-            decompilationOptions.DecompilerSettings.ShowXmlDocumentation = false;
-
-            cs.DecompileMethod(mutatedMethod, mutatedOutput, decompilationOptions);
-            cs.DecompileMethod(originalMethod, originalOutput, decompilationOptions);
-
-
-            string originalString = originalOutput.ToString().Replace("\t", "   ");
-            string mutatedString = mutatedOutput.ToString().Replace("\t", "   ");
-
-
-
-            var codeWithDifference = CodeAssert.GetDiff(originalString, mutatedString);
-          //  codeWithDifference.
-
-            _viewModel.PresentCode(codeWithDifference);
-            //   CodeAssert.GetDiff(mutantCode)
+            LoadData(_viewModel.SelectedTabHeader);
+    
         }
 
+        public void LoadCode(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
+        {
+//TODO: remove race
+            _viewModel.IsCodeLoading = true;
+            _viewModel.ClearCode();
+            _services.Threading.ScheduleAsync(
+                () => _codeDifferenceCreator.CreateCodeDifference(mutant, originalAssemblies),
+                code =>
+                {
+                    _viewModel.PresentCode(code);
+                    _viewModel.IsCodeLoading = false;
+                });
+           
+        }
 
         private void LoadTests(Mutant mutant)
         {
@@ -92,37 +118,5 @@
         }
 
       
-    }
-
-    public class MutantDetailsViewModel: ViewModel<IMutantDetailsView>
-    {
-        public MutantDetailsViewModel(IMutantDetailsView view)
-            : base(view)
-        {
-            TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
-        }
-
-
-        private BetterObservableCollection<TestNodeNamespace> _testNamespaces;
-
-        public BetterObservableCollection<TestNodeNamespace> TestNamespaces
-        {
-            get
-            {
-                return _testNamespaces;
-            }
-            set
-            {
-                SetAndRise(ref _testNamespaces, value, () => TestNamespaces);
-            }
-        }
-
- 
-
-        public void PresentCode(CodeWithDifference codeWithDifference)
-        {
-            View.PresentCode(codeWithDifference);
-            //View.SetText(codeWithDifference.Code);
-        }
     }
 }
