@@ -14,7 +14,7 @@
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
-    using PiotrTrzpil.VisualMutator_VSPackage.Views;
+
 
     using VisualMutator;
     using VisualMutator.Controllers;
@@ -36,16 +36,14 @@
         {
             Log4NetConfig.Execute();
             _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-            EnsureApplicationResources();
+            EnsureApplication();
         }
-        public static void EnsureApplicationResources()
+        public static void EnsureApplication()
         {
             if (Application.Current == null)
             {
-    
-                new App();
+                new Application();
             }
-          
         }
 
         public Bootstrapper()
@@ -55,9 +53,6 @@
             
             try
             {
-             //   _log.Info("Configuring assembly resolve.");
-               // SetupAssemblyResolve();
-               
 
                 _log.Info("Configuring dependency container.");
                 SetupDependencyInjection();
@@ -99,35 +94,7 @@
 
 
         }
-      
-
-        public void SetupAssemblyResolve()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
-            {
-                var requestedName = new AssemblyName(e.Name);
-
-                if (requestedName.Name == "VisualMutator.Extensibility")
-                {
-                    string p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-                    string path = Path.Combine(
-                        Path.GetDirectoryName(p),
-                        "Extensions",
-                        "VisualMutator.Extensibility.dll");
-
-                    return Assembly.LoadFrom(path);
-                }
-                else
-                {
-                    //   string[] Parts = e.Name.Split(',');
-                    //   string File = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + Parts[0].Trim() + ".dll";
-
-                    //    return System.Reflection.Assembly.LoadFrom(File);
-                    return null;
-                }
-            };
-        }
-
+   
 
         public object Shell
         {

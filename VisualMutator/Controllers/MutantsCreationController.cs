@@ -16,7 +16,7 @@
 
     using Mono.Cecil;
 
-    using VisualMutator.Controllers.EventMessages;
+
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.Factories;
@@ -57,7 +57,7 @@
 
         private readonly IOperatorsManager _operatorsManager;
 
-        private readonly Services _services;
+        private readonly CommonServices _commonServices;
 
         private readonly ITypesManager _typesManager;
 
@@ -80,14 +80,14 @@
             IMutantsContainer mutantsContainer,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
-            Services services)
+            CommonServices commonServices)
         {
             _viewModel = viewModel;
     
             _mutantsContainer = mutantsContainer;
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
-            _services = services;
+            _commonServices = commonServices;
 
 
             _viewModel.CommandCreateMutants = new BasicCommand(StoreChoicesResults, () => _viewModel.Assemblies != null
@@ -115,10 +115,10 @@
         public void Run()
         {
             
-            _services.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
+            _commonServices.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
                 packages => _viewModel.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
 
-            _services.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
+            _commonServices.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
                 assemblies => _viewModel.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
 
             _viewModel.ShowDialog();

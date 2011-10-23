@@ -17,10 +17,10 @@
     [ValueConversion(typeof(TestNodeState), typeof(Brush))]
     public class MutantResultStateToFillConverter : Converter<MutantResultStateToFillConverter, MutantResultState, Brush>
     {
-        public override Brush Convert(MutantResultState st)
+        public override Brush Convert(MutantResultState state)
         {
 
-            return Functional.ValuedSwitch<MutantResultState, Brush>(st)
+            return Functional.ValuedSwitch<MutantResultState, Brush>(state)
                 .Case(MutantResultState.NoState, Brushes.Gainsboro)
                 .Case(MutantResultState.Killed, Brushes.Gray)
                 .Case(MutantResultState.Live, Brushes.Orange)

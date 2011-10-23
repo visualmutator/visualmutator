@@ -28,7 +28,7 @@
 
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
-        private readonly Services _services;
+        private readonly CommonServices _commonServices;
 
         private IDisposable _listenerForCurrentMutant;
 
@@ -39,7 +39,7 @@
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
             ICodeDifferenceCreator codeDifferenceCreator,
-            Services services)
+            CommonServices commonServices)
         {
             _viewModel = viewModel;
 
@@ -47,7 +47,7 @@
 
            
             _codeDifferenceCreator = codeDifferenceCreator;
-            _services = services;
+            _commonServices = commonServices;
         }
 
         public void LoadData(string header)
@@ -77,7 +77,7 @@
 //TODO: remove race
             _viewModel.IsCodeLoading = true;
             _viewModel.ClearCode();
-            _services.Threading.ScheduleAsync(
+            _commonServices.Threading.ScheduleAsync(
                 () => _codeDifferenceCreator.CreateCodeDifference(mutant, originalAssemblies),
                 code =>
                 {

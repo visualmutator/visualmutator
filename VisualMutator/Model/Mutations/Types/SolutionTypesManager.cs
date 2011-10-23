@@ -47,7 +47,7 @@ namespace VisualMutator.Model.Mutations.Types
         public IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
         {
             return assemblies
-                .SelectManyRecursive<GenericNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
+                .SelectManyRecursive<NormalNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
                 .Cast<TypeNode>().Select(type=>type.TypeDefinition).ToList();
         }
        
@@ -99,7 +99,7 @@ namespace VisualMutator.Model.Mutations.Types
         }
 
 
-        public void GroupTypes(GenericNode parent, string currentNamespace, ICollection<TypeDefinition> types)
+        public void GroupTypes(NormalNode parent, string currentNamespace, ICollection<TypeDefinition> types)
         {
             var groupsByNamespaces = types
                 .Where(t => t.Namespace != currentNamespace)

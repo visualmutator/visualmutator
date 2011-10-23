@@ -32,7 +32,7 @@
 
         private readonly MutantDetailsController _mutantDetailsController;
 
-        private readonly Services _services;
+        private readonly CommonServices _commonServices;
 
         private MutationTestingSession _currentSession;
 
@@ -44,14 +44,14 @@
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             MutantDetailsController mutantDetailsController,
-            Services services)
+            CommonServices commonServices)
         {
             _viewModel = viewModel;
             _mutantsCreationFactory = mutantsCreationFactory;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _mutantDetailsController = mutantDetailsController;
-            _services = services;
+            _commonServices = commonServices;
 
             _viewModel.CommandCreateNewMutants = new BasicCommand(CreateMutants,
                 () => !_viewModel.AreOperationsOngoing);
@@ -99,7 +99,7 @@
                 _viewModel.OperationsStateDescription = "Creating mutants...";
 
                 _currentSession = new MutationTestingSession();
-                _services.Threading.ScheduleAsync(() =>
+                _commonServices.Threading.ScheduleAsync(() =>
                 {
                     _currentSession =  _mutantsContainer.GenerateMutantsForOperators(choices);
                    
@@ -126,7 +126,7 @@
             var allMutants = currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
             _viewModel.InitTestingProgress(allMutants.Count);
             
-            _services.Threading.ScheduleAsync(() =>
+            _commonServices.Threading.ScheduleAsync(() =>
             {
                 currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
                 foreach (Mutant mutant in allMutants.Where(m=>m.TestSession == null || !m.TestSession.IsComplete))

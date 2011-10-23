@@ -9,24 +9,18 @@
     using Ninject.Activation;
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Views;
-
+ 
     using VisualMutator.Controllers;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.ViewModels;
     using VisualMutator.Views;
-    using VisualMutator.Views.Abstract;
+
 
     public class UnitTestsModule : NinjectModule 
     {
         public override void Load()
         {
-            Kernel.Bind<TestingAndManagingController>().ToSelf().InSingletonScope();
-            Kernel.Bind<UnitTestsViewModel>().ToSelf().InSingletonScope();
-            Kernel.Bind<IUnitTestsView>().To<UnitTestsView>().InSingletonScope();
-            
-
 
             Kernel.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
 

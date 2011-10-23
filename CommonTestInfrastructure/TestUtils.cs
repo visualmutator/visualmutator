@@ -96,7 +96,7 @@
     {
 
 
-        public static Services TestServices()
+        public static CommonServices TestServices()
         {
             var testScheduler = new TestScheduler();
             var messageService = new Mock<IMessageService>().Object;
@@ -111,7 +111,7 @@
 
             var threading = new Threading(new FakeDispatcherExecute(), threadPooolExecuteMock.Object,messageService);
 
-            return new Services(messageService, eventService, threading);
+            return new CommonServices(messageService, eventService, threading);
         }
 
 

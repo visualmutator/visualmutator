@@ -35,7 +35,7 @@
     {
         private readonly IMutantsFileManager _mutantsFileManager;
 
-        private readonly CommonUtilityInfrastructure.Services _services;
+        private readonly CommonUtilityInfrastructure.CommonServices _commonServices;
 
         private readonly IEnumerable<ITestService> _testServices;
 
@@ -46,10 +46,10 @@
      
 
         public TestsContainer(NUnitTestService nunit, MsTestService ms,
-            IMutantsFileManager mutantsFileManager, CommonUtilityInfrastructure.Services services)
+            IMutantsFileManager mutantsFileManager, CommonUtilityInfrastructure.CommonServices commonServices)
         {
             _mutantsFileManager = mutantsFileManager;
-            _services = services;
+            _commonServices = commonServices;
             _testServices = new List<ITestService>
             {
                 nunit,ms
@@ -65,7 +65,7 @@
 
 
 
-            _services.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
+            _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
 
             RunTests(testSession);
 

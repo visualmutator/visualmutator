@@ -7,7 +7,6 @@
 
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Views;
 
     using VisualMutator.Controllers;
     using VisualMutator.Model;
@@ -22,7 +21,7 @@
         public override void Load()
         {
 
-            Kernel.Bind<IILMutationsView>().To<ILMutationsView>().InSingletonScope();
+    
             Kernel.Bind<MutantsCreationController>().ToSelf().AndFromFactory();
             Kernel.Bind<MutantsCreationViewModel>().ToSelf();
             Kernel.Bind<IMutantsCreationView>().To<MutantsCreationWindow>();
@@ -33,14 +32,6 @@
 
             Kernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
             Kernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
-
-           
-           // Kernel.Bind<ILMutationsViewModel>().ToSelf().InSingletonScope();
-
-        
-            Kernel.Bind<MutantsManagementViewModel>().ToSelf().AndFromFactory();
-            Kernel.Bind<IMutantsManagementView>().To<MutantsManagementView>();
-
 
             Kernel.Bind<MutantDetailsController>().ToSelf();
             Kernel.Bind<MutantDetailsViewModel>().ToSelf();

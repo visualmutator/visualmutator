@@ -122,9 +122,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infra\Bootstrapper.cs" />
-    <Compile Include="Infra\MainControl.xaml.cs">
-      <DependentUpon>MainControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Infra\NinjectFactory.cs" />
     <Compile Include="Infra\NinjectModules\InfrastructureModule.cs" />
     <Compile Include="Infra\NinjectModules\MutantsModule.cs" />
@@ -193,12 +190,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Package.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Infra\MainControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

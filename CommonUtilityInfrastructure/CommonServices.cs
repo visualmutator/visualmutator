@@ -9,7 +9,7 @@
     using CommonUtilityInfrastructure.WpfUtils;
     using CommonUtilityInfrastructure.WpfUtils.Messages;
 
-    public class Services
+    public class CommonServices
     {
         private readonly IMessageService _message;
 
@@ -17,7 +17,7 @@
 
         private readonly IThreading _threading;
 
-        public Services(
+        public CommonServices(
             IMessageService message,
             IEventService @event,
             IThreading threading)

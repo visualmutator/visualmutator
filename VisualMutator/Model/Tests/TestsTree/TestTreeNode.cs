@@ -13,7 +13,7 @@
 
     #endregion
 
-    public abstract class TestTreeNode : GenericNode
+    public abstract class TestTreeNode : NormalNode
     {
         private ICommand _commandRunTest;
 

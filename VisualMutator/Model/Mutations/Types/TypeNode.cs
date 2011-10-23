@@ -7,7 +7,7 @@
     using VisualMutator.Infrastructure;
 
     #endregion
-    public class AssemblyNode : GenericNode
+    public class AssemblyNode : NormalNode
     {
         private AssemblyDefinition _assemblyDefinition;
         
@@ -27,10 +27,10 @@
         }
     }
 
-    public class TypeNamespaceNode : GenericNode
+    public class TypeNamespaceNode : NormalNode
     {
 
-        public TypeNamespaceNode(GenericNode parent, string name)
+        public TypeNamespaceNode(NormalNode parent, string name)
             : base(parent, name, true)
         {
            
@@ -39,11 +39,11 @@
     }
 
 
-    public class TypeNode : GenericNode
+    public class TypeNode : NormalNode
     {
         private readonly TypeDefinition _typeDefinition;
 
-        public TypeNode(GenericNode parent, string name, TypeDefinition typeDefinition)
+        public TypeNode(NormalNode parent, string name, TypeDefinition typeDefinition)
             : base(parent, name, false)
         {
             _typeDefinition = typeDefinition;

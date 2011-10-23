@@ -7,8 +7,7 @@
 
     using CommonUtilityInfrastructure.WpfUtils;
 
-    using VisualMutator.Views.Abstract;
-
+ 
     #endregion
 
    public interface ITestsTreeView : IView

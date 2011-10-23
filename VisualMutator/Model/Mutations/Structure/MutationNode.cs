@@ -21,7 +21,7 @@
 
         }
     }
-    public abstract class MutationNode : GenericNode
+    public abstract class MutationNode : NormalNode
     {
 
         private MutantResultState _state;

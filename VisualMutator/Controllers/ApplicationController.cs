@@ -10,7 +10,7 @@
     using CommonUtilityInfrastructure.WpfUtils;
     using CommonUtilityInfrastructure.WpfUtils.Messages;
 
-    using VisualMutator.Controllers.EventMessages;
+
     using VisualMutator.Infrastructure;
     using VisualMutator.ViewModels;
 
@@ -18,7 +18,7 @@
 
     #endregion
 
-    public class ApplicationController : IHandler<SwitchToUnitTestsTabEventArgs>
+    public class ApplicationController
     {
         private readonly MutationResultsController _mutationResultsController;
 
@@ -120,9 +120,6 @@
            // _testingAndManagingController.Deactivate();
         }
 
-        public void Handle(SwitchToUnitTestsTabEventArgs message)
-        {
-        //    _viewModel.SelectedTab = 1;
-        }
+
     }
 }

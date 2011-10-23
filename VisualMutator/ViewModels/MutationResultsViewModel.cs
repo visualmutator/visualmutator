@@ -18,9 +18,7 @@
         public MutationResultsViewModel(IMutationResultsView view)
             : base(view)
         {
-            //AddListener(() => SelectedMutationTreeItem, SelectedMutationItemChanged2);
 
-            
 
         }
 
@@ -174,8 +172,7 @@
 
         private object _selectedMutationTreeItem;
 
-        private object _previousSelectedMutationTreeItem;
-
+   
         public object SelectedMutationTreeItem
         {
             get
@@ -236,8 +233,7 @@
         {
             get; set; }
 
-        private bool _isPauseRequested;
-
+    
      
     }
 }
