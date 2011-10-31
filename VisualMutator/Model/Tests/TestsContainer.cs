@@ -79,14 +79,11 @@
             {
                 mutant.NumberOfTestsThatKilled = testSession.TestMap.Values
                     .Count(t => t.State == TestNodeState.Failure);
-
                 mutant.State = MutantResultState.Killed;
-    
             }
             else
             {
                 mutant.State = MutantResultState.Live;
-           
             }
 
             mutant.TestSession.IsComplete = true;

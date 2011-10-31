@@ -76,7 +76,7 @@
                 .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, _currentSession.OriginalAssemblies));
 
             _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;
-            //CSharpLanguage
+
         }
 
         public void PauseOperations()
@@ -97,6 +97,7 @@
                 SetState(OperationsState.Mutating);
 
                 _currentSession = new MutationTestingSession();
+               
                 _commonServices.Threading.ScheduleAsync(() =>
                 {
                     _currentSession =  _mutantsContainer.GenerateMutantsForOperators(choices);
