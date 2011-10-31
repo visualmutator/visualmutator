@@ -23,22 +23,22 @@
 
         }
 
-     
 
+        private OperationsState _operationsState;
 
-        private bool _areOperationsOngoing;
-
-        public bool AreOperationsOngoing
+        public OperationsState OperationsState
         {
             get
             {
-                return _areOperationsOngoing;
+                return _operationsState;
             }
             set
             {
-                SetAndRise(ref _areOperationsOngoing, value, () => AreOperationsOngoing);
+                SetAndRise(ref _operationsState, value, () => OperationsState);
             }
         }
+
+      
 
         private BasicCommand _commandCreateNewMutants;
 
@@ -215,20 +215,6 @@
             }
         }
 
-
-        private bool _areMutantsBeingCreated;
-
-        public bool AreMutantsBeingCreated
-        {
-            get
-            {
-                return _areMutantsBeingCreated;
-            }
-            set
-            {
-                SetAndRise(ref _areMutantsBeingCreated, value, () => AreMutantsBeingCreated);
-            }
-        }
 
         public MutantDetailsViewModel MutantDetailsViewModel
         {

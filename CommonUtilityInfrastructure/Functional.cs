@@ -104,6 +104,16 @@
 
         }
 
+
+
+        public static bool IsIn<T>(this T obj, params T[] values)
+        {
+            return values.Contains(obj);
+        }
+
+
+
+
         public static Switch<T> Switch<T>(T obj)
         {
             return new Switch<T>(obj);

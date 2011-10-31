@@ -167,8 +167,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\MutantsCreationViewModel.cs" />
     <Compile Include="ViewModels\MutationResultsViewModel.cs" />
+    <Compile Include="ViewModels\OperationsState.cs" />
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
+    <Compile Include="Views\Converters\EqualsConverter.cs" />
     <Compile Include="Views\Converters\TrueToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />
     <Compile Include="Views\Converters\Converter.cs" />

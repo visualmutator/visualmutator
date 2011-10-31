@@ -51,7 +51,7 @@ namespace VisualMutator.Model.Mutations.Structure
             string stateText =
                 value == MutantResultState.Waiting ? "Waiting..." :
                 value == MutantResultState.Tested ? "Executing tests..." :
-                value == MutantResultState.Killed ? "Killed by {0} mutants".Formatted(NumberOfTestsThatKilled) :
+                value == MutantResultState.Killed ? "Killed by {0} tests".Formatted(NumberOfTestsThatKilled) :
                 value == MutantResultState.Live ? "Live" : null;
             if (stateText == null)
             {

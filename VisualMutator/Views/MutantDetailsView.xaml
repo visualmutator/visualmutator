@@ -18,7 +18,7 @@
 
             <TabItem Header="Code">
                 <Grid>
-                    <RichTextBox Name="codeTextBox" FontFamily="Consolas">
+                    <RichTextBox Name="codeTextBox" FontFamily="Consolas" IsReadOnly="true">
                         <RichTextBox.Resources>
                             <Style TargetType="{x:Type Paragraph}">
                                 <Setter Property="Margin" Value="0"/>

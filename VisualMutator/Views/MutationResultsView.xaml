@@ -16,11 +16,6 @@
                 <ResourceDictionary Source="Resources/Global.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyleForListView">
-                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType={x:Type ListViewItem}}, Path=DataContext.ResultState,
-                Converter={Converters:MutantResultStateToFillConverter}}"/>
-            </Style>
             <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyle">
                 <Setter Property="Height" Value="10"/>
                 <Setter Property="Width" Value="10"/>
@@ -86,7 +81,8 @@
             </Grid>
 
             <ProgressBar Height="25" Grid.Row="2"  
-                         IsIndeterminate="{Binding AreMutantsBeingCreated}"
+                         IsIndeterminate="{Binding OperationsState, Converter={Converters:EqualsConverter}, 
+                                            ConverterParameter={x:Static ViewModels:OperationsState.Mutating}}"
                          Value="{Binding TestingProgress}"/>
 
             <TextBlock  Grid.Row="3"  Text="Mutants gruped by operators:" />
@@ -112,91 +108,16 @@
                         <TextBlock Text="{Binding DisplayedText}"/>
                     </DockPanel>
                 </DataTemplate>
-
-
             </TreeView.Resources>
-
-        
         </TreeView>
 
-
-<!--
-
-
-        <ListView Grid.Row="1" SelectionMode="Single" 
-                  ItemsSource="{Binding Operators}" SelectedItem="{Binding SelectedOperator}" >
-            <ListView.View>
-                <GridView>
-                    <GridView.Columns>
-                        <GridViewColumn Header="Status">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Rectangle Fill="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
-                                        AncestorType={x:Type ListViewItem}}, Path=DataContext.ResultState,
-                                        Converter={Converters:MutantResultStateToFillConverter}}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                      <GridViewColumn Header="Name"
-                          DisplayMemberBinding="{Binding Name, Mode=TwoWay}"/>
-                        <GridViewColumn  Header="Number of mutants" DisplayMemberBinding="{Binding Mutants.Count}">
-                           
-                        </GridViewColumn>
-                    </GridView.Columns>
-                    
-                </GridView>
-                
-            </ListView.View>
-           
-        </ListView>
--->
 
         <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
 
         
-        
-        
         <Grid  Grid.Row="3">
-
-
             <Views:MutantDetailsView Content="{Binding MutantDetailsViewModel.View}"/>
-            
 
-
-            <!--    <Grid.RowDefinitions>
-                <RowDefinition  Height="Auto"/>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <TextBlock  Grid.Row="0" Text="Mutants for selected operator:"/>
-            
-            <TextBlock  Grid.Row="1" Text="Alive:"/>
-            
-            
-            <Grid  Grid.Row="2">
-          
-                <ListBox ItemsSource="{Binding SelectedOperator.Mutants}" SelectedItem="{Binding SelectedMutant}">
-                    <ListBox.ItemTemplate>
-
-
-
-                        <DataTemplate>
-                            <DockPanel>
-                                <Rectangle Style="{StaticResource MutationStateRectangleStyleForListBox}"/>
-                                <TextBlock Text="{Binding StateDescription}"/>
-                            </DockPanel>
-                            
-                        </DataTemplate>
-
-                    </ListBox.ItemTemplate>
-                    
-             
-                </ListBox>
-
-            </Grid>
--->
-            
         </Grid>
 
     </Grid>
