@@ -81,6 +81,19 @@
             }
         }
 
+        private BasicCommand _commandPause;
+
+        public BasicCommand CommandPause
+        {
+            get
+            {
+                return _commandPause;
+            }
+            set
+            {
+                SetAndRise(ref _commandPause, value, () => CommandPause);
+            }
+        }
         private BetterObservableCollection<ExecutedOperator> _operators;
 
         public BetterObservableCollection<ExecutedOperator> Operators

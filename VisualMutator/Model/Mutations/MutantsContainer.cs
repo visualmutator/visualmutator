@@ -79,6 +79,9 @@
             StoredAssemblies sourceAssemblies = _assembliesManager.Store(choices.Assemblies);
             IList<AssemblyDefinition> assemblies = _assembliesManager.Load(sourceAssemblies);
 
+            int[] i = { 0 };
+            Func<int> genId = () => i[0]++;
+
             foreach (IMutationOperator op in choices.SelectedOperators)
             {
                 IList<TypeDefinition> typeDefinitions = choices.SelectedTypes
@@ -87,7 +90,9 @@
                                 .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
                                               && t1.FullName == t2.FullName)).ToList();
 
-                ExecutedOperator executedOperator = CreateMutantsForOperator(op, root, typeDefinitions, sourceAssemblies);
+               
+                ExecutedOperator executedOperator = CreateMutantsForOperator(op, root,
+                    typeDefinitions, sourceAssemblies, genId);
 
                 executedOperator.DisplayedText = "{0} - Mutants: {1}"
                     .Formatted(executedOperator.Name, executedOperator.Children.Count);
@@ -109,7 +114,7 @@
 
         private ExecutedOperator CreateMutantsForOperator(IMutationOperator mutOperator,
                                                           MutationRootNode root, 
-            IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies)
+            IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies, Func<int> generateId )
         {
             var result = new ExecutedOperator(root, mutOperator.Name);
 
@@ -123,11 +128,11 @@
                 throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Name), e);
             }
 
-            int i = 0;
-
+         //   int i = 0;
+//
             var assembliesFactory = new AssembliesToMutateFactory(() => _assembliesManager.Load(sourceAssemblies));
-            for (int j = 0; j < 3; j++)
-            {
+          //  for (int j = 0; j < 3; j++)
+          //  {
                 IList<MutationResult> results;
                 try
                 {
@@ -142,11 +147,11 @@
                 {
                     var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
 
-                    var mutant = new Mutant(i++, result, mutationResult.MutationTarget, serializedMutant);
+                    var mutant = new Mutant(generateId(), result, mutationResult.MutationTarget, serializedMutant);
 
                     result.Children.Add(mutant);
                 }
-            }
+        //    }
             return result;
         }
     }

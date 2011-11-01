@@ -22,7 +22,10 @@
     using VisualMutator.ViewModels;
 
 
-
+    enum RequestedHaltState
+    {
+        Pause, Stop 
+    }
 
     public class MutationResultsController : Controller
     {
@@ -42,7 +45,11 @@
 
         private MutationTestingSession _currentSession;
 
-        private volatile bool _isPauseRequested;
+    //    private volatile bool _isPauseRequested;
+
+   //     private bool _isStopRequested;
+
+        private RequestedHaltState? _requestedHaltState;
 
         public MutationResultsController(
             MutationResultsViewModel viewModel,
@@ -71,8 +78,13 @@
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
-            _viewModel.CommandStop = new BasicCommand(PauseOperations, 
+            _viewModel.CommandPause = new BasicCommand(PauseOperations, 
                 () => _viewModel.OperationsState.IsIn(OperationsState.Mutating, OperationsState.Testing))
+                .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
+
+            _viewModel.CommandStop = new BasicCommand(StopOperations,
+                () => _viewModel.OperationsState.IsIn(OperationsState.Mutating,
+                    OperationsState.Testing, OperationsState.TestingPaused, OperationsState.Pausing))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
             _viewModel.CommandContinue = new BasicCommand(ResumeOperations,
@@ -100,6 +112,8 @@
                     .Case(OperationsState.TestingPaused, "Paused")
                     .Case(OperationsState.Finished, "Finished")
                     .Case(OperationsState.Mutating, "Creating mutants...")
+                    .Case(OperationsState.Pausing, "Pausing...")
+                    .Case(OperationsState.Stopping, "Stopping...")
                     .Case(OperationsState.Testing, () => "Running tests... ({0}/{1})"
                         .Formatted(_currentSession.TestedMutants.Count,
                             _currentSession.MutantsToTest.Count + _currentSession.TestedMutants.Count))
@@ -158,7 +172,7 @@
         private void RunTestsInternal(MutationTestingSession currentSession)
         {
 
-            while (currentSession.MutantsToTest.Count != 0 && !_isPauseRequested)
+            while (currentSession.MutantsToTest.Count != 0 && _requestedHaltState == null)
             {
                 SetState(OperationsState.Testing);
 
@@ -174,15 +188,37 @@
                 _viewModel.MutationScore = string.Format("Mutation score: {0}", currentSession.MutationScore);
 
             }
-            SetState(_isPauseRequested ? OperationsState.TestingPaused : OperationsState.Finished);
+            if (_requestedHaltState != null)
+            {
 
-            _isPauseRequested = false;
+                if (_requestedHaltState == RequestedHaltState.Pause)
+                {
+                    SetState( OperationsState.TestingPaused);
+                }
+                else
+                {
+                    SetState(OperationsState.Finished);
+                    Finish();
+                }
+                _requestedHaltState = null;
+            }
+          //  SetState(_requestedHaltState == RequestedHaltState.Pause ? OperationsState.TestingPaused 
+            //    : OperationsState.Finished);
+
+           // _isPauseRequested = false;
 
         }
+
+        private void Finish()
+        {
+            
+        }
+
         public void PauseOperations()
         {
-            _isPauseRequested = true;
-            _viewModel.OperationsStateDescription = "Pausing...";
+            _requestedHaltState = RequestedHaltState.Pause;
+            SetState(OperationsState.Pausing);
+
         }
         public void ResumeOperations()
         {
@@ -192,6 +228,19 @@
             });
         }
 
+        public void StopOperations()
+        {
+            if (_viewModel.OperationsState == OperationsState.TestingPaused)
+            {
+                Finish();
+            }
+            else
+            {
+                _requestedHaltState = RequestedHaltState.Stop;
+                SetState(OperationsState.Stopping);
+            }
+            
+        }
         public void SaveResults()
         {
             var resultsSavingController = _resultsSavingFactory.Create();

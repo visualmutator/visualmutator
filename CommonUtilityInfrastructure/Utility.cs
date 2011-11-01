@@ -36,7 +36,11 @@
             }
             return obs;
         }
-   
+        public static IEnumerable<T> ToEmptyIfNull<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable ?? Enumerable.Empty<T>();
+        }
+
         
         public static string InQuotes(this string str)
         {

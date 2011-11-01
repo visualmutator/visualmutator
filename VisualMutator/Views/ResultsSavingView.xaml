@@ -10,20 +10,35 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Global.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="CheckBox" x:Key="checkstyle">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="Margin" Value="3,0,3,0"/>
+            </Style>
         </ResourceDictionary>
+       
     </Window.Resources>
     <Grid d:DataContext="{d:DesignInstance ViewModels:ResultsSavingViewModel}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         
         <DockPanel Grid.Row="0">
-            <TextBlock Text="Target Path:"/>
+            <TextBlock Text="Target file path:"/>
             <TextBox Text="{Binding TargetPath}"/>
            
         </DockPanel>
-        <CheckBox Grid.Row="1" Content="Include detailed test results" IsChecked="{Binding IncludeDetailedTestResults}"/>
+        <CheckBox Grid.Row="1" Style="{StaticResource checkstyle}"
+                  Content="Include detailed test results" 
+                  IsChecked="{Binding IncludeDetailedTestResults}"/>
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
+            <Button Content="Save results" Command="{Binding CommandSaveResults}"/>
+            <Button Content="Cancel" Command="{Binding CommandClose}"/>
+       
+
+        </DockPanel>
     </Grid>
 </Window>
