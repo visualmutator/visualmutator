@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\ResultsSavingController.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\FakeNode.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\IHasChildren.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\IHasParent.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Model\Mutations\Structure\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\Structure\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
+    <Compile Include="Model\XmlResultsGenerator.cs" />
     <Compile Include="ViewModels\MutantDetailsViewModel.cs" />
     <Compile Include="Controllers\MutantsCreationController.cs" />
     <Compile Include="Controllers\MutationResultsController.cs" />
@@ -168,6 +170,7 @@
     <Compile Include="ViewModels\MutantsCreationViewModel.cs" />
     <Compile Include="ViewModels\MutationResultsViewModel.cs" />
     <Compile Include="ViewModels\OperationsState.cs" />
+    <Compile Include="ViewModels\ResultsSavingViewModel.cs" />
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Converters\EqualsConverter.cs" />
@@ -190,6 +193,9 @@
     </Compile>
     <Compile Include="Views\ProgressControl.xaml.cs">
       <DependentUpon>ProgressControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ResultsSavingView.xaml.cs">
+      <DependentUpon>ResultsSavingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TestsTree.xaml.cs">
       <DependentUpon>TestsTree.xaml</DependentUpon>
@@ -216,6 +222,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Resources\Global.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ResultsSavingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

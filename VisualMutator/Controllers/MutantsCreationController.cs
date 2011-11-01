@@ -51,7 +51,6 @@
     {
       
      
-        private readonly IMutantsContainer _mutantsContainer;
 
         private readonly IOperatorsManager _operatorsManager;
 
@@ -75,14 +74,12 @@
 
         public MutantsCreationController(
             MutantsCreationViewModel viewModel,
-            IMutantsContainer mutantsContainer,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
             CommonServices commonServices)
         {
             _viewModel = viewModel;
-    
-            _mutantsContainer = mutantsContainer;
+
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
             _commonServices = commonServices;
@@ -94,21 +91,8 @@
             _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.MutationPackages);
       
 
-           // _viewModel.Assemblies = new BetterObservableCollection<AssemblyNode>();
-          //  _viewModel.MutationPackages = _operatorsManager.OperatorPackages;
-
-           
         }
-        /*
-        public void LoadLastMutant()
-        {
-            _services.EventPassing.Publish(new LoadLastCreatedMutantEventArgs());
-            _services.EventPassing.Publish(new SwitchToUnitTestsTabEventArgs());
 
-
-        }
-        */
-       
 
         public void Run()
         {
@@ -133,65 +117,6 @@
             _viewModel.Close();
         }
 
-        /*
-        public void Mutate()
-        {
-            
-            _viewModel.IsMutationOngoing = true;
-            _viewModel.ClearMutationLog();
-            _viewModel.MutationLog("Starting mutation.");
-
-
-            Action<string> mutationLog = _services.Threading.ActionOnGui<string>(text => _viewModel.MutationLog(text));
-
-            _services.Threading.ScheduleAsync(
-                () =>
-                {
-                    try
-                    {
-                        return _mutantsContainer.GenerateMutant("Mutant", mutationLog);
-                    }
-                    catch (MutationException e)
-                    {
-                        
-                        throw new NonFatalWrappedException(e);
-                    }
-                    
-                },
-                onGui: result =>
-                {
-                    _mutantsContainer.AddMutant(result);
-                    _viewModel.MutationLog("Mutation complete.");
-                },
-                onException: () =>
-                {
-                    _viewModel.MutationLog("Mutation failed.");
-                },
-                onFinally: () => _viewModel.IsMutationOngoing = false);
-
-           
-        }*/
-
-       
-        /*
-        public void RefreshTypes()
-        {
-            _viewModel.AreTypesLoading = true;
-            _viewModel.Assemblies.Clear();
-
-            _services.Threading.ScheduleAsync(
-              () =>
-              {
-                  return _typesManager.GetTypesFromAssemblies();
-              },
-              onGui: result =>
-              {
-                  _viewModel.Assemblies.ReplaceRange(result);
-              },
-              onFinally: () =>_viewModel.AreTypesLoading = false);
-
-        }
-        */
 
        
     }

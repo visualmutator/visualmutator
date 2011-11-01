@@ -95,7 +95,7 @@
                 executedOperators.Add(executedOperator);
                 root.Children.Add(executedOperator);
             }
-            root.State = MutantResultState.Waiting;
+            root.State = MutantResultState.Untested;
 
             _assembliesManager.SessionEnded();
 

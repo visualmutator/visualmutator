@@ -24,7 +24,7 @@
         {
 
             return Functional.ValuedSwitch<MutantResultState, Brush>(state)
-                .Case(MutantResultState.Waiting, Brushes.Gainsboro)
+                .Case(MutantResultState.Untested, Brushes.Gainsboro)
                 .Case(MutantResultState.Killed, Brushes.Gray)
                 .Case(MutantResultState.Live, Brushes.Orange)
                 .Case(MutantResultState.Tested, Brushes.Blue)

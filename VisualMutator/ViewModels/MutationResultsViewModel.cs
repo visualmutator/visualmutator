@@ -220,7 +220,18 @@
         {
             get; set; }
 
-    
-     
+        private BasicCommand _commandSaveResults;
+
+        public BasicCommand CommandSaveResults
+        {
+            get
+            {
+                return _commandSaveResults;
+            }
+            set
+            {
+                SetAndRise(ref _commandSaveResults, value, () => CommandSaveResults);
+            }
+        }
     }
 }

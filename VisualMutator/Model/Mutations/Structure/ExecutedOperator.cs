@@ -32,5 +32,7 @@ namespace VisualMutator.Model.Mutations.Structure
                 SetAndRise(ref _displayedText, value, () => DisplayedText);
             }
         }
+
+        public int MutationTimeMiliseconds { get; set; }
     }
 }

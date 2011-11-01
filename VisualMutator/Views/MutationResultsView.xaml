@@ -116,8 +116,15 @@
 
         
         <Grid  Grid.Row="3">
-            <Views:MutantDetailsView Content="{Binding MutantDetailsViewModel.View}"/>
 
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+            <Views:MutantDetailsView Grid.Row="0" Content="{Binding MutantDetailsViewModel.View}"/>
+            <Button Grid.Row="1" Content="Save Results..." Command="{Binding CommandSaveResults}"/>
         </Grid>
 
     </Grid>

@@ -69,6 +69,7 @@
     <Compile Include="MvcMutations\RedirectToAction.cs" />
     <Compile Include="MvcMutations\SwapActionNamesTests.cs" />
     <Compile Include="MvcMutations\Utils.cs" />
+    <Compile Include="Results\XmlResultsGeneratorTests.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
     <Compile Include="Util\CecilUtils.cs" />
     <Compile Include="MonoCecilTests.cs" />

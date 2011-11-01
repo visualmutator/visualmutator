@@ -53,7 +53,7 @@
             OnCanExecuteChanged(EventArgs.Empty);
         }
 
-        public void UpdateOnChanged<T>(IEventNotifier notifier, 
+        public BasicCommand<TParam> UpdateOnChangedBase<T>(IEventNotifier notifier, 
             Expression<Func<T>> propertyExpression) 
         {
             
@@ -61,6 +61,7 @@
             {
                 OnCanExecuteChanged(EventArgs.Empty);
             });
+            return this;
         }
         public void UpdateOnCollectionChanged(IEventNotifier notifier, INotifyCollectionChanged collection)
         {
@@ -70,7 +71,7 @@
                 OnCanExecuteChanged(EventArgs.Empty);
             });
         }
-        public void ExecuteOnChanged<T>(IEventNotifier notifier,
+        public BasicCommand<TParam> ExecuteOnChangedBase<T>(IEventNotifier notifier,
             Expression<Func<T>> propertyExpression)
         {
             notifier.EventListeners.Add(notifier, propertyExpression.PropertyName(), () =>
@@ -80,6 +81,7 @@
                     Execute(null);
                 }
             });
+            return this;
         }
         //public void ExecuteOnChanged<T>(IEventNotifier notifier,
         //    Expression<Func<T>> propertyExpression, Func<bool> canExecuteFunc )
@@ -108,6 +110,21 @@
             : base(execute != null ? p => execute() : (Action<object>)null,
                 canExecute != null ? p => canExecute() : (Func<object, bool>)null)
         {
+        }
+        public BasicCommand UpdateOnChanged<T>(IEventNotifier notifier,
+    Expression<Func<T>> propertyExpression)
+        {
+
+            UpdateOnChangedBase(notifier, propertyExpression);
+
+
+            return this;
+        }
+        public BasicCommand ExecuteOnChanged<T>(IEventNotifier notifier,
+    Expression<Func<T>> propertyExpression)
+        {
+            ExecuteOnChangedBase(notifier, propertyExpression);
+            return this;
         }
     }
 }

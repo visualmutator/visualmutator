@@ -3,7 +3,7 @@
     public enum MutantResultState
     {
         NoState,
-        Waiting,
+        Untested,
         Killed,
         Live,
         Tested,

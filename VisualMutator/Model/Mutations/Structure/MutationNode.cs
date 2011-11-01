@@ -57,7 +57,7 @@
                 if (updateChildren && Children != null)
                 {
 
-                    if (value != MutantResultState.Waiting)
+                    if (value != MutantResultState.Untested)
                     {
                         throw new InvalidOperationException("Tried to set invalid state: " + value);
                     }

@@ -54,7 +54,12 @@
 
             Kernel.InjectFuncFactory(() => DateTime.Now);
 
+            Kernel.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
+            Kernel.Bind<ResultsSavingViewModel>().ToSelf();
+            Kernel.Bind<IResultsSavingView>().To<ResultsSavingView>();
 
+
+            Kernel.Bind<XmlResultsGenerator>().ToSelf();
 
         }
     }
