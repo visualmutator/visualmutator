@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -60,6 +61,11 @@
         public void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
         {
             mutant.State = MutantResultState.Tested;
+
+
+            var sw = new Stopwatch();
+            sw.Start();
+
             StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
             TestSession testSession = LoadTests(storedMutantInfo);
@@ -74,6 +80,8 @@
             UnloadTests();
             _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
 
+            sw.Stop();
+            testSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
 
             if (testSession.TestsRootNode.State == TestNodeState.Failure)
             {

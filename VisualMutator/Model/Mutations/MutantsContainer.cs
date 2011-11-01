@@ -4,6 +4,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
 
@@ -82,8 +83,12 @@
             int[] i = { 0 };
             Func<int> genId = () => i[0]++;
 
+           
             foreach (IMutationOperator op in choices.SelectedOperators)
             {
+                var sw = new Stopwatch();
+                sw.Start();
+
                 IList<TypeDefinition> typeDefinitions = choices.SelectedTypes
                     .Select(t1 =>
                             assemblies.SelectMany(a => a.MainModule.Types)
@@ -99,6 +104,8 @@
 
                 executedOperators.Add(executedOperator);
                 root.Children.Add(executedOperator);
+                sw.Stop();
+                executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
             }
             root.State = MutantResultState.Untested;
 

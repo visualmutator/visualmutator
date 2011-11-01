@@ -33,6 +33,6 @@ namespace VisualMutator.Model.Mutations.Structure
             }
         }
 
-        public int MutationTimeMiliseconds { get; set; }
+        public long MutationTimeMiliseconds { get; set; }
     }
 }

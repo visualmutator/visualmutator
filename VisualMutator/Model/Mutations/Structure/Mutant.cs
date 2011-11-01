@@ -106,6 +106,6 @@ namespace VisualMutator.Model.Mutations.Structure
             }
         }
 
-        public int TestingTimeMiliseconds { get; set; }
+       
     }
 }

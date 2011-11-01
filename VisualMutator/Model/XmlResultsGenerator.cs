@@ -72,10 +72,10 @@
                 let groupedTests = mutant.TestSession.TestMap.Values.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("Id", mutant.Id),
-                    new XAttribute("TestingTimeMiliseconds", mutant.TestingTimeMiliseconds),
+                    new XAttribute("TestingTimeMiliseconds", mutant.TestSession.TestingTimeMiliseconds),
                     new XElement("Tests",
                     new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
-                    new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count())),
+                    new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
                     from testClass in mutant.TestSession.TestClassses
                     select new XElement("TestClass",
@@ -92,13 +92,13 @@
                         select new XElement("TestMethod",
                             new XAttribute("Name", testMethod.Name),
                             new XAttribute("Outcome", Functional.ValuedSwitch<TestNodeState, string>(testMethod.State)
-                            .Case(TestNodeState.Success, "Success")
+                            .Case(TestNodeState.Success, "Passed")
                             .Case(TestNodeState.Inconclusive, "Inconclusive")
                             .GetResult())
                             )
                         )
                     )
-                );
+                ));
         }
     }
 }

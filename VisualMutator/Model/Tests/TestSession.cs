@@ -38,7 +38,11 @@ namespace VisualMutator.Model.Tests
             }
         }
 
-      
+        public long TestingTimeMiliseconds
+        {
+            get;
+            set;
+        }
         public TestsRootNode TestsRootNode
         {
             get
