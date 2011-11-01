@@ -1,5 +1,4 @@
-﻿<UserControl x:Class="VisualMutator.Views.TestsTree"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl x:Class="VisualMutator.Views.TestsTree" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,13 +7,12 @@
              xmlns:TestsTree="clr-namespace:VisualMutator.Model.Tests.TestsTree"
              xmlns:AttachedBehaviors="clr-namespace:VisualMutator.Views.AttachedBehaviors"
              xmlns:Views="clr-namespace:VisualMutator.Views" xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
-             mc:Ignorable="d" d:DesignHeight="116"
-             d:DesignWidth="365">
+             mc:Ignorable="d" d:DesignHeight="116" d:DesignWidth="365">
 
   <UserControl.Resources>
 
-        <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
-<!--
+    <Converters:TestStatusToFillConverter x:Key="TestStatusToFillConverter"/>
+    <!--
         <PipedConverters:ValueConverterGroup >
             <Converters:CloningConverter/>
             <Converters:TestStatusToFillConverter/>
@@ -31,60 +29,68 @@
     </Style>
     <Converters:TrueToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-        <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
-            <Setter Property="Height" Value="10"/>
-            <Setter Property="Width" Value="10"/>
-            <Setter Property="Margin" Value="0,0,5,0"/>
-            <Setter Property="Stroke" Value="Black"/>
-            <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+    <Style TargetType="Rectangle" x:Key="TestStatusRectangleStyle">
+      <Setter Property="Height" Value="10"/>
+      <Setter Property="Width" Value="10"/>
+      <Setter Property="Margin" Value="0,0,5,0"/>
+      <Setter Property="Stroke" Value="Black"/>
+      <Setter Property="Fill"
+              Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
                 AncestorType={x:Type TreeViewItem}}, Path=DataContext.State,
                 Converter={Converters:TestStatusToFillConverter}}"/>
 
-        </Style>
-    </UserControl.Resources>
+    </Style>
+  </UserControl.Resources>
 
-    <Grid d:DataContext="{d:DesignInstance ViewModels:MutationResultsViewModel}">
+  <Grid d:DataContext="{d:DesignInstance ViewModels:MutantDetailsViewModel}">
 
- 
+    <TreeView ItemsSource="{Binding TestNamespaces}" Name="Tree" >
 
-      <TreeView ItemsSource="{Binding TestNamespaces}">
+      <TreeView.Resources>
 
-        <TreeView.Resources>
-          <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeNamespace}"
-                                    ItemsSource="{Binding Children}">
-            <DockPanel>
-              <Image Source="Resources/namespace.png"/>
-                        <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
+        <ContextMenu x:Key="FailedTestContextMenu" StaysOpen="true">
+                    <MenuItem Header="Message" Click="MenuItemMessage_Click"/>
 
-                        <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </HierarchicalDataTemplate>
+        </ContextMenu>
 
-            
-          <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeClass}"
-                                    ItemsSource="{Binding Children}">
-            <DockPanel>
-              <Image Source="Resources/type.png"/>
-                        <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
+        <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeNamespace}"
+                                  ItemsSource="{Binding Children}">
+          <DockPanel>
+            <Image Source="Resources/namespace.png"/>
+            <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
 
-                        <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </HierarchicalDataTemplate>
+            <TextBlock Text="{Binding Name}"/>
+          </DockPanel>
+        </HierarchicalDataTemplate>
 
-            
-          <DataTemplate DataType="{x:Type TestsTree:TestNodeMethod}">
-            <DockPanel>
-              <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
-              <TextBlock Text="{Binding Name}"/>
-            </DockPanel>
-          </DataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeClass}" ItemsSource="{Binding Children}">
+          <DockPanel>
+            <Image Source="Resources/type.png"/>
+            <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
 
-        </TreeView.Resources>
+            <TextBlock Text="{Binding Name}"/>
+          </DockPanel>
+          <HierarchicalDataTemplate.ItemContainerStyle>
+            <Style TargetType="{x:Type TreeViewItem}">
+              <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown"
+                           Handler="trv_PreviewMouseRightButtonDown"/>
+            </Style>
+          </HierarchicalDataTemplate.ItemContainerStyle>
+        </HierarchicalDataTemplate>
 
+        <DataTemplate DataType="{x:Type TestsTree:TestNodeMethod}">
+          <DockPanel>
+            <Rectangle Style="{StaticResource TestStatusRectangleStyle}"/>
+            <TextBlock Text="{Binding Name}"/>
+          </DockPanel>
 
-      </TreeView>
+        </DataTemplate>
 
-     <!-- <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
+      </TreeView.Resources>
+
+    </TreeView>
+
+    <!-- <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
                              Visibility="{Binding AreTestsLoading, 
                 Converter={StaticResource BoolToVisibilityConverter} }"/>-->
 

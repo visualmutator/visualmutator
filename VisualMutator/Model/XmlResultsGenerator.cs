@@ -25,7 +25,7 @@
             var mutantsNode = new XElement("Mutants",
                 new XAttribute("Total", mutants.Count),
                 new XAttribute("Live", live.Count),
-                new XAttribute("Dead", testedMutants.Count - live.Count),
+                new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
@@ -68,6 +68,7 @@
         {
             return new XElement("DetailedTestingResults",
                 from mutant in mutants
+                where mutant.TestSession != null
                 let groupedTests = mutant.TestSession.TestMap.Values.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("Id", mutant.Id),
@@ -93,7 +94,7 @@
                             new XAttribute("Outcome", Functional.ValuedSwitch<TestNodeState, string>(testMethod.State)
                             .Case(TestNodeState.Success, "Success")
                             .Case(TestNodeState.Inconclusive, "Inconclusive")
-                            )
+                            .GetResult())
                             )
                         )
                     )

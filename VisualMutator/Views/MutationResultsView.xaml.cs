@@ -31,7 +31,7 @@ namespace VisualMutator.Views
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var vm = this.DataContext as MutationResultsViewModel;
+            var vm = (MutationResultsViewModel)this.DataContext;
             vm.SelectedMutationTreeItem = e.NewValue;
         }
     }

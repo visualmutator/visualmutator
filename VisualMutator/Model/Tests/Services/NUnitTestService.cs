@@ -100,7 +100,9 @@
             {
                 var c = new TestNodeClass(testClass.TestName.Name)
                 {
-                    Namespace = testClass.Parent.TestName.FullName
+                    Namespace = testClass.Parent.TestName.FullName,
+                    FullName = testClass.TestName.FullName,
+
                 };
 
                 foreach (ITest testMethod in testClass.Tests.Cast<ITest>())

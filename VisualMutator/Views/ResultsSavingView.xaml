@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Title="Save Mutation Testing Results">
+             d:DesignHeight="163" d:DesignWidth="395" Title="Save Mutation Testing Results" 
+        Width="400" Height="200"
+        SizeToContent="WidthAndHeight">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -22,6 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
@@ -34,7 +37,7 @@
         <CheckBox Grid.Row="1" Style="{StaticResource checkstyle}"
                   Content="Include detailed test results" 
                   IsChecked="{Binding IncludeDetailedTestResults}"/>
-        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
+        <DockPanel Grid.Row="3" HorizontalAlignment="Right">
             <Button Content="Save results" Command="{Binding CommandSaveResults}"/>
             <Button Content="Cancel" Command="{Binding CommandClose}"/>
        

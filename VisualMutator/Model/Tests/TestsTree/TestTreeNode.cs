@@ -37,23 +37,7 @@
         }
 
   
-        private string _message;
-
-        public string Message
-        {
-            set
-            {
-                if (_message != value)
-                {
-                    _message = value;
-                    RaisePropertyChanged(() => Message);
-                }
-            }
-            get
-            {
-                return _message;
-            }
-        }
+     
         public ICommand CommandRunTest
         {
             get
