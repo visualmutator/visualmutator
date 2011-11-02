@@ -4,6 +4,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
@@ -51,7 +52,14 @@
             IEnumerable<TestNodeClass> tests = null;
             using (var job = new TestsLoadJob(this, assemblies))
             {
-                job.Subscribe(arg => tests = BuildTestTree(arg, testSession),
+                var sw = new Stopwatch();
+                sw.Start();
+                job.Subscribe(arg =>
+                {
+                    sw.Stop();
+                    testSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                    tests = BuildTestTree(arg, testSession);
+                },
                     ex => _messageService.ShowFatalError(ex,_log));
             }
 
@@ -79,8 +87,14 @@
                 onError: ex => _messageService.ShowFatalError(ex, _log),
                 onCompleted: eventObj.Set);
 
+                var sw = new Stopwatch();
+                sw.Start();
                 eventObj.Wait();
-               
+                sw.Stop();
+
+                testSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+
+
             }
             return list;
         }

@@ -64,5 +64,9 @@ namespace VisualMutator.Model.Tests
         public bool IsComplete
         {
             get; set; }
+
+        public long RunTestsTimeRawMiliseconds { get; set; }
+
+        public long LoadTestsTimeRawMiliseconds { get; set; }
     }
 }

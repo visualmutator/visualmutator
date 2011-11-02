@@ -60,11 +60,10 @@
 
         public void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
         {
-            mutant.State = MutantResultState.Tested;
-
-
             var sw = new Stopwatch();
             sw.Start();
+
+            mutant.State = MutantResultState.Tested;
 
             StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
@@ -75,13 +74,13 @@
             _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
 
             RunTests(testSession);
-
+            
 
             UnloadTests();
             _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
 
-            sw.Stop();
-            testSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+            
+            
 
             if (testSession.TestsRootNode.State == TestNodeState.Failure)
             {
@@ -95,6 +94,8 @@
             }
 
             mutant.TestSession.IsComplete = true;
+            sw.Stop();
+            testSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
         }
 
         public TestEnvironmentInfo InitTestEnvironment()

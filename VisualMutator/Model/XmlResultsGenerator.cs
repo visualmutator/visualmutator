@@ -73,6 +73,8 @@
                 select new XElement("TestedMutant",
                     new XAttribute("Id", mutant.Id),
                     new XAttribute("TestingTimeMiliseconds", mutant.TestSession.TestingTimeMiliseconds),
+                    new XAttribute("LoadTestsTimeRawMiliseconds", mutant.TestSession.LoadTestsTimeRawMiliseconds),
+                    new XAttribute("RunTestsTimeRawMiliseconds", mutant.TestSession.RunTestsTimeRawMiliseconds),
                     new XElement("Tests",
                     new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
