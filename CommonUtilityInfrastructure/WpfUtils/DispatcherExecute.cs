@@ -37,7 +37,9 @@
             }
         }
        
-
+        /// <summary>
+        /// Must be called on dispatcher thread.
+        /// </summary>
         public void InitializeWithDispatcher()
         {
             Dispatcher dispatcher = Application.Current.Dispatcher;

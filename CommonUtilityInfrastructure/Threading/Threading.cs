@@ -15,24 +15,19 @@ namespace CommonUtilityInfrastructure.Threading
 
         void InvokeOnGui(Action onGui);
 
-        Action<T> ActionOnGui<T>(Action<T> onGui);
+        Action<T> CreateActionOnGui<T>(Action<T> onGui);
 
         Task ScheduleAsync(Action onBackground, Action onGui = null, Action onException = null, Action onFinally = null);
 
         void ContinueOnGuiWhenAll(ICollection<Task> tasks, Action onGui);
 
-        Task ScheduleAsyncSequential(Action onBackground, Action onGui = null, 
-                                                     Action onException = null, Action onFinally = null);
-
-        Task ScheduleAsyncSequential<T>(Func<T> onBackground, 
-                                                        Action<T> onGui, Action onException = null, Action onFinally = null);
     }
 
     public interface IThreadPoolExecute
     {
         TaskScheduler ThreadPoolScheduler { get; }
 
-        TaskScheduler LimitedThreadPoolScheduler(int degree);
+       // TaskScheduler LimitedThreadPoolScheduler(int degree);
     }
 
     public class ThreadPoolExecute : IThreadPoolExecute
@@ -44,10 +39,10 @@ namespace CommonUtilityInfrastructure.Threading
                 return TaskScheduler.Default;
             }
         }
-        public TaskScheduler LimitedThreadPoolScheduler(int degree)
-        {
-            return new LimitedConcurrencyLevelTaskScheduler(degree);
-        }
+     //   public TaskScheduler LimitedThreadPoolScheduler(int degree)
+     //   {
+     //       return new LimitedConcurrencyLevelTaskScheduler(degree);
+     //   }
     }
 
     public class Threading : IThreading
@@ -73,7 +68,7 @@ namespace CommonUtilityInfrastructure.Threading
         {
             _execute.OnUIThread(onGui);
         }
-        public Action<T> ActionOnGui<T>(Action<T> onGui)
+        public Action<T> CreateActionOnGui<T>(Action<T> onGui)
         {
             return param =>
             {
@@ -115,32 +110,7 @@ namespace CommonUtilityInfrastructure.Threading
         
         }
 
-        public Task ScheduleAsyncSequential(Action onBackground, Action onGui = null, 
-            Action onException = null, Action onFinally = null)
-        {
-            return new TaskFactory(_threadPoolExecute.LimitedThreadPoolScheduler(1))
-                .StartNew(onBackground)
-                .ContinueWith(prev =>
-                {
-                    ContinueWithMethod(prev.Exception, onGui, onException, onFinally);
-
-                }, _execute.GuiScheduler);
-
-        }
-
-        public Task ScheduleAsyncSequential<T>(Func<T> onBackground, 
-            Action<T> onGui, Action onException = null, Action onFinally = null)
-        {
-            return new TaskFactory(_threadPoolExecute.LimitedThreadPoolScheduler(1))
-                .StartNew(onBackground)
-                .ContinueWith(prev =>
-                {
-                    ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
-
-                }, _execute.GuiScheduler);
-
-        }
-
+    
 
         public void ContinueWithMethod(AggregateException aggregateException, Action onGuiPacked, Action onException, Action onFinally)
         {

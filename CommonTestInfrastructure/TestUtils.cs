@@ -104,7 +104,7 @@
 
             var threadPooolExecuteMock = new Mock<IThreadPoolExecute>();
             threadPooolExecuteMock.SetupGet(_ => _.ThreadPoolScheduler).Returns(testScheduler);
-            threadPooolExecuteMock.Setup(_ => _.LimitedThreadPoolScheduler(It.IsAny<int>())).Returns(testScheduler);
+         //   threadPooolExecuteMock.Setup(_ => _.LimitedThreadPoolScheduler(It.IsAny<int>())).Returns(testScheduler);
 
 
             var threading = new Threading(new FakeDispatcherExecute(), threadPooolExecuteMock.Object,messageService);
