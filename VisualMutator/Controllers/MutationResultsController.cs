@@ -45,10 +45,6 @@
 
         private MutationTestingSession _currentSession;
 
-    //    private volatile bool _isPauseRequested;
-
-   //     private bool _isStopRequested;
-
         private RequestedHaltState? _requestedHaltState;
 
         public MutationResultsController(
@@ -202,10 +198,6 @@
                 }
                 _requestedHaltState = null;
             }
-          //  SetState(_requestedHaltState == RequestedHaltState.Pause ? OperationsState.TestingPaused 
-            //    : OperationsState.Finished);
-
-           // _isPauseRequested = false;
 
         }
 

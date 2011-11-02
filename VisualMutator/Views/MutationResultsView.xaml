@@ -8,7 +8,7 @@
              xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
              xmlns:Views="clr-namespace:VisualMutator.Views"
              xmlns:Structure="clr-namespace:VisualMutator.Model.Mutations.Structure" mc:Ignorable="d" 
-             d:DesignHeight="488" d:DesignWidth="393">
+             d:DesignHeight="488" d:DesignWidth="393" Visibility="Hidden">
 
     <UserControl.Resources>
         <ResourceDictionary>

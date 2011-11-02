@@ -6,6 +6,7 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Text;
+    using System.Windows;
 
     using CommonUtilityInfrastructure.WpfUtils;
 
@@ -138,17 +139,13 @@
         }
 
 
-        private bool _isVisible;
 
         public bool IsVisible
         {
-            get
-            {
-                return _isVisible;
-            }
+
             set
             {
-                SetAndRise(ref _isVisible, value, () => IsVisible);
+                View.Visibility = value ? Visibility.Visible : Visibility.Hidden;
             }
         }
 

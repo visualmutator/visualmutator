@@ -20,7 +20,7 @@ namespace VisualMutator.Views
 
     public interface IMutationResultsView : IView
     {
-        
+        Visibility Visibility { set; }
     }
     public partial class MutationResultsView : UserControl, IMutationResultsView
     {
