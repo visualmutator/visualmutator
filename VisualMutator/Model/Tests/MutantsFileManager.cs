@@ -1,6 +1,8 @@
 ﻿namespace VisualMutator.Model.Tests
 {
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
 
     using CommonUtilityInfrastructure.FileSystem;
@@ -69,6 +71,9 @@
                 _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
                 result.AssembliesPaths.Add(file);
             }
+
+            
+
             return result;
         }
 

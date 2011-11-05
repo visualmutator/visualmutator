@@ -49,18 +49,15 @@ namespace VisualMutator.Model.Mutations.Structure
         protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
             string stateText =
-                value == MutantResultState.Untested ? "Waiting..." :
-                value == MutantResultState.Tested ? "Executing tests..." :
-                value == MutantResultState.Killed ? "Killed by {0} tests".Formatted(NumberOfTestsThatKilled) :
-                value == MutantResultState.Live ? "Live" : null;
-            if (stateText == null)
-            {
-                throw new InvalidOperationException();
-            }
+                Functional.ValuedSwitch<MutantResultState, string>(value)
+                .Case(MutantResultState.Untested, "Waiting...")
+                .Case(MutantResultState.Tested, "Executing tests...")
+                .Case(MutantResultState.Killed, () => "Killed by {0} tests".Formatted(NumberOfTestsThatKilled))
+                .Case(MutantResultState.Live, "Live")
+                .Case(MutantResultState.Error, () => ErrorMessage)
+                .GetResult();
 
             DisplayedText = "#{0} {1}".Formatted(Id, stateText);
-
-
             base.SetState(value, updateChildren, updateParent);
         }
 
@@ -106,6 +103,6 @@ namespace VisualMutator.Model.Mutations.Structure
             }
         }
 
-       
+        public string ErrorMessage { get; set; }
     }
 }

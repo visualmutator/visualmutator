@@ -78,7 +78,8 @@
         private string TestSettings()
         {
             string content =
-                @"<?xml version=""1.0"" encoding=""UTF-8""?>
+@"
+<?xml version=""1.0"" encoding=""UTF-8""?>
 <TestSettings
   id=""906380a7-c058-43a6-8f36-966013e5a9eb""
   name=""UnitTests""

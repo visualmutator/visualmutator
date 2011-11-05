@@ -7,5 +7,6 @@
         Killed,
         Live,
         Tested,
+        Error,
     }
 }

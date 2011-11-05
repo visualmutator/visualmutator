@@ -119,6 +119,9 @@
     <Compile Include="Infrastructure\CheckboxedTree\Node.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NodeWithChildrenBase.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NormalNode.cs" />
+    <Compile Include="Model\Mutations\AssemblyVerificationException.cs" />
+    <Compile Include="Model\Mutations\AssemblyVerifier.cs" />
+    <Compile Include="Model\Mutations\CodeVisualizer.cs" />
     <Compile Include="Model\Mutations\Structure\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\Structure\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
@@ -136,7 +139,6 @@
     <Compile Include="Model\CodeDifference\LineChangeType.cs" />
     <Compile Include="Model\Mutations\AssembliesManager.cs" />
     <Compile Include="Model\Mutations\ClearableCacheAssemblyResolver.cs" />
-    <Compile Include="Model\Mutations\CodeCorrectnessChecker.cs" />
     <Compile Include="Model\Mutations\Structure\MutantResultState.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
     <Compile Include="Model\Tests\MutantsFileManager.cs" />

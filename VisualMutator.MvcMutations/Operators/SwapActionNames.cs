@@ -19,8 +19,8 @@
     [Export(typeof(IMutationOperator))]
     public class SwapActionNames : IMutationOperator
     {
-        /*
-        public MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
+        
+        public void Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
 
             var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller")).ToList();
@@ -46,6 +46,8 @@
 
             var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) }).ToList();
 
+
+
             var contructor = GetActionNameAttribute(module);
             var stringType = module.Import(typeof(string));
 
@@ -58,13 +60,44 @@
             }
 
 
+        }
+
+
+        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        {
+            var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller")).ToList();
+            var list = new List<Tuple<MethodDefinition, MethodDefinition>>();
+            foreach (var controllerType in controllers)
+            {
+
+                var validGroups = controllerType.Methods
+                    .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList()
+                    .GroupBy(m => m.Parameters, new ParametersComparer()).ToList()
+                  .Where(g => g.Count() >= 2).ToList();
+
+
+                foreach (var group in validGroups)
+                {
+                    var chosen = group.Take(group.Count() - group.Count() % 2).ToArray();
+                    for (int i = 0; i < chosen.Length; i += 2)
+                    {
+                        list.Add(Tuple.Create(chosen[i], chosen[i + 1]));
+                    }
+                }
+            }
+
+            var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) }).ToList();
 
             return null;
 
-
         }
-        */
-      
+
+        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
+        {
+            throw new NotImplementedException();
+        }
+
+  
 
         public MethodReference GetActionNameAttribute(ModuleDefinition currentModule)
         {
@@ -95,17 +128,10 @@
             }
         }
 
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
-        {
-            throw new NotImplementedException();
-        }
 
-        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
-        {
-            throw new NotImplementedException();
-        }
 
-  
+
+
   
         public class ParametersComparer : IEqualityComparer<Collection<ParameterDefinition>>
     

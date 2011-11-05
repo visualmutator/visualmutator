@@ -141,11 +141,7 @@
                     _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
                     RunTests(_currentSession);
                 });
-
-                
             }
-
-           
         }
 
     

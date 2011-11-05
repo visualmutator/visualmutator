@@ -39,6 +39,7 @@
                         .Case(MutantResultState.Killed, "Killed")
                         .Case(MutantResultState.Live, "Live")
                         .Case(MutantResultState.Untested, "Untested")
+                        .Case(MutantResultState.Error, "WithError")
                         .GetResult()
                         )
                         )

@@ -43,9 +43,7 @@
             td.Methods.Add(CecilUtils.CreateMethodDefinition("Test1", td));
             td.Methods.Add(CecilUtils.CreateMethodDefinition("Test2", td));
             td.Methods.Add(CecilUtils.CreateMethodDefinition("Test3", td));
-            //  AssemblyDefinition assembly = TestWrapperMocking.CreateAssembly("Ass", new[] { td });
 
-            //  var mock = TestWrapperMocking.MockMsTestWrapperForLoad(out testMethods);
 
             var msTestLoaderMock = new Mock<IMsTestLoader>();
             msTestLoaderMock.Setup(_ => _.ScanAssemblies(It.IsAny<IEnumerable<string>>())).Returns(new AssemblyScanResult
@@ -60,13 +58,15 @@
             var nUnitTestService = new NUnitTestService(nUnitWrapperMock.Object, new Mock<IMessageService>().Object);
             var msTestService = new MsTestService(null, msTestLoaderMock.Object);
        
-            var container = new TestsContainer(nUnitTestService, msTestService, null,Create.TestServices());
+            var container = new TestsContainer(nUnitTestService, msTestService, null,Create.TestServices(),null);
          
             var mutant = new StoredMutantInfo();
             mutant.AssembliesPaths.Add( "a");
        
             //Act:
-            TestSession session = container.LoadTests(mutant);
+            TestSession session = new TestSession();
+
+            container.LoadTests(mutant, session);
 
 
             //Assert:

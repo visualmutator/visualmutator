@@ -158,6 +158,10 @@
     <None Include="packages.config" />
     <Resource Include="Resources\Images_24bit.bmp" />
     <Resource Include="Resources\Images_32bit.bmp" />
+    <Content Include="PEVerify.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -190,6 +194,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Package.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PEVerify.exe">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

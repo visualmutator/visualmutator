@@ -11,6 +11,7 @@
 
  
     using VisualMutator.Controllers;
+    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.ViewModels;
@@ -32,13 +33,15 @@
             Kernel.Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
             Kernel.Bind<IMsTestWrapper>().To<MsTestWrapper>().InSingletonScope();
             Kernel.Bind<IMsTestLoader>().To<MsTestLoader>().InSingletonScope();
-            
 
 
+            Kernel.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
             
 
 
             Kernel.Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));
+
+
 
 
 

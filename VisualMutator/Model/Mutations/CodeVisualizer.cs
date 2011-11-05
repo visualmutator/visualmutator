@@ -4,10 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+public interface ICodeVisualizer
+{
+    
+}
 
-    public class CodeCorrectnessChecker
+public class CodeVisualizer : ICodeVisualizer
     {
-        public CodeCorrectnessChecker()
+        public CodeVisualizer()
         {
             
         }

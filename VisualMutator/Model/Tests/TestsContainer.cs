@@ -39,6 +39,8 @@
 
         private readonly CommonUtilityInfrastructure.CommonServices _commonServices;
 
+        private readonly IAssemblyVerifier _assemblyVerifier;
+
         private readonly IEnumerable<ITestService> _testServices;
 
       
@@ -47,15 +49,25 @@
 
      
 
-        public TestsContainer(NUnitTestService nunit, MsTestService ms,
-            IMutantsFileManager mutantsFileManager, CommonUtilityInfrastructure.CommonServices commonServices)
+        public TestsContainer(
+            NUnitTestService nunit, 
+            MsTestService ms,
+            IMutantsFileManager mutantsFileManager, 
+            CommonServices commonServices,
+            IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
             _commonServices = commonServices;
+            _assemblyVerifier = assemblyVerifier;
             _testServices = new List<ITestService>
             {
                 nunit,ms
             };
+        }
+
+        public bool VerifyAssemblies(List<string> assembliesPaths)
+        {
+            return assembliesPaths.All(assemblyPath => _assemblyVerifier.Verify(assemblyPath));
         }
 
         public void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
@@ -65,37 +77,40 @@
 
             mutant.State = MutantResultState.Tested;
 
-            StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
+            StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
-            TestSession testSession = LoadTests(storedMutantInfo);
-
-
-
-            _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
-
-            RunTests(testSession);
-            
-
-            UnloadTests();
-            _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
-
-            
-            
-
-            if (testSession.TestsRootNode.State == TestNodeState.Failure)
+            if (!VerifyAssemblies(storedMutantInfo.AssembliesPaths))
             {
-                mutant.NumberOfTestsThatKilled = testSession.TestMap.Values
-                    .Count(t => t.State == TestNodeState.Failure);
-                mutant.State = MutantResultState.Killed;
+                mutant.State = MutantResultState.Error;
+                mutant.ErrorMessage = "Mutant assembly failed verification";
+                sw.Stop();
             }
             else
             {
-                mutant.State = MutantResultState.Live;
+                TestSession testSession = new TestSession();
+                LoadTests(storedMutantInfo, testSession);
+                _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
+                RunTests(testSession);
+                UnloadTests();
+
+                if (testSession.TestsRootNode.State == TestNodeState.Failure)
+                {
+                    mutant.NumberOfTestsThatKilled = testSession.TestMap.Values
+                        .Count(t => t.State == TestNodeState.Failure);
+                    mutant.State = MutantResultState.Killed;
+                }
+                else
+                {
+                    mutant.State = MutantResultState.Live;
+                }
+
+                mutant.TestSession.IsComplete = true;
+                sw.Stop();
+                testSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
             }
 
-            mutant.TestSession.IsComplete = true;
-            sw.Stop();
-            testSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+            _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
+            
         }
 
         public TestEnvironmentInfo InitTestEnvironment()
@@ -103,7 +118,7 @@
             return _mutantsFileManager.InitTestEnvironment();
         }
 
-        public TestSession LoadTests(StoredMutantInfo mutant)
+        public void LoadTests(StoredMutantInfo mutant, TestSession testSession)
         {
             if (mutant == null)
             {
@@ -111,8 +126,6 @@
             }
             _currentMutant = mutant;
       
-
-            var testSession = new TestSession();
 
             IEnumerable<TestNodeClass> testClassses = _testServices
                 .SelectMany(s => s.LoadTests(mutant.AssembliesPaths, testSession));
@@ -138,7 +151,7 @@
             testSession.TestsRootNode.Children.AddRange(testNamespaces);
             testSession.TestsRootNode.State = TestNodeState.Inactive;
 
-            return testSession;
+          
         }
 
 
