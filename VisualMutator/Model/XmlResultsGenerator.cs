@@ -8,6 +8,9 @@
 
     using CommonUtilityInfrastructure;
 
+    using Mono.Cecil;
+
+    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.TestsTree;
@@ -16,7 +19,16 @@
 
     public class XmlResultsGenerator
     {
-        public XDocument GenerateResults(MutationTestingSession session, bool includeDetailedTestResults)
+        private readonly ICodeDifferenceCreator _codeDifferenceCreator;
+
+        public XmlResultsGenerator(ICodeDifferenceCreator codeDifferenceCreator)
+        {
+            _codeDifferenceCreator = codeDifferenceCreator;
+        }
+
+        public XDocument GenerateResults(MutationTestingSession session, 
+            bool includeDetailedTestResults,
+            bool includeCodeDifferenceListings)
         {
             List<Mutant> mutants = session.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.TestSession != null).ToList();
@@ -46,33 +58,50 @@
                     )
                 );
 
+
+            var optionalElements = new List<XElement>();
+
+            if (includeCodeDifferenceListings)
+            {
+                optionalElements.Add(CreateCodeDifferenceListings(mutants, session.OriginalAssemblies));
+            }
+
             if (includeDetailedTestResults)
             {
+                optionalElements.Add(CreateDetailedTestingResults(mutants));
+            }
+
                 return
                     new XDocument(
                         new XElement("MutationTestingSession",
                             new XAttribute("MutationScore", session.MutationScore),
                             mutantsNode,
-                            CreateDetailedTestingResults(mutants)));
-            }
-            else
-            {
-                return
-                    new XDocument(
-                        new XElement("MutationTestingSession",
-                            new XAttribute("MutationScore", session.MutationScore),
-                            mutantsNode));
-            }
+                            optionalElements));
+            
+        }
+        public XElement CreateCodeDifferenceListings(List<Mutant> mutants, IList<AssemblyDefinition> originalAssemblies)
+        {
+
+            return new XElement("CodeDifferenceListings",
+                from mutant in mutants
+                select new XElement("MutantCodeListing",
+                    new XAttribute("MutantId", mutant.Id),
+                    new XElement("Code", 
+                        _codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp, 
+                        mutant, originalAssemblies).Code)
+                        )
+                    );
+
         }
 
         public XElement CreateDetailedTestingResults(List<Mutant> mutants)
         {
-            return new XElement("DetailedTestingResults",
+            return new XElement("DetailedTestingResults",   
                 from mutant in mutants
-                where mutant.TestSession != null
+                where mutant.TestSession != null && mutant.TestSession.IsComplete
                 let groupedTests = mutant.TestSession.TestMap.Values.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
-                    new XAttribute("Id", mutant.Id),
+                    new XAttribute("MutantId", mutant.Id),
                     new XAttribute("TestingTimeMiliseconds", mutant.TestSession.TestingTimeMiliseconds),
                     new XAttribute("LoadTestsTimeRawMiliseconds", mutant.TestSession.LoadTestsTimeRawMiliseconds),
                     new XAttribute("RunTestsTimeRawMiliseconds", mutant.TestSession.RunTestsTimeRawMiliseconds),
@@ -103,5 +132,6 @@
                     )
                 ));
         }
+
     }
 }

@@ -2,7 +2,7 @@ namespace VisualMutator.Model.CodeDifference
 {
     using System.Collections.Generic;
 
-    public class CodeLineEqualityComparer : IEqualityComparer<string>
+    public class CSharpCodeLineEqualityComparer : IEqualityComparer<string>
     {
         private IEqualityComparer<string> baseComparer = EqualityComparer<string>.Default;
 
@@ -21,6 +21,7 @@ namespace VisualMutator.Model.CodeDifference
 
         private string NormalizeLine(string line)
         {
+            //IL_00ca: 
             line = line.Trim();
             var index = line.IndexOf("//");
             if (index >= 0)
@@ -35,6 +36,7 @@ namespace VisualMutator.Model.CodeDifference
             {
                 return line;
             }
+
         }
     }
 }

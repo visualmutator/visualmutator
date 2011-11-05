@@ -5,6 +5,8 @@
     using System;
     using System.Linq;
 
+    using CommonUtilityInfrastructure;
+
     using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
@@ -71,8 +73,8 @@
                 
                 if (updateParent && Parent != null)
                 {
-                    if (!(value == MutantResultState.Tested || value == MutantResultState.Live 
-                        || value == MutantResultState.Killed))
+                    if (!value.IsIn(MutantResultState.Tested, MutantResultState.Live,
+                        MutantResultState.Killed, MutantResultState.Error))
                     {
                         throw new InvalidOperationException("Tried to set invalid state: " + value);
                     }

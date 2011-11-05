@@ -20,7 +20,12 @@
 
 
 
-
+        [Test]
+        public void Test2()
+        {
+            var ilCodeLineEqualityComparer = new ILCodeLineEqualityComparer();
+            Assert.IsTrue(ilCodeLineEqualityComparer.Equals(@"IL_00ca: mov 435", @"IL_0aeg: mov 435"));
+        }
 
         [Test]
         public void Test1()
@@ -58,7 +63,8 @@
 
 ";
 
-            var diff = new CodeDifferenceCreator(new AssembliesManager()).GetDiff(testMethod, mutatedMethod);
+            var diff = new CodeDifferenceCreator(
+                new AssembliesManager()).GetDiff(CodeLanguage.CSharp, testMethod, mutatedMethod);
         }
     }
 }

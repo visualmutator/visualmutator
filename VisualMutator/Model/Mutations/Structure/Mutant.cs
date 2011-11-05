@@ -54,7 +54,7 @@ namespace VisualMutator.Model.Mutations.Structure
                 .Case(MutantResultState.Tested, "Executing tests...")
                 .Case(MutantResultState.Killed, () => "Killed by {0} tests".Formatted(NumberOfTestsThatKilled))
                 .Case(MutantResultState.Live, "Live")
-                .Case(MutantResultState.Error, () => ErrorMessage)
+                .Case(MutantResultState.Error, () => TestSession.ErrorDescription)
                 .GetResult();
 
             DisplayedText = "#{0} {1}".Formatted(Id, stateText);
@@ -103,6 +103,5 @@ namespace VisualMutator.Model.Mutations.Structure
             }
         }
 
-        public string ErrorMessage { get; set; }
     }
 }

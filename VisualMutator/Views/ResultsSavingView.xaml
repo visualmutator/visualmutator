@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" 
              d:DesignHeight="163" d:DesignWidth="395" Title="Save Mutation Testing Results" 
-        Width="400" Height="200"
-        SizeToContent="WidthAndHeight">
+        Width="500" Height="200">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -24,20 +23,30 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        
-        <DockPanel Grid.Row="0">
-            <TextBlock Text="Target file path:"/>
-            <TextBox Text="{Binding TargetPath}"/>
-           
-        </DockPanel>
+
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Target file path:"/>
+            <TextBox Grid.Column="1" Text="{Binding TargetPath}" HorizontalAlignment="Stretch" />
+            <Button  Grid.Column="2" Content="Browse..." Command="{Binding CommandBrowse}"/>
+        </Grid>
         <CheckBox Grid.Row="1" Style="{StaticResource checkstyle}"
-                  Content="Include detailed test results" 
+                  Content="Include detailed test results for each mutant" 
                   IsChecked="{Binding IncludeDetailedTestResults}"/>
-        <DockPanel Grid.Row="3" HorizontalAlignment="Right">
+        <CheckBox Grid.Row="2" Style="{StaticResource checkstyle}"
+                  Content="Include code difference listings for each mutant" 
+                  IsChecked="{Binding IncludeCodeDifferenceListings}"/>
+        
+        <DockPanel Grid.Row="4" HorizontalAlignment="Right">
             <Button Content="Save results" Command="{Binding CommandSaveResults}"/>
             <Button Content="Cancel" Command="{Binding CommandClose}"/>
        

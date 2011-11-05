@@ -4,7 +4,11 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
     using System.Text;
+
+    using CommonUtilityInfrastructure;
 
     using DiffLib;
 
@@ -13,52 +17,38 @@
 
     using Mono.Cecil;
 
+    using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Structure;
+
+    using log4net;
 
     #endregion
 
     public interface ICodeDifferenceCreator
     {
-        CodeWithDifference CreateCodeDifference(Mutant mutant, IList<AssemblyDefinition> originalAssemblies);
+
+        CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant,
+            IList<AssemblyDefinition> currentOriginalAssemblies);
     }
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAssembliesManager _assembliesManager;
 
         public CodeDifferenceCreator(IAssembliesManager assembliesManager)
         {
             _assembliesManager = assembliesManager;
+
         }
 
-        public CodeWithDifference CreateCodeDifference(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
-        {
-            var originalMethod = mutant.MutationTarget.GetMethod(originalAssemblies);
 
-            var mutatedAssemblies = _assembliesManager.Load(mutant.StoredAssemblies);
-            var mutatedMethod = mutant.MutationTarget.GetMethod(mutatedAssemblies);
 
-            var cs = new CSharpLanguage();
-
-            var mutatedOutput = new PlainTextOutput();
-            var originalOutput = new PlainTextOutput();
-            var decompilationOptions = new DecompilationOptions();
-            decompilationOptions.DecompilerSettings.ShowXmlDocumentation = false;
-
-            cs.DecompileMethod(mutatedMethod, mutatedOutput, decompilationOptions);
-            cs.DecompileMethod(originalMethod, originalOutput, decompilationOptions);
-
-            string originalString = originalOutput.ToString().Replace("\t", "   ");
-            string mutatedString = mutatedOutput.ToString().Replace("\t", "   ");
-
-            return GetDiff(originalString, mutatedString);
-        }
-
-        public CodeWithDifference GetDiff(string input1, string input2)
+        public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
         {
             var diff = new StringBuilder();
-            var lineChanges = CreateDiff(input1, input2, diff);
+            var lineChanges = CreateDiff(language, input1, input2, diff);
             return new CodeWithDifference
             {
                 Code = diff.ToString(),
@@ -66,19 +56,49 @@
             };
         }
 
-        private LineChange NewLineChange(LineChangeType type, StringBuilder diff, int startIndex, int endIndex)
+        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, IList<AssemblyDefinition> currentOriginalAssemblies)
+        {
+            var codeVisualizer = new CodeVisualizer(language);
+
+            var assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
+            CodePair pair = null;
+            try
+            {
+                pair = codeVisualizer.CreateCodesToCompare(
+                    mutant.MutationTarget, currentOriginalAssemblies, assemblyDefinitions);
+
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                return new CodeWithDifference
+                {
+                    Code = "Exception Occurred: " + e,
+                    LineChanges = Enumerable.Empty<LineChange>().ToList()
+                };
+            }
+
+            return GetDiff(language,pair.OriginalCode, pair.MutatedCode);
+        }
+
+        private LineChange NewLineChange(LineChangeType type, 
+            StringBuilder diff, int startIndex, int endIndex)
         {
             string text = diff.ToString().Substring(startIndex, endIndex - startIndex - 2);
 
             return new LineChange(type, text);
         }
 
-        private List<LineChange> CreateDiff(string input1, string input2, StringBuilder diff)
+        private List<LineChange> CreateDiff(CodeLanguage language, string input1, string input2, StringBuilder diff)
         {
+            IEqualityComparer<string> eq = Functional.ValuedSwitch<CodeLanguage, IEqualityComparer<string>>(language)
+                .Case(CodeLanguage.CSharp, () => new CSharpCodeLineEqualityComparer())
+                .Case(CodeLanguage.IL, () => new ILCodeLineEqualityComparer())
+                .GetResult();
             var differ = new AlignedDiff<string>(
                 NormalizeAndSplitCode(input1),
                 NormalizeAndSplitCode(input2),
-                new CodeLineEqualityComparer(),
+                eq,
                 new StringSimilarityComparer(),
                 new StringAlignmentFilter());
 

@@ -30,6 +30,17 @@ namespace VisualMutator.Model.Tests
             }
         }
 
+        public string ErrorMessage
+        {
+            get;
+            set;
+        }
+
+        public string ErrorDescription
+        {
+            get;
+            set;
+        }
         public List<TestNodeClass> TestClassses
         {
             get

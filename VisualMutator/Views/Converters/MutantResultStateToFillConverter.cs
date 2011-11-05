@@ -28,7 +28,7 @@
                 .Case(MutantResultState.Killed, Brushes.Gray)
                 .Case(MutantResultState.Live, Brushes.Orange)
                 .Case(MutantResultState.Tested, Brushes.Blue)
-                .Case(MutantResultState.Tested, Brushes.Red)
+                .Case(MutantResultState.Error, Brushes.Red)
                 .GetResult();
 
         }

@@ -3,6 +3,7 @@ namespace VisualMutator.ViewModels
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.CodeDifference;
+    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 
@@ -12,6 +13,10 @@ namespace VisualMutator.ViewModels
             : base(view)
         {
             TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
+
+            CodeLanguages = new BetterObservableCollection<CodeLanguage> { CodeLanguage.CSharp, CodeLanguage.IL };
+
+            SelectedLanguage = CodeLanguage.CSharp;
         }
 
 
@@ -29,7 +34,19 @@ namespace VisualMutator.ViewModels
             }
         }
 
+        private CodeLanguage _selectedLanguage;
 
+        public CodeLanguage SelectedLanguage
+        {
+            get
+            {
+                return _selectedLanguage;
+            }
+            set
+            {
+                SetAndRise(ref _selectedLanguage, value, () => SelectedLanguage);
+            }
+        }
 
 
         private string _selectedTabHeader;
@@ -68,6 +85,20 @@ namespace VisualMutator.ViewModels
         public void ClearCode()
         {
             View.ClearCode();
+        }
+
+        private BetterObservableCollection<CodeLanguage> _codeLanguages;
+
+        public BetterObservableCollection<CodeLanguage> CodeLanguages
+        {
+            get
+            {
+                return _codeLanguages;
+            }
+            set
+            {
+                SetAndRise(ref _codeLanguages, value, () => CodeLanguages);
+            }
         }
     }
 }

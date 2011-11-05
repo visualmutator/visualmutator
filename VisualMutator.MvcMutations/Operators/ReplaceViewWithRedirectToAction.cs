@@ -19,24 +19,10 @@
     public class ReplaceViewWithRedirectToAction : IMutationOperator
     {
      
-        private class ThisMutationTarget : InstructionMutationTarget
-        {
-            public ThisMutationTarget(MethodDefinition method, int instrOffset, MethodDefinition toRedirect)
-                : base(method, instrOffset)
-            {
-                MethodToRedirectToFullName = toRedirect.FullName;
-            }
-
-            public string MethodToRedirectToFullName
-            {
-                get; private set;
-            }
-
-        }
 
         public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
         {
-            var list = new List<ThisMutationTarget>();
+            var list = new List<MutationTarget>();
             var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));
  
             foreach (var controller in controllers)
@@ -67,83 +53,58 @@
             return list;
         }
 
-        private IEnumerable<ThisMutationTarget> FindValidViewCallInstructions(MethodDefinition methodToModify, 
+        private IEnumerable<MutationTarget> FindValidViewCallInstructions(MethodDefinition methodToModify, 
             MethodDefinition methodToRedirectTo)
         {
     
-            var a = from _ in methodToModify.Body.Instructions.Select((instruction, index)=> new {instruction, index})
+            return
+            from _ in methodToModify.Body.Instructions.Select((instruction, index)=> new {instruction, index})
             where _.instruction.OpCode == OpCodes.Call
             let method = ((MethodReference)_.instruction.Operand)
             where method.DeclaringType.FullName == "System.Web.Mvc.Controller"
                   && method.Name == "View" && HasProperParameters(methodToModify, _.instruction, method )
-                    select new ThisMutationTarget(methodToModify, _.index, methodToRedirectTo);
-            return a;
+            select new MutationTarget()
+            .Add("MethodToModify", new MutationElementMethod(methodToModify, _.index))
+            .Hidden.Add("MethodToRedirectTo", new MutationElementMethod(methodToRedirectTo));
+           
+     
         }
-
-        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, 
-            AssembliesToMutateFactory assembliesFactory)
+        
+        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
         {
-            var results = new MutationResultsCollection();
+            MutationElementMethod methodToModifyElement = target.Method("MethodToModify");
+            MethodDefinition methodToModify = methodToModifyElement.FindIn(assembliesToMutate);
+            MethodDefinition methodToRedirectTo = target.Hidden.Method("MethodToRedirectTo").FindIn(assembliesToMutate);
 
-            foreach (ThisMutationTarget target in targets.Cast<ThisMutationTarget>())
+            methodToModify.Body.SimplifyMacros();
+
+            //  var callInstr = methodToModify.Body.GetInstructionAtOffset(target.InstructionOffset);
+            Instruction callInstr = methodToModifyElement.FindInstructionIn(methodToModify);
+         
+
+            MethodDefinition redirectToActionMethod = GetRedirectToActionMethod(methodToModify.DeclaringType.Module);
+
+
+            ILProcessor proc = methodToModify.Body.GetILProcessor();
+            var method = (MethodReference)callInstr.Operand;
+
+
+
+            foreach (var _ in method.Parameters)
             {
-
-                var assemblies = assembliesFactory.GetNewCopy();
-                var methodToModify = target.GetMethod(assemblies);
-                var methodToRedirectTo = methodToModify.DeclaringType.Methods
-                    .Single(m => m.FullName == target.MethodToRedirectToFullName);
-
-                methodToModify.Body.SimplifyMacros();
-
-                if (target.InstructionOffset == 209)
-                {
-                    Debug.WriteLine("##############");
-                    Debug.WriteLine("##############");
-                    Debug.WriteLine("##############");
-                    foreach (var instruction in methodToModify.Body.Instructions)
-                    {
-                        Debug.WriteLine(instruction);
-                    }
-                }
-              //  var callInstr = methodToModify.Body.GetInstructionAtOffset(target.InstructionOffset);
-                var callInstr = methodToModify.Body.Instructions[target.InstructionOffset];
-                
-
-                MethodDefinition redirectToActionMethod = GetRedirectToActionMethod(methodToModify.DeclaringType.Module);
-
-
-                ILProcessor proc = methodToModify.Body.GetILProcessor();
-                var method = (MethodReference)callInstr.Operand;
-
-
-
-                foreach (var _ in method.Parameters)
-                {
-                    proc.Remove(callInstr.Previous);
-                }
-
-                proc.InsertBefore(callInstr, Instruction.Create(OpCodes.Ldstr, methodToRedirectTo.Name));
-
-
-                proc.Replace(callInstr, Instruction.Create(OpCodes.Call, 
-                    methodToModify.DeclaringType.Module.Import(redirectToActionMethod)));
-
-                var result = new MutationResult
-                {
-                    MutatedAssemblies = assemblies,
-                    MutationTarget = target,
-                    ModifiedMethod = methodToModify,
-                };
-
-                results.MutationResults.Add(result);
-
-                methodToModify.Body.OptimizeMacros();
+                proc.Remove(callInstr.Previous);
             }
 
+            proc.InsertBefore(callInstr, Instruction.Create(OpCodes.Ldstr, methodToRedirectTo.Name));
 
-            return results;
 
+            proc.Replace(callInstr, Instruction.Create(OpCodes.Call, 
+                methodToModify.DeclaringType.Module.Import(redirectToActionMethod)));
 
+ 
+            methodToModify.Body.OptimizeMacros();
+
+     
         }
 
 

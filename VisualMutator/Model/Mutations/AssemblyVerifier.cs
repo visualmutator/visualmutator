@@ -14,7 +14,7 @@
 
     public interface IAssemblyVerifier
     {
-        bool Verify( string assemblyPath);
+        void Verify(string assemblyPath);
     }
 
     public class AssemblyVerifier : IAssemblyVerifier
@@ -27,7 +27,7 @@
         }
 
   
-        public bool Verify( string assemblyPath)
+        public void Verify( string assemblyPath)
         {
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(@".\PEVerify.exe")
@@ -47,7 +47,10 @@
 
             p.WaitForExit();
 
-            return p.ExitCode == 0;
+            if(p.ExitCode != 0)
+            {
+                throw new AssemblyVerificationException(consoleOutput);
+            }
         }
 
     }

@@ -1,19 +1,6 @@
 ﻿namespace VisualMutator.Model.Mutations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-public interface ICodeVisualizer
-{
-    
-}
+    using VisualMutator.Extensibility;
 
-public class CodeVisualizer : ICodeVisualizer
-    {
-        public CodeVisualizer()
-        {
-            
-        }
-    }
+ 
 }

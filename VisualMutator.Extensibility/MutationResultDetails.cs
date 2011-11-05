@@ -22,7 +22,11 @@ namespace VisualMutator.Extensibility
 
     public class MutationResult
     {
-
+        public MutationResult(MutationTarget mutationTarget, IList<AssemblyDefinition> assembliesToMutate)
+        {
+            MutationTarget = mutationTarget;
+            MutatedAssemblies = assembliesToMutate;
+        }
 
         public IEnumerable<AssemblyDefinition> MutatedAssemblies
         {
@@ -36,7 +40,7 @@ namespace VisualMutator.Extensibility
             set;
         }
 
-        public MethodDefinition ModifiedMethod { get; set; }
+
     }
 
 

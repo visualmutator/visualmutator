@@ -29,31 +29,20 @@
 
         public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
         {
-            yield return new MutationTarget(types.Single(t => t.Name == "Type1").Methods.Single());
-            yield return new MutationTarget(types.Single(t => t.Name == "Type3").Methods.Single());
+            yield return new MutationTarget().Add("0", new MutationElementMethod(types.Single(t => t.Name == "Type1").Methods.Single()));
+            yield return new MutationTarget().Add("0", new MutationElementMethod(types.Single(t => t.Name == "Type3").Methods.Single()));
+          
 
         }
 
-        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
+        public void Mutate(MutationTarget mutationTarget, IList<AssemblyDefinition> assembliesToMutate)
         {
-            int i = 0;
-            var results = new MutationResultsCollection();
-            foreach (var mutationTarget in targets)
-            {
-                var assemblyDefinitions = assembliesFactory.GetNewCopy();
-                mutationTarget.GetMethod(assemblyDefinitions).Name = "MutatedMethodName" + i++;
+            mutationTarget.Method("0").FindIn(assembliesToMutate).Name = "MutatedMethodName";
 
-                results.MutationResults.Add(new MutationResult
-                {
-
-                    MutatedAssemblies = assemblyDefinitions,
-                    MutationTarget = mutationTarget
-                });
-            }
-
-            return results;
 
         }
+
+    
 
 
     }

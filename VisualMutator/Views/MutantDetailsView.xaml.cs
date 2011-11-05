@@ -31,9 +31,10 @@ namespace VisualMutator.Views
         public MutantDetailsView()
         {
             InitializeComponent();
-            codeTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            codeTextBox.Document.PageWidth = 1000;
 
+            codeTextBox.Document.PageWidth = 2000;
+            codeTextBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            codeTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 
         //    codeTextBox.FontFamily = new FontFamily("Consolas");
         }
@@ -88,8 +89,13 @@ namespace VisualMutator.Views
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ((MutantDetailsViewModel)this.DataContext)
-                .SelectedTabHeader = (string)e.AddedItems.Cast<TabItem>().Single().Header;
+            // 'VisualMutator.Model.Mutations.CSharpCodeLanguage' in addedItems? ... 
+            if (e.AddedItems.Cast<object>().All(i => i is TabItem))
+            {
+                ((MutantDetailsViewModel)this.DataContext)
+                   .SelectedTabHeader = (string)e.AddedItems.Cast<TabItem>().Single().Header;
+            }
+           
         }
 
     }

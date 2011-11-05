@@ -119,9 +119,13 @@
     <Compile Include="Infrastructure\CheckboxedTree\Node.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NodeWithChildrenBase.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NormalNode.cs" />
+    <Compile Include="Model\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\AssemblyVerificationException.cs" />
     <Compile Include="Model\Mutations\AssemblyVerifier.cs" />
+    <Compile Include="Model\Mutations\CodeLanguage.cs" />
+    <Compile Include="Model\Mutations\CodePair.cs" />
     <Compile Include="Model\Mutations\CodeVisualizer.cs" />
+    <Compile Include="Model\Mutations\Decompiler.cs" />
     <Compile Include="Model\Mutations\Structure\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\Structure\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
@@ -133,7 +137,7 @@
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\TreeNode.cs" />
     <Compile Include="Model\CodeDifference\CodeDifferenceCreator.cs" />
-    <Compile Include="Model\CodeDifference\CodeLineEqualityComparer.cs" />
+    <Compile Include="Model\CodeDifference\CSharpCodeLineEqualityComparer.cs" />
     <Compile Include="Model\CodeDifference\CodeWithDifference.cs" />
     <Compile Include="Model\CodeDifference\LineChange.cs" />
     <Compile Include="Model\CodeDifference\LineChangeType.cs" />

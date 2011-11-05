@@ -21,7 +21,6 @@ namespace VisualMutator.Extensibility
    
         IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types);
 
-        MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, 
-                                                                AssembliesToMutateFactory assembliesFactory);
+        void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate);
     }
 }

@@ -54,14 +54,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
+    <Compile Include="IMutationElement.cs" />
     <Compile Include="IMutationOperator.cs" />
     <Compile Include="IOperatorsPack.cs" />
+    <Compile Include="MutationElementField.cs" />
+    <Compile Include="MutationElementMethod.cs" />
+    <Compile Include="MutationElementProperty.cs" />
+    <Compile Include="MutationElementType.cs" />
     <Compile Include="MutationResultDetails.cs" />
     <Compile Include="MutationTarget.cs" />
     <Compile Include="PackageInfoAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferencedAssemblyNotFoundException.cs" />
     <Compile Include="AssembliesToMutateFactory.cs" />
+    <Compile Include="TypeIdentyfier.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

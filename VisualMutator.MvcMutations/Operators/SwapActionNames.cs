@@ -92,6 +92,11 @@
 
         }
 
+        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
+        {
+            throw new NotImplementedException();
+        }
+
         public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
         {
             throw new NotImplementedException();

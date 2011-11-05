@@ -70,9 +70,27 @@
         }
 
 
+
         public void AddListener<T>(Expression<Func<T>> propertyExpression, Action action )
         {
             EventListeners.Add(this, propertyExpression.PropertyName(),action);
         }
+
+
+     
+    }
+    public static class Mixin2
+    {
+        public static NotifyChangedObservable<T> RegisterPropertyChanged<VM, T>
+            (this VM vm, Expression<Func<VM, T>> propertyExpression)
+where VM : ModelElement,IEventNotifier
+        {
+            var changedObservable = vm.WhenPropertyChanged(propertyExpression);
+            vm.EventListeners.AddReference(changedObservable);
+
+            return changedObservable;
+
+        }
+
     }
 }

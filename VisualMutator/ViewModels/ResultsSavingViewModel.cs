@@ -14,6 +14,8 @@
         public ResultsSavingViewModel(IResultsSavingView view)
             : base(view)
         {
+            this.IncludeDetailedTestResults = true;
+            this.IncludeCodeDifferenceListings= false;
         }
 
         public void Show()
@@ -54,6 +56,19 @@
             }
         }
 
+        private bool _includeCodeDifferenceListings;
+
+        public bool IncludeCodeDifferenceListings
+        {
+            get
+            {
+                return _includeCodeDifferenceListings;
+            }
+            set
+            {
+                SetAndRise(ref _includeCodeDifferenceListings, value, () => IncludeCodeDifferenceListings);
+            }
+        }
         private BasicCommand _commandSaveResults;
 
         public BasicCommand CommandSaveResults
@@ -79,6 +94,20 @@
             set
             {
                 SetAndRise(ref _commandClose, value, () => CommandClose);
+            }
+        }
+
+        private BasicCommand _commandBrowse;
+
+        public BasicCommand CommandBrowse
+        {
+            get
+            {
+                return _commandBrowse;
+            }
+            set
+            {
+                SetAndRise(ref _commandBrowse, value, () => CommandBrowse);
             }
         }
     }

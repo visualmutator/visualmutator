@@ -56,6 +56,11 @@
             var memberExpression = propertyExpression.Body as MemberExpression;
             return memberExpression.Member.Name;
         }
+        public static string PropertyName<Param, T>(this Expression<Func<Param,T>> propertyExpression)
+        {
+            var memberExpression = propertyExpression.Body as MemberExpression;
+            return memberExpression.Member.Name;
+        }
 
 
 

@@ -63,6 +63,14 @@ namespace CommonUtilityInfrastructure.WpfUtils
             return new NotifyChangedObservable<T>(@this, propertyExpression.PropertyName());
  
         }
+            
+        public static NotifyChangedObservable<T> WhenPropertyChanged<Param,T>(this INotifyPropertyChanged @this,
+            Expression<Func<Param,T>> propertyExpression)
+        {
+
+            return new NotifyChangedObservable<T>(@this, propertyExpression.PropertyName());
+ 
+        }
     }
 
     

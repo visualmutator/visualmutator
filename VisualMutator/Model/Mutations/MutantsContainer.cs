@@ -11,6 +11,7 @@
     using CommonUtilityInfrastructure;
 
     using Mono.Cecil;
+    using Mono.Collections.Generic;
 
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
@@ -46,17 +47,14 @@
 
         public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
         {
-            yield return new MutationTarget(null);
+            yield return new MutationTarget();
         }
 
-        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, 
-            AssembliesToMutateFactory assembliesFactory)
+        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
         {
-            return new MutationResultsCollection()
-            {
-                MutationResults = new[] { new MutationResult(), }
-            };
+            
         }
+
     }
 
 
@@ -139,25 +137,31 @@
 //
             var assembliesFactory = new AssembliesToMutateFactory(() => _assembliesManager.Load(sourceAssemblies));
           //  for (int j = 0; j < 3; j++)
-          //  {
-                IList<MutationResult> results;
-                try
+        //  {
+            IList<MutationResult> results = new List<MutationResult>();
+            try
+            {
+                foreach (MutationTarget mutationTarget in targets)
                 {
-                    results = mutOperator.CreateMutants(targets, assembliesFactory).MutationResults;
+                    var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
+                    mutOperator.Mutate(mutationTarget, assembliesToMutate);
+                    results.Add(new MutationResult(mutationTarget, assembliesToMutate));
                 }
-                catch (Exception e)
-                {
-                    throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutOperator.Name), e);
-                }
+                    
+            }
+            catch (Exception e)
+            {
+                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutOperator.Name), e);
+            }
 
-                foreach (MutationResult mutationResult in results)
-                {
-                    var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
+            foreach (MutationResult mutationResult in results)
+            {
+                var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
 
-                    var mutant = new Mutant(generateId(), result, mutationResult.MutationTarget, serializedMutant);
+                var mutant = new Mutant(generateId(), result, mutationResult.MutationTarget, serializedMutant);
 
-                    result.Children.Add(mutant);
-                }
+                result.Children.Add(mutant);
+            }
         //    }
             return result;
         }

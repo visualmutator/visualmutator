@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.ViewModels;
 
+    using log4net;
 
     enum RequestedHaltState
     {
@@ -29,6 +31,7 @@
 
     public class MutationResultsController : Controller
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutationResultsViewModel _viewModel;
 
         private readonly IFactory<MutantsCreationController> _mutantsCreationFactory;
@@ -183,16 +186,19 @@
             if (_requestedHaltState != null)
             {
 
-                if (_requestedHaltState == RequestedHaltState.Pause)
-                {
-                    SetState( OperationsState.TestingPaused);
-                }
-                else
-                {
-                    SetState(OperationsState.Finished);
-                    Finish();
-                }
+                Functional.Switch(_requestedHaltState)
+                    .Case(RequestedHaltState.Pause, () => SetState( OperationsState.TestingPaused))
+                    .Case(RequestedHaltState.Stop, () =>
+                    {
+                        SetState(OperationsState.Finished);
+                        Finish();
+                    }).Do();
                 _requestedHaltState = null;
+            }
+            else
+            {
+                SetState(OperationsState.Finished);
+                Finish();
             }
 
         }

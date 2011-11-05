@@ -33,6 +33,8 @@
 
         private readonly CommonServices _commonServices;
 
+
+
         private IDisposable _listenerForCurrentMutant;
 
         private IList<AssemblyDefinition> _currentOriginalAssemblies;
@@ -45,43 +47,53 @@
             CommonServices commonServices)
         {
             _viewModel = viewModel;
-
-            _viewModel.RegisterPropertyChanged(() => _viewModel.SelectedTabHeader).Subscribe(LoadData);
-
-           
             _codeDifferenceCreator = codeDifferenceCreator;
+
             _commonServices = commonServices;
+
+
+
+            _viewModel.RegisterPropertyChanged(_=>_.SelectedTabHeader)
+                .Where(x=> _currentMutant != null).Subscribe(LoadData);
+
+            _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
+
         }
-
-        public void LoadData(string header)
-        {
-
-            if (_currentMutant != null)
-            {
-                Functional.Switch(header)
-               .Case("Tests", () => LoadTests(_currentMutant))
-               .Case("Code", () => LoadCode(_currentMutant, _currentOriginalAssemblies))
-               .ThrowIfNoMatch();
-            }
-           
-        }
-
         public void LoadDetails(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
         {
             _currentOriginalAssemblies = originalAssemblies;
             _currentMutant = mutant;
 
             LoadData(_viewModel.SelectedTabHeader);
-    
+
+        }
+        public void LoadData(string header)
+        {
+
+            Functional.Switch(header)
+            .Case("Tests", () => LoadTests(_currentMutant))
+            .Case("Code", () => LoadCode(_viewModel.SelectedLanguage))
+            .Do();
+            
+           
         }
 
-        public void LoadCode(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
+  
+
+        public void LoadCode(CodeLanguage selectedLanguage)
         {
 //TODO: remove race
+
             _viewModel.IsCodeLoading = true;
             _viewModel.ClearCode();
+
             _commonServices.Threading.ScheduleAsync(
-                () => _codeDifferenceCreator.CreateCodeDifference(mutant, originalAssemblies),
+                () =>
+                {
+                    return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
+                        _currentMutant, _currentOriginalAssemblies);
+                   
+                },
                 code =>
                 {
                     _viewModel.PresentCode(code);
