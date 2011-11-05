@@ -37,6 +37,8 @@ namespace VisualMutator.Model.Mutations.Structure
             _id = id;
             _mutationTarget = mutationTarget;
             _storedAssemblies = storedAssemblies;
+            _testSession  = new TestSession();
+
         }
 
         public int Id
@@ -49,7 +51,8 @@ namespace VisualMutator.Model.Mutations.Structure
         protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
             string stateText =
-                Functional.ValuedSwitch<MutantResultState, string>(value)
+                Switch.Into<string>().From(value)
+                //Functional.ValuedSwitch<MutantResultState, string>(value)
                 .Case(MutantResultState.Untested, "Waiting...")
                 .Case(MutantResultState.Tested, "Executing tests...")
                 .Case(MutantResultState.Killed, () => "Killed by {0} tests".Formatted(NumberOfTestsThatKilled))
@@ -97,11 +100,7 @@ namespace VisualMutator.Model.Mutations.Structure
             {
                 return _testSession;
             }
-            set
-            {
-                SetAndRise(ref _testSession, value, () => TestSession);
-            }
-        }
 
+        }
     }
 }

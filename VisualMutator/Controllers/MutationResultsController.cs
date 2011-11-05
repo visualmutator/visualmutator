@@ -93,7 +93,7 @@
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
 
 
-            _viewModel.RegisterPropertyChanged(() => _viewModel.SelectedMutationTreeItem).OfType<Mutant>()
+            _viewModel.RegisterPropertyChanged(_ => _.SelectedMutationTreeItem).OfType<Mutant>()
                 .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, _currentSession.OriginalAssemblies));
 
             _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;

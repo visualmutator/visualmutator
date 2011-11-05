@@ -16,6 +16,8 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.Model.Mutations.Structure;
+    using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.ViewModels;
 
     public interface IMutationResultsView : IView
@@ -33,6 +35,31 @@ namespace VisualMutator.Views
         {
             var vm = (MutationResultsViewModel)this.DataContext;
             vm.SelectedMutationTreeItem = e.NewValue;
+        }
+
+
+
+        private void MenuItemMessage_Click(object sender, RoutedEventArgs e)
+        {
+
+            string message = ((Mutant)Tree.SelectedItem).TestSession.ErrorMessage;
+            MessageBox.Show(message);
+        }
+
+
+        private void trv_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var mutant = (Mutant)((TreeViewItem)sender).DataContext;
+            ((TreeViewItem)sender).IsSelected = true;
+            if (mutant.State == MutantResultState.Error)
+            {
+                ((TreeViewItem)sender).ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
+            }
+            else
+            {
+                ((TreeViewItem)sender).ContextMenu = null;
+                Tree.ContextMenu = null;
+            }
         }
     }
 

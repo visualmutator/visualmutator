@@ -112,14 +112,14 @@
                 _listenerForCurrentMutant = null;
             }
 
-            if (mutant.TestSession != null)
+            if (mutant.TestSession.IsComplete)
             {
                 _viewModel.TestNamespaces.AddRange(mutant.TestSession.TestNamespaces);
             }
             else
             {
-                _listenerForCurrentMutant = mutant.WhenPropertyChanged(() => mutant.TestSession)
-                    .Subscribe(testSession => _viewModel.TestNamespaces.AddRange(testSession.TestNamespaces));
+                _listenerForCurrentMutant = mutant.TestSession.WhenPropertyChanged(_ => _.IsComplete)
+                    .Subscribe(x => _viewModel.TestNamespaces.AddRange(mutant.TestSession.TestNamespaces));
             }
         }
 

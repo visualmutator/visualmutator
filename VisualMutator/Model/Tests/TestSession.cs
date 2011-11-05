@@ -3,9 +3,11 @@ namespace VisualMutator.Model.Tests
     using System.Collections.Generic;
     using System.Linq;
 
+    using CommonUtilityInfrastructure.WpfUtils;
+
     using VisualMutator.Model.Tests.TestsTree;
 
-    public class TestSession
+    public class TestSession : ModelElement
     {
         private IDictionary<string, TestNodeMethod> _testMap;
 
@@ -72,9 +74,20 @@ namespace VisualMutator.Model.Tests
 
         public IList<string> AssembliesWithTests { get; set; }
 
+        private bool _isComplete;
+
         public bool IsComplete
         {
-            get; set; }
+            get
+            {
+                return _isComplete;
+            }
+            set
+            {
+                SetAndRise(ref _isComplete, value, () => IsComplete);
+            }
+        }
+    
 
         public long RunTestsTimeRawMiliseconds { get; set; }
 

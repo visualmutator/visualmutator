@@ -60,22 +60,6 @@
             }
         }
 
-        public NotifyChangedObservable<T> RegisterPropertyChanged<T>(Expression<Func<T>> propertyExpression)
-        {
-            var changedObservable = this.WhenPropertyChanged(propertyExpression);
-            EventListeners.AddReference(changedObservable);
-            
-            return changedObservable;
-
-        }
-
-
-
-        public void AddListener<T>(Expression<Func<T>> propertyExpression, Action action )
-        {
-            EventListeners.Add(this, propertyExpression.PropertyName(),action);
-        }
-
 
      
     }

@@ -31,7 +31,8 @@
             bool includeCodeDifferenceListings)
         {
             List<Mutant> mutants = session.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
-            List<Mutant> testedMutants = mutants.Where(m => m.TestSession != null).ToList();
+            List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
+            List<Mutant> testedMutants = mutants.Where(m => m.TestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
 
             var mutantsNode = new XElement("Mutants",
@@ -39,6 +40,7 @@
                 new XAttribute("Live", live.Count),
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
+                new XAttribute("WithError", mutantsWithErrors.Count),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
                     new XAttribute("Name", oper.Name),
@@ -98,7 +100,7 @@
         {
             return new XElement("DetailedTestingResults",   
                 from mutant in mutants
-                where mutant.TestSession != null && mutant.TestSession.IsComplete
+                where mutant.TestSession.IsComplete
                 let groupedTests = mutant.TestSession.TestMap.Values.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("MutantId", mutant.Id),

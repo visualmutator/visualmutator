@@ -112,7 +112,10 @@
         }
 
 
-
+        public static SwitchIntoSelector<R> SwitchInto<R>(R obj)
+        {
+            return new SwitchIntoSelector<R>();
+        }
 
         public static Switch<T> Switch<T>(T obj)
         {
@@ -133,6 +136,32 @@
         {
             return new TypeSwitch(obj);
         }
+
+
+        public static ValuedSwitch<T, R> From<T,R>(this SwitchIntoSelector<R> obj, T from)
+        {
+            return new ValuedSwitch<T, R>(from);
+        }
+
+
     }
+    public static class Switch
+    {
+        public static SwitchIntoSelector<R> Into<R>()
+        {
+            return new SwitchIntoSelector<R>();
+        }
+
+    }
+    public class SwitchIntoSelector<T>
+    {
+        public SwitchIntoSelector()
+        {
  
+        }
+
+    }
+
+
+
 }

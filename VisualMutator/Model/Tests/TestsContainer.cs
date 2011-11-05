@@ -82,23 +82,23 @@
             mutant.State = MutantResultState.Tested;
 
             StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
-            TestSession testSession = new TestSession();
+          //  TestSession testSession = new TestSession();
             
             //TODO: Remove invokeongui
             try
             {
-                //VerifyAssemblies(storedMutantInfo.AssembliesPaths);
+                VerifyAssemblies(storedMutantInfo.AssembliesPaths);
 
-                
-                LoadTests(storedMutantInfo, testSession);
-                
-                RunTests(testSession);
+
+                LoadTests(storedMutantInfo, mutant.TestSession);
+
+                RunTests(mutant.TestSession);
                 
                 UnloadTests();
 
-                if (testSession.TestsRootNode.State == TestNodeState.Failure)
+                if (mutant.TestSession.TestsRootNode.State == TestNodeState.Failure)
                 {
-                    mutant.NumberOfTestsThatKilled = testSession.TestMap.Values
+                    mutant.NumberOfTestsThatKilled = mutant.TestSession.TestMap.Values
                         .Count(t => t.State == TestNodeState.Failure);
                     mutant.State = MutantResultState.Killed;
                 }
@@ -106,30 +106,30 @@
                 {
                     mutant.State = MutantResultState.Live;
                 }
-                
-                testSession.IsComplete = true;
 
-                _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
+                mutant.TestSession.IsComplete = true;
+
+                _commonServices.Threading.InvokeOnGui(() => mutant.TestSession.IsComplete = true);
             }
             catch (AssemblyVerificationException e)
             {
-                _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
-                testSession.ErrorDescription = "Mutant assembly failed verification";
-                testSession.ErrorMessage = e.Message;
+
+                mutant.TestSession.ErrorDescription = "Mutant assembly failed verification";
+                mutant.TestSession.ErrorMessage = e.Message;
                 mutant.State = MutantResultState.Error;
                
             }
             catch (Exception e)
             {
-                _commonServices.Threading.InvokeOnGui(() => mutant.TestSession = testSession);
-                testSession.ErrorDescription = "Error ocurred";
-                testSession.ErrorMessage = e.Message;
+
+                mutant.TestSession.ErrorDescription = "Error ocurred";
+                mutant.TestSession.ErrorMessage = e.Message;
                 mutant.State = MutantResultState.Error;
             }
             finally
             {
                 sw.Stop();
-                testSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+                mutant.TestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
                 
                 _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
             }

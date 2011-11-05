@@ -7,7 +7,7 @@
         xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" xmlns:Views="clr-namespace:VisualMutator.Views"
         xmlns:Types="clr-namespace:VisualMutator.Model.Mutations.Types"
         xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Width="1000" Height="600">
+             d:DesignHeight="300" d:DesignWidth="300" Width="600" Height="500" Title="New mutation session">
 
 
     <Window.Resources>
@@ -26,11 +26,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
-            <ColumnDefinition/>
+    
         </Grid.ColumnDefinitions>
 
         <Grid.Resources>
@@ -107,8 +108,8 @@
 
 
 
-        <Button Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom"
-                Content="Create mutants" Command="{Binding CommandCreateMutants}" />
+        <Button Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom"
+                Content="Start session" Command="{Binding CommandCreateMutants}" />
 
     </Grid>
 

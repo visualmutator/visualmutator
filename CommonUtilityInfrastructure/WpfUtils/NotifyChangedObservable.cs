@@ -56,16 +56,16 @@ namespace CommonUtilityInfrastructure.WpfUtils
 
     public static class Mixin
     {
-        public static NotifyChangedObservable<T> WhenPropertyChanged<T>(this INotifyPropertyChanged @this, 
-            Expression<Func<T>> propertyExpression)
-        {
+ //       public static NotifyChangedObservable<T> WhenPropertyChanged<T>(this INotifyPropertyChanged @this, 
+ //           Expression<Func<T>> propertyExpression)
+ //       {
 
-            return new NotifyChangedObservable<T>(@this, propertyExpression.PropertyName());
- 
-        }
-            
-        public static NotifyChangedObservable<T> WhenPropertyChanged<Param,T>(this INotifyPropertyChanged @this,
-            Expression<Func<Param,T>> propertyExpression)
+ //           return new NotifyChangedObservable<T>(@this, propertyExpression.PropertyName());
+ //
+ //       }
+
+        public static NotifyChangedObservable<T> WhenPropertyChanged<Param, T>(this Param @this,
+            Expression<Func<Param,T>> propertyExpression) where Param : ModelElement
         {
 
             return new NotifyChangedObservable<T>(@this, propertyExpression.PropertyName());
