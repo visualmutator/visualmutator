@@ -83,7 +83,7 @@
 
             <ProgressBar Height="25" Grid.Row="2"  
                          IsIndeterminate="{Binding OperationsState, Converter={Converters:EqualsConverter}, 
-                                            ConverterParameter={x:Static ViewModels:OperationsState.Mutating}}"
+                                            ConverterParameter={x:Static ViewModels:OperationsState.PreCheck}}"
                          Value="{Binding TestingProgress}"/>
 
             <TextBlock  Grid.Row="3"  Text="Mutants gruped by operators:" />

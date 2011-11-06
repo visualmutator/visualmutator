@@ -191,10 +191,12 @@
         {
             SetState(OperationsState.Mutating);
 
+
+            _viewModel.InitTestingProgress(_currentSession.SelectedOperators.Count);
  
             _commonServices.Threading.ScheduleAsync(() =>
             {
-                _mutantsContainer.GenerateMutantsForOperators(_currentSession);
+                _mutantsContainer.GenerateMutantsForOperators(_currentSession, () => _viewModel.UpdateTestingProgress());
             },
             () =>
             {

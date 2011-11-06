@@ -26,7 +26,7 @@
     {
         MutationTestingSession PrepareSession(MutationSessionChoices choices);
 
-        void GenerateMutantsForOperators(MutationTestingSession session);
+        void GenerateMutantsForOperators(MutationTestingSession session, Action progress = null);
 
         Mutant CreateChangelessMutant(MutationTestingSession session);
     }
@@ -88,7 +88,7 @@
 
         }
 
-        public void GenerateMutantsForOperators(MutationTestingSession session)
+        public void GenerateMutantsForOperators(MutationTestingSession session, Action progress = null)
         {
            session.MutantsGroupedByOperators = new List<ExecutedOperator>();
             MutationRootNode root = new MutationRootNode();
@@ -114,6 +114,10 @@
                 root.Children.Add(executedOperator);
                 sw.Stop();
                 executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
+                if (progress != null)
+                {
+                    progress();
+                }
             }
             root.State = MutantResultState.Untested;
 
@@ -125,7 +129,8 @@
 
 
         private ExecutedOperator CreateMutantsForOperator(IMutationOperator mutOperator,
-            IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies, Func<int> generateId )
+            IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies, 
+            Func<int> generateId  )
         {
             var result = new ExecutedOperator( mutOperator.Name);
 
@@ -148,6 +153,7 @@
                     var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
                     mutOperator.Mutate(mutationTarget, assembliesToMutate);
                     results.Add(new MutationResult(mutationTarget, assembliesToMutate));
+                    
                 }
             }
             catch (Exception e)
