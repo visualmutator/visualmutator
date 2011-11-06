@@ -60,6 +60,7 @@
     <Compile Include="Comparers\Comparers.cs" />
     <Compile Include="Comparers\FuncComparer.cs" />
     <Compile Include="Comparers\KeyComparer.cs" />
+    <Compile Include="DependencyInjection\FilteredCatalog.cs" />
     <Compile Include="DependencyInjection\FuncFactory.cs" />
     <Compile Include="DependencyInjection\IFactory.cs" />
     <Compile Include="FileSystem\DirectoryService.cs" />

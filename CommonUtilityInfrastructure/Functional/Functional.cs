@@ -142,7 +142,10 @@
         {
             return new ValuedSwitch<T, R>(from);
         }
-
+        public static ValuedTypeSwitch<R> FromTypeOf<R>(this SwitchIntoSelector<R> sel, object obj)
+        {
+            return new ValuedTypeSwitch<R>(obj);
+        }
 
     }
     public static class Switch
@@ -152,6 +155,31 @@
             return new SwitchIntoSelector<R>();
         }
 
+    }
+    public static class Throw
+    {
+        public static void If(bool condition, string message=null, string parameterName=null)
+        {
+            if(message == null)
+            {
+                message = "Object is in invalid state";
+            }
+            if (condition)
+            {
+                throw new InvalidOperationException(message);
+            }
+        }
+        public static void IfArgumentNull<T>(T parameter, string parameterName = null ) where T : class
+        {
+            if (parameterName == null)
+            {
+                parameterName = "";
+            }
+            if (parameter == null)
+            {
+                throw new ArgumentNullException("Parameter {0} cannot be null".Formatted(parameterName));
+            }
+        }
     }
     public class SwitchIntoSelector<T>
     {

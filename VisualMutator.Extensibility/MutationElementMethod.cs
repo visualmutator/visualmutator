@@ -21,10 +21,21 @@ namespace VisualMutator.Extensibility
 
         private int _instructionIndex;
 
+        public int InstructionIndex
+        {
+            get
+            {
+                return _instructionIndex;
+            }
+        }
 
         public Instruction FindInstructionIn(MethodDefinition method)
         {
             return method.Body.Instructions[_instructionIndex];
+        }
+        public Instruction FindInstructionIn(ICollection<AssemblyDefinition> assemblies)
+        {
+            return FindIn(assemblies).Body.Instructions[_instructionIndex];
         }
 
         public MethodDefinition FindIn(ICollection<AssemblyDefinition> assemblies)

@@ -271,6 +271,10 @@
       <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
       <Name>VisualMutator.MvcMutations</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
+      <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
+      <Name>VisualMutator.OperatorsStandard</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\Resources\assembly.png" />

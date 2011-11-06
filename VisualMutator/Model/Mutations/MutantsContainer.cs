@@ -133,11 +133,7 @@
                 throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Name), e);
             }
 
-         //   int i = 0;
-//
-            var assembliesFactory = new AssembliesToMutateFactory(() => _assembliesManager.Load(sourceAssemblies));
-          //  for (int j = 0; j < 3; j++)
-        //  {
+
             IList<MutationResult> results = new List<MutationResult>();
             try
             {
@@ -147,7 +143,6 @@
                     mutOperator.Mutate(mutationTarget, assembliesToMutate);
                     results.Add(new MutationResult(mutationTarget, assembliesToMutate));
                 }
-                    
             }
             catch (Exception e)
             {
@@ -157,12 +152,10 @@
             foreach (MutationResult mutationResult in results)
             {
                 var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
-
                 var mutant = new Mutant(generateId(), result, mutationResult.MutationTarget, serializedMutant);
-
                 result.Children.Add(mutant);
             }
-        //    }
+ 
             return result;
         }
     }

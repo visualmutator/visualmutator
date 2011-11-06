@@ -7,8 +7,12 @@
     using System.Reflection;
     using System.Text;
 
+    using CommonUtilityInfrastructure;
+
     using Mono.Cecil;
     using Mono.Cecil.Cil;
+
+    using ICustomAttributeProvider = Mono.Cecil.ICustomAttributeProvider;
 
     public class MutationElementsContainer
     {
@@ -34,11 +38,6 @@
             }
         }
 
-        public TMutationElement Of<TMutationElement>(string key) where TMutationElement : IMutationElement
-        {
-            return (TMutationElement)this[key];
-        }
-
         public MutationElementType Type(string key)
         {
             return (MutationElementType)this[key];
@@ -46,6 +45,12 @@
         public MutationElementMethod Method(string key)
         {
             return (MutationElementMethod)this[key];
+        }
+        public MethodAndInstructionMutationElement MethodAndInstruction(string key)
+        {
+            var methodElement = (MutationElementMethod)this[key];
+
+            return new MethodAndInstructionMutationElement(methodElement);
         }
         public MutationElementProperty Property(string key)
         {
@@ -55,12 +60,35 @@
         {
             return (MutationElementField)this[key];
         }
-        public MutationTarget Add(string key, IMutationElement value)
+        public MutationTarget AddElement(string key, IMutationElement value)
         {
             _mutationElements.Add(key, value);
             return _mutationTarget;
         }
+        public MutationTarget Add(string key, MethodDefinition method, int instructionIndex)
+        {
+            _mutationElements.Add(key, new MutationElementMethod(method, instructionIndex));
+            return _mutationTarget;
+        }
+        public MutationTarget Add(string key, MethodDefinition method, Instruction instruction)
+        {
+            int index = method.Body.Instructions.IndexOf(instruction);
+            _mutationElements.Add(key, new MutationElementMethod(method, index));
+            return _mutationTarget;
+        }
+        public MutationTarget Add<TMemberDefinition>(string key, TMemberDefinition param) where TMemberDefinition : IMemberDefinition
+        {
 
+            IMutationElement element = Switch.Into<IMutationElement>().FromTypeOf(param)
+                .Case<MethodDefinition>(method => new MutationElementMethod(method))
+                .Case<TypeDefinition>(type => new MutationElementType(type))
+                .Case<PropertyDefinition>(prop => new MutationElementProperty(prop))
+                .Case<FieldDefinition>(field => new MutationElementField(field))
+                .GetResult();
+
+            _mutationElements.Add(key, element);
+            return _mutationTarget;
+        }
     }
 
     public class MutationTarget : MutationElementsContainer
@@ -92,6 +120,4 @@
 
 
     }
-
-
 }

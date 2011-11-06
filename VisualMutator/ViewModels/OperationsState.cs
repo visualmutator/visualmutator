@@ -11,6 +11,8 @@
         TestingPaused,
         Pausing,
         Stopping,
-        Finished
+        Finished,
+
+        PreCheck
     }
 }

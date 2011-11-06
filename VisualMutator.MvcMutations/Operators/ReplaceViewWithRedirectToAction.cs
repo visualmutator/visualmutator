@@ -58,14 +58,14 @@
         {
     
             return
-            from _ in methodToModify.Body.Instructions.Select((instruction, index)=> new {instruction, index})
-            where _.instruction.OpCode == OpCodes.Call
-            let method = ((MethodReference)_.instruction.Operand)
+            from instruction in methodToModify.Body.Instructions
+            where instruction.OpCode == OpCodes.Call
+            let method = ((MethodReference)instruction.Operand)
             where method.DeclaringType.FullName == "System.Web.Mvc.Controller"
-                  && method.Name == "View" && HasProperParameters(methodToModify, _.instruction, method )
+                  && method.Name == "View" && HasProperParameters(methodToModify, instruction, method )
             select new MutationTarget()
-            .Add("MethodToModify", new MutationElementMethod(methodToModify, _.index))
-            .Hidden.Add("MethodToRedirectTo", new MutationElementMethod(methodToRedirectTo));
+            .Add("MethodToModify", methodToModify, instruction)
+            .Hidden.Add("MethodToRedirectTo", methodToRedirectTo);
            
      
         }
@@ -199,7 +199,7 @@
         {
             get
             {
-                return "Replace method return statement.";
+                return "Replace View with RedirectToAction.";
             }
         }
 

@@ -66,6 +66,7 @@
     <Compile Include="Mutations\MutantsContainerTests.cs" />
     <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="MvcMutations\ChangeRouteTest.cs" />
+    <Compile Include="MvcMutations\ChangeAdditionIntoSubstractionTest.cs" />
     <Compile Include="MvcMutations\RedirectToAction.cs" />
     <Compile Include="MvcMutations\SwapActionNamesTests.cs" />
     <Compile Include="MvcMutations\Utils.cs" />
@@ -100,6 +101,10 @@
     <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
       <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
       <Name>VisualMutator.MvcMutations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
+      <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
+      <Name>VisualMutator.OperatorsStandard</Name>
     </ProjectReference>
     <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
       <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>

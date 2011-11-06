@@ -21,23 +21,10 @@
         public void Test1()
         {
 
-            var assemblyFile = new TestAssemblyFile();
-            var assembly = AssemblyDefinition.ReadAssembly(assemblyFile.FilePath);
 
-     
-            var mutator = new SwapActionNames();
+            var assembly = Utils.ReadTestAssembly();
 
-         //   mutator.Mutate(assembly.MainModule, assembly.MainModule.Types);
-
-
-
-
-
-
-            assembly.Write(assemblyFile.FilePath);
-
-            var assembly2 = AssemblyDefinition.ReadAssembly(assemblyFile.FilePath);
-
+            var executedOperator = Utils.ExecuteMutation(new SwapActionNames(), Utils.ReadTestAssembly());
 
                 
 

@@ -19,48 +19,7 @@
     [Export(typeof(IMutationOperator))]
     public class SwapActionNames : IMutationOperator
     {
-        
-        public void Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
-        {
-
-            var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller")).ToList();
-            var list = new List<Tuple<MethodDefinition, MethodDefinition>>();
-            foreach (var controllerType in controllers)
-            {
-
-                var validGroups = controllerType.Methods
-                    .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList()
-                    .GroupBy(m => m.Parameters,  new ParametersComparer()).ToList()
-                  .Where(g => g.Count() >= 2).ToList();
-           
-                
-                foreach (var group in validGroups)
-                {
-                    var chosen = group.Take(group.Count() - group.Count() % 2).ToArray();
-                    for (int i = 0; i < chosen.Length; i += 2)
-                    {
-                        list.Add(Tuple.Create(chosen[i], chosen[i + 1]));
-                    }
-                }
-            }
-
-            var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) }).ToList();
-
-
-
-            var contructor = GetActionNameAttribute(module);
-            var stringType = module.Import(typeof(string));
-
-            foreach (var pair in duplicatedSwapped)
-            {
-                var result = new CustomAttribute(contructor);
-                result.ConstructorArguments.Add(new CustomAttributeArgument(stringType, pair.Item2.Name));
-    
-                pair.Item1.CustomAttributes.Add(result);
-            }
-
-
-        }
+  
 
 
         public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
@@ -86,23 +45,32 @@
                 }
             }
 
+            
             var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) }).ToList();
 
-            return null;
+            return duplicatedSwapped.Select(pair => new MutationTarget()
+                .Add("Method1", pair.Item1).Add("Method2", pair.Item2));
 
         }
 
         public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
         {
-            throw new NotImplementedException();
+            var module = assembliesToMutate.First().MainModule;
+            var contructor = GetActionNameAttribute(module);
+            var stringType = module.Import(typeof(string));
+
+            var method1 = target.Method("Method1").FindIn(assembliesToMutate);
+            var method2 = target.Method("Method2").FindIn(assembliesToMutate);
+
+            
+            var result = new CustomAttribute(contructor);
+            result.ConstructorArguments.Add(new CustomAttributeArgument(stringType, method2.Name));
+
+            method1.CustomAttributes.Add(result);
+            
         }
 
-        public MutationResultsCollection CreateMutants(IEnumerable<MutationTarget> targets, AssembliesToMutateFactory assembliesFactory)
-        {
-            throw new NotImplementedException();
-        }
-
-  
+    
 
         public MethodReference GetActionNameAttribute(ModuleDefinition currentModule)
         {

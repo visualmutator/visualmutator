@@ -18,30 +18,7 @@ namespace VisualMutator.OperatorTests
     using VisualMutator.MvcMutations;
     using VisualMutator.Tests.Util;
 
-    public class TestAssemblyFile : IDisposable
-    {
-
-        public string FilePath
-        {
-            get;
-            set;
-        }
-
-        public TestAssemblyFile()
-        {
-            string p = Path.Combine(Utils.NerdDinner3Directory, Utils.NerdDinner3AssemblyName);
-
-
-            FilePath = Path.Combine(Utils.NerdDinner3Directory, "session", Utils.NerdDinner3AssemblyName);
-            Directory.CreateDirectory(Path.Combine(Utils.NerdDinner3Directory, "session"));
-            File.Copy(p, FilePath, true);
-        }
-
-        public void Dispose()
-        {
-            // File.Delete(FilePath);
-        }
-    }
+   
 
 
     [TestFixture]
@@ -51,8 +28,7 @@ namespace VisualMutator.OperatorTests
         [Test]
         public void Test1()
         {
-            var assemblyFile = new TestAssemblyFile();
-            var assembly = AssemblyDefinition.ReadAssembly(assemblyFile.FilePath);
+            var assembly = Utils.ReadTestAssembly();
 
             var dinnersController = assembly.MainModule.Types.Single(t => t.Name == "DinnersController");
 
@@ -73,25 +49,15 @@ namespace VisualMutator.OperatorTests
                 }
                 return false;
             });
-            var mutator = new ReplaceViewWithRedirectToAction();
-            var mutationSessionChoices = new MutationSessionChoices
-            {
-                SelectedOperators = new[] { mutator },
-                Assemblies = new[] { assembly },
-                SelectedTypes = assembly.MainModule.Types 
-            };
+          
+            var executedOperator = Utils.ExecuteMutation(new ReplaceViewWithRedirectToAction(), Utils.ReadTestAssembly());
 
-            var assembliesManager = new AssembliesManager();
-
-            MutantsContainer mutantsContainer = new MutantsContainer(assembliesManager);
-            var executedOperator = mutantsContainer.GenerateMutantsForOperators(mutationSessionChoices)
-                .MutantsGroupedByOperators.Single();
+            
 
             executedOperator.Mutants.Single(mut =>
             {
-
-                var assembly2 = assembliesManager.Load(mut.StoredAssemblies).Single();
-
+                var assembly2 = Utils.LoadMutantAssembly(mut);
+               
                 var dinnersController2 = assembly2.MainModule.Types.Single(t => t.Name == "DinnersController");
 
                 var createMethod2 = dinnersController2.Methods.Single(m => m.Name == "Create" && m.Parameters.Count == 1);

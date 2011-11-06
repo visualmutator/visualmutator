@@ -73,16 +73,16 @@
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.CommandCreateNewMutants = new BasicCommand(CreateMutants,
+            _viewModel.CommandCreateNewMutants = new BasicCommand(RunMutationSession,
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
             _viewModel.CommandPause = new BasicCommand(PauseOperations, 
-                () => _viewModel.OperationsState.IsIn(OperationsState.Mutating, OperationsState.Testing))
+                () => _viewModel.OperationsState.IsIn(OperationsState.Testing))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
             _viewModel.CommandStop = new BasicCommand(StopOperations,
-                () => _viewModel.OperationsState.IsIn(OperationsState.Mutating,
+                () => _viewModel.OperationsState.IsIn(
                     OperationsState.Testing, OperationsState.TestingPaused, OperationsState.Pausing))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
@@ -110,6 +110,7 @@
                     .Case(OperationsState.None, "")
                     .Case(OperationsState.TestingPaused, "Paused")
                     .Case(OperationsState.Finished, "Finished")
+                    .Case(OperationsState.PreCheck, "Running pre-check...")
                     .Case(OperationsState.Mutating, "Creating mutants...")
                     .Case(OperationsState.Pausing, "Pausing...")
                     .Case(OperationsState.Stopping, "Stopping...")
@@ -122,7 +123,7 @@
         }
 
 
-        public void CreateMutants()
+        public void RunMutationSession()
         {
             var mutantsCreationController = _mutantsCreationFactory.Create();
             mutantsCreationController.Run();
@@ -130,24 +131,41 @@
             if (mutantsCreationController.HasResults)
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
-
-                SetState(OperationsState.Mutating);
-
                 _currentSession = new MutationTestingSession();
-               
+
+                SetState(OperationsState.PreCheck);
+
                 _commonServices.Threading.ScheduleAsync(() =>
                 {
-                    _currentSession =  _mutantsContainer.GenerateMutantsForOperators(choices);
+
+                   // _testsContainer.RunPreCheck(_currentSession, );
                 },
                 () =>
                 {
-                    _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
-                    RunTests(_currentSession);
+
+                    CreateMutants(choices);
                 });
             }
         }
 
-    
+
+        public void CreateMutants(MutationSessionChoices choices)
+        {
+            SetState(OperationsState.Mutating);
+
+ 
+            _commonServices.Threading.ScheduleAsync(() =>
+            {
+                _currentSession = _mutantsContainer.GenerateMutantsForOperators(choices);
+            },
+            () =>
+            {
+                _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
+                RunTests(_currentSession);
+            });
+            
+        }
+
 
         public void RunTests(MutationTestingSession currentSession)
         {
