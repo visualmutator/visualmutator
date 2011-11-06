@@ -131,19 +131,57 @@
             if (mutantsCreationController.HasResults)
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
-                _currentSession = new MutationTestingSession();
+        
 
                 SetState(OperationsState.PreCheck);
 
                 _commonServices.Threading.ScheduleAsync(() =>
                 {
+                    _currentSession  = _mutantsContainer.PrepareSession(choices);
+                    var changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
 
-                   // _testsContainer.RunPreCheck(_currentSession, );
+                    _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
+                    _testsContainer.RunTestsForMutant(_currentSession,_currentSession.TestEnvironment, changelessMutant);
+
+
+                    if (changelessMutant.State == MutantResultState.Error)
+                    {
+                        if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
+                        {
+                            _commonServices.Logging.ShowWarning("Some of source project assemblies failed veryfication. "+
+                                "Mutant verification will be disabled, also errors may occur during testing and "+
+                                "while decompiling code for preview." + changelessMutant.TestSession.Exception, _log);
+                            _currentSession.Options.IsMutantVerificationEnabled = false;
+
+                        }
+                        else
+                        {
+                            _commonServices.Logging.ShowError("Error occurred while pre-testing source assemblies. "+
+                            "Mutation session cannot continue.\n\nException:\n" + changelessMutant.TestSession.Exception, _log);
+                            SetState(OperationsState.Finished);
+                            Finish();
+                            return false;
+                        }
+                    }
+                    else if (changelessMutant.State == MutantResultState.Killed)
+                    {
+                        _commonServices.Logging.ShowError("One or more tests failed on unmodified source assemblies. " 
+                            + "All tests must pass before starting mutation testing process. Mutation session cannot continue." );
+                        SetState(OperationsState.Finished);
+                        Finish();
+                        return false;
+                    }
+
+                    return true;
                 },
-                () =>
+                (cont) =>
                 {
 
-                    CreateMutants(choices);
+                    if (cont)
+                    {
+                        CreateMutants(choices);
+                    }
+                    
                 });
             }
         }
@@ -156,49 +194,48 @@
  
             _commonServices.Threading.ScheduleAsync(() =>
             {
-                _currentSession = _mutantsContainer.GenerateMutantsForOperators(choices);
+                _mutantsContainer.GenerateMutantsForOperators(_currentSession);
             },
             () =>
             {
                 _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
-                RunTests(_currentSession);
+                RunTests();
             });
             
         }
 
 
-        public void RunTests(MutationTestingSession currentSession)
+        public void RunTests()
         {
-            var allMutants = currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants);
-            currentSession.MutantsToTest = new Queue<Mutant>(allMutants);
-            _viewModel.InitTestingProgress(currentSession.MutantsToTest.Count);
+            var allMutants = _currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants);
+            _currentSession.MutantsToTest = new Queue<Mutant>(allMutants);
+            _viewModel.InitTestingProgress(_currentSession.MutantsToTest.Count);
             
             _commonServices.Threading.ScheduleAsync(() =>
             {
-                currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
-                currentSession.TestedMutants = new List<Mutant>();
-                RunTestsInternal(currentSession);
+                _currentSession.TestedMutants = new List<Mutant>();
+                RunTestsInternal();
             });
             
         }
 
-        private void RunTestsInternal(MutationTestingSession currentSession)
+        private void RunTestsInternal()
         {
 
-            while (currentSession.MutantsToTest.Count != 0 && _requestedHaltState == null)
+            while (_currentSession.MutantsToTest.Count != 0 && _requestedHaltState == null)
             {
                 SetState(OperationsState.Testing);
 
-                Mutant mutant = currentSession.MutantsToTest.Dequeue();
-                _testsContainer.RunTestsForMutant(currentSession.TestEnvironment, mutant);
-                currentSession.TestedMutants.Add(mutant);
+                Mutant mutant = _currentSession.MutantsToTest.Dequeue();
+                _testsContainer.RunTestsForMutant(_currentSession,_currentSession.TestEnvironment, mutant);
+                _currentSession.TestedMutants.Add(mutant);
                 _viewModel.UpdateTestingProgress();
 
-                int mutantsKilled = currentSession.TestedMutants.Count(m => m.State == MutantResultState.Killed);
+                int mutantsKilled = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Killed);
 
-                currentSession.MutationScore = ((double)mutantsKilled) / currentSession.TestedMutants.Count;
-                _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, currentSession.TestedMutants.Count);
-                _viewModel.MutationScore = string.Format("Mutation score: {0}", currentSession.MutationScore);
+                _currentSession.MutationScore = ((double)mutantsKilled) / _currentSession.TestedMutants.Count;
+                _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, _currentSession.TestedMutants.Count);
+                _viewModel.MutationScore = string.Format("Mutation score: {0}", _currentSession.MutationScore);
 
             }
             if (_requestedHaltState != null)
@@ -236,7 +273,7 @@
         {
             _commonServices.Threading.ScheduleAsync(() =>
             {
-                RunTestsInternal(_currentSession);
+                RunTestsInternal();
             });
         }
 

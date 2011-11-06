@@ -38,10 +38,10 @@ namespace VisualMutator.Infrastructure.CheckboxedTree
     {
         private BetterObservableCollection<NormalNode> _children;
 
-        protected NormalNode(NormalNode parent, string name, bool hasChildren)
+        protected NormalNode(string name, bool hasChildren)
             : base(name)
         {
-            _parent = parent;
+       
             if (hasChildren)
                 _children = new BetterObservableCollection<NormalNode>();
 

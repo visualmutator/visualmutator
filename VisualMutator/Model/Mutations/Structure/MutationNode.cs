@@ -13,7 +13,7 @@
     public class MutationRootNode : MutationNode
     {
         public MutationRootNode()
-            : base(null, "", true)
+            : base( "", true)
         {
 
         }
@@ -23,8 +23,8 @@
 
         private MutantResultState _state;
 
-        protected MutationNode(MutationNode parent, string name, bool hasChildren)
-            : base(parent, name, hasChildren)
+        protected MutationNode(string name, bool hasChildren)
+            : base( name, hasChildren)
         {
      
         }

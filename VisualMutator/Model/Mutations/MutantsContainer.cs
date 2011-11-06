@@ -24,39 +24,12 @@
 
     public interface IMutantsContainer
     {
-        MutationTestingSession GenerateMutantsForOperators(MutationSessionChoices choices);
+        MutationTestingSession PrepareSession(MutationSessionChoices choices);
+
+        void GenerateMutantsForOperators(MutationTestingSession session);
+
+        Mutant CreateChangelessMutant(MutationTestingSession session);
     }
-
-    class PreOperator : IMutationOperator
-    {
-        public string Name
-        {
-            get
-            {
-                return "PreOperator";
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return "PreOperator";
-            }
-        }
-
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
-        {
-            yield return new MutationTarget();
-        }
-
-        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
-        {
-            
-        }
-
-    }
-
 
     public class MutantsContainer : IMutantsContainer
     {
@@ -70,37 +43,74 @@
             _assembliesManager = assembliesManager;
         }
 
-        public MutationTestingSession GenerateMutantsForOperators(MutationSessionChoices choices)
+        public MutationTestingSession PrepareSession(MutationSessionChoices choices)
         {
-            var executedOperators = new List<ExecutedOperator>();
-            MutationRootNode root = new MutationRootNode();
-
             StoredAssemblies sourceAssemblies = _assembliesManager.Store(choices.Assemblies);
-            IList<AssemblyDefinition> assemblies = _assembliesManager.Load(sourceAssemblies);
+            IList<AssemblyDefinition> reloadedAssemblies = _assembliesManager.Load(sourceAssemblies);
+
+            var copiedTypes = ProjectTypesToCopiedAssemblies(choices.SelectedTypes, reloadedAssemblies);
+
+            return new MutationTestingSession
+            {
+                OriginalAssemblies = reloadedAssemblies,
+                StoredSourceAssemblies = sourceAssemblies,
+                SelectedTypes = copiedTypes,
+                SelectedOperators = choices.SelectedOperators,
+                Options = CreateDefaultOptions()
+            };
+        }
+
+        private MutationTestingOptions CreateDefaultOptions()
+        {
+            return new MutationTestingOptions
+            {
+                IsMutantVerificationEnabled = true
+            };
+        }
+
+        public Mutant CreateChangelessMutant(MutationTestingSession session)
+        {
+    
+            var op = new PreOperator();
+
+            return CreateMutantsForOperator(op, 
+                session.SelectedTypes, session.StoredSourceAssemblies, ()=>0).Mutants.Single();
+        }
+
+        public IList<TypeDefinition> ProjectTypesToCopiedAssemblies(IList<TypeDefinition> sourceTypes, 
+            IList<AssemblyDefinition> destinationAssemblies)
+        {
+            return sourceTypes
+              .Select(t1 =>
+                      destinationAssemblies.SelectMany(a => a.MainModule.Types)
+                          .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
+                                        && t1.FullName == t2.FullName)).ToList();
+
+        }
+
+        public void GenerateMutantsForOperators(MutationTestingSession session)
+        {
+           session.MutantsGroupedByOperators = new List<ExecutedOperator>();
+            MutationRootNode root = new MutationRootNode();
 
             int[] i = { 0 };
             Func<int> genId = () => i[0]++;
 
-           
-            foreach (IMutationOperator op in choices.SelectedOperators)
+
+            foreach (IMutationOperator op in session.SelectedOperators)
             {
                 var sw = new Stopwatch();
                 sw.Start();
 
-                IList<TypeDefinition> typeDefinitions = choices.SelectedTypes
-                    .Select(t1 =>
-                            assemblies.SelectMany(a => a.MainModule.Types)
-                                .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
-                                              && t1.FullName == t2.FullName)).ToList();
 
-               
-                ExecutedOperator executedOperator = CreateMutantsForOperator(op, root,
-                    typeDefinitions, sourceAssemblies, genId);
+                ExecutedOperator executedOperator = CreateMutantsForOperator(op,
+                    session.SelectedTypes, session.StoredSourceAssemblies, genId);
 
                 executedOperator.DisplayedText = "{0} - Mutants: {1}"
                     .Formatted(executedOperator.Name, executedOperator.Children.Count);
 
-                executedOperators.Add(executedOperator);
+                session.MutantsGroupedByOperators.Add(executedOperator);
+                executedOperator.Parent = root;
                 root.Children.Add(executedOperator);
                 sw.Stop();
                 executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
@@ -109,19 +119,15 @@
 
             _assembliesManager.SessionEnded();
 
-            return new MutationTestingSession
-            {
-                MutantsGroupedByOperators = executedOperators,
-                OriginalAssemblies = choices.Assemblies,
-            };
+
+        
         }
 
 
         private ExecutedOperator CreateMutantsForOperator(IMutationOperator mutOperator,
-                                                          MutationRootNode root, 
             IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies, Func<int> generateId )
         {
-            var result = new ExecutedOperator(root, mutOperator.Name);
+            var result = new ExecutedOperator( mutOperator.Name);
 
             List<MutationTarget> targets;
             try

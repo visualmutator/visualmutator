@@ -1,10 +1,12 @@
 namespace VisualMutator.Model.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.TestsTree;
 
     public class TestSession : ModelElement
@@ -92,5 +94,7 @@ namespace VisualMutator.Model.Tests
         public long RunTestsTimeRawMiliseconds { get; set; }
 
         public long LoadTestsTimeRawMiliseconds { get; set; }
+
+        public Exception Exception { get; set; }
     }
 }

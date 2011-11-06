@@ -32,13 +32,14 @@ namespace VisualMutator.Model.Mutations.Structure
         }
 
         public Mutant(int id, MutationNode parent, MutationTarget mutationTarget, StoredAssemblies storedAssemblies)
-            : base(parent, "Mutant", false)
+            : base( "Mutant", false)
         {
             _id = id;
             _mutationTarget = mutationTarget;
             _storedAssemblies = storedAssemblies;
             _testSession  = new TestSession();
 
+            Parent = parent;
         }
 
         public int Id

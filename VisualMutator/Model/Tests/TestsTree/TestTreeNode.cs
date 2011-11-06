@@ -22,8 +22,9 @@
         private TestNodeState _state;
 
         protected TestTreeNode(TestTreeNode parent, string name, bool hasChildren)
-            : base(parent, name, hasChildren)
+            : base( name, hasChildren)
         {
+            Parent = parent;
             CommandRunTest = new BasicCommand(Comm);
         }
 

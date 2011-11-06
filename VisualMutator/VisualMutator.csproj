@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\MutationSessionChoices.cs" />
     <Compile Include="Controllers\ResultsSavingController.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\FakeNode.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\IHasChildren.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Model\Mutations\CodePair.cs" />
     <Compile Include="Model\Mutations\CodeVisualizer.cs" />
     <Compile Include="Model\Mutations\Decompiler.cs" />
+    <Compile Include="Model\Mutations\PreOperator.cs" />
     <Compile Include="Model\Mutations\Structure\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\Structure\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />

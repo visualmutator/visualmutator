@@ -5,8 +5,8 @@ namespace VisualMutator.Model.Mutations.Structure
 
     public class ExecutedOperator : MutationNode
     {
-        public ExecutedOperator(MutationRootNode parent, string name)
-            : base(parent, name, true)
+        public ExecutedOperator(string name)
+            : base( name, true)
         {
         }
 

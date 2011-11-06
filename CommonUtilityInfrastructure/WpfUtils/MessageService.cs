@@ -234,6 +234,15 @@
             }
             service.ShowWarning(null, message);
         }
+        public static void ShowWarning(this IMessageService service, string message, ILog log)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            log.Warn(message);
+            service.ShowWarning(null, message);
+        }
 
         public static void ShowFatalError(this IMessageService service, string message, ILog log)
         {
@@ -276,7 +285,14 @@
 
 
         }
-
+        public static void ShowError(this IMessageService service, string message)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            service.ShowError(null, message);
+        }
         public static void ShowError(this IMessageService service, Exception exception, ILog log)
         {
             if (service == null)
@@ -285,6 +301,15 @@
             }
             log.Error("Error occurred.", exception);
             service.ShowError(null, exception.Message);
+        }
+        public static void ShowError(this IMessageService service, string message, ILog log)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException("service");
+            }
+            log.Error(message);
+            service.ShowError(null, message);
         }
     }
 }

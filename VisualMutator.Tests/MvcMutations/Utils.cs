@@ -69,8 +69,10 @@
             var assembliesManager = new AssembliesManager();
 
             MutantsContainer mutantsContainer = new MutantsContainer(assembliesManager);
-            var executedOperator = mutantsContainer.GenerateMutantsForOperators(mutationSessionChoices)
-                .MutantsGroupedByOperators.Single();
+
+            var mutationTestingSession = mutantsContainer.PrepareSession(mutationSessionChoices);
+            mutantsContainer.GenerateMutantsForOperators(mutationTestingSession);
+               var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
 
             return executedOperator;
         }

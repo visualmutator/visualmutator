@@ -14,7 +14,7 @@
         
 
         public AssemblyNode(string name, AssemblyDefinition assemblyDefinition)
-            : base(null, name, true)
+            : base( name, true)
         {
             _assemblyDefinition = assemblyDefinition;
         }
@@ -32,9 +32,9 @@
     {
 
         public TypeNamespaceNode(NormalNode parent, string name)
-            : base(parent, name, true)
+            : base( name, true)
         {
-           
+            Parent = parent;
         }
         
     }
@@ -45,9 +45,10 @@
         private readonly TypeDefinition _typeDefinition;
 
         public TypeNode(NormalNode parent, string name, TypeDefinition typeDefinition)
-            : base(parent, name, false)
+            : base( name, false)
         {
             _typeDefinition = typeDefinition;
+            Parent = parent;
         }
 
         public TypeDefinition TypeDefinition

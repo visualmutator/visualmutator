@@ -21,9 +21,14 @@
     {
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
-        public XmlResultsGenerator(ICodeDifferenceCreator codeDifferenceCreator)
+        private readonly IAssembliesManager _assembliesManager;
+
+        public XmlResultsGenerator(
+            ICodeDifferenceCreator codeDifferenceCreator,
+            IAssembliesManager assembliesManager)
         {
             _codeDifferenceCreator = codeDifferenceCreator;
+            _assembliesManager = assembliesManager;
         }
 
         public XDocument GenerateResults(MutationTestingSession session, 
@@ -65,7 +70,9 @@
 
             if (includeCodeDifferenceListings)
             {
-                optionalElements.Add(CreateCodeDifferenceListings(mutants, session.OriginalAssemblies));
+
+                optionalElements.Add(CreateCodeDifferenceListings(mutants, 
+                    _assembliesManager.Load(session.StoredSourceAssemblies)));
             }
 
             if (includeDetailedTestResults)

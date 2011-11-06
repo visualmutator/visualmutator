@@ -26,9 +26,9 @@
  
         void UnloadTests();
 
-   
 
-        void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
+
+        void RunTestsForMutant(MutationTestingSession session, TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
 
         TestEnvironmentInfo InitTestEnvironment();
     }
@@ -37,7 +37,7 @@
     {
         private readonly IMutantsFileManager _mutantsFileManager;
 
-        private readonly CommonUtilityInfrastructure.CommonServices _commonServices;
+        private readonly CommonServices _commonServices;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
 
@@ -73,8 +73,15 @@
             }
   
         }
+        public TestEnvironmentInfo InitTestEnvironment()
+        {
+            return _mutantsFileManager.InitTestEnvironment();
+        }
 
-        public void RunTestsForMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
+
+
+
+        public void RunTestsForMutant(MutationTestingSession session, TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -82,12 +89,15 @@
             mutant.State = MutantResultState.Tested;
 
             StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
-          //  TestSession testSession = new TestSession();
-            
+     
             //TODO: Remove invokeongui
             try
             {
-                VerifyAssemblies(storedMutantInfo.AssembliesPaths);
+                if (session.Options.IsMutantVerificationEnabled)
+                {
+                    VerifyAssemblies(storedMutantInfo.AssembliesPaths);
+                }
+                
 
 
                 LoadTests(storedMutantInfo, mutant.TestSession);
@@ -116,6 +126,7 @@
 
                 mutant.TestSession.ErrorDescription = "Mutant assembly failed verification";
                 mutant.TestSession.ErrorMessage = e.Message;
+                mutant.TestSession.Exception = e;
                 mutant.State = MutantResultState.Error;
                
             }
@@ -124,6 +135,7 @@
 
                 mutant.TestSession.ErrorDescription = "Error ocurred";
                 mutant.TestSession.ErrorMessage = e.Message;
+                mutant.TestSession.Exception = e;
                 mutant.State = MutantResultState.Error;
             }
             finally
@@ -137,10 +149,7 @@
             
         }
 
-        public TestEnvironmentInfo InitTestEnvironment()
-        {
-            return _mutantsFileManager.InitTestEnvironment();
-        }
+  
 
         public void LoadTests(StoredMutantInfo mutant, TestSession testSession)
         {

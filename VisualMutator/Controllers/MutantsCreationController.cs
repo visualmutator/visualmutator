@@ -3,7 +3,6 @@
     #region Usings
 
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reflection;
@@ -13,10 +12,6 @@
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
 
-    using Mono.Cecil;
-
-
-    using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
@@ -28,25 +23,6 @@
 
     #endregion
 
-    public class MutationSessionChoices
-    {
-        public IList<IMutationOperator> SelectedOperators
-        {
-            get;
-            set;
-        }
-
-        public IList<AssemblyDefinition> Assemblies
-        {
-            get; set;
-        }
-
-        public IList<TypeDefinition> SelectedTypes
-        {
-            get;
-            set;
-        }
-    }
     public class MutantsCreationController : Controller
     {
       
