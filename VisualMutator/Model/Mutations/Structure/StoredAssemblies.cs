@@ -5,14 +5,14 @@ namespace VisualMutator.Model.Mutations.Structure
 
     public class StoredAssemblies
     {
-        private readonly IList<Stream> _streams;
+        private readonly IList<byte[]> _streams;
 
-        public StoredAssemblies(IList<Stream> streams)
+        public StoredAssemblies(IList<byte[]> streams)
         {
             _streams = streams;
         }
 
-        public IList<Stream> Streams
+        public IList<byte[]> Streams
         {
             get
             {

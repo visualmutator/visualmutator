@@ -8,13 +8,15 @@ namespace VisualMutator.OperatorsStandard
     using System.Collections;
     using System.ComponentModel.Composition;
 
+
     using Mono.Cecil;
     using Mono.Cecil.Cil;
 
     using VisualMutator.Extensibility;
 
+    using OpCodes = Mono.Cecil.Cil.OpCodes;
 
-    public class ChangeAdditionIntoSubstraction : IMutationOperator
+    public class ChangeEqualsIntoComparison : IMutationOperator
     {
 
         public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)

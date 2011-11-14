@@ -13,6 +13,8 @@
         Stopping,
         Finished,
 
-        PreCheck
+        PreCheck,
+
+        Error
     }
 }

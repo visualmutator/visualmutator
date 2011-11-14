@@ -120,6 +120,7 @@
     <Compile Include="Infrastructure\CheckboxedTree\Node.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NodeWithChildrenBase.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NormalNode.cs" />
+    <Compile Include="Infrastructure\UserMessages.cs" />
     <Compile Include="Model\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\AssemblyVerificationException.cs" />
     <Compile Include="Model\Mutations\AssemblyVerifier.cs" />

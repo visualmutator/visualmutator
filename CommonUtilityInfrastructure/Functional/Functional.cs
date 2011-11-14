@@ -154,6 +154,10 @@
         {
             return new SwitchIntoSelector<R>();
         }
+        public static Switch<T> On<T>(T obj)
+        {
+            return new Switch<T>(obj);
+        }
 
     }
     public static class Throw

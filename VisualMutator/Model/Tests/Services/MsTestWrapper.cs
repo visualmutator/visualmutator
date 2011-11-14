@@ -88,7 +88,7 @@
   <Deployment enabled=""false"" />
   <Description>This test run configuration is used for running the unit tests</Description>
 </TestSettings>
-";
+".Trim();
             string path = Path.GetTempFileName();
 
             File.WriteAllText(path, content);

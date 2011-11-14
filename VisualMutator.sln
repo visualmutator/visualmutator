@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonTestInfrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.OperatorsStandard", "VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj", "{78D8E683-1282-4114-BEB8-A5784E885C02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.OperatorsObject", "VisualMutator.OperatorsObject\VisualMutator.OperatorsObject.csproj", "{0AEFE663-70C8-4466-98B7-E506215D1B58}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = VisualMutator.vsmdi
@@ -150,6 +152,16 @@ Global
 		{78D8E683-1282-4114-BEB8-A5784E885C02}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{78D8E683-1282-4114-BEB8-A5784E885C02}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{78D8E683-1282-4114-BEB8-A5784E885C02}.Release|x86.ActiveCfg = Release|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

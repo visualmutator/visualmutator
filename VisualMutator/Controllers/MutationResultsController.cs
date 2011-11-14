@@ -74,7 +74,7 @@
 
 
             _viewModel.CommandCreateNewMutants = new BasicCommand(RunMutationSession,
-                () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished))
+                () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
             _viewModel.CommandPause = new BasicCommand(PauseOperations, 
@@ -114,6 +114,7 @@
                     .Case(OperationsState.Mutating, "Creating mutants...")
                     .Case(OperationsState.Pausing, "Pausing...")
                     .Case(OperationsState.Stopping, "Stopping...")
+                    .Case(OperationsState.Error, "Error occurred.")
                     .Case(OperationsState.Testing, () => "Running tests... ({0}/{1})"
                         .Formatted(_currentSession.TestedMutants.Count,
                             _currentSession.MutantsToTest.Count + _currentSession.TestedMutants.Count))
@@ -128,66 +129,77 @@
             var mutantsCreationController = _mutantsCreationFactory.Create();
             mutantsCreationController.Run();
             
-            if (mutantsCreationController.HasResults)
+            if (!mutantsCreationController.HasResults)
             {
-                MutationSessionChoices choices = mutantsCreationController.Result;
+                return;
+            }
+            MutationSessionChoices choices = mutantsCreationController.Result;
         
 
-                SetState(OperationsState.PreCheck);
+            SetState(OperationsState.PreCheck);
 
-                _commonServices.Threading.ScheduleAsync(() =>
+            _commonServices.Threading.ScheduleAsync(() =>
+            {
+                _currentSession  = _mutantsContainer.PrepareSession(choices);
+                var changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
+
+                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
+                _testsContainer.RunTestsForMutant(_currentSession,_currentSession.TestEnvironment, changelessMutant);
+
+
+                if (changelessMutant.State == MutantResultState.Error)
                 {
-                    _currentSession  = _mutantsContainer.PrepareSession(choices);
-                    var changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
-
-                    _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
-                    _testsContainer.RunTestsForMutant(_currentSession,_currentSession.TestEnvironment, changelessMutant);
-
-
-                    if (changelessMutant.State == MutantResultState.Error)
+                    if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
                     {
-                        if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
-                        {
-                            _commonServices.Logging.ShowWarning("Some of source project assemblies failed veryfication. "+
-                                "Mutant verification will be disabled, also errors may occur during testing and "+
-                                "while decompiling code for preview." + changelessMutant.TestSession.Exception, _log);
-                            _currentSession.Options.IsMutantVerificationEnabled = false;
+                        _commonServices.Logging.ShowWarning(
+                            UserMessages.ErrorPretest_VerificationFailure(changelessMutant.TestSession.Exception.Message), _log);
 
-                        }
-                        else
-                        {
-                            _commonServices.Logging.ShowError("Error occurred while pre-testing source assemblies. "+
-                            "Mutation session cannot continue.\n\nException:\n" + changelessMutant.TestSession.Exception, _log);
-                            SetState(OperationsState.Finished);
-                            Finish();
-                            return false;
-                        }
+                        _currentSession.Options.IsMutantVerificationEnabled = false;
+
                     }
-                    else if (changelessMutant.State == MutantResultState.Killed)
+                    else
                     {
-                        _commonServices.Logging.ShowError("One or more tests failed on unmodified source assemblies. " 
-                            + "All tests must pass before starting mutation testing process. Mutation session cannot continue." );
-                        SetState(OperationsState.Finished);
+                        _commonServices.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
+                            changelessMutant.TestSession.Exception.ToString()), _log);
+
+                        SetState(OperationsState.Error);
                         Finish();
                         return false;
                     }
-
-                    return true;
-                },
-                (cont) =>
+                }
+                else if (changelessMutant.State == MutantResultState.Killed)
                 {
+                    _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
+                        changelessMutant.TestSession.TestMap.Values.First(t => t.State == TestNodeState.Failure).Name), _log);
 
-                    if (cont)
-                    {
-                        CreateMutants(choices);
-                    }
+                    SetState(OperationsState.Error);
+                    Finish();
+                    return false;
+                }
+
+                return true;
+            },
+            cont =>
+            {
+
+                if (cont)
+                {
+                    CreateMutants();
+                }
                     
-                });
-            }
+            },
+            onException: OnUnhandledException);
+            
         }
 
+        private void OnUnhandledException()
+        {
+            SetState(OperationsState.Error);
+            _viewModel.TestingProgress = 0;
+            Finish();
+        }
 
-        public void CreateMutants(MutationSessionChoices choices)
+        public void CreateMutants()
         {
             SetState(OperationsState.Mutating);
 
@@ -202,7 +214,7 @@
             {
                 _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
                 RunTests();
-            });
+            }, onException: OnUnhandledException);
             
         }
 
@@ -217,7 +229,7 @@
             {
                 _currentSession.TestedMutants = new List<Mutant>();
                 RunTestsInternal();
-            });
+            }, onException: OnUnhandledException);
             
         }
 
@@ -243,13 +255,14 @@
             if (_requestedHaltState != null)
             {
 
-                Functional.Switch(_requestedHaltState)
+                Switch.On(_requestedHaltState)
                     .Case(RequestedHaltState.Pause, () => SetState( OperationsState.TestingPaused))
                     .Case(RequestedHaltState.Stop, () =>
                     {
                         SetState(OperationsState.Finished);
                         Finish();
-                    }).Do();
+                    })
+                    .Do();
                 _requestedHaltState = null;
             }
             else
@@ -276,7 +289,7 @@
             _commonServices.Threading.ScheduleAsync(() =>
             {
                 RunTestsInternal();
-            });
+            }, onException: OnUnhandledException);
         }
 
         public void StopOperations()
