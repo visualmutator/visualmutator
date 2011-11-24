@@ -116,6 +116,7 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\MutationSessionChoices.cs" />
     <Compile Include="Controllers\ResultsSavingController.cs" />
+    <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\FakeNode.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\IHasChildren.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\IHasParent.cs" />

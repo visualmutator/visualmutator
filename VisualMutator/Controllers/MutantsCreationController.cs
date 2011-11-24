@@ -94,7 +94,7 @@
         }
 
 
-        public void Run()
+        public MutantsCreationController Run()
         {
             
             _commonServices.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
@@ -104,6 +104,7 @@
                 assemblies => _viewModel.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
 
             _viewModel.ShowDialog();
+            return this;
         }
         public void StoreChoicesResults()
         {

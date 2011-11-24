@@ -85,6 +85,7 @@
 
 
 
+            Kernel.Bind<SessionController>().To<SessionController>().AndFromFactory();
 
         }
     }
@@ -104,31 +105,33 @@
         public void MutantsCreation()
         {
 
-            Kernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
-            Kernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
-
+            Kernel.Bind<IMutantsContainer>().To<MutantsContainer>();//.InSingletonScope();
+          
             Kernel.Bind<IAssembliesManager>().To<AssembliesManager>().InSingletonScope();
 
             Kernel.Bind<IAssemblyReaderWriter>().To<AssemblyReaderWriter>().InSingletonScope();
-            Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
-            Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
-            Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
+
+
+            Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().AndFromFactory();//.InSingletonScope();
+            Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().AndFromFactory();//.InSingletonScope();
+            Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>();//.InSingletonScope();
         }
 
         public void Tests()
         {
 
-            Kernel.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
+            Kernel.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();//.InSingletonScope();
+            Kernel.Bind<IMutantsFileManager>().To<MutantsFileManager>();//.InSingletonScope();
 
-            Kernel.Bind<NUnitTestService>().ToSelf().InSingletonScope();
-            Kernel.Bind<MsTestService>().ToSelf().InSingletonScope();
+            Kernel.Bind<NUnitTestService>().ToSelf();//.InSingletonScope();
+            Kernel.Bind<MsTestService>().ToSelf();//.InSingletonScope();
 
-            Kernel.Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
-            Kernel.Bind<IMsTestWrapper>().To<MsTestWrapper>().InSingletonScope();
-            Kernel.Bind<IMsTestLoader>().To<MsTestLoader>().InSingletonScope();
+            Kernel.Bind<INUnitWrapper>().To<NUnitWrapper>();//;.InSingletonScope();
+            Kernel.Bind<IMsTestWrapper>().To<MsTestWrapper>();//.InSingletonScope();
+            Kernel.Bind<IMsTestLoader>().To<MsTestLoader>();//.InSingletonScope();
 
 
-            Kernel.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
+            Kernel.Bind<IAssemblyVerifier>().To<AssemblyVerifier>();//.InSingletonScope();
 
             Kernel.Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));
 

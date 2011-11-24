@@ -63,6 +63,7 @@
     <Compile Include="DependencyInjection\FilteredCatalog.cs" />
     <Compile Include="DependencyInjection\FuncFactory.cs" />
     <Compile Include="DependencyInjection\IFactory.cs" />
+    <Compile Include="Event.cs" />
     <Compile Include="FileSystem\DirectoryService.cs" />
     <Compile Include="FileSystem\FileService.cs" />
     <Compile Include="FileSystem\FileSystemService.cs" />

@@ -25,11 +25,8 @@ namespace VisualMutator.Controllers
 
     using log4net;
 
-    enum RequestedHaltState
-    {
-        Pause, Stop 
-    }
 
+    
     public class MutationResultsController : Controller
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -37,11 +34,13 @@ namespace VisualMutator.Controllers
 
         private readonly IFactory<MutantsCreationController> _mutantsCreationFactory;
 
+        private readonly IFactory<SessionController> _sessionControllerFactory;
+
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
 
-        private readonly IMutantsContainer _mutantsContainer;
+   //     private readonly IMutantsContainer _mutantsContainer;
 
-        private readonly ITestsContainer _testsContainer;
+   //     private readonly ITestsContainer _testsContainer;
 
         private readonly MutantDetailsController _mutantDetailsController;
 
@@ -51,20 +50,25 @@ namespace VisualMutator.Controllers
 
         private RequestedHaltState? _requestedHaltState;
 
+        private SessionController _sessionController;
+
+        private EventSubscriptions _subscriptions;
+
         public MutationResultsController(
             MutationResultsViewModel viewModel,
             IFactory<MutantsCreationController> mutantsCreationFactory,
+            IFactory<SessionController> sessionControllerFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
-            IMutantsContainer mutantsContainer,
-            ITestsContainer testsContainer,
+            
             MutantDetailsController mutantDetailsController,
             CommonServices commonServices)
         {
             _viewModel = viewModel;
             _mutantsCreationFactory = mutantsCreationFactory;
+            _sessionControllerFactory = sessionControllerFactory;
             _resultsSavingFactory = resultsSavingFactory;
-            _mutantsContainer = mutantsContainer;
-            _testsContainer = testsContainer;
+         //   _mutantsContainer = mutantsContainer;
+         //   _testsContainer = testsContainer;
             _mutantDetailsController = mutantDetailsController;
             _commonServices = commonServices;
 
@@ -94,7 +98,7 @@ namespace VisualMutator.Controllers
             _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
 
 
-            _viewModel.RegisterPropertyChanged(_ => _.SelectedMutationTreeItem).OfType<Mutant>()
+            _viewModel.RegisterPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
                 .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, _currentSession.OriginalAssemblies));
 
             _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;
@@ -124,91 +128,153 @@ namespace VisualMutator.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="changelessMutant"></param>
+        /// <returns>true if session can continue</returns>
+        private bool ProcessPrecheckMutant(Mutant changelessMutant )
+        {
 
+            if (changelessMutant.State == MutantResultState.Error)
+            {
+                if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
+                {
+                    _commonServices.Logging.ShowWarning(
+                        UserMessages.ErrorPretest_VerificationFailure(changelessMutant.TestSession.Exception.Message), _log);
+
+                    _currentSession.Options.IsMutantVerificationEnabled = false;
+
+                }
+                else
+                {
+                    _commonServices.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
+                        changelessMutant.TestSession.Exception.ToString()), _log);
+
+                    return false;
+                }
+            }
+            else if (changelessMutant.State == MutantResultState.Killed)
+            {
+                var test = changelessMutant.TestSession.TestMap.Values.FirstOrDefault(t =>
+                    t.State == TestNodeState.Failure);
+                if (test != null)
+                {
+                    _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
+                        test.Name, test.Message), _log);
+                }
+                else
+                {
+                    var testInconcl = changelessMutant.TestSession.TestMap.Values.First(t =>
+                        t.State == TestNodeState.Inconclusive);
+
+                    _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
+                        testInconcl.Name, "Test was inconclusive."), _log);
+                }
+                return false;
+            }
+            return true;
+        }
+
+        class EventSubscriptions
+        {
+              public Action OnStartingPreCheck{get;set;} 
+              public Action<int> OnMutationsStarting{get;set;} 
+              public Action OnMutationProgress{get;set;} 
+              public Action OnMutationFinished{get;set;} 
+
+              public Action<int> OnTestingStarting{get;set;} 
+              public Action<TestingProgressEventArgs> OnTestingProgress{get;set;} 
+
+              public Action OnSessionPaused{get;set;} 
+              public Action OnFinished{get;set;} 
+              public Action OnStopping{get;set;} 
+              public Action OnFinishedWithError{get;set;}  
+
+
+            public void Subscribe(SessionController _c)
+            {
+                _c.OnStartingPreCheck += OnStartingPreCheck;
+                _c.OnMutationsStarting += OnMutationsStarting;
+                _c.OnMutationProgress += OnMutationProgress;
+                _c.OnMutationFinished += OnMutationFinished;
+
+                _c.OnTestingStarting += OnTestingStarting;
+                _c.OnTestingProgress += OnTestingProgress;
+
+                _c.OnSessionPaused += OnSessionPaused;
+                _c.OnFinished += OnFinished;
+                _c.OnStopping += OnStopping;
+                _c.OnFinishedWithError += OnFinishedWithError;
+            }
+
+        }
         public void RunMutationSession()
         {
-            var mutantsCreationController = _mutantsCreationFactory.Create();
-            mutantsCreationController.Run();
-            
-            if (!mutantsCreationController.HasResults)
+
+
+            var mutantsCreationController = _mutantsCreationFactory.Create().Run();
+  
+            if (mutantsCreationController.HasResults)
             {
-                return;
+
+                MutationSessionChoices choices = mutantsCreationController.Result;
+
+                _sessionController = _sessionControllerFactory.Create();
+
+                _sessionController.Initialize();
+
+                _subscriptions = new EventSubscriptions
+                {
+                    OnStartingPreCheck = () => SetState(OperationsState.PreCheck),
+                    OnMutationsStarting = count =>
+                        {
+                            SetState(OperationsState.Mutating);
+                            _viewModel.InitTestingProgress(count);
+
+                        },
+                };
+
+                _sessionController.OnStartingPreCheck += () => SetState(OperationsState.PreCheck);
+                _sessionController.On += () => SetState(OperationsState.PreCheck);
+
+
+     
+
             }
-            MutationSessionChoices choices = mutantsCreationController.Result;
+
+          
         
 
-            SetState(OperationsState.PreCheck);
+            ;
 
             _commonServices.Threading.ScheduleAsync(() =>
             {
                 _currentSession  = _mutantsContainer.PrepareSession(choices);
-                var changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
+                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                 _testsContainer.RunTestsForMutant(_currentSession,_currentSession.TestEnvironment, changelessMutant);
 
-
-                if (changelessMutant.State == MutantResultState.Error)
-                {
-                    if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
-                    {
-                        _commonServices.Logging.ShowWarning(
-                            UserMessages.ErrorPretest_VerificationFailure(changelessMutant.TestSession.Exception.Message), _log);
-
-                        _currentSession.Options.IsMutantVerificationEnabled = false;
-
-                    }
-                    else
-                    {
-                        _commonServices.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
-                            changelessMutant.TestSession.Exception.ToString()), _log);
-
-                        SetState(OperationsState.Error);
-                        Finish();
-                        return false;
-                    }
-                }
-                else if (changelessMutant.State == MutantResultState.Killed)
-                {
-                    var test = changelessMutant.TestSession.TestMap.Values.FirstOrDefault(t =>
-                        t.State == TestNodeState.Failure);
-                    if (test != null)
-                    {
-                        _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                            test.Name, test.Message), _log);
-                    }
-                    else
-                    {
-                        var testInconcl = changelessMutant.TestSession.TestMap.Values.First(t => 
-                            t.State == TestNodeState.Inconclusive);
-
-                        _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                            testInconcl.Name, "Test was inconclusive."), _log);
-                    }
-                    SetState(OperationsState.Error);
-                    Finish();
-                    return false;
-                }
-
-                return true;
+                return ProcessPrecheckMutant(changelessMutant);
             },
-            cont =>
+            canContinue =>
             {
-                if (cont)
+                if (canContinue)
                 {
                     CreateMutants();
-                }   
+                }
+                else
+                {
+                    FinishWithError();
+                }
             },
-            onException: OnUnhandledException);
+            onException: FinishWithError);
             
         }
 
-        private void OnUnhandledException()
-        {
-            SetState(OperationsState.Error);
-            _viewModel.TestingProgress = 0;
-            Finish();
-        }
+
+
 
         public void CreateMutants()
         {
@@ -225,7 +291,8 @@ namespace VisualMutator.Controllers
             {
                 _viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
                 RunTests();
-            }, onException: OnUnhandledException);
+
+            }, onException: FinishWithError);
             
         }
 
@@ -240,7 +307,8 @@ namespace VisualMutator.Controllers
             {
                 _currentSession.TestedMutants = new List<Mutant>();
                 RunTestsInternal();
-            }, onException: OnUnhandledException);
+
+            }, onException: FinishWithError);
             
         }
 
@@ -258,7 +326,7 @@ namespace VisualMutator.Controllers
 
                 int mutantsKilled = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Killed);
               //  int mutantsLive = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Live);
-// 
+ 
                 _currentSession.MutationScore = ((double)mutantsKilled) / _currentSession.TestedMutants.Count;
                 _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, _currentSession.TestedMutants.Count);
                 _viewModel.MutationScore = string.Format("Mutation score: {0}", _currentSession.MutationScore);
@@ -271,7 +339,6 @@ namespace VisualMutator.Controllers
                     .Case(RequestedHaltState.Pause, () => SetState( OperationsState.TestingPaused))
                     .Case(RequestedHaltState.Stop, () =>
                     {
-                        SetState(OperationsState.Finished);
                         Finish();
                     })
                     .Do();
@@ -279,7 +346,6 @@ namespace VisualMutator.Controllers
             }
             else
             {
-                SetState(OperationsState.Finished);
                 Finish();
             }
 
@@ -287,9 +353,16 @@ namespace VisualMutator.Controllers
 
         private void Finish()
         {
+            
             _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+            SetState(OperationsState.Finished);
         }
-
+        private void FinishWithError()
+        {
+            _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+            _viewModel.TestingProgress = 0;
+            SetState(OperationsState.Error);
+        }
         public void PauseOperations()
         {
             _requestedHaltState = RequestedHaltState.Pause;
@@ -301,7 +374,7 @@ namespace VisualMutator.Controllers
             _commonServices.Threading.ScheduleAsync(() =>
             {
                 RunTestsInternal();
-            }, onException: OnUnhandledException);
+            }, onException: FinishWithError);
         }
 
         public void StopOperations()
