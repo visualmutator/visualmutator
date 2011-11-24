@@ -46,6 +46,7 @@
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
+                new XAttribute("TotalSizeInKilobytes", mutants.Sum(mut=>mut.StoredAssemblies.SizeInKilobytes())),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
                     new XAttribute("Name", oper.Name),
@@ -54,6 +55,7 @@
                     from mutant in oper.Mutants
                     select new XElement("Mutant",
                         new XAttribute("Id", mutant.Id),
+                    //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
                         new XAttribute("State", Functional.ValuedSwitch<MutantResultState, string>(mutant.State)
                         .Case(MutantResultState.Killed, "Killed")
                         .Case(MutantResultState.Live, "Live")

@@ -123,9 +123,8 @@
   <ItemGroup>
     <Compile Include="Infra\Bootstrapper.cs" />
     <Compile Include="Infra\NinjectFactory.cs" />
-    <Compile Include="Infra\NinjectModules\InfrastructureModule.cs" />
+    <Compile Include="Infra\NinjectModules\MainNinjectModules.cs" />
     <Compile Include="Infra\NinjectModules\MutantsModule.cs" />
-    <Compile Include="Infra\NinjectModules\SharedModelsModule.cs" />
     <Compile Include="Infra\NinjectModules\UnitTestsModule.cs" />
     <Compile Include="Infra\VisualStudioConnection.cs" />
     <Compile Include="MyToolWindow.cs" />
@@ -186,6 +185,10 @@
     <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
       <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
       <Name>VisualMutator.MvcMutations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
+      <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
+      <Name>VisualMutator.OperatorsStandard</Name>
     </ProjectReference>
     <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
       <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>

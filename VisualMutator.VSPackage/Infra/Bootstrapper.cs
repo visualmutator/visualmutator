@@ -84,8 +84,8 @@
             var modules = new INinjectModule[]
             {
                 new InfrastructureModule(), 
-                new MutantsModule(), 
-                new UnitTestsModule(), 
+                new ControllersAndViewsModule(), 
+                new ModelModule(), 
             };
            
 

@@ -13,6 +13,8 @@ namespace VisualMutator.Model.Tests.Services
         List<TestNodeMethod> RunTests(TestSession testSession);
 
         void UnloadTests();
+
+        void Cancel();
     }
 
   

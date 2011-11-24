@@ -157,6 +157,14 @@
             }
         }
 
+
+        public void Cancel()
+        {
+            _nUnitWrapper.Cancel();
+        }
+
+
+
         private class TestsLoadJob : IObservable<ITest>, IDisposable
         {
             private readonly NUnitTestService _service;
@@ -209,7 +217,13 @@
                 _service._messageService.ShowFatalError(sArgs.Exception, _service._log);
             
             }
+
+
         }
+
+
+
+
 
         private class TestsRunJob : IObservable<TestResult>, IDisposable
         {
@@ -258,5 +272,6 @@
                 _observer.OnCompleted();
             }
         }
+
     }
 }

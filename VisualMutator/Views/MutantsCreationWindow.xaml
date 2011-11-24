@@ -6,7 +6,9 @@
         xmlns:Operators="clr-namespace:VisualMutator.Model.Mutations.Operators"
         xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" xmlns:Views="clr-namespace:VisualMutator.Views"
         xmlns:Types="clr-namespace:VisualMutator.Model.Mutations.Types"
-        xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" 
+        xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" 
+        xmlns:extToolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
+        mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Width="600" Height="500" Title="New mutation session">
 
 
@@ -26,6 +28,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -107,10 +110,49 @@
                                Visibility="{Binding MutationPackages, Converter={Converters:NullToVisibilityConverter}}"/>
 
 
+        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+ 
+            <Button Content="Start session" Command="{Binding CommandCreateMutants}" />
+            
+        </StackPanel>
 
-        <Button Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom"
-                Content="Start session" Command="{Binding CommandCreateMutants}" />
 
+        <Expander Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" 
+                  HorizontalAlignment="Stretch" Height="Auto">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <CheckBox Grid.Row="0"  Content="Create 20 times more mutants" IsChecked="{Binding CreateMoreMutants}"/>
+                <Separator Grid.Row="1"/>
+                <TextBlock Grid.Row="2" Text="External files:" 
+                           ToolTip="Additional files that are required during 
+                           testing of mutated assemblies.
+                           They will be accessible for the executing mutant."/>
+                <DockPanel Grid.Row="3" >
+                    <Button HorizontalAlignment="Left"
+                        Content="Browse..." Command="{Binding CommandAdditionalFileToCopy}" />
+
+                    <TextBlock  Text="Files selected: " />
+                    <TextBlock  Text="{Binding AdditionalFileToCopy.Count}" />
+                </DockPanel>
+                <Separator Grid.Row="4"/>
+                <DockPanel Grid.Row="5" >
+                    <TextBlock  Text="Mutant testing timeout (seconds):"  />
+                    <extToolkit:IntegerUpDown Width="70" HorizontalAlignment="Left"
+                        Maximum="1000" Minimum="1" DefaultValue="10" Value="{Binding TimeoutSeconds}"/>
+           
+                </DockPanel>
+            </Grid>
+
+        </Expander>
     </Grid>
 
 </Window>

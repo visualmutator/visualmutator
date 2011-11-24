@@ -5,10 +5,12 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FileSystem;
 
     using VisualMutator.Model.Tests.Services;
 
@@ -23,14 +25,20 @@
 
         public AssemblyVerifier()
         {
-          
+         
         }
 
-  
         public void Verify( string assemblyPath)
         {
+            var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            string path = Path.Combine(Path.GetDirectoryName(localPath), "PEVerify.exe");
+
+            if (!File.Exists(path))
+            {
+                throw new AssemblyVerificationException("File " + path+" does not exists.");
+            }
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@".\PEVerify.exe")
+            p.StartInfo = new ProcessStartInfo(path)
             {
                 Arguments = assemblyPath.InQuotes(),
                 WindowStyle = ProcessWindowStyle.Hidden,

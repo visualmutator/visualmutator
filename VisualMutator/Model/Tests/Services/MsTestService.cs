@@ -95,6 +95,11 @@
             
         }
 
+        public void Cancel()
+        {
+            //TODO: throw new NotImplementedException();
+        }
+
         public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc, TestSession testSession)
         {
        

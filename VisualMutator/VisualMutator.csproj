@@ -108,6 +108,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.1.5.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
@@ -120,6 +123,7 @@
     <Compile Include="Infrastructure\CheckboxedTree\Node.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NodeWithChildrenBase.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\NormalNode.cs" />
+    <Compile Include="Infrastructure\ToDo.cs" />
     <Compile Include="Infrastructure\UserMessages.cs" />
     <Compile Include="Model\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\AssemblyVerificationException.cs" />

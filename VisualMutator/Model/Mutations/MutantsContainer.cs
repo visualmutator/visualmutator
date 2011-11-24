@@ -55,6 +55,7 @@
                 OriginalAssemblies = reloadedAssemblies,
                 StoredSourceAssemblies = sourceAssemblies,
                 SelectedTypes = copiedTypes,
+                MutationSessionChoices = choices,
                 SelectedOperators = choices.SelectedOperators,
                 Options = CreateDefaultOptions()
             };
@@ -73,8 +74,8 @@
     
             var op = new PreOperator();
 
-            return CreateMutantsForOperator(op, 
-                session.SelectedTypes, session.StoredSourceAssemblies, ()=>0).Mutants.Single();
+            return CreateMutantsForOperator(op,
+                session.SelectedTypes, session.StoredSourceAssemblies, () => 0, session).Mutants.First();
         }
 
         public IList<TypeDefinition> ProjectTypesToCopiedAssemblies(IList<TypeDefinition> sourceTypes, 
@@ -104,7 +105,8 @@
 
 
                 ExecutedOperator executedOperator = CreateMutantsForOperator(op,
-                    session.SelectedTypes, session.StoredSourceAssemblies, genId);
+                    session.SelectedTypes, session.StoredSourceAssemblies, genId, session);
+
 
                 executedOperator.DisplayedText = "{0} - Mutants: {1}"
                     .Formatted(executedOperator.Name, executedOperator.Children.Count);
@@ -130,7 +132,7 @@
 
         private ExecutedOperator CreateMutantsForOperator(IMutationOperator mutOperator,
             IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies, 
-            Func<int> generateId  )
+            Func<int> generateId,MutationTestingSession session  )
         {
             var result = new ExecutedOperator( mutOperator.Name);
 
@@ -148,13 +150,20 @@
             IList<MutationResult> results = new List<MutationResult>();
             try
             {
-                foreach (MutationTarget mutationTarget in targets)
+
+                int times = session.MutationSessionChoices.CreateMoreMutants ? 20 : 1;
+
+               for (int i = 0; i < times; i++)
                 {
-                    var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
-                    mutOperator.Mutate(mutationTarget, assembliesToMutate);
-                    results.Add(new MutationResult(mutationTarget, assembliesToMutate));
-                    
+                    foreach (MutationTarget mutationTarget in targets)
+                    {
+                        var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
+                        mutOperator.Mutate(mutationTarget, assembliesToMutate);
+                        results.Add(new MutationResult(mutationTarget, assembliesToMutate));
+
+                    }
                 }
+               
             }
             catch (Exception e)
             {

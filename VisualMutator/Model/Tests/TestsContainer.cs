@@ -17,6 +17,8 @@
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;
 
+    using Switch = CommonUtilityInfrastructure.Switch;
+
     public interface ITestsContainer
     {
        // TestSession LoadTests(StoredMutantInfo mutant);
@@ -30,7 +32,11 @@
 
         void RunTestsForMutant(MutationTestingSession session, TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
 
-        TestEnvironmentInfo InitTestEnvironment();
+        TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
+
+        void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo);
+
+        void CancelTestRun();
     }
 
     public class TestsContainer : ITestsContainer
@@ -73,11 +79,16 @@
             }
   
         }
-        public TestEnvironmentInfo InitTestEnvironment()
+        public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
-            return _mutantsFileManager.InitTestEnvironment();
+            return _mutantsFileManager.InitTestEnvironment(currentSession);
         }
 
+
+        public void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo)
+        {
+            _mutantsFileManager.CleanupTestEnvironment(testEnvironmentInfo);
+        }
 
 
 
@@ -89,8 +100,10 @@
             mutant.State = MutantResultState.Tested;
 
             StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
-     
-            //TODO: Remove invokeongui
+
+            var timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.MutationSessionChoices.TestingTimeoutSeconds))
+                .Subscribe(e => CancelTestRun());
+      
             try
             {
                 if (session.Options.IsMutantVerificationEnabled)
@@ -104,22 +117,27 @@
 
                 RunTests(mutant.TestSession);
                 
+                timoutDisposable.Dispose();
+
                 UnloadTests();
 
-                if (mutant.TestSession.TestsRootNode.State == TestNodeState.Failure)
-                {
-                    mutant.NumberOfTestsThatKilled = mutant.TestSession.TestMap.Values
-                        .Count(t => t.State == TestNodeState.Failure);
-                    mutant.State = MutantResultState.Killed;
-                }
-                else
-                {
-                    mutant.State = MutantResultState.Live;
-                }
+
+                Switch.On(mutant.TestSession.TestsRootNode.State)
+                    .Case(TestNodeState.Failure, TestNodeState.Running, TestNodeState.Inconclusive, ()=>
+                    {
+                        mutant.NumberOfFailedTests = mutant.TestSession.TestMap.Values
+                            .Count(t => t.State == TestNodeState.Failure);
+                        mutant.State = MutantResultState.Killed;
+                    })
+                    .Case(TestNodeState.Success, ()=>
+                    {
+                        mutant.State = MutantResultState.Live;
+                    })
+                    .Do();
 
                 mutant.TestSession.IsComplete = true;
 
-                _commonServices.Threading.InvokeOnGui(() => mutant.TestSession.IsComplete = true);
+               // _commonServices.Threading.InvokeOnGui(() => mutant.TestSession.IsComplete = true);
             }
             catch (AssemblyVerificationException e)
             {
@@ -143,13 +161,20 @@
                 sw.Stop();
                 mutant.TestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
                 
-                _mutantsFileManager.DeleteMutantFiles(storedMutantInfo);
+                
             }
             
             
         }
 
-  
+
+        public void CancelTestRun()
+        {
+            foreach (var service in _testServices)
+            {
+                service.Cancel();
+            }
+        }
 
         public void LoadTests(StoredMutantInfo mutant, TestSession testSession)
         {

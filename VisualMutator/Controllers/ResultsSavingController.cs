@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
@@ -39,13 +40,15 @@
 
         public void BrowsePath()
         {
-      
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = "MutationResults"; // Default file name
-            dlg.DefaultExt = ".xml"; // Default file extension
-            dlg.Filter = "XML documents (.xml)|*.xml"; // Filter files by extension
 
-          
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = "MutationResults", 
+                DefaultExt = ".xml", 
+                Filter = "XML documents (.xml)|*.xml"
+            };
+    
+
             bool? result = dlg.ShowDialog();
 
             if (result == true)
@@ -61,11 +64,6 @@
             _currentSession = currentSession;
             _viewModel.Show();
 
-
-            //    _viewModel.TargetPath
-
-
-
         }
         public void SaveResults()
         {
@@ -80,6 +78,12 @@
             
 
             _viewModel.Close();
+
+            
+            var p =new Process();
+
+            p.StartInfo.FileName = _viewModel.TargetPath;
+            p.Start();
         }
         public void Close()
         {

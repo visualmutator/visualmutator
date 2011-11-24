@@ -27,6 +27,8 @@
         void RunTests();
 
         void UnloadProject();
+
+        void Cancel();
     }
 
     public class NUnitWrapper : INUnitWrapper
@@ -82,7 +84,7 @@
                        // }
                         
                    // });
-
+         
 
             _testFinished = Observable.FromEvent<TestEventArgs>(
                 _testLoader.Events, "TestFinished")
@@ -141,6 +143,10 @@
             _testLoader.LoadTest();
         }
 
+        public void Cancel()
+        {
+            _testLoader.CancelTestRun();
+        }
         public void RunTests()
         {
             

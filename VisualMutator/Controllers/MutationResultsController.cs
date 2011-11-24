@@ -1,4 +1,5 @@
-﻿namespace VisualMutator.Controllers
+﻿using System.Drawing;
+namespace VisualMutator.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -143,7 +144,7 @@
                 _currentSession  = _mutantsContainer.PrepareSession(choices);
                 var changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
 
-                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment();
+                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                 _testsContainer.RunTestsForMutant(_currentSession,_currentSession.TestEnvironment, changelessMutant);
 
 
@@ -169,9 +170,21 @@
                 }
                 else if (changelessMutant.State == MutantResultState.Killed)
                 {
-                    _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                        changelessMutant.TestSession.TestMap.Values.First(t => t.State == TestNodeState.Failure).Name), _log);
+                    var test = changelessMutant.TestSession.TestMap.Values.FirstOrDefault(t =>
+                        t.State == TestNodeState.Failure);
+                    if (test != null)
+                    {
+                        _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
+                            test.Name, test.Message), _log);
+                    }
+                    else
+                    {
+                        var testInconcl = changelessMutant.TestSession.TestMap.Values.First(t => 
+                            t.State == TestNodeState.Inconclusive);
 
+                        _commonServices.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
+                            testInconcl.Name, "Test was inconclusive."), _log);
+                    }
                     SetState(OperationsState.Error);
                     Finish();
                     return false;
@@ -181,12 +194,10 @@
             },
             cont =>
             {
-
                 if (cont)
                 {
                     CreateMutants();
-                }
-                    
+                }   
             },
             onException: OnUnhandledException);
             
@@ -246,7 +257,8 @@
                 _viewModel.UpdateTestingProgress();
 
                 int mutantsKilled = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Killed);
-
+              //  int mutantsLive = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Live);
+// 
                 _currentSession.MutationScore = ((double)mutantsKilled) / _currentSession.TestedMutants.Count;
                 _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, _currentSession.TestedMutants.Count);
                 _viewModel.MutationScore = string.Format("Mutation score: {0}", _currentSession.MutationScore);
@@ -275,7 +287,7 @@
 
         private void Finish()
         {
-            
+            _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
         }
 
         public void PauseOperations()
@@ -302,6 +314,9 @@
             {
                 _requestedHaltState = RequestedHaltState.Stop;
                 SetState(OperationsState.Stopping);
+                _testsContainer.CancelTestRun();
+
+
             }
             
         }

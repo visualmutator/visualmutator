@@ -2,6 +2,7 @@ namespace VisualMutator.Model.Mutations.Structure
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     public class StoredAssemblies
     {
@@ -19,5 +20,14 @@ namespace VisualMutator.Model.Mutations.Structure
                 return _streams;
             }
         }
+
+
+
+        public int SizeInKilobytes()
+        {
+            int sizeBytes = Streams.Aggregate(0, (all, next) => all + next.Length);
+            return (int)(((double)sizeBytes) / 1024);
+        }
+
     }
 }

@@ -43,5 +43,34 @@
             }
             return @switch;
         }
+        public static Switch<T> Case<T>(this Switch<T> @switch, T caseValue1, T caseValue2, Action action)
+        {
+            if (@switch.Value.Equals(caseValue1) || @switch.Value.Equals(caseValue2))
+            {
+                action();
+                @switch.HasResult = true;
+            }
+            return @switch;
+        }
+        public static Switch<T> Case<T>(this Switch<T> @switch, T caseValue1, T caseValue2, T caseValue3, Action action)
+        {
+            if (@switch.Value.Equals(caseValue1) 
+                || @switch.Value.Equals(caseValue2)
+                || @switch.Value.Equals(caseValue3))
+            {
+                action();
+                @switch.HasResult = true;
+            }
+            return @switch;
+        }
+        public static Switch<T> Case<T>(this Switch<T> @switch, IEnumerable<T> caseValues, Action action)
+        {
+            if (caseValues.Contains(@switch.Value))
+            {
+                action();
+                @switch.HasResult = true;
+            }
+            return @switch;
+        }
     }
 }

@@ -24,5 +24,14 @@ namespace VisualMutator.Controllers
             get;
             set;
         }
+
+        public IList<string> AdditionalFilesToCopy 
+        { get;
+            set;
+        }
+
+        public bool CreateMoreMutants { get; set; }
+
+        public int TestingTimeoutSeconds { get; set; }
     }
 }

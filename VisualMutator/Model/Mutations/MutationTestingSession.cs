@@ -4,6 +4,7 @@
 
     using Mono.Cecil;
 
+    using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests;
@@ -43,5 +44,6 @@
             set;
         }
 
+        public MutationSessionChoices MutationSessionChoices { get; set; }
     }
 }

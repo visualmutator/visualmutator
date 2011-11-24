@@ -20,9 +20,62 @@
             
         }
 
- 
+        private bool _createMoreMutants;
+
+        public bool CreateMoreMutants
+        {
+            get
+            {
+                return _createMoreMutants;
+            }
+            set
+            {
+                SetAndRise(ref _createMoreMutants, value, () => CreateMoreMutants);
+            }
+        }
 
 
+
+        private BetterObservableCollection<string> _additionalFileToCopy;
+
+        public BetterObservableCollection<string> AdditionalFileToCopy
+        {
+            get
+            {
+                return _additionalFileToCopy;
+            }
+            set
+            {
+                SetAndRise(ref _additionalFileToCopy, value, () => AdditionalFileToCopy);
+            }
+        }
+
+        private BasicCommand _commandAdditionalFileToCopy;
+        public BasicCommand CommandAdditionalFileToCopy
+        {
+            get
+            {
+                return _commandAdditionalFileToCopy;
+            }
+            set
+            {
+                SetAndRise(ref _commandAdditionalFileToCopy, value, () => CommandAdditionalFileToCopy);
+            }
+        }
+
+        private int _timeoutSeconds;
+
+        public int TimeoutSeconds
+        {
+            get
+            {
+                return _timeoutSeconds;
+            }
+            set
+            {
+                SetAndRise(ref _timeoutSeconds, value, () => TimeoutSeconds);
+            }
+        }
         private BasicCommand _commandCreateMutants;
         public BasicCommand CommandCreateMutants
         {

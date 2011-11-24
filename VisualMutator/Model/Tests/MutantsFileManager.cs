@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Model.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -19,12 +20,12 @@
     public interface IMutantsFileManager
     {
 
-        void DeleteMutantFiles(StoredMutantInfo mutant);
-
 
         StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
 
-        TestEnvironmentInfo InitTestEnvironment();
+        TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
+
+        void CleanupTestEnvironment(TestEnvironmentInfo info);
     }
 
  
@@ -77,7 +78,7 @@
             return result;
         }
 
-        public TestEnvironmentInfo InitTestEnvironment()
+        public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
             string mutantDirectoryPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             _fs.Directory.CreateDirectory(mutantDirectoryPath);
@@ -89,7 +90,28 @@
                 _fs.File.Copy(referenced, destination, overwrite: true); //TODO: Remove overwrite?
             }
 
+            foreach (string path in currentSession.MutationSessionChoices.AdditionalFilesToCopy)
+            {
+                string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(path));
+                _fs.File.Copy(path, destination, overwrite: true); 
+            }
             return new TestEnvironmentInfo(mutantDirectoryPath);
+        }
+
+        public void CleanupTestEnvironment(TestEnvironmentInfo info)
+        {
+            if (_fs.Directory.Exists(info.Directory))
+            {
+                try
+                {
+                    _fs.Directory.Delete(info.Directory, recursive: true);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    _log.Warn(e);
+                }
+                
+            }
         }
 
         public void DeleteMutantFiles(StoredMutantInfo mutant)

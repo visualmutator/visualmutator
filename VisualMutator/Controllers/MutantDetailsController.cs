@@ -118,8 +118,8 @@
             }
             else
             {
-                _listenerForCurrentMutant = mutant.TestSession.WhenPropertyChanged(_ => _.IsComplete)
-                    .Subscribe(x => _viewModel.TestNamespaces.AddRange(mutant.TestSession.TestNamespaces));
+                //_listenerForCurrentMutant = mutant.TestSession.WhenPropertyChanged(_ => _.IsComplete)
+                //    .Subscribe(x => _viewModel.TestNamespaces.AddRange(mutant.TestSession.TestNamespaces));
             }
         }
 

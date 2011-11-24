@@ -56,7 +56,17 @@ namespace VisualMutator.Model.Mutations.Structure
                 //Functional.ValuedSwitch<MutantResultState, string>(value)
                 .Case(MutantResultState.Untested, "Waiting...")
                 .Case(MutantResultState.Tested, "Executing tests...")
-                .Case(MutantResultState.Killed, () => "Killed by {0} tests".Formatted(NumberOfTestsThatKilled))
+                .Case(MutantResultState.Killed, () =>
+                {
+                    if (NumberOfFailedTests == 0)
+                    {
+                        return "Inconclusive";
+                    }
+                    else
+                    {
+                        return "Killed by {0} tests".Formatted(NumberOfFailedTests);
+                    }
+                })
                 .Case(MutantResultState.Live, "Live")
                 .Case(MutantResultState.Error, () => TestSession.ErrorDescription)
                 .GetResult();
@@ -65,17 +75,17 @@ namespace VisualMutator.Model.Mutations.Structure
             base.SetState(value, updateChildren, updateParent);
         }
 
-        private int _numberOfTestsThatKilled;
+        private int _numberOfFailedTests;
 
-        public int NumberOfTestsThatKilled
+        public int NumberOfFailedTests
         {
             get
             {
-                return _numberOfTestsThatKilled;
+                return _numberOfFailedTests;
             }
             set
             {
-                SetAndRise(ref _numberOfTestsThatKilled, value, () => NumberOfTestsThatKilled);
+                SetAndRise(ref _numberOfFailedTests, value, () => NumberOfFailedTests);
             }
         }
 

@@ -38,6 +38,8 @@
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+    //    private string[] paths;
+
         public MutationSessionChoices Result { get; set; }
 
         public bool HasResults
@@ -65,8 +67,30 @@
                 && _viewModel.MutationPackages != null);
             _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.Assemblies);
             _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.MutationPackages);
-      
 
+            _viewModel.CommandAdditionalFileToCopy = new BasicCommand(ChooseFiles);
+
+            _viewModel.AdditionalFileToCopy = new BetterObservableCollection<string>();
+
+        }
+
+
+
+        public void ChooseFiles()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+            //    DefaultExt = ".xml",
+             //   Filter = "XML documents (.xml)|*.xml"
+            };
+
+            bool? result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+
+                _viewModel.AdditionalFileToCopy.ReplaceRange(dlg.FileNames);
+            }
         }
 
 
@@ -88,7 +112,10 @@
                 SelectedOperators = _viewModel.MutationPackages.SelectMany(pack => pack.Operators)
                                  .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator).ToList(),
                 Assemblies = _viewModel.Assemblies.Select(a => a.AssemblyDefinition).ToList(),
-                SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.Assemblies)
+                SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.Assemblies),
+                AdditionalFilesToCopy = _viewModel.AdditionalFileToCopy.ToList(),
+                CreateMoreMutants = _viewModel.CreateMoreMutants,
+                TestingTimeoutSeconds = _viewModel.TimeoutSeconds
             };
             _viewModel.Close();
         }
