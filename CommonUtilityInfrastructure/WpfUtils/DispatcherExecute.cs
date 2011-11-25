@@ -3,6 +3,7 @@
     #region Usings
 
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Threading;
@@ -15,18 +16,28 @@
 
         TaskScheduler GuiScheduler { get; }
 
-
+        SynchronizationContext GuiSyncContext { get; }
     }
 
     public class DispatcherExecute : IDispatcherExecute
     {
-        private Action<Action> _executor = action => action();
 
         private TaskScheduler _guiScheduler;
 
+        private Dispatcher _dispatcher;
+
+        private SynchronizationContext _syncContext;
+
         public void OnUIThread(Action action)
         {
-            _executor(action);
+            if (_dispatcher.CheckAccess())
+            {
+                action();
+            }
+            else
+            {
+                _dispatcher.BeginInvoke(action);
+            }
         }
 
         public TaskScheduler GuiScheduler
@@ -36,27 +47,26 @@
                 return _guiScheduler;
             }
         }
-       
+
+        public SynchronizationContext GuiSyncContext
+        {
+            get
+            {
+                return _syncContext;
+            }
+        }
+
         /// <summary>
         /// Must be called on dispatcher thread.
         /// </summary>
         public void InitializeWithDispatcher()
         {
-            Dispatcher dispatcher = Application.Current.Dispatcher;
+            _dispatcher = Application.Current.Dispatcher;
             _guiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
+            _syncContext = SynchronizationContext.Current;
 
-            _executor = action =>
-            {
-                if (dispatcher.CheckAccess())
-                {
-                    action();
-                }
-                else
-                {
-                    dispatcher.BeginInvoke(action);
-                }
-            };
+
         }
     }
 }

@@ -4,6 +4,7 @@ namespace CommonUtilityInfrastructure.Threading
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure.WpfUtils;
@@ -21,13 +22,17 @@ namespace CommonUtilityInfrastructure.Threading
 
         void ContinueOnGuiWhenAll(ICollection<Task> tasks, Action onGui);
 
+        SynchronizationContext GuiSyncContext
+        {
+            get;
+        }
     }
 
     public interface IThreadPoolExecute
     {
         TaskScheduler ThreadPoolScheduler { get; }
 
-       // TaskScheduler LimitedThreadPoolScheduler(int degree);
+      
     }
 
     public class ThreadPoolExecute : IThreadPoolExecute
@@ -39,10 +44,7 @@ namespace CommonUtilityInfrastructure.Threading
                 return TaskScheduler.Default;
             }
         }
-     //   public TaskScheduler LimitedThreadPoolScheduler(int degree)
-     //   {
-     //       return new LimitedConcurrencyLevelTaskScheduler(degree);
-     //   }
+ 
     }
 
     public class Threading : IThreading
@@ -67,6 +69,14 @@ namespace CommonUtilityInfrastructure.Threading
         public void InvokeOnGui( Action onGui)
         {
             _execute.OnUIThread(onGui);
+        }
+
+        public SynchronizationContext GuiSyncContext 
+        { 
+            get
+            {
+                return _execute.GuiSyncContext;
+            }
         }
         public Action<T> CreateActionOnGui<T>(Action<T> onGui)
         {

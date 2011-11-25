@@ -142,6 +142,10 @@
         {
             return new ValuedSwitch<T, R>(from);
         }
+        public static CollectiveSwitch<T, R> AsCascadingCollectiveOf<T, R>(this SwitchIntoSelector<R> obj, IEnumerable<T> from)
+        {
+            return new CollectiveSwitch<T, R>(from);
+        }
         public static ValuedTypeSwitch<R> FromTypeOf<R>(this SwitchIntoSelector<R> sel, object obj)
         {
             return new ValuedTypeSwitch<R>(obj);

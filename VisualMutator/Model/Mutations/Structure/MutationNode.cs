@@ -41,48 +41,39 @@
                 return _state;
             }
         }
-        public bool HasResults
-        {
-            get
-            {
-                return (State == MutantResultState.Tested || State == MutantResultState.Live
-                    || State == MutantResultState.Killed);
-            }
-        }
-
+  
         protected virtual void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
-            if (_state != value)
+            
+            _state = value;
+
+            if (updateChildren && Children != null)
             {
-                _state = value;
 
-                if (updateChildren && Children != null)
+                if (value != MutantResultState.Untested)
                 {
+                    throw new InvalidOperationException("Tried to set invalid state: " + value);
+                }
 
-                    if (value != MutantResultState.Untested)
-                    {
-                        throw new InvalidOperationException("Tried to set invalid state: " + value);
-                    }
-
-                    foreach (var node in Children.Cast<MutationNode>())
-                    {
-                        node.SetState(value, updateChildren: true, updateParent: false);
-                    }
+                foreach (var node in Children.Cast<MutationNode>())
+                {
+                    node.SetState(value, updateChildren: true, updateParent: false);
+                }
   
-                }
-                
-                if (updateParent && Parent != null)
-                {
-                    if (!value.IsIn(MutantResultState.Tested, MutantResultState.Live,
-                        MutantResultState.Killed, MutantResultState.Error))
-                    {
-                        throw new InvalidOperationException("Tried to set invalid state: " + value);
-                    }
-
-                    ((MutationNode)Parent).UpdateStateBasedOnChildren();
-                }
-                RaisePropertyChanged(() => State);
             }
+                
+            if (updateParent && Parent != null)
+            {
+                if (!value.IsIn(MutantResultState.Tested, MutantResultState.Live,
+                    MutantResultState.Killed, MutantResultState.Error))
+                {
+                    throw new InvalidOperationException("Tried to set invalid state: " + value);
+                }
+
+                ((MutationNode)Parent).UpdateStateBasedOnChildren();
+            }
+            RaisePropertyChanged(() => State);
+            
         }
 
      
@@ -90,23 +81,44 @@
         {
             var children = Children.Cast<MutationNode>().ToList();
 
-            if(children.All(_ => _.HasResults))
+
+
+            MutantResultState state = Switch.Into<MutantResultState>().AsCascadingCollectiveOf(children.Select(n => n.State))
+                .CaseAny(MutantResultState.Error, MutantResultState.Error)
+                .CaseAny(MutantResultState.Tested, MutantResultState.Tested)
+                .CaseAny(MutantResultState.Live, MutantResultState.Live)
+                .CaseAny(MutantResultState.Killed, MutantResultState.Killed)
+                .CaseAll(MutantResultState.Untested, MutantResultState.Untested);
+
+/*
+
+            MutantResultState state;
+            if (children.Any(n => n.State == MutantResultState.Error))
             {
-                MutantResultState state;
-                if (children.Any(n => n.State == MutantResultState.Tested))
-                {
-                    state = MutantResultState.Tested;
-                }
-                else if (children.Any(n => n.State == MutantResultState.Live))
-                {
-                    state = MutantResultState.Live;
-                }
-                else 
-                {
-                    state = MutantResultState.Killed;
-                }
-                SetState(state, updateChildren: false, updateParent: true);
+                state = MutantResultState.Error;
             }
+            else if (children.Any(n => n.State == MutantResultState.Tested))
+            {
+                state = MutantResultState.Tested;
+            }
+            else if (children.Any(n => n.State == MutantResultState.Live))
+            {
+                state = MutantResultState.Live;
+            }
+            else if (children.Any(n => n.State == MutantResultState.Killed))
+            {
+                state = MutantResultState.Killed;
+            }
+            else if (children.All(n => n.State == MutantResultState.Untested))
+            {
+                state = MutantResultState.Untested;
+            }
+            else
+            {
+                throw new InvalidOperationException("Unknown state");
+            }*/
+            SetState(state, updateChildren: false, updateParent: true);
+            
   
 
             

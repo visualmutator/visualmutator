@@ -69,6 +69,7 @@
     <Compile Include="FileSystem\FileSystemService.cs" />
     <Compile Include="FileSystem\IDirectory.cs" />
     <Compile Include="FileSystem\IFile.cs" />
+    <Compile Include="Functional\CollectiveSwitch.cs" />
     <Compile Include="Functional\ValuedTypeSwitch.cs" />
     <Compile Include="Functional\TypeSwitch.cs" />
     <Compile Include="Functional\Functional.cs" />

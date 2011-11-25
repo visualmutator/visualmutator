@@ -26,15 +26,15 @@
 
         public TestEnvironmentInfo TestEnvironment { get; set; }
 
-        public Queue<Mutant> MutantsToTest { get; set; }
+    //    public Queue<Mutant> MutantsToTest { get; set; }
 
-        public List<Mutant> TestedMutants { get; set; }
+     //   public List<Mutant> TestedMutants { get; set; }
 
         public StoredAssemblies StoredSourceAssemblies { get; set; }
 
         public IList<TypeDefinition> SelectedTypes { get; set; }
 
-        public IList<IMutationOperator> SelectedOperators { get; set; }
+    //    public IList<IMutationOperator> SelectedOperators { get; set; }
 
         public IList<AssemblyDefinition> OriginalAssemblies { get; set; }
 

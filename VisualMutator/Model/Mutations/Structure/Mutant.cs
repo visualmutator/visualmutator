@@ -54,18 +54,15 @@ namespace VisualMutator.Model.Mutations.Structure
             string stateText =
                 Switch.Into<string>().From(value)
                 //Functional.ValuedSwitch<MutantResultState, string>(value)
-                .Case(MutantResultState.Untested, "Waiting...")
+                .Case(MutantResultState.Untested, "Untested")
                 .Case(MutantResultState.Tested, "Executing tests...")
                 .Case(MutantResultState.Killed, () =>
                 {
-                    if (NumberOfFailedTests == 0)
-                    {
-                        return "Inconclusive";
-                    }
-                    else
-                    {
-                        return "Killed by {0} tests".Formatted(NumberOfFailedTests);
-                    }
+                    return Switch.Into<string>().From(KilledSubstate)
+                        .Case(MutantKilledSubstate.Normal, "Killed by {0} tests".Formatted(NumberOfFailedTests))
+                        .Case(MutantKilledSubstate.Inconclusive, "Killed by {0} tests".Formatted(NumberOfFailedTests))
+                        .Case(MutantKilledSubstate.TimedOut, "Killed by {0} tests (timed out)".Formatted(NumberOfFailedTests))
+                        .GetResult();
                 })
                 .Case(MutantResultState.Live, "Live")
                 .Case(MutantResultState.Error, () => TestSession.ErrorDescription)
@@ -113,5 +110,15 @@ namespace VisualMutator.Model.Mutations.Structure
             }
 
         }
+
+        public MutantKilledSubstate KilledSubstate { get; set; }
+
+    }
+
+    public enum MutantKilledSubstate
+    {
+        Normal,
+        Inconclusive,
+        TimedOut,
     }
 }

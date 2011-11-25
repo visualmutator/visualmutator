@@ -110,9 +110,6 @@
                 {
                     VerifyAssemblies(storedMutantInfo.AssembliesPaths);
                 }
-                
-
-
                 LoadTests(storedMutantInfo, mutant.TestSession);
 
                 RunTests(mutant.TestSession);
@@ -122,22 +119,9 @@
                 UnloadTests();
 
 
-                Switch.On(mutant.TestSession.TestsRootNode.State)
-                    .Case(TestNodeState.Failure, TestNodeState.Running, TestNodeState.Inconclusive, ()=>
-                    {
-                        mutant.NumberOfFailedTests = mutant.TestSession.TestMap.Values
-                            .Count(t => t.State == TestNodeState.Failure);
-                        mutant.State = MutantResultState.Killed;
-                    })
-                    .Case(TestNodeState.Success, ()=>
-                    {
-                        mutant.State = MutantResultState.Live;
-                    })
-                    .Do();
+                ResolveMutantState(mutant);
 
                 mutant.TestSession.IsComplete = true;
-
-               // _commonServices.Threading.InvokeOnGui(() => mutant.TestSession.IsComplete = true);
             }
             catch (AssemblyVerificationException e)
             {
@@ -167,6 +151,42 @@
             
         }
 
+        private void ResolveMutantState(Mutant mutant)
+        {
+            mutant.NumberOfFailedTests = mutant.TestSession.TestMap.Values
+                          .Count(t => t.State.IsIn(TestNodeState.Failure, TestNodeState.Inconclusive));
+
+
+
+            if (mutant.TestSession.TestMap.Values.Any(t => t.State == TestNodeState.Inconclusive))
+            {
+                
+                mutant.KilledSubstate = MutantKilledSubstate.Inconclusive;
+                mutant.State = MutantResultState.Killed;
+            }
+            else if (mutant.TestSession.TestMap.Values.Any(t => t.State == TestNodeState.Running))
+            {
+                
+                //TODO: not accurate and can be wrong
+                mutant.KilledSubstate = MutantKilledSubstate.TimedOut;
+                mutant.State = MutantResultState.Killed;
+            }
+            else if (mutant.TestSession.TestMap.Values.Any(t => t.State == TestNodeState.Failure))
+            {
+              
+                mutant.KilledSubstate = MutantKilledSubstate.Normal;
+                mutant.State = MutantResultState.Killed;
+            }
+            else if (mutant.TestSession.TestMap.Values.All(t => t.State == TestNodeState.Success))
+            {
+                mutant.State = MutantResultState.Live;
+            }
+            else
+            {
+                throw new InvalidOperationException("Unknown state");
+            }
+
+        }
 
         public void CancelTestRun()
         {

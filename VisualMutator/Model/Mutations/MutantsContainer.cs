@@ -26,7 +26,7 @@
     {
         MutationTestingSession PrepareSession(MutationSessionChoices choices);
 
-        void GenerateMutantsForOperators(MutationTestingSession session, Action progress = null);
+        void GenerateMutantsForOperators(MutationTestingSession session, Action<int> progress = null);
 
         Mutant CreateChangelessMutant(MutationTestingSession session);
     }
@@ -56,7 +56,7 @@
                 StoredSourceAssemblies = sourceAssemblies,
                 SelectedTypes = copiedTypes,
                 MutationSessionChoices = choices,
-                SelectedOperators = choices.SelectedOperators,
+              //  SelectedOperators = choices.SelectedOperators,
                 Options = CreateDefaultOptions()
             };
         }
@@ -89,16 +89,16 @@
 
         }
 
-        public void GenerateMutantsForOperators(MutationTestingSession session, Action progress = null)
+        public void GenerateMutantsForOperators(MutationTestingSession session, Action<int> percentCompleted = null)
         {
            session.MutantsGroupedByOperators = new List<ExecutedOperator>();
             MutationRootNode root = new MutationRootNode();
 
-            int[] i = { 0 };
+            int[] i = { 1 };
             Func<int> genId = () => i[0]++;
 
-
-            foreach (IMutationOperator op in session.SelectedOperators)
+            int counter = 0;
+            foreach (IMutationOperator op in session.MutationSessionChoices.SelectedOperators   )
             {
                 var sw = new Stopwatch();
                 sw.Start();
@@ -116,9 +116,10 @@
                 root.Children.Add(executedOperator);
                 sw.Stop();
                 executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
-                if (progress != null)
+                counter++;
+                if (percentCompleted != null)
                 {
-                    progress();
+                    percentCompleted(counter.AsPercentageOf(session.MutationSessionChoices.SelectedOperators.Count));
                 }
             }
             root.State = MutantResultState.Untested;

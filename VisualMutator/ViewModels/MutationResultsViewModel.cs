@@ -109,21 +109,7 @@
             }
         }
 
-        private ExecutedOperator _selectedOperator;
 
-        public ExecutedOperator SelectedOperator
-        {
-            get
-            {
-                return _selectedOperator;
-            }
-            set
-            {
-                SetAndRise(ref _selectedOperator, value, () => SelectedOperator);
-            }
-        }
-
-     
         private string _operationsStateDescription;
 
         public string OperationsStateDescription
@@ -152,7 +138,6 @@
 
 
         private double _testingProgress;
-
         public double TestingProgress
         {
             get
@@ -165,25 +150,8 @@
             }
         }
 
-        private double _numberOfMutants;
-        private double _currentMutant;
-        public void InitTestingProgress(int count)
-        {
-            _numberOfMutants = count;
-            _currentMutant = 0;
-            TestingProgress = 0;
-        }
-
-        public void UpdateTestingProgress()
-        {
-            _currentMutant++;
-            TestingProgress = (_currentMutant / _numberOfMutants) *100;
-          
-        }
 
         private object _selectedMutationTreeItem;
-
-   
         public object SelectedMutationTreeItem
         {
             get
@@ -198,7 +166,6 @@
 
 
         private string _mutantsRatio;
-
         public string MutantsRatio
         {
             get
@@ -228,10 +195,11 @@
 
         public MutantDetailsViewModel MutantDetailsViewModel
         {
-            get; set; }
+            get; 
+            set;
+        }
 
         private BasicCommand _commandSaveResults;
-
         public BasicCommand CommandSaveResults
         {
             get

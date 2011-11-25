@@ -72,17 +72,14 @@
 
             _viewModel.AdditionalFileToCopy = new BetterObservableCollection<string>();
 
+            _viewModel.TimeoutSeconds = 10;
         }
 
 
 
         public void ChooseFiles()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog
-            {
-            //    DefaultExt = ".xml",
-             //   Filter = "XML documents (.xml)|*.xml"
-            };
+            var dlg = new Microsoft.Win32.OpenFileDialog();
 
             bool? result = dlg.ShowDialog();
 

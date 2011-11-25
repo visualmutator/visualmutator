@@ -40,8 +40,14 @@
         {
             return enumerable ?? Enumerable.Empty<T>();
         }
-
-        
+        public static bool ContainsAny<T>(this IEnumerable<T> enumerable, T val1, T val2)
+        {
+            return enumerable.Any(obj => obj.Equals(val1) || obj.Equals(val2));
+        }
+        public static bool ContainsAny<T>(this IEnumerable<T> enumerable, T val1, T val2, T val3)
+        {
+            return enumerable.Any(obj => obj.Equals(val1) || obj.Equals(val2) || obj.Equals(val3));
+        }
         public static string InQuotes(this string str)
         {
             return string.Format(@"""{0}""", str);
@@ -49,6 +55,20 @@
         public static string Formatted(this string str, params object[] args)
         {
             return string.Format(str, args);
+        }
+        public static int IncrementedIf(this int value, bool condition)
+        {
+            return condition ? value + 1 : value;
+        }
+        public static int AsPercentageOf(this int part, int all)
+        {
+            Throw.If(part < 0 || all < 0 || part > all || all == 0);
+            return (int)(((double)part / all) * 100);
+        }
+        public static double RoundToSignificantDigits(this double d, int digits)
+        {
+            double scale = Math.Pow(10, Math.Floor(Math.Log10(d)) + 1);
+            return scale * Math.Round(d / scale, digits);
         }
 
         public static string PropertyName<T>(this Expression<Func<T>> propertyExpression)

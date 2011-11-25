@@ -1,10 +1,11 @@
 ﻿namespace VisualMutator.Controllers
 {
+    #region Usings
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
@@ -18,49 +19,35 @@
 
     using log4net;
 
-    using Event = CommonUtilityInfrastructure.Event;
-    enum RequestedHaltState
-    {
-        Pause,
-        Stop
-    }
-    enum SessionState
-    {
-        NotStarted,
-        Paused,
-        Running,
-        Finished
-    }
+    #endregion
 
-
-    public class TestingProgressEventArgs : EventArgs
-    {
-        public int NumberOfMutantsKilled { get; set; }
-
-        public int NumberOfAllMutantsTested { get; set; }
-
-        public double MutationScore { get; set; }
-    }
 
     public class SessionController
     {
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IMutantsContainer _mutantsContainer;
 
         private readonly CommonServices _svc;
 
-        private readonly IMutantsContainer _mutantsContainer;
-
         private readonly ITestsContainer _testsContainer;
+
+        private int _allMutantsCount;
 
         private MutationTestingSession _currentSession;
 
-     //   private Action<OperationsState> SetState;
 
-        private bool _isInitialized;
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        private int _mutantsKilledCount;
+
+        private Queue<Mutant> _mutantsToTest;
 
         private RequestedHaltState? _requestedHaltState;
 
+        private Subject<SessionEventArgs> _sessionEventsSubject;
+
         private SessionState _sessionState;
+
+        private List<Mutant> _testedMutants;
 
         public SessionController(
             CommonServices svc,
@@ -70,48 +57,39 @@
             _svc = svc;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
-        }
-
-        public void Initialize(Action<OperationsState> setState)
-        {
-         //   SetState = setState;
-
             _sessionState = SessionState.NotStarted;
-            _isInitialized = true;
+
+            _sessionEventsSubject = new Subject<SessionEventArgs>();
+        }
+
+        public IObservable<SessionEventArgs> SessionEventsObservable
+        {
+            get
+            {
+                return _sessionEventsSubject.AsObservable();
+            }
         }
 
 
-
-        public event Action OnStartingPreCheck; 
-        public event Action<int> OnMutationsStarting; 
-        public event Action OnMutationProgress; 
-        public event Action OnMutationFinished;
-
-        public event Action<int> OnTestingStarting;
-        public event Action<TestingProgressEventArgs> OnTestingProgress; 
-
-        public event Action OnSessionPaused; 
-        public event Action OnFinished;
-        public event Action OnStopping; 
-        public event Action OnFinishedWithError; 
-
-        private void InvokeEvent(Action evnt)
+        public MutationTestingSession Session
         {
-            if (evnt != null)
+            get
             {
-                evnt();
+                return _currentSession;
             }
+            
+        }
+
+        private void RaiseEvent(SessionEventType type)
+        {
+            _sessionEventsSubject.OnNext(new SessionEventArgs(type));
         }
 
         public void RunMutationSession(MutationSessionChoices choices)
         {
-            Throw.If(!_isInitialized);
+            _sessionState = SessionState.Running;
 
-             _sessionState = SessionState.Running;
-
-            Event.RaiseIfNotNull(OnStartingPreCheck);
-       
-          //  SetState(OperationsState.PreCheck);
+            RaiseEvent(SessionEventType.PreCheckStarting);
 
             _svc.Threading.ScheduleAsync(() =>
             {
@@ -135,112 +113,99 @@
                 }
             },
             onException: FinishWithError);
-
         }
-
-
 
         private void Finish()
         {
-
             _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
-            Event.RaiseIfNotNull(OnFinished);
-           
+            _sessionState = SessionState.Finished;
+            RaiseEvent(SessionEventType.SessionFinished);
+            _sessionEventsSubject.OnCompleted();
         }
+
         private void FinishWithError()
         {
             _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
 
-            Event.RaiseIfNotNull(OnFinishedWithError);
-            
+            _sessionState = SessionState.Finished;
+            RaiseEvent(SessionEventType.SessionFinishedWithError);
+            _sessionEventsSubject.OnCompleted();
         }
-
-
-
 
         public void CreateMutants()
         {
-            Event.RaiseIfNotNull(OnMutationsStarting, _currentSession.SelectedOperators.Count);
-
-
-         //   _viewModel.InitTestingProgress(_currentSession.SelectedOperators.Count);
-
-            _svc.Threading.ScheduleAsync(() =>
+            Action<int> onMutationProgress = (percent) =>
             {
-                _mutantsContainer.GenerateMutantsForOperators(_currentSession, OnMutationProgress);
+                _sessionEventsSubject.OnNext(new MutationProgressEventArgs(SessionEventType.MutationProgress)
+                {
+                    PercentCompleted = percent,
+                });
+            };
+
+            onMutationProgress(0);
+
+            _svc.Threading.ScheduleAsync(
+            () =>
+            {
+                _mutantsContainer.GenerateMutantsForOperators(_currentSession, onMutationProgress);
             },
             () =>
             {
-                //_viewModel.Operators.ReplaceRange(_currentSession.MutantsGroupedByOperators);
-                Event.RaiseIfNotNull(OnMutationFinished);
-
-
+                _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(SessionEventType.MutationFinished)
+                {
+                    MutantsGroupedByOperators = _currentSession.MutantsGroupedByOperators,
+                });
+        
                 RunTests();
-
             }, onException: FinishWithError);
-
         }
-
 
         public void RunTests()
         {
-           
-            var allMutants = _currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants);
-            _currentSession.MutantsToTest = new Queue<Mutant>(allMutants);
-           // _viewModel.InitTestingProgress(_currentSession.MutantsToTest.Count);
-
-            
-
-            _svc.Threading.ScheduleAsync(() =>
-            {
-                _currentSession.TestedMutants = new List<Mutant>();
-                RunTestsInternal();
-
-            }, onException: FinishWithError);
-
+            _mutantsToTest = new Queue<Mutant>(_currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants));
+            _allMutantsCount = _mutantsToTest.Count;
+            _testedMutants = new List<Mutant>();
+         
+            _svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }
 
         private void RunTestsInternal()
         {
-
-            while (_currentSession.MutantsToTest.Count != 0 && _requestedHaltState == null)
+            while (_mutantsToTest.Count != 0 && _requestedHaltState == null)
             {
-                //SetState(OperationsState.Testing);
-                Event.RaiseIfNotNull(OnTestingStarting, _currentSession.MutantsToTest.Count);
 
-                Mutant mutant = _currentSession.MutantsToTest.Dequeue();
-                _testsContainer.RunTestsForMutant(_currentSession, _currentSession.TestEnvironment, mutant);
-                _currentSession.TestedMutants.Add(mutant);
-               // _viewModel.UpdateTestingProgress();
-                
-                int mutantsKilled = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Killed);
-                //  int mutantsLive = _currentSession.TestedMutants.Count(m => m.State == MutantResultState.Live);
-                _currentSession.MutationScore = ((double)mutantsKilled) / _currentSession.TestedMutants.Count;
-                Event.RaiseIfNotNull(OnTestingProgress, new TestingProgressEventArgs
+                Action raiseTestingProgress = () =>
                 {
-                    NumberOfMutantsKilled = mutantsKilled,
-                    NumberOfAllMutantsTested = mutantsKilled,
-                    MutationScore = _currentSession.MutationScore,
-                });
-                
-               // _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", mutantsKilled, _currentSession.TestedMutants.Count);
-             //   _viewModel.MutationScore = string.Format("Mutation score: {0}", _currentSession.MutationScore);
+                    _sessionEventsSubject.OnNext(new TestingProgressEventArgs(SessionEventType.TestingProgress)
+                    {
+                        NumberOfAllMutants = _allMutantsCount,
+                        NumberOfMutantsKilled = _mutantsKilledCount,
+                        NumberOfAllMutantsTested = _testedMutants.Count,
+                        MutationScore = _currentSession.MutationScore,
+                    });
+                };
 
+                raiseTestingProgress();
+
+                Mutant mutant = _mutantsToTest.Dequeue();
+                _testsContainer.RunTestsForMutant(_currentSession, _currentSession.TestEnvironment, mutant);
+                _testedMutants.Add(mutant);
+       
+                _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
+
+                _currentSession.MutationScore = ((double)_mutantsKilledCount) / _testedMutants.Count;
+
+                raiseTestingProgress();
             }
             if (_requestedHaltState != null)
             {
-
                 Switch.On(_requestedHaltState)
                     .Case(RequestedHaltState.Pause, () =>
                     {
                         _sessionState = SessionState.Paused;
-                        Event.RaiseIfNotNull(OnSessionPaused);
-                       // SetState(OperationsState.TestingPaused)
+                        RaiseEvent(SessionEventType.SessionPaused);
                     })
-                    .Case(RequestedHaltState.Stop, () =>
-                    {
-                        Finish();
-                    })
+                    .Case(RequestedHaltState.Stop, () => { Finish(); })
                     .Do();
                 _requestedHaltState = null;
             }
@@ -248,22 +213,16 @@
             {
                 Finish();
             }
-
         }
-
 
         public void PauseOperations()
         {
             _requestedHaltState = RequestedHaltState.Pause;
-         //   SetState(OperationsState.Pausing);
-
         }
+
         public void ResumeOperations()
         {
-            _svc.Threading.ScheduleAsync(() =>
-            {
-                RunTestsInternal();
-            }, onException: FinishWithError);
+            _svc.Threading.ScheduleAsync(() => { RunTestsInternal(); }, onException: FinishWithError);
         }
 
         public void StopOperations()
@@ -275,37 +234,31 @@
             else
             {
                 _requestedHaltState = RequestedHaltState.Stop;
-             //   SetState(OperationsState.Stopping);
                 _testsContainer.CancelTestRun();
+                RaiseEvent(SessionEventType.SessionStopping);
 
-                Event.RaiseIfNotNull(OnStopping);
             }
-
         }
 
-
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="changelessMutant"></param>
+        /// <param name = "changelessMutant"></param>
         /// <returns>true if session can continue</returns>
         private bool ProcessPrecheckMutant(Mutant changelessMutant)
         {
-
             if (changelessMutant.State == MutantResultState.Error)
             {
                 if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
                 {
                     _svc.Logging.ShowWarning(
-                        UserMessages.ErrorPretest_VerificationFailure(changelessMutant.TestSession.Exception.Message), _log);
+                                             UserMessages.ErrorPretest_VerificationFailure(changelessMutant.TestSession.Exception.Message), _log);
 
                     _currentSession.Options.IsMutantVerificationEnabled = false;
-
                 }
                 else
                 {
                     _svc.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
-                        changelessMutant.TestSession.Exception.ToString()), _log);
+                                                                                  changelessMutant.TestSession.Exception.ToString()), _log);
 
                     return false;
                 }
@@ -313,26 +266,136 @@
             else if (changelessMutant.State == MutantResultState.Killed)
             {
                 var test = changelessMutant.TestSession.TestMap.Values.FirstOrDefault(t =>
-                    t.State == TestNodeState.Failure);
+                                                                                      t.State == TestNodeState.Failure);
                 if (test != null)
                 {
                     _svc.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                        test.Name, test.Message), _log);
+                                                                                 test.Name, test.Message), _log);
                 }
                 else
                 {
                     var testInconcl = changelessMutant.TestSession.TestMap.Values.First(t =>
-                        t.State == TestNodeState.Inconclusive);
+                                                                                        t.State == TestNodeState.Inconclusive);
 
                     _svc.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                        testInconcl.Name, "Test was inconclusive."), _log);
+                                                                                 testInconcl.Name, "Test was inconclusive."), _log);
                 }
                 return false;
             }
             return true;
         }
+    }
 
-    
+    public class MutationFinishedEventArgs : SessionEventArgs
+    {
+        public MutationFinishedEventArgs(SessionEventType eventType)
+            : base(eventType)
+        {
+        }
 
+        public IList<ExecutedOperator> MutantsGroupedByOperators { get; set; }
+    }
+
+    internal enum RequestedHaltState
+    {
+        Pause,
+
+        Stop
+    }
+
+    internal enum SessionState
+    {
+        NotStarted,
+
+        Paused,
+
+        Running,
+
+        Finished
+    }
+
+    public enum SessionEventType
+    {
+        PreCheckStarting,
+
+
+
+
+        MutationProgress,
+
+        TestingProgress,
+
+        MutationFinished,
+        SessionPaused,
+
+        SessionFinished,
+
+        SessionStopping,
+
+        SessionFinishedWithError,
+    }
+
+    public class SessionEventArgs : EventArgs
+    {
+        private SessionEventType _eventType;
+
+        public SessionEventArgs(SessionEventType eventType)
+        {
+            _eventType = eventType;
+        }
+
+        public SessionEventType EventType
+        {
+            get
+            {
+                return _eventType;
+            }
+        }
+    }
+
+    public class MutationProgressEventArgs : SessionEventArgs
+    {
+        public MutationProgressEventArgs(SessionEventType eventType)
+            : base(eventType)
+        {
+        }
+
+        public int PercentCompleted
+        {
+            get;
+            set;
+        }
+    }
+
+    public class TestingProgressEventArgs : SessionEventArgs
+    {
+        public TestingProgressEventArgs(SessionEventType eventType)
+            : base(eventType)
+        {
+        }
+
+        public int NumberOfMutantsKilled
+        {
+            get;
+            set;
+        }
+
+        public int NumberOfAllMutantsTested
+        {
+            get;
+            set;
+        }
+
+        public double MutationScore
+        {
+            get;
+            set;
+        }
+
+        public int NumberOfAllMutants
+        {
+            get;
+            set;
+        }
     }
 }
