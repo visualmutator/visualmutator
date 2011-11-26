@@ -16,14 +16,18 @@
 
         private readonly IThreading _threading;
 
+        private readonly ISettingsManager _settings;
+
         public CommonServices(
             IMessageService message,
             IEventService @event,
-            IThreading threading)
+            IThreading threading,
+            ISettingsManager settings)
         {
             _message = message;
             _event = @event;
             _threading = threading;
+            _settings = settings;
         }
 
         public IMessageService Logging
@@ -47,6 +51,14 @@
             get
             {
                 return _threading;
+            }
+        }
+
+        public ISettingsManager Settings
+        {
+            get
+            {
+                return _settings;
             }
         }
     }

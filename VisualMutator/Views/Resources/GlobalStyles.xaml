@@ -6,7 +6,7 @@
     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Margin" Value="3"/>
         <Setter Property="Padding" Value="15,0,15,0"/>
-        <Setter Property="Height" Value="20"/>
+        <Setter Property="Height" Value="23"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
@@ -36,7 +36,7 @@
     <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="3,0,3,0"/>
-        <Setter Property="Height" Value="20"/>
+        <Setter Property="Height" Value="25"/>
         <Setter Property="Padding" Value="3"/>
     </Style>
 

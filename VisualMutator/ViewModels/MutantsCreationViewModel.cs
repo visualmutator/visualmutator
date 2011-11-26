@@ -17,7 +17,7 @@
         public MutantsCreationViewModel(IMutantsCreationView view)
             : base(view)
         {
-            
+    
         }
 
         private bool _createMoreMutants;
@@ -118,7 +118,7 @@
 
         public void ShowDialog()
         {
-            View.ShowDialog();
+            View.SetOwnerAndShowDialog();
         }
 
         public void Close()

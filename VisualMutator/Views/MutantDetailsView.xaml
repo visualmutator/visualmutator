@@ -33,7 +33,7 @@
 
           <DockPanel HorizontalAlignment="Right">
             <TextBlock Text="Language:"/>
-                        <ComboBox Grid.Row="0" Width="60" ItemsSource="{Binding CodeLanguages}" 
+                        <ComboBox Grid.Row="0" Width="100" ItemsSource="{Binding CodeLanguages}" 
                                   SelectedValue="{Binding SelectedLanguage}"/>
           </DockPanel>
 

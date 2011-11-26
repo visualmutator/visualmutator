@@ -2,6 +2,7 @@
 {
     #region Usings
 
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml.Linq;
@@ -47,11 +48,14 @@
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
                 new XAttribute("TotalSizeInKilobytes", mutants.Sum(mut=>mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGroupedByOperators
+                    .Sum(oper => oper.MutationTimeMiliseconds)),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
                     new XAttribute("Name", oper.Name),
                     new XAttribute("NumberOfMutants", oper.Children.Count),
-                    new XAttribute("MutationTimeMiliseconds", oper.MutationTimeMiliseconds),
+                    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0:
+                        oper.MutationTimeMiliseconds / oper.Children.Count ),
                     from mutant in oper.Mutants
                     select new XElement("Mutant",
                         new XAttribute("Id", mutant.Id),
@@ -82,12 +86,15 @@
                 optionalElements.Add(CreateDetailedTestingResults(mutants));
             }
 
-                return
-                    new XDocument(
-                        new XElement("MutationTestingSession",
-                            new XAttribute("MutationScore", session.MutationScore),
-                            mutantsNode,
-                            optionalElements));
+            long totalTimeMs = session.MutantsGroupedByOperators.Sum(oper => oper.MutationTimeMiliseconds)
+                            + mutants.Sum(m => m.TestSession.TestingTimeMiliseconds);
+            return
+                new XDocument(
+                    new XElement("MutationTestingSession",
+                        new XAttribute("MutationScore", session.MutationScore),
+                        new XAttribute("TotalTimeSeconds", totalTimeMs/1000),
+                        mutantsNode,
+                        optionalElements));
             
         }
         public XElement CreateCodeDifferenceListings(List<Mutant> mutants, IList<AssemblyDefinition> originalAssemblies)

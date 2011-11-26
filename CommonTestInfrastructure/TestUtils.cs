@@ -118,7 +118,7 @@
 
             var threading = new Threading(new FakeDispatcherExecute(), threadPooolExecuteMock.Object,messageService);
 
-            return new CommonServices(messageService, eventService, threading);
+            return new CommonServices(messageService, eventService, threading,null);
         }
 
 

@@ -5,6 +5,7 @@ namespace VisualMutator.Controllers
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -30,6 +31,7 @@ namespace VisualMutator.Controllers
     public class MutationResultsController : Controller
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly MutationResultsViewModel _viewModel;
 
         private readonly IFactory<MutantsCreationController> _mutantsCreationFactory;
@@ -43,7 +45,6 @@ namespace VisualMutator.Controllers
         private readonly CommonServices _svc;
 
         private SessionController _sessionController;
-
 
         private List<IDisposable> _subscriptions; 
 
@@ -88,9 +89,6 @@ namespace VisualMutator.Controllers
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.Operators = new BetterObservableCollection<ExecutedOperator>();
-
-
             _viewModel.RegisterPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
                 .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, 
                     _sessionController.Session.OriginalAssemblies));
@@ -118,14 +116,11 @@ namespace VisualMutator.Controllers
                         .Case(OperationsState.Error, "Error occurred.")
                         .GetResult();
                 }
-                
             });
-
         }
 
- 
 
-        
+       
         public void Subscribe(SessionController sessionController)
         {
             _subscriptions = new List<IDisposable>
@@ -184,6 +179,10 @@ namespace VisualMutator.Controllers
 
         public void RunMutationSession()
         {
+       
+           
+
+
             var mutantsCreationController = _mutantsCreationFactory.Create().Run();
   
             if (mutantsCreationController.HasResults)
@@ -237,12 +236,9 @@ namespace VisualMutator.Controllers
 
         private void Clean()
         {
-            _viewModel.Operators.Clear();
-            _viewModel.SelectedMutationTreeItem = null;
-            _viewModel.MutantsRatio = "";
-            _viewModel.MutationScore = "";
-            _viewModel.OperationsState = OperationsState.None;
-            _viewModel.OperationsStateDescription = "";
+            _viewModel.Clean();
+
+            _mutantDetailsController.Clean();
             if (_subscriptions!=null)
             {
                 foreach (var subscription in _subscriptions)

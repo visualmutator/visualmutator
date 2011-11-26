@@ -101,9 +101,7 @@
 
             StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
-            var timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.MutationSessionChoices.TestingTimeoutSeconds))
-                .Subscribe(e => CancelTestRun());
-      
+            IDisposable timoutDisposable = null;
             try
             {
                 if (session.Options.IsMutantVerificationEnabled)
@@ -111,6 +109,10 @@
                     VerifyAssemblies(storedMutantInfo.AssembliesPaths);
                 }
                 LoadTests(storedMutantInfo, mutant.TestSession);
+
+                timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.MutationSessionChoices.TestingTimeoutSeconds))
+                    .Subscribe(e => CancelTestRun());
+      
 
                 RunTests(mutant.TestSession);
                 
@@ -142,6 +144,10 @@
             }
             finally
             {
+                if (timoutDisposable != null)
+                {
+                    timoutDisposable.Dispose();
+                }
                 sw.Stop();
                 mutant.TestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
                 

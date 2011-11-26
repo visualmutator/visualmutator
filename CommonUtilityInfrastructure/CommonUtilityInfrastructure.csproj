@@ -75,6 +75,7 @@
     <Compile Include="Functional\Functional.cs" />
     <Compile Include="Functional\Switch.cs" />
     <Compile Include="Functional\ValuedSwitch.cs" />
+    <Compile Include="ISettingsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommonServices.cs" />
     <Compile Include="Threading\LimitedConcurrencyLevelTaskScheduler.cs" />
@@ -87,10 +88,13 @@
     <Compile Include="WpfUtils\EventListeners.cs" />
     <Compile Include="WpfUtils\EventService.cs" />
     <Compile Include="WpfUtils\DispatcherExecute.cs" />
+    <Compile Include="WpfUtils\IDialogView.cs" />
     <Compile Include="WpfUtils\IEventNotifier.cs" />
     <Compile Include="WpfUtils\IView.cs" />
+    <Compile Include="WpfUtils\IOwnerWindowProvider.cs" />
     <Compile Include="WpfUtils\MessageService.cs" />
     <Compile Include="WpfUtils\ModelElement.cs" />
+    <Compile Include="WpfUtils\NativeWindowInfo.cs" />
     <Compile Include="WpfUtils\NotifyChangedObservable.cs" />
     <Compile Include="WpfUtils\PropertyAccessor.cs" />
     <Compile Include="WpfUtils\ViewModel.cs" />

@@ -206,7 +206,7 @@
                         RaiseEvent(SessionEventType.SessionPaused);
                     })
                     .Case(RequestedHaltState.Stop, () => { Finish(); })
-                    .Do();
+                    .ThrowIfNoMatch();
                 _requestedHaltState = null;
             }
             else
@@ -250,35 +250,34 @@
             {
                 if (changelessMutant.TestSession.Exception is AssemblyVerificationException)
                 {
-                    _svc.Logging.ShowWarning(
-                                             UserMessages.ErrorPretest_VerificationFailure(changelessMutant.TestSession.Exception.Message), _log);
+                    _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
+                        changelessMutant.TestSession.Exception.Message), _log);
 
                     _currentSession.Options.IsMutantVerificationEnabled = false;
                 }
                 else
                 {
                     _svc.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
-                                                                                  changelessMutant.TestSession.Exception.ToString()), _log);
+                         changelessMutant.TestSession.Exception.ToString()), _log);
 
                     return false;
                 }
             }
             else if (changelessMutant.State == MutantResultState.Killed)
             {
-                var test = changelessMutant.TestSession.TestMap.Values.FirstOrDefault(t =>
-                                                                                      t.State == TestNodeState.Failure);
+                var test = changelessMutant.TestSession.TestMap.Values
+                    .FirstOrDefault(t => t.State == TestNodeState.Failure);
                 if (test != null)
                 {
-                    _svc.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                                                                                 test.Name, test.Message), _log);
+                    _svc.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(test.Name, test.Message), _log);
                 }
                 else
                 {
-                    var testInconcl = changelessMutant.TestSession.TestMap.Values.First(t =>
-                                                                                        t.State == TestNodeState.Inconclusive);
+                    var testInconcl = changelessMutant.TestSession.TestMap.Values
+                        .First(t =>t.State == TestNodeState.Inconclusive);
 
-                    _svc.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(
-                                                                                 testInconcl.Name, "Test was inconclusive."), _log);
+                    _svc.Logging.ShowError(UserMessages
+                        .ErrorPretest_TestsFailed(testInconcl.Name, "Test was inconclusive."), _log);
                 }
                 return false;
             }

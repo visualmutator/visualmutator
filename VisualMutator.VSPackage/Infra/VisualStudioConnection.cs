@@ -7,15 +7,16 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Windows;
-    using System.Windows.Interop;
-    using System.Windows.Media;
+    using System.Windows.Forms;
 
     using EnvDTE;
 
     using EnvDTE80;
 
+    using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell.Settings;
     using Microsoft.Win32;
 
     using VisualMutator.Infrastructure;
@@ -28,6 +29,8 @@
 
     public class VisualStudioConnection : IVisualStudioConnection
     {
+        private readonly Package _package;
+
         private readonly DTE2 _dte;
 
         private readonly SolutionEvents _solutionEvents;
@@ -36,34 +39,35 @@
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public VisualStudioConnection()
+        private SettingsManager _settingsManager;
+
+        public VisualStudioConnection(Package package)
         {
+            _package = package;
             _dte = (DTE2)Package.GetGlobalService(typeof(DTE));
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
             _buildEvents = ((Events2)_dte.Events).BuildEvents;
 
-            //  _dte.Solution.Projects.
-            //  _dte.
-            var win = _dte.Windows;
-
-            //..win _dte.MainWindow.HWnd;
-
-            //new NativeWindow()
+           
         }
 
-        public BuildEvents BuildEvents
+        public SettingsManager SettingsManager
         {
             get
             {
-                return _buildEvents;
+                return _settingsManager;
             }
         }
 
-        public SolutionEvents SolutionEvents
+
+        public NativeWindowInfo WindowInfo
         {
             get
             {
-                return _solutionEvents;
+                EnvDTE.Window vsWindow = _dte.MainWindow;
+                return new NativeWindowInfo(new IntPtr(vsWindow.HWnd), vsWindow.Top, 
+                    vsWindow.Left, vsWindow.Width, vsWindow.Height);
+                    //new IntPtr(vsWindow.HWnd); 
             }
         }
 
@@ -75,6 +79,8 @@
             }
         }
 
+
+
         public void Initialize()
         {
             _buildEvents.OnBuildBegin += _buildEvents_OnBuildBegin;
@@ -82,6 +88,8 @@
 
             _solutionEvents.Opened += _solutionEvents_Opened;
             _solutionEvents.AfterClosing += _solutionEvents_AfterClosing;
+
+            _settingsManager = new ShellSettingsManager(_package);
         }
 
         public void OpenFile(string className)
@@ -89,6 +97,17 @@
             IEnumerable<ProjectItem> projectItems = _dte.Solution.Cast<Project>()
                 .SelectMany(p => p.ProjectItems.Cast<ProjectItem>()).ToList();
             ProjectItem projectItem = projectItems.First(i => i.Name == className);
+        }
+
+        public IWin32Window GetWindow()
+        {
+            EnvDTE.Window vsWindow = _dte.MainWindow;
+
+            // Get the handle to the non-WPF owner window
+
+            IntPtr ownerWindowHandle = new IntPtr(vsWindow.HWnd); // Get hWnd for non-WPF window
+
+            return new WindowWrapper(ownerWindowHandle);
         }
 
         public string InstallPath
@@ -166,74 +185,6 @@
 
         public void ss(Window window)
         {
-            // Instantiate the owned WPF window
-
-            EnvDTE.Window vsWindow = _dte.MainWindow;
-
-            // Get the handle to the non-WPF owner window
-
-            IntPtr ownerWindowHandle = new IntPtr(vsWindow.HWnd); // Get hWnd for non-WPF window
-
-            // Set the owned WPF window’s owner with the non-WPF owner window
-
-            WindowInteropHelper helper = new WindowInteropHelper(window);
-
-            helper.Owner = ownerWindowHandle;
-
-            // Center window
-
-            // Note - Need to use HwndSource to get handle to WPF owned window,
-
-            //        and the handle only exists when SourceInitialized has been
-
-            //        raised
-
-            window.SourceInitialized += delegate
-
-            {
-                // Get WPF size and location for non-WPF owner window
-
-                int nonWPFOwnerLeft = vsWindow.Left; // Get non-WPF owner’s Left
-
-                int nonWPFOwnerWidth = vsWindow.Width; // Get non-WPF owner’s Width
-
-                int nonWPFOwnerTop = vsWindow.Top; // Get non-WPF owner’s Top
-
-                int nonWPFOwnerHeight = vsWindow.Top; // Get non-WPF owner’s Height
-
-                // Get transform matrix to transform non-WPF owner window
-
-                // size and location units into device-independent WPF
-
-                // size and location units
-
-                HwndSource source = HwndSource.FromHwnd(helper.Handle);
-
-                if (source == null)
-                {
-                    return;
-                }
-
-                Matrix matrix = source.CompositionTarget.TransformFromDevice;
-
-                Point ownerWPFSize = matrix.Transform(
-                                                      new Point(nonWPFOwnerWidth, nonWPFOwnerHeight));
-
-                Point ownerWPFPosition = matrix.Transform(
-                                                          new Point(nonWPFOwnerLeft, nonWPFOwnerTop));
-
-                // Center WPF window
-
-                window.WindowStartupLocation = WindowStartupLocation.Manual;
-
-                window.Left = ownerWPFPosition.X + (ownerWPFSize.X - window.Width) / 2;
-
-                window.Top = ownerWPFPosition.Y + (ownerWPFSize.Y - window.Height) / 2;
-            };
-
-            // Show WPF owned window
-
-            window.Show();
         }
 
         private void _solutionEvents_AfterClosing()
@@ -293,6 +244,24 @@
             if (handler != null)
             {
                 handler();
+            }
+        }
+
+        public class WindowWrapper : IWin32Window
+        {
+            private IntPtr _hwnd;
+
+            public WindowWrapper(IntPtr handle)
+            {
+                _hwnd = handle;
+            }
+
+            public IntPtr Handle
+            {
+                get
+                {
+                    return _hwnd;
+                }
             }
         }
     }

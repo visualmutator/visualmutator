@@ -7,6 +7,7 @@
     using System.Windows;
     using System.Windows.Threading;
 
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Infrastructure;
@@ -22,6 +23,8 @@
 
         private readonly IVisualStudioConnection _visualStudio;
 
+        private readonly ISettingsManager _settingsManager;
+
         private readonly IMessageService _messageService;
 
         private readonly IEventService _eventService;
@@ -31,11 +34,13 @@
         public ApplicationController(
             MutationResultsController mutationResultsController,
             IVisualStudioConnection visualStudio,
+            ISettingsManager settingsManager,
             IMessageService messageService,
             IEventService eventService)
         {
             _mutationResultsController = mutationResultsController;
             _visualStudio = visualStudio;
+            _settingsManager = settingsManager;
             _messageService = messageService;
             _eventService = eventService;
 
@@ -58,6 +63,8 @@
         {
             _log.Info("Initializing package...");
             _visualStudio.Initialize();
+            _settingsManager.Initialize();
+
 
             _visualStudio.SolutionOpened += ActivateOnSolutionOpened;
             _visualStudio.SolutionAfterClosing += DeactivateOnSolutionClosed;

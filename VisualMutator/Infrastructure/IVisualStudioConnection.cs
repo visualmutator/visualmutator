@@ -7,8 +7,10 @@ namespace VisualMutator.Infrastructure
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Windows.Forms;
 
- 
+    using PiotrTrzpil.VisualMutator_VSPackage.Model;
+
     public interface IVisualStudioConnection
     {
   
@@ -19,6 +21,8 @@ namespace VisualMutator.Infrastructure
         }
 
         bool IsSolutionOpen { get; }
+
+        NativeWindowInfo WindowInfo { get; }
 
         IEnumerable<string> GetProjectPaths();
 
@@ -37,5 +41,7 @@ namespace VisualMutator.Infrastructure
         void Initialize();
 
         void OpenFile(string className);
+
+        IWin32Window GetWindow();
     }
 }

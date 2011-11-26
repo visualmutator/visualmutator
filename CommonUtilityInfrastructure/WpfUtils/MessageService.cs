@@ -5,8 +5,12 @@
     using System;
     using System.Globalization;
     using System.Windows;
+    using System.Windows.Forms;
 
     using log4net;
+
+    using MessageBox = System.Windows.MessageBox;
+    using MessageBoxOptions = System.Windows.MessageBoxOptions;
 
     #endregion
        public interface IMessageService
@@ -25,6 +29,18 @@
     }
     public class MessageService : IMessageService
     {
+        private readonly IApplicationTitleProvider _titleProvider;
+
+        private readonly IOwnerWindowProvider _provider;
+
+        public MessageService(
+            IApplicationTitleProvider titleProvider,
+            IOwnerWindowProvider provider)
+        {
+            _titleProvider = titleProvider;
+            _provider = provider;
+        }
+
         private static MessageBoxResult MessageBoxResult
         {
             get
@@ -45,80 +61,44 @@
 
         public void ShowMessage(object owner, string message)
         {
-            var ownerWindow = owner as Window;
-            if (ownerWindow != null)
-            {
-                MessageBox.Show(
-                    ownerWindow,
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.None,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                MessageBox.Show(
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.None,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
+            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
+
+            System.Windows.Forms.MessageBox.Show(
+                   ownerWindow,
+                   message,
+                   TitlePart() + "Information",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
+
         }
 
         public void ShowWarning(object owner, string message)
         {
-            var ownerWindow = owner as Window;
-            if (ownerWindow != null)
-            {
-                MessageBox.Show(
-                    ownerWindow,
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                MessageBox.Show(
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
+            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
+
+            System.Windows.Forms.MessageBox.Show(
+                   ownerWindow,
+                   message,
+                   TitlePart() + "Warning",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Exclamation);
         }
 
+        private string TitlePart()
+        {
+            return _titleProvider.GetTitle()+" - ";
+        }
         public void ShowFatalError(object owner, string message)
         {
-            var ownerWindow = owner as Window;
-            if (ownerWindow != null)
-            {
-                MessageBox.Show(
-                    ownerWindow,
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                MessageBox.Show(
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
+            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
+
+            System.Windows.Forms.MessageBox.Show(
+                              ownerWindow,
+                              message,
+                              TitlePart()+"Error",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Error);
+
         }
         public void ShowError(object owner, string message)
         {
@@ -215,6 +195,11 @@
         
     }
 
+    public interface IApplicationTitleProvider
+    {
+        string GetTitle();
+    }
+
     public static class MessageServiceExtensions
     {
         public static void ShowMessage(this IMessageService service, string message)
@@ -241,6 +226,7 @@
                 throw new ArgumentNullException("service");
             }
             log.Warn(message);
+
             service.ShowWarning(null, message);
         }
 

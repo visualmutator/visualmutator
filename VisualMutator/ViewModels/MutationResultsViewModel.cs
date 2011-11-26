@@ -21,9 +21,21 @@
             : base(view)
         {
 
+            Operators = new BetterObservableCollection<ExecutedOperator>();
+
 
         }
 
+        public void Clean()
+        {
+            Operators.Clear();
+            SelectedMutationTreeItem = null;
+            MutantsRatio = "";
+            MutationScore = "";
+            OperationsState = OperationsState.None;
+            OperationsStateDescription = "";
+           
+        }
 
         private OperationsState _operationsState;
 
@@ -193,12 +205,19 @@
         }
 
 
+        private MutantDetailsViewModel _mutantDetailsViewModel;
+
         public MutantDetailsViewModel MutantDetailsViewModel
         {
-            get; 
-            set;
+            get
+            {
+                return _mutantDetailsViewModel;
+            }
+            set
+            {
+                SetAndRise(ref _mutantDetailsViewModel, value, () => MutantDetailsViewModel);
+            }
         }
-
         private BasicCommand _commandSaveResults;
         public BasicCommand CommandSaveResults
         {

@@ -61,7 +61,7 @@ namespace VisualMutator.Model.Mutations.Structure
                     return Switch.Into<string>().From(KilledSubstate)
                         .Case(MutantKilledSubstate.Normal, "Killed by {0} tests".Formatted(NumberOfFailedTests))
                         .Case(MutantKilledSubstate.Inconclusive, "Killed by {0} tests".Formatted(NumberOfFailedTests))
-                        .Case(MutantKilledSubstate.TimedOut, "Killed by {0} tests (timed out)".Formatted(NumberOfFailedTests))
+                        .Case(MutantKilledSubstate.TimedOut, "Killed by {0} tests".Formatted(NumberOfFailedTests))
                         .GetResult();
                 })
                 .Case(MutantResultState.Live, "Live")

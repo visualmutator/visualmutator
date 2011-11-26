@@ -13,6 +13,7 @@
     using Ninject;
     using Ninject.Modules;
 
+    using PiotrTrzpil.VisualMutator_VSPackage.Infra;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
 
 
@@ -34,6 +35,7 @@
         public override void Load()
         {
             Kernel.Bind<IMessageService>().To<MessageService>().InSingletonScope();
+          
             Kernel.Bind<IEventService>().To<EventService>().InSingletonScope();
             Kernel.Bind<IThreading>().To<Threading>().InSingletonScope();
             Kernel.Bind<CommonServices>().ToSelf().InSingletonScope();
@@ -45,9 +47,9 @@
             Kernel.Bind<IDispatcherExecute>().ToConstant(exe);
 
             Kernel.InjectFuncFactory(() => DateTime.Now);
-          
 
-            
+
+          
            
 
         }
@@ -55,9 +57,23 @@
 
     public class ControllersAndViewsModule : NinjectModule
     {
+        private readonly VisualStudioConnection _visualStudioConnection;
+
+        public ControllersAndViewsModule(VisualStudioConnection visualStudioConnection)
+        {
+            _visualStudioConnection = visualStudioConnection;
+        }
+
         public override void Load()
         {
-            Kernel.Bind<IVisualStudioConnection>().To<VisualStudioConnection>().InSingletonScope();
+            Kernel.Bind<IVisualStudioConnection>().ToConstant(_visualStudioConnection);
+            Kernel.Bind<ISettingsManager>().ToConstant(new VisualStudioSettingsProvider(_visualStudioConnection));
+
+            Kernel.Bind<IOwnerWindowProvider>().To<VisualStudioOwnerWindowProvider>().InSingletonScope();
+            Kernel.Bind<IApplicationTitleProvider>().To<VisualMutatorTitleProvider>().InSingletonScope();
+
+
+
 
             Kernel.Bind<ApplicationController>().ToSelf().InSingletonScope();
             

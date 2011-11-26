@@ -87,10 +87,13 @@ namespace VisualMutator.Model.Mutations.Types
           
             var root = new FakeNode();
 
+
+
+
             foreach (var assembly in loadedAssemblies)
             {
                 var assemblyNode = new AssemblyNode(assembly.Name.Name, assembly);
-                GroupTypes(assemblyNode, "", assembly.MainModule.Types.Where(t => t.Name != "<Module>").ToList());
+                GroupTypes(assemblyNode, "", ChooseTypes(assembly).ToList());
 
                 root.Children.Add(assemblyNode);
                 assemblyTreeNodes.Add(assemblyNode);
@@ -101,6 +104,12 @@ namespace VisualMutator.Model.Mutations.Types
             return assemblyTreeNodes;
         }
 
+        private static IEnumerable<TypeDefinition> ChooseTypes(AssemblyDefinition assembly)
+        {
+            return assembly.MainModule.Types
+                .Where(t => t.Name != "<Module>")
+                .Where(t => !t.Name.StartsWith("<>"));
+        }
 
         public void GroupTypes(NormalNode parent, string currentNamespace, ICollection<TypeDefinition> types)
         {

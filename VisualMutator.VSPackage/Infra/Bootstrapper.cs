@@ -9,6 +9,10 @@
     using System.Windows;
     using System.Windows.Threading;
 
+    using CommonUtilityInfrastructure;
+
+    using Microsoft.VisualStudio.Shell;
+
     using Ninject;
     using Ninject.Modules;
 
@@ -24,6 +28,8 @@
 
     public class Bootstrapper
     {
+        private readonly Package _package;
+
         private readonly ApplicationController _appController;
 
         private IKernel _kernel;
@@ -37,6 +43,8 @@
             Log4NetConfig.Execute();
             _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
             EnsureApplication();
+
+           
         }
         public static void EnsureApplication()
         {
@@ -46,11 +54,12 @@
             }
         }
 
-        public Bootstrapper()
+        public Bootstrapper(Package package)
         {
+            _package = package;
             _log.Info("Starting bootstrapper.");
 
-            
+   
             try
             {
 
@@ -61,6 +70,9 @@
                 _appController = _kernel.Get<ApplicationController>();
 
                 VisualMutator_VSPackagePackage.MainControl = Shell;
+
+
+
             }
             catch (Exception e)
             {
@@ -84,7 +96,7 @@
             var modules = new INinjectModule[]
             {
                 new InfrastructureModule(), 
-                new ControllersAndViewsModule(), 
+                new ControllersAndViewsModule(new VisualStudioConnection(_package)), 
                 new ModelModule(), 
             };
            
@@ -106,7 +118,9 @@
 
         public void InitializePackage(VisualMutator_VSPackagePackage visualMutatorVsPackagePackage)
         {
+           
             _appController.Initialize();
+           
         }
     }
 }

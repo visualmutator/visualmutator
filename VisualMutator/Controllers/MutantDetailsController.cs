@@ -27,13 +27,9 @@
     {
         private readonly MutantDetailsViewModel _viewModel;
 
-
-
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
         private readonly CommonServices _commonServices;
-
-
 
         private IDisposable _listenerForCurrentMutant;
 
@@ -48,10 +44,7 @@
         {
             _viewModel = viewModel;
             _codeDifferenceCreator = codeDifferenceCreator;
-
             _commonServices = commonServices;
-
-
 
             _viewModel.RegisterPropertyChanged(_=>_.SelectedTabHeader)
                 .Where(x=> _currentMutant != null).Subscribe(LoadData);
@@ -69,29 +62,26 @@
         }
         public void LoadData(string header)
         {
-
             Functional.Switch(header)
-            .Case("Tests", () => LoadTests(_currentMutant))
-            .Case("Code", () => LoadCode(_viewModel.SelectedLanguage))
-            .Do();
-            
-           
+                .Case("Tests", () => LoadTests(_currentMutant))
+                .Case("Code", () => LoadCode(_viewModel.SelectedLanguage))
+                .ThrowIfNoMatch();   
         }
 
   
 
         public void LoadCode(CodeLanguage selectedLanguage)
         {
-//TODO: remove race
-
             _viewModel.IsCodeLoading = true;
             _viewModel.ClearCode();
 
+            var mutant = _currentMutant;
+            var assemblies = _currentOriginalAssemblies;
             _commonServices.Threading.ScheduleAsync(
                 () =>
                 {
                     return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
-                        _currentMutant, _currentOriginalAssemblies);
+                        mutant, assemblies);
                    
                 },
                 code =>
@@ -132,6 +122,15 @@
             }
         }
 
-      
+        public void Clean()
+        {
+            _currentMutant = null;
+            _currentOriginalAssemblies = null;
+            _viewModel.IsCodeLoading = false;
+            _viewModel.TestNamespaces.Clear();
+            _viewModel.SelectedLanguage = CodeLanguage.CSharp;
+            _viewModel.ClearCode();
+
+        }
     }
 }

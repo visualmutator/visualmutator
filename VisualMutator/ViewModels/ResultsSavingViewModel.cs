@@ -20,7 +20,7 @@
 
         public void Show()
         {
-            View.ShowDialog();
+            View.SetOwnerAndShowDialog();
         }
 
         public void Close()

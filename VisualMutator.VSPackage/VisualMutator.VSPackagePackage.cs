@@ -59,7 +59,7 @@
                     CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
 
             
-                _bootstrapper = new Bootstrapper();
+                _bootstrapper = new Bootstrapper(this);
             
         }
 

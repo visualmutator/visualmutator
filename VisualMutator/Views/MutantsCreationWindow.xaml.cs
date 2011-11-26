@@ -16,12 +16,9 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface IMutantsCreationView : IView
+    public interface IMutantsCreationView : IDialogView
     {
-        bool? ShowDialog();
-
-        void Close();
-        
+        bool? SetOwnerAndShowDialog();
     }
 
     /// <summary>
@@ -29,10 +26,18 @@ namespace VisualMutator.Views
     /// </summary>
     public partial class MutantsCreationWindow : Window, IMutantsCreationView
     {
-        public MutantsCreationWindow()
+        private readonly IOwnerWindowProvider _windowProvider;
+
+        public MutantsCreationWindow(IOwnerWindowProvider windowProvider)
         {
+            _windowProvider = windowProvider;
             InitializeComponent();
-         
+        }
+
+        public bool? SetOwnerAndShowDialog()
+        {
+            _windowProvider.SetOwner(this);
+            return ShowDialog();
         }
     }
 }

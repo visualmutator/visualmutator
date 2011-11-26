@@ -27,13 +27,14 @@
 
     public static class SwitchMixin
     {
-        public static void Do<T>(this Switch<T> @switch)
+        public static void ThrowIfNoMatch<T>(this Switch<T> @switch)
         {
             if (!@switch.HasResult)
             {
                 throw new InvalidOperationException("No case matched value: " + @switch.Value);
             }
         }
+
         public static Switch<T> Case<T>(this Switch<T> @switch, T caseValue, Action action)
         {
             if (@switch.Value.Equals(caseValue))
