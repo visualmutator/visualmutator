@@ -23,7 +23,7 @@
 
     #endregion
 
-    public class MutantsCreationController : Controller
+    public class SessionCreationController : Controller
     {
       
      
@@ -50,7 +50,7 @@
             }
         }
 
-        public MutantsCreationController(
+        public SessionCreationController(
             MutantsCreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
@@ -91,7 +91,7 @@
         }
 
 
-        public MutantsCreationController Run()
+        public SessionCreationController Run()
         {
             
             _commonServices.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),

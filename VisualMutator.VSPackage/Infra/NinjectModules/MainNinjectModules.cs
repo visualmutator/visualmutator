@@ -78,12 +78,12 @@
             Kernel.Bind<ApplicationController>().ToSelf().InSingletonScope();
             
 
-            Kernel.Bind<MutantsCreationController>().ToSelf().AndFromFactory();
+            Kernel.Bind<SessionCreationController>().ToSelf().AndFromFactory();
             Kernel.Bind<MutantsCreationViewModel>().ToSelf();
             Kernel.Bind<IMutantsCreationView>().To<MutantsCreationWindow>();
 
 
-            Kernel.Bind<MutationResultsController>().ToSelf().InSingletonScope();
+            Kernel.Bind<MainController>().ToSelf().InSingletonScope();
             Kernel.Bind<MutationResultsViewModel>().ToSelf();
             Kernel.Bind<IMutationResultsView>().To<MutationResultsView>();
 

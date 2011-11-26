@@ -19,7 +19,7 @@
 
     public class ApplicationController
     {
-        private readonly MutationResultsController _mutationResultsController;
+        private readonly MainController _mutationResultsController;
 
         private readonly IVisualStudioConnection _visualStudio;
 
@@ -32,7 +32,7 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public ApplicationController(
-            MutationResultsController mutationResultsController,
+            MainController mutationResultsController,
             IVisualStudioConnection visualStudio,
             ISettingsManager settingsManager,
             IMessageService messageService,

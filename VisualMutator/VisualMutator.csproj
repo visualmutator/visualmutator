@@ -114,7 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
-    <Compile Include="Controllers\MutationSessionChoices.cs" />
+    <Compile Include="Model\MutationSessionChoices.cs" />
     <Compile Include="Controllers\ResultsSavingController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\FakeNode.cs" />
@@ -127,46 +127,46 @@
     <Compile Include="Infrastructure\ToDo.cs" />
     <Compile Include="Infrastructure\UserMessages.cs" />
     <Compile Include="Infrastructure\VisualMutatorTitleProvider.cs" />
-    <Compile Include="Model\CodeDifference\ILCodeLineEqualityComparer.cs" />
-    <Compile Include="Model\Mutations\AssemblyVerificationException.cs" />
-    <Compile Include="Model\Mutations\AssemblyVerifier.cs" />
-    <Compile Include="Model\Mutations\CodeLanguage.cs" />
-    <Compile Include="Model\Mutations\CodePair.cs" />
-    <Compile Include="Model\Mutations\CodeVisualizer.cs" />
-    <Compile Include="Model\Mutations\Decompiler.cs" />
-    <Compile Include="Model\Mutations\PreOperator.cs" />
-    <Compile Include="Model\Mutations\Structure\ExecutedOperator.cs" />
-    <Compile Include="Model\Mutations\Structure\Mutant.cs" />
+    <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
+    <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
+    <Compile Include="Model\Verification\AssemblyVerifier.cs" />
+    <Compile Include="Model\Decompilation\CodeLanguage.cs" />
+    <Compile Include="Model\Decompilation\CodePair.cs" />
+    <Compile Include="Model\Decompilation\CodeVisualizer.cs" />
+    <Compile Include="Model\Decompilation\Decompiler.cs" />
+    <Compile Include="Model\Mutations\Operators\PreOperator.cs" />
+    <Compile Include="Model\Mutations\MutantsTree\ExecutedOperator.cs" />
+    <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
     <Compile Include="ViewModels\MutantDetailsViewModel.cs" />
-    <Compile Include="Controllers\MutantsCreationController.cs" />
-    <Compile Include="Controllers\MutationResultsController.cs" />
+    <Compile Include="Controllers\SessionCreationController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Infrastructure\CheckboxedTree\TreeNode.cs" />
-    <Compile Include="Model\CodeDifference\CodeDifferenceCreator.cs" />
-    <Compile Include="Model\CodeDifference\CSharpCodeLineEqualityComparer.cs" />
-    <Compile Include="Model\CodeDifference\CodeWithDifference.cs" />
-    <Compile Include="Model\CodeDifference\LineChange.cs" />
-    <Compile Include="Model\CodeDifference\LineChangeType.cs" />
-    <Compile Include="Model\Mutations\AssembliesManager.cs" />
+    <Compile Include="Model\Decompilation\CodeDifference\CodeDifferenceCreator.cs" />
+    <Compile Include="Model\Decompilation\CodeDifference\CSharpCodeLineEqualityComparer.cs" />
+    <Compile Include="Model\Decompilation\CodeDifference\CodeWithDifference.cs" />
+    <Compile Include="Model\Decompilation\CodeDifference\LineChange.cs" />
+    <Compile Include="Model\Decompilation\CodeDifference\LineChangeType.cs" />
+    <Compile Include="Model\StoringMutants\AssembliesManager.cs" />
     <Compile Include="Model\Mutations\ClearableCacheAssemblyResolver.cs" />
-    <Compile Include="Model\Mutations\Structure\MutantResultState.cs" />
+    <Compile Include="Model\Mutations\MutantsTree\MutantResultState.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
-    <Compile Include="Model\Tests\MutantsFileManager.cs" />
+    <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\Exceptions\MutationException.cs" />
-    <Compile Include="Model\Mutations\Structure\StoredAssemblies.cs" />
-    <Compile Include="Model\Tests\StoredMutantInfo.cs" />
+    <Compile Include="Model\StoringMutants\StoredAssemblies.cs" />
+    <Compile Include="Model\StoringMutants\StoredMutantInfo.cs" />
     <Compile Include="Model\Exceptions\NoTypesSelectedException.cs" />
     <Compile Include="Model\Mutations\Operators\MEFOperatorLoader.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorsManager.cs" />
-    <Compile Include="Model\Mutations\Structure\MutationNode.cs" />
+    <Compile Include="Model\Mutations\MutantsTree\MutationNode.cs" />
     <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
     <Compile Include="Model\Mutations\Types\SolutionTypesManager.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
-    <Compile Include="Model\Mutations\MutationTestingSession.cs" />
+    <Compile Include="Model\MutationTestingSession.cs" />
     <Compile Include="Model\Tests\Services\ITestService.cs" />
     <Compile Include="Model\Tests\Services\MsTestException.cs" />
     <Compile Include="Model\Tests\Services\MsTestLoader.cs" />
@@ -203,8 +203,8 @@
     <Compile Include="Views\MutantDetailsView.xaml.cs">
       <DependentUpon>MutantDetailsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MutantsCreationWindow.xaml.cs">
-      <DependentUpon>MutantsCreationWindow.xaml</DependentUpon>
+    <Compile Include="Views\NewSessionView.xaml.cs">
+      <DependentUpon>NewSessionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProgressControl.xaml.cs">
       <DependentUpon>ProgressControl.xaml</DependentUpon>
@@ -215,8 +215,11 @@
     <Compile Include="Views\TestsTree.xaml.cs">
       <DependentUpon>TestsTree.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MutationResultsView.xaml.cs">
-      <DependentUpon>MutationResultsView.xaml</DependentUpon>
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TypesTree.xaml.cs">
+      <DependentUpon>TypesTree.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -224,7 +227,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MutantsCreationWindow.xaml">
+    <Page Include="Views\NewSessionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -248,7 +251,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MutationResultsView.xaml">
+    <Page Include="Views\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TypesTree.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

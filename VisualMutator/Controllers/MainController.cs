@@ -28,13 +28,13 @@ namespace VisualMutator.Controllers
 
 
     
-    public class MutationResultsController : Controller
+    public class MainController : Controller
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MutationResultsViewModel _viewModel;
 
-        private readonly IFactory<MutantsCreationController> _mutantsCreationFactory;
+        private readonly IFactory<SessionCreationController> _mutantsCreationFactory;
 
         private readonly IFactory<SessionController> _sessionControllerFactory;
 
@@ -49,9 +49,9 @@ namespace VisualMutator.Controllers
         private List<IDisposable> _subscriptions; 
 
 
-        public MutationResultsController(
+        public MainController(
             MutationResultsViewModel viewModel,
-            IFactory<MutantsCreationController> mutantsCreationFactory,
+            IFactory<SessionCreationController> mutantsCreationFactory,
             IFactory<SessionController> sessionControllerFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
             
