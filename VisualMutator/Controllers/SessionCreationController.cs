@@ -34,7 +34,7 @@
 
         private readonly ITypesManager _typesManager;
 
-        private readonly MutantsCreationViewModel _viewModel;
+        private readonly SessionCreationViewModel _viewModel;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -42,16 +42,9 @@
 
         public MutationSessionChoices Result { get; set; }
 
-        public bool HasResults
-        {
-            get
-            {
-                return Result != null;
-            }
-        }
-
+  
         public SessionCreationController(
-            MutantsCreationViewModel viewModel,
+            SessionCreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
             CommonServices commonServices)
@@ -63,62 +56,50 @@
             _commonServices = commonServices;
 
 
-            _viewModel.CommandCreateMutants = new BasicCommand(StoreChoicesResults, () => _viewModel.Assemblies != null
-                && _viewModel.MutationPackages != null);
-            _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.Assemblies);
-            _viewModel.CommandCreateMutants.UpdateOnChanged(_viewModel, () => _viewModel.MutationPackages);
+            _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
+                () => _viewModel.TypesTree.Assemblies != null && _viewModel.MutationsTree.MutationPackages != null)
+                    .UpdateOnChanged(_viewModel.TypesTree, _ => _.Assemblies)
+                    .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
 
-            _viewModel.CommandAdditionalFileToCopy = new BasicCommand(ChooseFiles);
-
-            _viewModel.AdditionalFileToCopy = new BetterObservableCollection<string>();
-
-            _viewModel.TimeoutSeconds = 10;
+   
         }
 
-
-
-        public void ChooseFiles()
-        {
-            var dlg = new Microsoft.Win32.OpenFileDialog();
-
-            bool? result = dlg.ShowDialog();
-
-            if (result == true)
-            {
-
-                _viewModel.AdditionalFileToCopy.ReplaceRange(dlg.FileNames);
-            }
-        }
 
 
         public SessionCreationController Run()
         {
             
             _commonServices.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
-                packages => _viewModel.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
+                packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
 
             _commonServices.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
-                assemblies => _viewModel.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
+                assemblies => _viewModel.TypesTree.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
 
             _viewModel.ShowDialog();
             return this;
         }
-        public void StoreChoicesResults()
+        public void AcceptChoices()
         {
             Result = new MutationSessionChoices
             {
-                SelectedOperators = _viewModel.MutationPackages.SelectMany(pack => pack.Operators)
+                SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                                  .Where(oper => oper.IsLeafIncluded).Select(n=>n.Operator).ToList(),
-                Assemblies = _viewModel.Assemblies.Select(a => a.AssemblyDefinition).ToList(),
-                SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.Assemblies),
-                AdditionalFilesToCopy = _viewModel.AdditionalFileToCopy.ToList(),
-                CreateMoreMutants = _viewModel.CreateMoreMutants,
-                TestingTimeoutSeconds = _viewModel.TimeoutSeconds
+                Assemblies = _viewModel.TypesTree.Assemblies.Select(a => a.AssemblyDefinition).ToList(),
+                SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTree.Assemblies),
+                MutantsCreationOptions = _viewModel.MutantsCreation.Options,
+                MutantsTestingOptions = _viewModel.MutantsTesting.Options,
             };
             _viewModel.Close();
         }
 
 
-       
+        public bool HasResults
+        {
+            get
+            {
+                return Result != null;
+            }
+        }
+
     }
 }

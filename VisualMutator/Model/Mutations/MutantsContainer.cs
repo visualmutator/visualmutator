@@ -26,9 +26,11 @@
     {
         MutationTestingSession PrepareSession(MutationSessionChoices choices);
 
-        void GenerateMutantsForOperators(MutationTestingSession session, Action<int> progress = null);
+        void GenerateMutantsForOperators(MutationTestingSession session, ProgressCounter progress );
 
         Mutant CreateChangelessMutant(MutationTestingSession session);
+
+        void SaveMutantsToDisk(MutationTestingSession currentSession);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -55,17 +57,8 @@
                 OriginalAssemblies = reloadedAssemblies,
                 StoredSourceAssemblies = sourceAssemblies,
                 SelectedTypes = copiedTypes,
-                MutationSessionChoices = choices,
-              //  SelectedOperators = choices.SelectedOperators,
-                Options = CreateDefaultOptions()
-            };
-        }
+                Choices = choices,
 
-        private MutationTestingOptions CreateDefaultOptions()
-        {
-            return new MutationTestingOptions
-            {
-                IsMutantVerificationEnabled = true
             };
         }
 
@@ -74,8 +67,14 @@
     
             var op = new PreOperator();
 
-            return CreateMutantsForOperator(op,
-                session.SelectedTypes, session.StoredSourceAssemblies, () => 0, session).Mutants.First();
+            var targets = FindTargets(op, session.SelectedTypes);
+            CreateMutantsForOperator(targets, session.StoredSourceAssemblies, () => 0, ProgressCounter.Inactive());
+            return targets.ExecutedOperator.Mutants.First();
+        }
+
+        public void SaveMutantsToDisk(MutationTestingSession currentSession)
+        {
+            
         }
 
         public IList<TypeDefinition> ProjectTypesToCopiedAssemblies(IList<TypeDefinition> sourceTypes, 
@@ -89,38 +88,55 @@
 
         }
 
-        public void GenerateMutantsForOperators(MutationTestingSession session, Action<int> percentCompleted = null)
+        public void GenerateMutantsForOperators(MutationTestingSession session, ProgressCounter percentCompleted )
         {
            session.MutantsGroupedByOperators = new List<ExecutedOperator>();
             MutationRootNode root = new MutationRootNode();
 
-            int[] i = { 1 };
-            Func<int> genId = () => i[0]++;
+            int[] id = { 1 };
+            Func<int> genId = () => id[0]++;
 
-            int counter = 0;
-            foreach (IMutationOperator op in session.MutationSessionChoices.SelectedOperators   )
+
+            percentCompleted.Initialize(session.Choices.SelectedOperators.Count);
+
+            var sw = new Stopwatch();
+            //sw.Start();
+
+            List<OperatorWithTargets> operatorsWithTargets = session.Choices.SelectedOperators
+                .Select(oper =>
+                {
+                    percentCompleted.Progress();
+                    sw.Restart();
+                    var targets = FindTargets(oper, session.SelectedTypes);
+                    targets.ExecutedOperator.FindTargetsTimeMiliseconds =  sw.ElapsedMilliseconds;
+                    return targets;
+
+                }).ToList();
+
+
+            int times = session.Choices.MutantsCreationOptions.CreateMoreMutants ? 20 : 1;
+            int allMutantsCount = operatorsWithTargets.Sum(op => op.MutationTargets.Count) * times;
+            percentCompleted.Initialize(allMutantsCount);
+
+            foreach (var op in operatorsWithTargets)
             {
-                var sw = new Stopwatch();
-                sw.Start();
 
+                ExecutedOperator executedOperator = op.ExecutedOperator;
+                sw.Restart();
+                for (int i = 0; i < times; i++)
+                {
+                    CreateMutantsForOperator(op, session.StoredSourceAssemblies, genId, percentCompleted);
+                }
+                sw.Stop();
+                executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
 
-                ExecutedOperator executedOperator = CreateMutantsForOperator(op,
-                    session.SelectedTypes, session.StoredSourceAssemblies, genId, session);
-
-
-                executedOperator.DisplayedText = "{0} - Mutants: {1}"
-                    .Formatted(executedOperator.Name, executedOperator.Children.Count);
+                executedOperator.UpdateDisplayedText();
 
                 session.MutantsGroupedByOperators.Add(executedOperator);
                 executedOperator.Parent = root;
                 root.Children.Add(executedOperator);
-                sw.Stop();
-                executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
-                counter++;
-                if (percentCompleted != null)
-                {
-                    percentCompleted(counter.AsPercentageOf(session.MutationSessionChoices.SelectedOperators.Count));
-                }
+                
+        
             }
             root.State = MutantResultState.Untested;
 
@@ -130,55 +146,77 @@
         
         }
 
-
-        private ExecutedOperator CreateMutantsForOperator(IMutationOperator mutOperator,
-            IEnumerable<TypeDefinition> types, StoredAssemblies sourceAssemblies, 
-            Func<int> generateId,MutationTestingSession session  )
+        public class OperatorWithTargets
         {
-            var result = new ExecutedOperator( mutOperator.Name);
+            public List<MutationTarget> MutationTargets
+            {
+                get;
+                set;
+            }
+
+            public IMutationOperator Operator { get; set; }
+
+            public ExecutedOperator ExecutedOperator { get; set; }
+        }
+
+
+        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IEnumerable<TypeDefinition> types)
+        {
+            var result = new ExecutedOperator(mutOperator.Name);
 
             List<MutationTarget> targets;
             try
             {
-                targets = mutOperator.FindTargets(types).ToList();
+                targets  = mutOperator.FindTargets(types).ToList();
             }
             catch (Exception e)
             {
                 throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Name), e);
             }
+            return new OperatorWithTargets
+            {
+                MutationTargets = targets,
+                Operator = mutOperator,
+                ExecutedOperator = result,
+            };
+
+        }
+
+        private void CreateMutantsForOperator(OperatorWithTargets oper, StoredAssemblies sourceAssemblies, 
+            Func<int> generateId, ProgressCounter percentCompleted)
+        {
+           
 
 
             IList<MutationResult> results = new List<MutationResult>();
             try
             {
 
-                int times = session.MutationSessionChoices.CreateMoreMutants ? 20 : 1;
-
-               for (int i = 0; i < times; i++)
+                
+                foreach (MutationTarget mutationTarget in oper.MutationTargets)
                 {
-                    foreach (MutationTarget mutationTarget in targets)
-                    {
-                        var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
-                        mutOperator.Mutate(mutationTarget, assembliesToMutate);
-                        results.Add(new MutationResult(mutationTarget, assembliesToMutate));
+                    percentCompleted.Progress();
+                    var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
+                    oper.Operator.Mutate(mutationTarget, assembliesToMutate);
+                    results.Add(new MutationResult(mutationTarget, assembliesToMutate));
 
-                    }
                 }
+                
                
             }
             catch (Exception e)
             {
-                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutOperator.Name), e);
+                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(oper.Operator.Name), e);
             }
 
             foreach (MutationResult mutationResult in results)
             {
                 var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
-                var mutant = new Mutant(generateId(), result, mutationResult.MutationTarget, serializedMutant);
-                result.Children.Add(mutant);
+                var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationResult.MutationTarget, serializedMutant);
+                oper.ExecutedOperator.Children.Add(mutant);
             }
- 
-            return result;
+
+       
         }
     }
 }

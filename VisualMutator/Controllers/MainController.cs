@@ -26,8 +26,8 @@ namespace VisualMutator.Controllers
 
     using log4net;
 
+    using Switch = CommonUtilityInfrastructure.Switch;
 
-    
     public class MainController : Controller
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -35,6 +35,8 @@ namespace VisualMutator.Controllers
         private readonly MutationResultsViewModel _viewModel;
 
         private readonly IFactory<SessionCreationController> _mutantsCreationFactory;
+
+        private readonly IFactory<OnlyMutantsCreationController> _onlyMutantsCreationFactory;
 
         private readonly IFactory<SessionController> _sessionControllerFactory;
 
@@ -52,6 +54,7 @@ namespace VisualMutator.Controllers
         public MainController(
             MutationResultsViewModel viewModel,
             IFactory<SessionCreationController> mutantsCreationFactory,
+            IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
             IFactory<SessionController> sessionControllerFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
             
@@ -60,6 +63,7 @@ namespace VisualMutator.Controllers
         {
             _viewModel = viewModel;
             _mutantsCreationFactory = mutantsCreationFactory;
+            _onlyMutantsCreationFactory = onlyMutantsCreationFactory;
             _sessionControllerFactory = sessionControllerFactory;
             _resultsSavingFactory = resultsSavingFactory;
             _mutantDetailsController = mutantDetailsController;
@@ -69,6 +73,12 @@ namespace VisualMutator.Controllers
             _viewModel.CommandCreateNewMutants = new BasicCommand(RunMutationSession,
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
+
+
+            _viewModel.CommandOnlyCreateMutants = new BasicCommand(OnlyCreateMutants,
+                () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
+                .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
+
 
             _viewModel.CommandPause = new BasicCommand(PauseOperations, 
                 () => _viewModel.OperationsState.IsIn(OperationsState.Testing))
@@ -113,6 +123,7 @@ namespace VisualMutator.Controllers
                         .Case(OperationsState.Mutating, "Creating mutants...")
                         .Case(OperationsState.Pausing, "Pausing...")
                         .Case(OperationsState.Stopping, "Stopping...")
+                        .Case(OperationsState.SavingMutants, "Saving mutants...")
                         .Case(OperationsState.Error, "Error occurred.")
                         .GetResult();
                 }
@@ -126,27 +137,33 @@ namespace VisualMutator.Controllers
             _subscriptions = new List<IDisposable>
             {
                 sessionController.SessionEventsObservable
-                    .Where(args => args.EventType == SessionEventType.PreCheckStarting)
-                    .Subscribe(args => SetState(OperationsState.PreCheck)),
+                    .OfType<MinorSessionUpdateEventArgs>()
+                    .Subscribe(args =>
+                    {
+                        SetState(args.EventType);
+                        Switch.On(args.ProgressUpdateMode)
+                            .Case(ProgressUpdateMode.SetValue, () =>
+                            {
+                                _viewModel.IsProgressIndeterminate = false;
+                                _viewModel.Progress = args.PercentCompleted;
+                            })
+                            .Case(ProgressUpdateMode.Indeterminate, () =>
+                            {
+                                _viewModel.IsProgressIndeterminate = true;
+                            })
+                            .Case(ProgressUpdateMode.PreserveValue, ()=>
+                            {
+                               
+                            });
+                        
+                    }),
 
                 sessionController.SessionEventsObservable
-                 .Where(args => args.EventType == SessionEventType.MutationProgress)
-                 .Cast<MutationProgressEventArgs>()
-                 .Subscribe(args =>
-                 {
-                     SetState(OperationsState.Mutating);
-                     _viewModel.TestingProgress = args.PercentCompleted;
-                 }),
-
-                sessionController.SessionEventsObservable
-                 .Where(args => args.EventType == SessionEventType.MutationFinished)
-                 .Cast<MutationFinishedEventArgs>()
+                 .OfType<MutationFinishedEventArgs>()
                  .Subscribe(args => _viewModel.Operators.ReplaceRange(args.MutantsGroupedByOperators)),
 
                 sessionController.SessionEventsObservable
-                 .Where(args => args.EventType == SessionEventType.TestingProgress)
-                 .Cast<TestingProgressEventArgs>()
-                 //.SubscribeOn(_commonServices.Threading.GuiSyncContext)
+                 .OfType<TestingProgressEventArgs>()
                  .Subscribe(args =>
                  {
                      _svc.Threading.InvokeOnGui(()=>
@@ -158,31 +175,17 @@ namespace VisualMutator.Controllers
 
                          _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllMutantsTested);
                          _viewModel.MutationScore = string.Format("Mutation score: {0:F2}", args.MutationScore);
-                         _viewModel.TestingProgress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
+                         _viewModel.Progress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
                      });
                  }),
 
-                sessionController.SessionEventsObservable
-                 .Where(args => args.EventType == SessionEventType.SessionFinished)
-                 .Subscribe(args => SetState(OperationsState.Finished)),
-
-                sessionController.SessionEventsObservable
-                 .Where(args => args.EventType == SessionEventType.SessionFinished)
-                 .Subscribe(args => SetState(OperationsState.Finished)),
-
-                sessionController.SessionEventsObservable
-                 .Where(args => args.EventType == SessionEventType.SessionFinishedWithError)
-                 .Subscribe(args => SetState(OperationsState.Error)),
+               
             };
           
         }
 
         public void RunMutationSession()
         {
-       
-           
-
-
             var mutantsCreationController = _mutantsCreationFactory.Create().Run();
   
             if (mutantsCreationController.HasResults)
@@ -194,6 +197,22 @@ namespace VisualMutator.Controllers
                 _sessionController = _sessionControllerFactory.Create();
                 Subscribe(_sessionController);
                 _sessionController.RunMutationSession(choices);
+            }
+        }
+
+        public void OnlyCreateMutants()
+        {
+            var onlyMutantsController = _onlyMutantsCreationFactory.Create().Run();
+
+            if (onlyMutantsController.HasResults)
+            {
+                MutationSessionChoices choices = onlyMutantsController.Result;
+
+                Clean();
+
+                _sessionController = _sessionControllerFactory.Create();
+                Subscribe(_sessionController);
+                _sessionController.OnlyCreateMutants(choices);
             }
         }
 

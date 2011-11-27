@@ -73,7 +73,7 @@
                 _log.Error(e);
                 return new CodeWithDifference
                 {
-                    Code = "Exception Occurred: " + e,
+                    Code = "Exception occurred while decompiling: " + e.Message,
                     LineChanges = Enumerable.Empty<LineChange>().ToList()
                 };
             }

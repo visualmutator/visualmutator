@@ -9,10 +9,6 @@
     using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests;
 
-    public class MutationTestingOptions
-    {
-        public bool IsMutantVerificationEnabled { get; set; }
-    }
     public class MutationTestingSession
     {
         public MutationTestingSession()
@@ -38,12 +34,8 @@
 
         public IList<AssemblyDefinition> OriginalAssemblies { get; set; }
 
-        public MutationTestingOptions Options
-        {
-            get;
-            set;
-        }
+      
 
-        public MutationSessionChoices MutationSessionChoices { get; set; }
+        public MutationSessionChoices Choices { get; set; }
     }
 }

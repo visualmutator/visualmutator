@@ -79,8 +79,12 @@
             
 
             Kernel.Bind<SessionCreationController>().ToSelf().AndFromFactory();
-            Kernel.Bind<MutantsCreationViewModel>().ToSelf();
-            Kernel.Bind<IMutantsCreationView>().To<MutantsCreationWindow>();
+            Kernel.Bind<SessionCreationViewModel>().ToSelf();
+            Kernel.Bind<ISessionCreationView>().To<SessionCreationView>();
+
+            Kernel.Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory();
+            Kernel.Bind<OnlyMutantsCreationViewModel>().ToSelf();
+            Kernel.Bind<IOnlyMutantsCreationView>().To<OnlyMutantsCreationView>();
 
 
             Kernel.Bind<MainController>().ToSelf().InSingletonScope();
@@ -102,6 +106,20 @@
 
 
             Kernel.Bind<SessionController>().To<SessionController>().AndFromFactory();
+
+
+
+            Kernel.Bind<IMutantsCreationOptionsView>().To<MutantsCreationOptionsView>();
+            Kernel.Bind<MutantsCreationOptionsViewModel>().ToSelf();
+
+            Kernel.Bind<IMutantsTestingOptionsView>().To<MutantsTestingOptionsView>();
+            Kernel.Bind<MutantsTestingOptionsViewModel>().ToSelf();
+
+            Kernel.Bind<ITypesTreeView>().To<TypesTree>();
+            Kernel.Bind<TypesTreeViewModel>().ToSelf();
+
+            Kernel.Bind<IMutationsTreeView>().To<MutationsTree>();
+            Kernel.Bind<MutationsTreeViewModel>().ToSelf();
 
         }
     }

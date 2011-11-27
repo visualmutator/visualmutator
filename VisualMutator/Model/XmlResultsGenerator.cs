@@ -47,26 +47,35 @@
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
-                new XAttribute("TotalSizeInKilobytes", mutants.Sum(mut=>mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("TotalSizeInKilobytes", mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
                 new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGroupedByOperators
                     .Sum(oper => oper.MutationTimeMiliseconds)),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
                     new XAttribute("Name", oper.Name),
                     new XAttribute("NumberOfMutants", oper.Children.Count),
-                    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0:
-                        oper.MutationTimeMiliseconds / oper.Children.Count ),
+                    new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),
+                    new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
+                    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
+                        oper.MutationTimeMiliseconds / oper.Children.Count),
                     from mutant in oper.Mutants
                     select new XElement("Mutant",
                         new XAttribute("Id", mutant.Id),
-                    //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
-                        new XAttribute("State", Functional.ValuedSwitch<MutantResultState, string>(mutant.State)
+                        //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
+                        new XAttribute("State", Switch.Into<string>().From(mutant.State)
                         .Case(MutantResultState.Killed, "Killed")
                         .Case(MutantResultState.Live, "Live")
                         .Case(MutantResultState.Untested, "Untested")
                         .Case(MutantResultState.Error, "WithError")
                         .GetResult()
-                        )
+                        ),
+                        new XElement("ErrorInfo",
+                             new XElement("Description", mutant.TestSession.ErrorDescription),
+                             new XElement("ExceptionMessage", mutant.TestSession.ErrorMessage)
+                             ).InArrayIf(mutant.State == MutantResultState.Error)
+                          
+
+
                         )
                     )
                 );
@@ -105,7 +114,7 @@
                 select new XElement("MutantCodeListing",
                     new XAttribute("MutantId", mutant.Id),
                     new XElement("Code", 
-                        _codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp, 
+                        Environment.NewLine+_codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp, 
                         mutant, originalAssemblies).Code)
                         )
                     );

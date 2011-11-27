@@ -120,6 +120,18 @@
 
             return this;
         }
+        public BasicCommand UpdateOnChanged<Param, T>(Param notifier,
+            Expression<Func<Param, T>> propertyExpression) where Param : IEventNotifier
+        {
+
+            notifier.EventListeners.Add(notifier, propertyExpression.PropertyName(), () =>
+            {
+                OnCanExecuteChanged(EventArgs.Empty);
+            });
+            return this;
+
+        
+        }
         public BasicCommand ExecuteOnChanged<T>(IEventNotifier notifier,
     Expression<Func<T>> propertyExpression)
         {

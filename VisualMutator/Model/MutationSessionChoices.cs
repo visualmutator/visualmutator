@@ -5,8 +5,10 @@ namespace VisualMutator.Controllers
     using Mono.Cecil;
 
     using VisualMutator.Extensibility;
+    using VisualMutator.Model.Mutations;
 
-    public class MutationSessionChoices
+ 
+    public class MutationSessionChoices 
     {
         public IList<IMutationOperator> SelectedOperators
         {
@@ -16,7 +18,8 @@ namespace VisualMutator.Controllers
 
         public IList<AssemblyDefinition> Assemblies
         {
-            get; set;
+            get;
+            set;
         }
 
         public IList<TypeDefinition> SelectedTypes
@@ -24,14 +27,23 @@ namespace VisualMutator.Controllers
             get;
             set;
         }
-
-        public IList<string> AdditionalFilesToCopy 
-        { get;
+        public string MutantsCreationFolderPath
+        {
+            get;
             set;
         }
 
-        public bool CreateMoreMutants { get; set; }
-
-        public int TestingTimeoutSeconds { get; set; }
+        
+     
+        public MutantsTestingOptions MutantsTestingOptions
+        {
+            get;
+            set;
+        }
+        public MutantsCreationOptions MutantsCreationOptions
+        {
+            get;
+            set;
+        }
     }
 }

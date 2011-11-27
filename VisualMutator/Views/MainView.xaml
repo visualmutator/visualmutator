@@ -60,10 +60,11 @@
             <DockPanel Grid.Row="0">
                 <TextBlock  HorizontalAlignment="Stretch" Text="{Binding OperationsStateDescription}" />
                 <DockPanel Grid.Row="1" HorizontalAlignment="Right">
-                    <Button Grid.Row="0" HorizontalAlignment="Right" Content="New session..." Command="{Binding CommandCreateNewMutants}"/>
-                    <Button Grid.Row="0" HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>
-                    <Button Grid.Row="0" HorizontalAlignment="Right" Content="Continue" Command="{Binding CommandContinue}"/>
-                    <Button Grid.Row="0" HorizontalAlignment="Right" Content="Pause" Command="{Binding CommandPause}"/>
+                    <Button  HorizontalAlignment="Right" Content="Create and save mutants..." Command="{Binding CommandOnlyCreateMutants}"/>
+                    <Button  HorizontalAlignment="Right" Content="New session..." Command="{Binding CommandCreateNewMutants}"/>
+                    <Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>
+                    <Button  HorizontalAlignment="Right" Content="Continue" Command="{Binding CommandContinue}"/>
+                    <Button  HorizontalAlignment="Right" Content="Pause" Command="{Binding CommandPause}"/>
                 </DockPanel>
               
             </DockPanel>
@@ -82,9 +83,8 @@
             </Grid>
 
             <ProgressBar Height="25" Grid.Row="2"  
-                         IsIndeterminate="{Binding OperationsState, Converter={Converters:EqualsConverter}, 
-                                            ConverterParameter={x:Static ViewModels:OperationsState.PreCheck}}"
-                         Value="{Binding TestingProgress}"/>
+                         IsIndeterminate="{Binding IsProgressIndeterminate}"
+                         Value="{Binding Progress}"/>
 
             <TextBlock  Grid.Row="3"  Text="Mutants gruped by operators:" />
         </Grid>

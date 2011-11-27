@@ -12,17 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace VisualMutator.Views
+namespace VisualMutator.Views.Resources
 {
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    public interface ITypesTreeView : IView
+    /// <summary>
+    /// Interaction logic for IconButton.xaml
+    /// </summary>
+    public partial class IconButton : UserControl
     {
-         
-    }
-    public partial class TypesTree : UserControl, ITypesTreeView
-    {
-        public TypesTree()
+        public IconButton()
         {
             InitializeComponent();
         }

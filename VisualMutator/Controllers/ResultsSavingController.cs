@@ -39,9 +39,7 @@
             _svc = svc;
             _generator = generator;
 
-            _viewModel.CommandSaveResults = new BasicCommand(SaveResults, 
-                () => !string.IsNullOrEmpty(_viewModel.TargetPath))
-                .UpdateOnChanged(_viewModel,() => _viewModel.TargetPath);
+            _viewModel.CommandSaveResults = new BasicCommand(SaveResults);
 
             _viewModel.CommandClose = new BasicCommand(Close);
             _viewModel.CommandBrowse = new BasicCommand(BrowsePath);
@@ -79,6 +77,12 @@
         }
         public void SaveResults()
         {
+            if (string.IsNullOrEmpty(_viewModel.TargetPath)
+                || !Path.IsPathRooted(_viewModel.TargetPath))
+            {
+                _svc.Logging.ShowError("Invalid path");
+                return;
+            }
 
             XDocument document = _generator.GenerateResults(_currentSession, 
                 _viewModel.IncludeDetailedTestResults, _viewModel.IncludeCodeDifferenceListings);

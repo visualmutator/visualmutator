@@ -16,15 +16,26 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface ITypesTreeView : IView
+    public interface ISessionCreationView : IDialogView
     {
-         
+        bool? SetOwnerAndShowDialog();
     }
-    public partial class TypesTree : UserControl, ITypesTreeView
+
+
+    public partial class SessionCreationView : Window, ISessionCreationView
     {
-        public TypesTree()
+        private readonly IOwnerWindowProvider _windowProvider;
+
+        public SessionCreationView(IOwnerWindowProvider windowProvider)
         {
+            _windowProvider = windowProvider;
             InitializeComponent();
+        }
+
+        public bool? SetOwnerAndShowDialog()
+        {
+            _windowProvider.SetOwner(this);
+            return ShowDialog();
         }
     }
 }

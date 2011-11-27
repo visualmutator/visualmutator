@@ -7,6 +7,7 @@
     using System.Reflection;
 
     using CommonUtilityInfrastructure.FileSystem;
+    using CommonUtilityInfrastructure;
 
     using Mono.Cecil;
 
@@ -21,11 +22,13 @@
     {
 
 
-        StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
+        StoredMutantInfo StoreMutant(string directory, Mutant mutant);
 
         TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
 
         void CleanupTestEnvironment(TestEnvironmentInfo info);
+
+        void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
     }
 
  
@@ -57,17 +60,46 @@
         }
 
 
+        public void WriteMutantsToDisk(string rootFolder, 
+            IList<ExecutedOperator> mutantsInOperators, Action<Mutant, StoredMutantInfo> verify, 
+            ProgressCounter onSavingProgress)
+        {
 
-        public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironmentInfo,Mutant mutant)
+          //  var storedMutantsList = new List<Tuple<Mutant, StoredMutantInfo>>();
+
+            onSavingProgress.Initialize(mutantsInOperators.Select(oper => oper.Children)
+                .Sum(ch => ch.Count), ProgressMode.Before);
+         
+            foreach (ExecutedOperator oper in mutantsInOperators)
+            {
+                string subFolder = Path.Combine(rootFolder, oper.Name.RemoveInvalidPathCharacters());
+                
+                _fs.Directory.CreateDirectory(subFolder);
+                foreach (Mutant mutant in oper.Mutants)
+                {
+                    onSavingProgress.Progress();
+
+                    string mutantFolder = Path.Combine(subFolder,mutant.Id.ToString());
+                    _fs.Directory.CreateDirectory(mutantFolder);
+                    StoredMutantInfo storedMutantInfo = StoreMutant(mutantFolder, mutant);
+                    verify(mutant, storedMutantInfo);
+                   // storedMutantsList.Add(Tuple.Create(mutant,));
+                }
+                
+            }
+         //   return storedMutantsList;
+        }
+
+        public StoredMutantInfo StoreMutant(string directory,Mutant mutant)
         {
 
             var result = new StoredMutantInfo();
 
-            var assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
+            IList<AssemblyDefinition> assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
             foreach (AssemblyDefinition assemblyDefinition in assemblyDefinitions)
             {
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(testEnvironmentInfo.Directory, assemblyDefinition.Name.Name + ".dll");
+                string file = Path.Combine(directory, assemblyDefinition.Name.Name + ".dll");
                 _fs.File.Delete(file);
                 _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
                 result.AssembliesPaths.Add(file);
@@ -90,7 +122,7 @@
                 _fs.File.Copy(referenced, destination, overwrite: true); //TODO: Remove overwrite?
             }
 
-            foreach (string path in currentSession.MutationSessionChoices.AdditionalFilesToCopy)
+            foreach (string path in currentSession.Choices.MutantsCreationOptions.AdditionalFilesToCopy)
             {
                 string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(path));
                 _fs.File.Copy(path, destination, overwrite: true); 
@@ -100,7 +132,8 @@
 
         public void CleanupTestEnvironment(TestEnvironmentInfo info)
         {
-            if (_fs.Directory.Exists(info.Directory))
+
+            if (info != null && _fs.Directory.Exists(info.Directory))
             {
                 try
                 {

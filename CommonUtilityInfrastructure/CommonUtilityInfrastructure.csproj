@@ -76,6 +76,7 @@
     <Compile Include="Functional\Switch.cs" />
     <Compile Include="Functional\ValuedSwitch.cs" />
     <Compile Include="ISettingsManager.cs" />
+    <Compile Include="ProgressCounter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommonServices.cs" />
     <Compile Include="Threading\LimitedConcurrencyLevelTaskScheduler.cs" />

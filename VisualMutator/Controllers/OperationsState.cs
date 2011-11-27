@@ -15,6 +15,11 @@
 
         PreCheck,
 
-        Error
+        Error,
+
+        MutationFinished,
+
+        SavingMutants,
+
     }
 }

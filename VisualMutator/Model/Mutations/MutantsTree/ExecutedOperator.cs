@@ -3,6 +3,8 @@ namespace VisualMutator.Model.Mutations.Structure
     using System.Collections.Generic;
     using System.Linq;
 
+    using CommonUtilityInfrastructure;
+
     public class ExecutedOperator : MutationNode
     {
         public ExecutedOperator(string name)
@@ -34,5 +36,13 @@ namespace VisualMutator.Model.Mutations.Structure
         }
 
         public long MutationTimeMiliseconds { get; set; }
+
+        public long FindTargetsTimeMiliseconds { get; set; }
+
+        public void UpdateDisplayedText()
+        {
+           DisplayedText = "{0} - Mutants: {1}"
+                    .Formatted(Name, Children.Count);
+        }
     }
 }

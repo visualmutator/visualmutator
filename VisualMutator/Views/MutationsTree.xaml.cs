@@ -16,13 +16,13 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface ITypesTreeView : IView
+    public interface IMutationsTreeView : IView
     {
          
     }
-    public partial class TypesTree : UserControl, ITypesTreeView
+    public partial class MutationsTree : UserControl, IMutationsTreeView
     {
-        public TypesTree()
+        public MutationsTree()
         {
             InitializeComponent();
         }

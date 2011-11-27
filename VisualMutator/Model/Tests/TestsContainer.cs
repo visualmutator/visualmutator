@@ -30,13 +30,17 @@
 
 
 
-        void RunTestsForMutant(MutationTestingSession session, TestEnvironmentInfo testEnvironmentInfo, Mutant mutant);
+        void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant);
 
         TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
 
         void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo);
 
         void CancelTestRun();
+
+        bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
+
+
     }
 
     public class TestsContainer : ITestsContainer
@@ -91,27 +95,47 @@
         }
 
 
+        public bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant)
+        {
 
-        public void RunTestsForMutant(MutationTestingSession session, TestEnvironmentInfo testEnvironmentInfo, Mutant mutant)
+          //  StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
+
+            try
+            {
+                
+                VerifyAssemblies(storedMutantInfo.AssembliesPaths);
+                
+            }
+            catch (AssemblyVerificationException e)
+            {
+
+                mutant.TestSession.ErrorDescription = "Mutant assembly failed verification";
+                mutant.TestSession.ErrorMessage = e.Message;
+                mutant.TestSession.Exception = e;
+                mutant.State = MutantResultState.Error;
+                return false;
+            }
+            return true;
+                
+
+        }
+
+        public void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
             var sw = new Stopwatch();
             sw.Start();
 
             mutant.State = MutantResultState.Tested;
 
-            StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
+       //     StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
             IDisposable timoutDisposable = null;
             try
             {
-                if (session.Options.IsMutantVerificationEnabled)
-                {
-                    VerifyAssemblies(storedMutantInfo.AssembliesPaths);
-                }
                 LoadTests(storedMutantInfo, mutant.TestSession);
 
-                timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.MutationSessionChoices.TestingTimeoutSeconds))
-                    .Subscribe(e => CancelTestRun());
+                timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.Choices
+                    .MutantsTestingOptions.TestingTimeoutSeconds)).Subscribe(e => CancelTestRun());
       
 
                 RunTests(mutant.TestSession);
@@ -125,15 +149,7 @@
 
                 mutant.TestSession.IsComplete = true;
             }
-            catch (AssemblyVerificationException e)
-            {
-
-                mutant.TestSession.ErrorDescription = "Mutant assembly failed verification";
-                mutant.TestSession.ErrorMessage = e.Message;
-                mutant.TestSession.Exception = e;
-                mutant.State = MutantResultState.Error;
-               
-            }
+            
             catch (Exception e)
             {
 

@@ -16,19 +16,15 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface IMutantsCreationView : IDialogView
+    public interface IOnlyMutantsCreationView : IDialogView
     {
         bool? SetOwnerAndShowDialog();
     }
-
-    /// <summary>
-    /// Interaction logic for MutantsCreationWindow.xaml
-    /// </summary>
-    public partial class MutantsCreationWindow : Window, IMutantsCreationView
+    public partial class OnlyMutantsCreationView : Window, IOnlyMutantsCreationView
     {
         private readonly IOwnerWindowProvider _windowProvider;
 
-        public MutantsCreationWindow(IOwnerWindowProvider windowProvider)
+        public OnlyMutantsCreationView(IOwnerWindowProvider windowProvider)
         {
             _windowProvider = windowProvider;
             InitializeComponent();

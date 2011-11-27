@@ -71,7 +71,7 @@
             MutantsContainer mutantsContainer = new MutantsContainer(assembliesManager);
 
             var mutationTestingSession = mutantsContainer.PrepareSession(mutationSessionChoices);
-            mutantsContainer.GenerateMutantsForOperators(mutationTestingSession);
+         //TODO:   mutantsContainer.GenerateMutantsForOperators(mutationTestingSession);
                var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
 
             return executedOperator;

@@ -114,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
+    <Compile Include="Model\MutantsCreationOptions.cs" />
+    <Compile Include="Model\MutantsTestingOptions.cs" />
     <Compile Include="Model\MutationSessionChoices.cs" />
     <Compile Include="Controllers\ResultsSavingController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
@@ -139,6 +142,10 @@
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
+    <Compile Include="ViewModels\OnlyMutantsCreationViewModel.cs" />
+    <Compile Include="ViewModels\MutationsTreeViewModel.cs" />
+    <Compile Include="ViewModels\MutantsTestingOptionsViewModel.cs" />
+    <Compile Include="ViewModels\MutantsCreationOptionsViewModel.cs" />
     <Compile Include="ViewModels\MutantDetailsViewModel.cs" />
     <Compile Include="Controllers\SessionCreationController.cs" />
     <Compile Include="Controllers\MainController.cs" />
@@ -182,10 +189,11 @@
     <Compile Include="Model\Tests\TestsTree\TestNodeState.cs" />
     <Compile Include="Model\Tests\TestsTree\TestTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\MutantsCreationViewModel.cs" />
+    <Compile Include="ViewModels\SessionCreationViewModel.cs" />
     <Compile Include="ViewModels\MutationResultsViewModel.cs" />
-    <Compile Include="ViewModels\OperationsState.cs" />
+    <Compile Include="Controllers\OperationsState.cs" />
     <Compile Include="ViewModels\ResultsSavingViewModel.cs" />
+    <Compile Include="ViewModels\TypesTreeViewModel.cs" />
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Converters\EqualsConverter.cs" />
@@ -203,8 +211,23 @@
     <Compile Include="Views\MutantDetailsView.xaml.cs">
       <DependentUpon>MutantDetailsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\NewSessionView.xaml.cs">
-      <DependentUpon>NewSessionView.xaml</DependentUpon>
+    <Compile Include="Views\MutantsCreationOptionsView.xaml.cs">
+      <DependentUpon>MutantsCreationOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MutantsTestingOptionsView.xaml.cs">
+      <DependentUpon>MutantsTestingOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MutationsTree.xaml.cs">
+      <DependentUpon>MutationsTree.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\IconButton.xaml.cs">
+      <DependentUpon>IconButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SessionCreationView.xaml.cs">
+      <DependentUpon>SessionCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OnlyMutantsCreationView.xaml.cs">
+      <DependentUpon>OnlyMutantsCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProgressControl.xaml.cs">
       <DependentUpon>ProgressControl.xaml</DependentUpon>
@@ -227,7 +250,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NewSessionView.xaml">
+    <Page Include="Views\MutantsCreationOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MutantsTestingOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MutationsTree.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Resources\IconButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SessionCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OnlyMutantsCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

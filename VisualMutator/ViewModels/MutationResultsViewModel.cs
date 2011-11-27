@@ -94,6 +94,19 @@
             }
         }
 
+        private BasicCommand _commandOnlyCreateMutants;
+
+        public BasicCommand CommandOnlyCreateMutants
+        {
+            get
+            {
+                return _commandOnlyCreateMutants;
+            }
+            set
+            {
+                SetAndRise(ref _commandOnlyCreateMutants, value, () => CommandOnlyCreateMutants);
+            }
+        }
         private BasicCommand _commandPause;
 
         public BasicCommand CommandPause
@@ -149,19 +162,32 @@
 
 
 
-        private double _testingProgress;
-        public double TestingProgress
+        private double _progress;
+        public double Progress
         {
             get
             {
-                return _testingProgress;
+                return _progress;
             }
             set
             {
-                SetAndRise(ref _testingProgress, value, () => TestingProgress);
+                SetAndRise(ref _progress, value, () => Progress);
             }
         }
 
+        private bool _isProgressIndeterminate;
+
+        public bool IsProgressIndeterminate
+        {
+            get
+            {
+                return _isProgressIndeterminate;
+            }
+            set
+            {
+                SetAndRise(ref _isProgressIndeterminate, value, () => IsProgressIndeterminate);
+            }
+        }
 
         private object _selectedMutationTreeItem;
         public object SelectedMutationTreeItem
