@@ -65,9 +65,11 @@
             
             var result = new CustomAttribute(contructor);
             result.ConstructorArguments.Add(new CustomAttributeArgument(stringType, method2.Name));
-
             method1.CustomAttributes.Add(result);
-            
+
+            var result2 = new CustomAttribute(contructor);
+            result2.ConstructorArguments.Add(new CustomAttributeArgument(stringType, method1.Name));
+            method2.CustomAttributes.Add(result2);
         }
 
     

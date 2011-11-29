@@ -18,13 +18,15 @@
 
     <Grid d:DataContext="{d:DesignInstance ViewModels:OnlyMutantsCreationViewModel}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <TextBlock Grid.Row="0" Text="Create mutants using selected operators and save them to disk. Tests are not executed. After creation and storage, mutants are available for preview." /> 
 
-        <Grid>
+        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
@@ -42,7 +44,7 @@
 
         </Grid>
 
-            <Grid Grid.Row="1" HorizontalAlignment="Stretch">
+            <Grid Grid.Row="2" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -57,7 +59,7 @@
            
            
 
-        <Expander  Grid.Row="2" Style="{StaticResource newExpanderStyle}"
+        <Expander  Grid.Row="3" Style="{StaticResource newExpanderStyle}"
               VerticalAlignment="Top" Background="{StaticResource NormalBrush}" Padding="20" HorizontalAlignment="Stretch"
               Height="Auto" Header="Options:" IsExpanded="False">
 

@@ -41,7 +41,7 @@
         public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
         {
             var instr = target.Method("ldstrRouteInstr").FindInstructionIn(assembliesToMutate);
-            MutateRoute(instr);
+            instr.Operand = "MutatedString";
 
         }
 
@@ -49,7 +49,7 @@
         {
             get
             {
-                return "Mutate route.";
+                return "Change MapRoute Patter String";
             }
         }
 
@@ -57,9 +57,10 @@
         {
             get
             {
-                return "..";
+                return "Replaces MapRoute method's pattern string with irrelevant value. Acts only on MapRoute(RouteCollection,String,String,Object) overload.";
             }
         }
+
 
         public void Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types)
         {
@@ -78,7 +79,11 @@
                                             select instr;
 
                 var nameRouteValuesCallInstructions = validCallInstructions
-                    .Select(i => new { Instr = i, MethodRef = (MethodReference)i.Operand })
+                    .Select(i => new
+                    {
+                        Instr = i,
+                        MethodRef = (MethodReference)i.Operand
+                    })
                     .Where(_ => _.MethodRef.FullName == "System.Web.Routing.Route System.Web.Mvc.RouteCollectionExtensions::MapRoute(System.Web.Routing.RouteCollection,System.String,System.String,System.Object)")
                     .Where(_ => _.Instr.Previous.OpCode == OpCodes.Newobj)
                     // .Select(_=>new { _.Instr, ConstrRef = (MethodReference)_.Instr.Previous.Operand})
@@ -97,15 +102,11 @@
                         var ldstrRouteInstr = generic.GenericArguments
                             .Aggregate(nameRouteValuesInstruction.Previous.Previous, (current, x) => current.Previous);
 
-                        MutateRoute(ldstrRouteInstr);
+                       // MutateRoute(ldstrRouteInstr);
                     }
                 }
             }
         }
 
-        private void MutateRoute(Instruction ldstrRouteInstr)
-        {
-            ldstrRouteInstr.Operand = "MutatedString";
-        }
     }
 }

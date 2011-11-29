@@ -40,7 +40,7 @@
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(path)
             {
-                Arguments = assemblyPath.InQuotes(),
+                Arguments = assemblyPath.InQuotes() + " /nologo",
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
                 UseShellExecute = false,

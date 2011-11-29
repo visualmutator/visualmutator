@@ -24,7 +24,7 @@
 
             var assembly = Utils.ReadTestAssembly();
 
-            var executedOperator = Utils.ExecuteMutation(new SwapActionNames(), Utils.ReadTestAssembly());
+            var executedOperator = Utils.ExecuteMutation(new SwapActionNames(), assembly);
 
                 
 
