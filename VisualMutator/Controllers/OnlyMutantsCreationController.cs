@@ -85,7 +85,15 @@
                 packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
 
             _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
-                assemblies => _viewModel.TypesTree.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
+                assemblies =>
+                {
+                    _viewModel.TypesTree.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
+                    if (_typesManager.IsAssemblyLoadError)
+                    {
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log);
+
+                    }
+                });
 
             _viewModel.ShowDialog();
             return this;

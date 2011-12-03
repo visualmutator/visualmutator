@@ -115,6 +115,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
+    <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\MutantsCreationOptions.cs" />
     <Compile Include="Model\MutantsTestingOptions.cs" />
     <Compile Include="Model\MutationSessionChoices.cs" />

@@ -1,6 +1,11 @@
 ﻿namespace VisualMutator.Model.Mutations.Types
 {
+    using System;
+    using System.IO;
+
     using Mono.Cecil;
+
+    using VisualMutator.Model.Exceptions;
 
     public interface IAssemblyReaderWriter
     {
@@ -35,7 +40,23 @@
         */
         public AssemblyDefinition ReadAssembly(string path)
         {
-            return AssemblyDefinition.ReadAssembly(path);
+            try
+            {
+                return AssemblyDefinition.ReadAssembly(path);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new AssemblyReadException("",e);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw new AssemblyReadException("", e);
+            }
+            catch (IOException e)
+            {
+                throw new AssemblyReadException("", e);
+            }
+            
         }
         public void WriteAssembly(AssemblyDefinition assembly, string path)
         {

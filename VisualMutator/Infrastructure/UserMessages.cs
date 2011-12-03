@@ -49,6 +49,15 @@ Details:
 
 }
 
-     
+public static string WarningAssemblyNotLoaded()
+{
+    return
+        @"One or more assemblies could not be loaded. Ensure that projects are built and their assemblies exist on disk.";
+}
+
+
+
+
+
     }
 }

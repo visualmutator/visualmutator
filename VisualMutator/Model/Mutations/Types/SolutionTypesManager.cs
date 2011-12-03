@@ -15,6 +15,7 @@ namespace VisualMutator.Model.Mutations.Types
 
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.CheckboxedTree;
+    using VisualMutator.Model.Exceptions;
 
     using log4net;
 
@@ -27,7 +28,7 @@ namespace VisualMutator.Model.Mutations.Types
 
         IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
 
-  
+        bool IsAssemblyLoadError { get; set; }
     }
 
     public class SolutionTypesManager : ITypesManager
@@ -37,6 +38,8 @@ namespace VisualMutator.Model.Mutations.Types
 
         private readonly IVisualStudioConnection _visualStudio;
 
+
+        public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
             IAssemblyReaderWriter assemblyReaderWriter,
@@ -73,9 +76,10 @@ namespace VisualMutator.Model.Mutations.Types
                 {
                     loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
                 }
-                catch (FileNotFoundException e)
+                catch (AssemblyReadException e)
                 {
                     _log.Info("ReadAssembly failed. ", e);
+                    IsAssemblyLoadError = true;
                 }
             }
             return loadedAssemblies;

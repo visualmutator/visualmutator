@@ -30,7 +30,7 @@
 
         private readonly IOperatorsManager _operatorsManager;
 
-        private readonly CommonServices _commonServices;
+        private readonly CommonServices _svc;
 
         private readonly ITypesManager _typesManager;
 
@@ -47,13 +47,13 @@
             SessionCreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
-            CommonServices commonServices)
+            CommonServices svc)
         {
             _viewModel = viewModel;
 
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
-            _commonServices = commonServices;
+            _svc = svc;
 
 
             _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
@@ -69,11 +69,19 @@
         public SessionCreationController Run()
         {
             
-            _commonServices.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
+            _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
                 packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
 
-            _commonServices.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
-                assemblies => _viewModel.TypesTree.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies));
+            _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
+                assemblies =>
+                {
+                    _viewModel.TypesTree.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
+                    if (_typesManager.IsAssemblyLoadError)
+                    {
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log);
+                 
+                    }
+                });
 
             _viewModel.ShowDialog();
             return this;
