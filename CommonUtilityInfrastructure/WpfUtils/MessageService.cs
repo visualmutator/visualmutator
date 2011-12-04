@@ -95,35 +95,21 @@
             System.Windows.Forms.MessageBox.Show(
                               ownerWindow,
                               message,
-                              TitlePart()+"Error",
+                              TitlePart()+"Unhandled Exception",
                               MessageBoxButtons.OK,
                               MessageBoxIcon.Error);
 
         }
         public void ShowError(object owner, string message)
         {
-            var ownerWindow = owner as Window;
-            if (ownerWindow != null)
-            {
-                MessageBox.Show(
-                    ownerWindow,
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                MessageBox.Show(
-                    message,
-                    "",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation,
-                    MessageBoxResult,
-                    MessageBoxOptions);
-            }
+            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
+
+            System.Windows.Forms.MessageBox.Show(
+                              ownerWindow,
+                              message,
+                              TitlePart() + "Error",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Error);
         }
         public bool? ShowQuestion(object owner, string message)
         {
@@ -165,31 +151,20 @@
 
         public bool ShowYesNoQuestion(object owner, string message)
         {
-            var ownerWindow = owner as Window;
-            MessageBoxResult result;
-            if (ownerWindow != null)
-            {
-                result = MessageBox.Show(
-                    ownerWindow,
-                    message,
-                    "",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.No,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                result = MessageBox.Show(
-                    message,
-                    "",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.No,
-                    MessageBoxOptions);
-            }
 
-            return result == MessageBoxResult.Yes;
+            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
+
+            DialogResult result = System.Windows.Forms.MessageBox.Show(
+                              ownerWindow,
+                              message,
+                              TitlePart() + "Error",
+                              MessageBoxButtons.YesNo,
+                              MessageBoxIcon.Question,
+                              MessageBoxDefaultButton.Button2);
+
+            return result == DialogResult.Yes;
+
+           
         }
 
         

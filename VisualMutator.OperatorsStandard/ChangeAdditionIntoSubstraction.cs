@@ -17,7 +17,7 @@ namespace VisualMutator.OperatorsStandard
     public class ChangeAdditionIntoSubstraction : IMutationOperator
     {
 
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
         {
             return from type in types
             from method in type.Methods

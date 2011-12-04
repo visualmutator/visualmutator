@@ -23,70 +23,18 @@
 
     #endregion
 
-    public class SessionCreationController : Controller
+    public class SessionCreationController : CreationController<SessionCreationViewModel, ISessionCreationView>
     {
-      
-     
-
-        private readonly IOperatorsManager _operatorsManager;
-
-        private readonly CommonServices _svc;
-
-        private readonly ITypesManager _typesManager;
-
-        private readonly SessionCreationViewModel _viewModel;
-
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-    //    private string[] paths;
-
-        public MutationSessionChoices Result { get; set; }
-
-  
         public SessionCreationController(
             SessionCreationViewModel viewModel,
-            ITypesManager typesManager,
-            IOperatorsManager operatorsManager,
+            ITypesManager typesManager, 
+            IOperatorsManager operatorsManager, 
             CommonServices svc)
+            : base(viewModel, typesManager, operatorsManager, svc)
         {
-            _viewModel = viewModel;
-
-            _typesManager = typesManager;
-            _operatorsManager = operatorsManager;
-            _svc = svc;
-
-
-            _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
-                () => _viewModel.TypesTree.Assemblies != null && _viewModel.MutationsTree.MutationPackages != null)
-                    .UpdateOnChanged(_viewModel.TypesTree, _ => _.Assemblies)
-                    .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
-
-   
         }
 
-
-
-        public SessionCreationController Run()
-        {
-            
-            _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
-                packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
-
-            _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
-                assemblies =>
-                {
-                    _viewModel.TypesTree.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
-                    if (_typesManager.IsAssemblyLoadError)
-                    {
-                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log);
-                 
-                    }
-                });
-
-            _viewModel.ShowDialog();
-            return this;
-        }
-        public void AcceptChoices()
+        protected override void AcceptChoices()
         {
             Result = new MutationSessionChoices
             {
@@ -100,14 +48,6 @@
             _viewModel.Close();
         }
 
-
-        public bool HasResults
-        {
-            get
-            {
-                return Result != null;
-            }
-        }
 
     }
 }

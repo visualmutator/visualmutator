@@ -17,7 +17,7 @@
     [Export(typeof(IMutationOperator))]
     public class ChangeRoute : IMutationOperator
     {
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
         {
             var methods = types.SelectMany(t => t.Methods).Where(m => m.HasBody); 
 

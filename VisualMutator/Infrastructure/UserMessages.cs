@@ -14,11 +14,15 @@
 public static string ErrorPretest_TestsFailed(string firstTestThatFailedFullName, string message)
 {
     return @"One or more tests failed or were inconclusive on unmodified source assemblies. 
-All tests must pass before starting mutation testing process. 
-Mutation session cannot continue.
+If you continue with session, its results will be inacurate.
 
 First test that failed: {0}
-Message: {1}"
+Message: {1}
+
+Do you want to continue mutation session?
+"
+
+
         .Formatted(firstTestThatFailedFullName, message);
 
 

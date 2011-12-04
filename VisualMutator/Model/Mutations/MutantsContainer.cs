@@ -160,14 +160,14 @@
         }
 
 
-        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IEnumerable<TypeDefinition> types)
+        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<TypeDefinition> types)
         {
             var result = new ExecutedOperator(mutOperator.Name);
 
             List<MutationTarget> targets;
             try
             {
-                targets  = mutOperator.FindTargets(types).ToList();
+                targets = types.Count != 0 ? mutOperator.FindTargets(types).ToList() : new List<MutationTarget>();
             }
             catch (Exception e)
             {

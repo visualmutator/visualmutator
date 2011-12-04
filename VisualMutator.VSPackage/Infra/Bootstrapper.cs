@@ -26,6 +26,7 @@
 
     #endregion
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Bootstrapper
     {
         private readonly Package _package;
@@ -90,6 +91,7 @@
 
             
         }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void SetupDependencyInjection()
         {
 

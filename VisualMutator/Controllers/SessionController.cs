@@ -195,7 +195,7 @@
 
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
                 // _testsContainer.VerifyMutant(_currentSession, storedMutantInfo, changelessMutant);
-                _testsContainer .RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
+                _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
 
                 return CheckForTestingErrors(changelessMutant);
             },
@@ -366,19 +366,25 @@
             {
                 var test = changelessMutant.TestSession.TestMap.Values
                     .FirstOrDefault(t => t.State == TestNodeState.Failure);
+
+                string testName = null;
+                string testMessage = null;
                 if (test != null)
                 {
-                    _svc.Logging.ShowError(UserMessages.ErrorPretest_TestsFailed(test.Name, test.Message), _log);
+                    testName = test.Name;
+                    testMessage = test.Message;
+                    
                 }
                 else
                 {
                     var testInconcl = changelessMutant.TestSession.TestMap.Values
                         .First(t =>t.State == TestNodeState.Inconclusive);
 
-                    _svc.Logging.ShowError(UserMessages
-                        .ErrorPretest_TestsFailed(testInconcl.Name, "Test was inconclusive."), _log);
+                    testName = testInconcl.Name;
+                    testMessage = "Test was inconclusive.";
                 }
-                return false;
+
+                return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_TestsFailed(testName, testMessage));
             }
             return true;
         }

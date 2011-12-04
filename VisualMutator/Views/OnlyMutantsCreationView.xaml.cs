@@ -18,7 +18,7 @@ namespace VisualMutator.Views
 
     public interface IOnlyMutantsCreationView : IDialogView
     {
-        bool? SetOwnerAndShowDialog();
+
     }
     public partial class OnlyMutantsCreationView : Window, IOnlyMutantsCreationView
     {

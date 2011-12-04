@@ -13,11 +13,11 @@
     using VisualMutator.MvcMutations;
     using VisualMutator.Tests.Util;
 
-    [TestFixture]
+ //   [TestFixture]
     public class SwapActionNamesTests
     {
 
-        [Test]
+   //     [Test]
         public void Test1()
         {
 

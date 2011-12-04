@@ -48,7 +48,6 @@
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
             _buildEvents = ((Events2)_dte.Events).BuildEvents;
 
-           
         }
 
         public SettingsManager SettingsManager

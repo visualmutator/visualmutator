@@ -7,15 +7,39 @@
 
     using CommonUtilityInfrastructure.Comparers;
 
+
     using NUnit.Framework;
 
     using VisualMutator.Model;
     using VisualMutator.Model.CodeDifference;
+    using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Mutations;
+
+    using Assert = NUnit.Framework.Assert;
 
     [TestFixture]
     public class Difference
     {
+
+        struct Ss
+        {
+            public int i;
+
+            public Ss(int v)
+            {
+                i = v;
+            }
+
+        }
+
+
+        [Test]
+        public void Test0()
+        {
+            Ss aa = new Ss();
+            System.Console.WriteLine(aa.i);
+            Assert.Fail();
+        }
 
 
 

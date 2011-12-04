@@ -48,7 +48,8 @@
 
         public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, TestSession testSession)
         {
-       
+
+            Exception exc = null;
             IEnumerable<TestNodeClass> tests = null;
             using (var job = new TestsLoadJob(this, assemblies))
             {
@@ -60,12 +61,12 @@
                     testSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
                     tests = BuildTestTree(arg, testSession);
                 },
-                    ex => _messageService.ShowFatalError(ex,_log));
+                ex => exc = ex);
             }
 
-            if (tests == null)
+            if (exc != null)
             {
-                throw new InvalidOperationException();
+                throw new Exception("Exception occurred while loading tests. ",exc);
             }
 
             return tests;
@@ -208,14 +209,14 @@
                 }
                 catch (Exception e)
                 {
-                    _service._messageService.ShowFatalError(e, _service._log);
+                    _observer.OnError(e);
                 }
             }
 
             private void TestLoadFailedHandler(TestEventArgs sArgs)
             {
-                _service._messageService.ShowFatalError(sArgs.Exception, _service._log);
-            
+                //_service._messageService.ShowFatalError(sArgs.Exception, _service._log);
+                _observer.OnError(sArgs.Exception);
             }
 
 

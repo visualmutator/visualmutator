@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeAdditionIntoSubstraction.cs" />
+    <Compile Include="SwapTrueAndFalse.cs" />
     <Compile Include="StandardOperatorsPack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

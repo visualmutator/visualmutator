@@ -19,7 +19,7 @@ namespace VisualMutator.Extensibility
         string Description { get; }
 
    
-        IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types);
+        IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types);
 
         void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate);
     }

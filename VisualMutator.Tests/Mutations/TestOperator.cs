@@ -27,7 +27,7 @@
             }
         }
 
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
         {
             yield return new MutationTarget().Add("0", types.Single(t => t.Name == "Type1").Methods.Single());
             yield return new MutationTarget().Add("0", types.Single(t => t.Name == "Type3").Methods.Single());

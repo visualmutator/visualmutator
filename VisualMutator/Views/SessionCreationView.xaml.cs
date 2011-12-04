@@ -18,7 +18,7 @@ namespace VisualMutator.Views
 
     public interface ISessionCreationView : IDialogView
     {
-        bool? SetOwnerAndShowDialog();
+ 
     }
 
 

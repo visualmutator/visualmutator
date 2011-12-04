@@ -12,6 +12,7 @@ namespace CommonUtilityInfrastructure.WpfUtils
     public interface IDialogView : IView
     {
         bool? ShowDialog();
+        bool? SetOwnerAndShowDialog();
 
         void Close();
 

@@ -21,11 +21,11 @@ namespace VisualMutator.OperatorTests
    
 
 
-    [TestFixture]
+  //  [TestFixture]
     public class RedirectToAction
     {
 
-        [Test]
+  //      [Test]
         public void Test1()
         {
             var assembly = Utils.ReadTestAssembly();

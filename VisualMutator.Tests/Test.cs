@@ -7,12 +7,11 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
     using NUnit.Framework;
 
-    [TestClass]
-    public class Testsa
-    {
+    using VisualMutator.Model.Exceptions;
 
-    }
+ 
 }
 

@@ -20,7 +20,7 @@
     {
      
 
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
         {
             var list = new List<MutationTarget>();
             var controllers = types.Where(t => t.IsOfType("System.Web.Mvc.Controller"));

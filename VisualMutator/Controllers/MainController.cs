@@ -186,8 +186,8 @@ namespace VisualMutator.Controllers
 
         public void RunMutationSession()
         {
-            var mutantsCreationController = _mutantsCreationFactory.Create().Run();
-  
+            var mutantsCreationController = _mutantsCreationFactory.Create();
+             mutantsCreationController.Run();
             if (mutantsCreationController.HasResults)
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
@@ -202,7 +202,8 @@ namespace VisualMutator.Controllers
 
         public void OnlyCreateMutants()
         {
-            var onlyMutantsController = _onlyMutantsCreationFactory.Create().Run();
+            var onlyMutantsController = _onlyMutantsCreationFactory.Create();
+            onlyMutantsController.Run();
 
             if (onlyMutantsController.HasResults)
             {

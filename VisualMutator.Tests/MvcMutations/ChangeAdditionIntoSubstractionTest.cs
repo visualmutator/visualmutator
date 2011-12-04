@@ -22,11 +22,11 @@ namespace VisualMutator.OperatorTests
    
 
 
-    [TestFixture]
+  //  [TestFixture]
     public class ChangeAdditionIntoSubstractionTest
     {
 
-        [Test]
+ //       [Test]
         public void Test1()
         {
 

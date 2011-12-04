@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\MutantsCreationOptions.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
+    <Compile Include="ViewModels\CreationViewModel.cs" />
     <Compile Include="ViewModels\OnlyMutantsCreationViewModel.cs" />
     <Compile Include="ViewModels\MutationsTreeViewModel.cs" />
     <Compile Include="ViewModels\MutantsTestingOptionsViewModel.cs" />

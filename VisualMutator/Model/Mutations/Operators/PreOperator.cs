@@ -24,7 +24,7 @@ namespace VisualMutator.Model.Mutations
             }
         }
 
-        public IEnumerable<MutationTarget> FindTargets(IEnumerable<TypeDefinition> types)
+        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
         {
             yield return new MutationTarget();
         }
