@@ -119,7 +119,7 @@ namespace VisualMutator.Controllers
                         .Case(OperationsState.None, "")
                         .Case(OperationsState.TestingPaused, "Paused")
                         .Case(OperationsState.Finished, "Finished")
-                        .Case(OperationsState.PreCheck, "Running pre-check...")
+                        .Case(OperationsState.PreCheck, "Pre-check...")
                         .Case(OperationsState.Mutating, "Creating mutants...")
                         .Case(OperationsState.Pausing, "Pausing...")
                         .Case(OperationsState.Stopping, "Stopping...")

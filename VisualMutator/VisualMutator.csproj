@@ -199,6 +199,7 @@
     <Compile Include="ViewModels\TypesTreeViewModel.cs" />
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
+    <Compile Include="Views\Controls\ImageButton.cs" />
     <Compile Include="Views\Converters\EqualsConverter.cs" />
     <Compile Include="Views\Converters\TrueToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />
@@ -222,9 +223,6 @@
     </Compile>
     <Compile Include="Views\MutationsTree.xaml.cs">
       <DependentUpon>MutationsTree.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Resources\IconButton.xaml.cs">
-      <DependentUpon>IconButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SessionCreationView.xaml.cs">
       <DependentUpon>SessionCreationView.xaml</DependentUpon>
@@ -265,10 +263,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Resources\IconButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\SessionCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -300,6 +294,14 @@
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\ImageButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Resources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TypesTree.xaml">
       <SubType>Designer</SubType>
@@ -345,7 +347,25 @@
     <Resource Include="Views\Resources\namespace.png" />
     <Resource Include="Views\Resources\type.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Views\images\button_stop_disabled.png" />
+    <Resource Include="Views\images\button_stop_unpressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Themes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\images\button_continue_disabled.png" />
+    <Resource Include="Views\images\button_continue_mouseover.png" />
+    <Resource Include="Views\images\button_continue_pressed.png" />
+    <Resource Include="Views\images\button_continue_unpressed.png" />
+    <Resource Include="Views\images\button_pause_disabled.png" />
+    <Resource Include="Views\images\button_pause_mouseover.png" />
+    <Resource Include="Views\images\button_pause_pressed.png" />
+    <Resource Include="Views\images\button_pause_unpressed.png" />
+    <Resource Include="Views\images\button_stop_mouseover.png" />
+    <Resource Include="Views\images\button_stop_pressed.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

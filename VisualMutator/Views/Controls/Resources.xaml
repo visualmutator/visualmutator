@@ -1,0 +1,16 @@
+﻿<ResourceDictionary x:Class="VisualMutator.Views.Theme.ThemeDictionary"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="WindowsBackgroundColor1">#FF000000</Color>
+    <Color x:Key="WindowsBackgroundColor2">#FF1A1A1A</Color>
+
+    <LinearGradientBrush x:Key="WindowBackground" EndPoint="0,1" StartPoint="0,0">
+      <GradientStop Color="{StaticResource WindowsBackgroundColor1}" Offset=".5"/>
+      <GradientStop Color="{StaticResource WindowsBackgroundColor2}" Offset="1"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="TextBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="#FF999999" />
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="#FF333333" />            
+</ResourceDictionary>

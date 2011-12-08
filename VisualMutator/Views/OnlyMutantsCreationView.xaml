@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:Views="clr-namespace:VisualMutator.Views" xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
         mc:Ignorable="d"  Title="VisualMutator - Create and save mutants"
-       Width="800" Height="600" 
+       Width="808" Height="600" 
              d:DesignHeight="547" d:DesignWidth="698" WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
@@ -24,7 +24,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Create mutants using selected operators and save them to disk. Tests are not executed. After creation and storage, mutants are available for preview." /> 
+        <TextBlock Grid.Row="0" Height="Auto" TextWrapping="Wrap"
+                   Text="Create mutants using selected operators and save them to disk. Tests are not executed. After creation and storage, mutants are available for preview." /> 
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

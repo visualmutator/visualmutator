@@ -7,13 +7,16 @@
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
              xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
              xmlns:Views="clr-namespace:VisualMutator.Views"
-             xmlns:Structure="clr-namespace:VisualMutator.Model.Mutations.Structure" mc:Ignorable="d" 
-             d:DesignHeight="488" d:DesignWidth="393" Visibility="Hidden">
+             xmlns:Structure="clr-namespace:VisualMutator.Model.Mutations.Structure"
+             xmlns:Controls="clr-namespace:VisualMutator.Views.Controls" mc:Ignorable="d" 
+             d:DesignHeight="488" d:DesignWidth="544" Visibility="Hidden">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Global.xaml" />
+                <ResourceDictionary Source="Controls/Resources.xaml"/>
+                <ResourceDictionary Source="Controls/ImageButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyle">
@@ -60,11 +63,30 @@
             <DockPanel Grid.Row="0">
                 <TextBlock  HorizontalAlignment="Stretch" Text="{Binding OperationsStateDescription}" />
                 <DockPanel Grid.Row="1" HorizontalAlignment="Right">
-                    <Button  HorizontalAlignment="Right" Content="Create and save mutants..." Command="{Binding CommandOnlyCreateMutants}"/>
+                    <Button  HorizontalAlignment="Right" Content="Generate to disk..." Command="{Binding CommandOnlyCreateMutants}"/>
                     <Button  HorizontalAlignment="Right" Content="New session..." Command="{Binding CommandCreateNewMutants}"/>
-                    <Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>
-                    <Button  HorizontalAlignment="Right" Content="Continue" Command="{Binding CommandContinue}"/>
-                    <Button  HorizontalAlignment="Right" Content="Pause" Command="{Binding CommandPause}"/>
+                    <!--<Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
+                    <Controls:ImageButton HorizontalAlignment="Right" 
+                                          NormalImage="/VisualMutator;component/Views/images/button_stop_unpressed.png"
+                                          DisabledImage="/VisualMutator;component/Views/images/button_stop_disabled.png"
+                                          HoverImage="/VisualMutator;component/Views/images/button_stop_mouseover.png"
+                                          PressedImage="/VisualMutator;component/Views/images/button_stop_pressed.png"
+                                          ImageSize="18" ToolTip="Stop"
+                                          Command="{Binding CommandStop}"/>
+                    <Controls:ImageButton HorizontalAlignment="Right" 
+                                          NormalImage="/VisualMutator;component/Views/images/button_continue_unpressed.png"
+                                          DisabledImage="/VisualMutator;component/Views/images/button_continue_disabled.png"
+                                          HoverImage="/VisualMutator;component/Views/images/button_continue_mouseover.png"
+                                          PressedImage="/VisualMutator;component/Views/images/button_continue_pressed.png"
+                                          ImageSize="18" ToolTip="Continue"
+                                          Command="{Binding CommandContinue}"/>
+                    <Controls:ImageButton HorizontalAlignment="Right" 
+                                          NormalImage="/VisualMutator;component/Views/images/button_pause_unpressed.png"
+                                          DisabledImage="/VisualMutator;component/Views/images/button_pause_disabled.png"
+                                          HoverImage="/VisualMutator;component/Views/images/button_pause_mouseover.png"
+                                          PressedImage="/VisualMutator;component/Views/images/button_pause_pressed.png"
+                                          ImageSize="18" ToolTip="Pause"
+                                          Command="{Binding CommandPause}"/>
                 </DockPanel>
               
             </DockPanel>
@@ -74,13 +96,7 @@
                 <TextBlock  DockPanel.Dock="Right" Text="{Binding MutationScore}" />
                 
             </DockPanel>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                
-            </Grid>
+         
 
             <ProgressBar Height="25" Grid.Row="2"  
                          IsIndeterminate="{Binding IsProgressIndeterminate}"
