@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface IOperatorsPack
+    public interface IOperatorsPackage
     {
         IEnumerable<IMutationOperator> Operators { get;  }
         string Name

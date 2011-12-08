@@ -7,19 +7,19 @@ namespace VisualMutator.Extensibility
 
     public class MutationElementField : IMutationElement<FieldDefinition>
     {
-        private TypeIdentyfier _typeIdentyfier;
+        private TypeIdentifier _typeIdentifier;
 
         private string _fieldFullName;
 
         public MutationElementField(FieldDefinition field)
         {
-            _typeIdentyfier = new TypeIdentyfier(field.DeclaringType);
+            _typeIdentifier = new TypeIdentifier(field.DeclaringType);
             _fieldFullName = field.FullName;
       
         }
         public FieldDefinition FindIn(ICollection<AssemblyDefinition> assemblies)
         {
-            return _typeIdentyfier.FindType(assemblies).Fields.Single(f => f.FullName == _fieldFullName );
+            return _typeIdentifier.FindType(assemblies).Fields.Single(f => f.FullName == _fieldFullName );
         }
     }
 }

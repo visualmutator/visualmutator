@@ -56,7 +56,7 @@
     <Compile Include="Operators\ChangeRoute.cs" />
     <Compile Include="Operators\SwapActionNames.cs" />
     <Compile Include="Operators\ReplaceViewWithRedirectToAction.cs" />
-    <Compile Include="MvcMutationOperatorPack.cs" />
+    <Compile Include="MvcMutationOperatorPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

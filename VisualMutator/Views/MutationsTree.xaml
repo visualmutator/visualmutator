@@ -17,7 +17,7 @@
                 <DockPanel>
                     <Image Source="Resources/mutation.png"/>
                     <CheckBox IsChecked="{Binding IsIncluded}"/>
-                    <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPack.Description}"/>
+                    <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPackage.Description}"/>
                 </DockPanel>
 
             </HierarchicalDataTemplate>

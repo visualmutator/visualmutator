@@ -18,22 +18,22 @@
     }
     public class PackageNode : NormalNode<FakeOperatorPackageRootNode, PackageNode, OperatorNode>
     {
-        private readonly IOperatorsPack _operatorsPack;
+        private readonly IOperatorsPackage _operatorsPackage;
 
 
-        public PackageNode(FakeOperatorPackageRootNode root, IOperatorsPack operatorsPack)
-            : base(root, operatorsPack.Name)
+        public PackageNode(FakeOperatorPackageRootNode root, IOperatorsPackage operatorsPackage)
+            : base(root, operatorsPackage.Name)
         {
-            _operatorsPack = operatorsPack;
+            _operatorsPackage = operatorsPackage;
 
 
         }
 
-        public IOperatorsPack OperatorsPack
+        public IOperatorsPackage OperatorsPackage
         {
             get
             {
-                return _operatorsPack;
+                return _operatorsPackage;
             }
         }
 

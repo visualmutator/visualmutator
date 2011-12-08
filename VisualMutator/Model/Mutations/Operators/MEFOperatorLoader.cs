@@ -19,22 +19,22 @@
 
     public interface IOperatorLoader
     {
-        IEnumerable<IOperatorsPack> ReloadOperators();
+        IEnumerable<IOperatorsPackage> ReloadOperators();
     }
 
     public class MEFOperatorLoader : IOperatorLoader
     {
         [ImportMany(AllowRecomposition = true)]
-        private IEnumerable<IOperatorsPack> OperatorPacks { get; set; }
+        private IEnumerable<IOperatorsPackage> OperatorPacks { get; set; }
 
         public IQueryable<ComposablePart> SelectParts(ComposablePartCatalog catalog)
         {
             var parts = from part in catalog.Parts
-                        where part.ExportDefinitions.Any(d => d.ContractName == typeof(IOperatorsPack).FullName)
+                        where part.ExportDefinitions.Any(d => d.ContractName == typeof(IOperatorsPackage).FullName)
                         select part.CreatePart();
             return parts;
         }
-        public IEnumerable<IOperatorsPack> ReloadOperators()
+        public IEnumerable<IOperatorsPackage> ReloadOperators()
         {
             OperatorPacks = null;
             string p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;

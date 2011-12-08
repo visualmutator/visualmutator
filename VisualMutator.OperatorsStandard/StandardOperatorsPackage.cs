@@ -8,36 +8,37 @@
     using System.Text;
 
     using VisualMutator.Extensibility;
-
+    using VisualMutator.OperatorsStandard;
 
     [PackageExport]
-    public class MvcMutationOperatorPack : IOperatorsPack
+    public class StandardOperatorsPackage : IOperatorsPackage
     {
-        public MvcMutationOperatorPack()
+        public StandardOperatorsPackage()
         {
-         //   var catalog = new AssemblyCatalog(GetType().Assembly);
-        //    var container = new CompositionContainer(catalog);
-        //    container.ComposeParts(this);
+          ////  var catalog = new AssemblyCatalog(GetType().Assembly);
+         //   var container = new CompositionContainer(catalog);
+         //   container.ComposeParts(this);
 
 
-            Operators = new IMutationOperator[]
+
+            Operators = new[]
             {
-                new ChangeRoute(), 
-                new ReplaceViewWithRedirectToAction(), 
-                new SwapActionNames(), 
+                new ChangeAdditionIntoSubstraction(), 
             };
+
         }
-      //  [ImportMany]
+     //   [ImportMany]
         public IEnumerable<IMutationOperator> Operators
         {
-            get; set;
+            get; 
+            set;
         }
 
         public string Name
         {
             get
             {
-                return "ASP.NET MVC3 Operators";
+                return "Standard";
             }
         }
 
@@ -45,7 +46,7 @@
         {
             get
             {
-                return "Operators specific to ASP.NET MVC3 web framework.";
+                return "Standard imperative operators.";
             }
         }
     }

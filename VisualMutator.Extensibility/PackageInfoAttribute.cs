@@ -19,7 +19,7 @@
     public class PackageExportAttribute : ExportAttribute
     {
         public PackageExportAttribute()
-            : base(typeof(IOperatorsPack))
+            : base(typeof(IOperatorsPackage))
         {
         }
        

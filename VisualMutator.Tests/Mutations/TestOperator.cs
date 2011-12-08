@@ -35,9 +35,9 @@
 
         }
 
-        public void Mutate(MutationTarget mutationTarget, IList<AssemblyDefinition> assembliesToMutate)
+        public void Mutate(MutationContext context)
         {
-            mutationTarget.Method("0").FindIn(assembliesToMutate).Name = "MutatedMethodName";
+            context.Method("0").Name = "MutatedMethodName";
 
 
         }

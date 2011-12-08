@@ -18,7 +18,7 @@
     {
         protected MutationTarget _mutationTarget;
 
-        protected IDictionary<string, IMutationElement> _mutationElements;
+        protected readonly IDictionary<string, IMutationElement> _mutationElements;
 
         protected internal MutationElementsContainer(MutationTarget mutationTarget)
         {
@@ -26,64 +26,40 @@
             _mutationElements = new Dictionary<string, IMutationElement>();
         }
 
-        public IMutationElement this[string key]
+   
+
+  
+        private void ThrowIfKeyExists(string key)
+        {
+            if (_mutationTarget._mutationElements.ContainsKey(key)
+                || _mutationTarget.Hidden._mutationElements.ContainsKey(key))
+            {
+                throw new ArgumentException("Entry with this key already exists: " + key);
+            }
+        }
+        public virtual IMutationElement this[string key]
         {
             get
             {
                 return _mutationElements[key];
             }
-            set
-            {
-                _mutationElements[key] = value;
-            }
-        }
-
-        public MutationElementType Type(string key)
-        {
-            return (MutationElementType)this[key];
-        }
-        public MutationElementMethod Method(string key)
-        {
-            return (MutationElementMethod)this[key];
-        }
-        public MethodAndInstructionMutationElement MethodAndInstruction(string key)
-        {
-            var methodElement = (MutationElementMethod)this[key];
-
-            return new MethodAndInstructionMutationElement(methodElement);
-        }
-        public MutationElementProperty Property(string key)
-        {
-            return (MutationElementProperty)this[key];
-        }
-        public MutationElementField Field(string key)
-        {
-            return (MutationElementField)this[key];
-        }
-        public MutationTarget AddElement(string key, IMutationElement value)
-        {
-            _mutationElements.Add(key, value);
-            return _mutationTarget;
-        }
-        public MutationTarget Add(string key, MethodDefinition method, int instructionIndex)
-        {
-            _mutationElements.Add(key, new MutationElementMethod(method, instructionIndex));
-            return _mutationTarget;
         }
         public MutationTarget Add(string key, MethodDefinition method, Instruction instruction)
         {
+            ThrowIfKeyExists(key);
             int index = method.Body.Instructions.IndexOf(instruction);
-            _mutationElements.Add(key, new MutationElementMethod(method, index));
+            _mutationElements.Add(key, new MutationElementMethodAndInstruction(method, index));
             return _mutationTarget;
         }
         public MutationTarget Add<TMemberDefinition>(string key, TMemberDefinition param) where TMemberDefinition : IMemberDefinition
         {
-
+            ThrowIfKeyExists(key);
             IMutationElement element = Switch.Into<IMutationElement>().FromTypeOf(param)
                 .Case<MethodDefinition>(method => new MutationElementMethod(method))
                 .Case<TypeDefinition>(type => new MutationElementType(type))
                 .Case<PropertyDefinition>(prop => new MutationElementProperty(prop))
                 .Case<FieldDefinition>(field => new MutationElementField(field))
+                .Case<EventDefinition>(field => new MutationElementEvent(field))
                 .GetResult();
 
             _mutationElements.Add(key, element);
@@ -104,7 +80,14 @@
             _hidden = new MutationElementsContainer(this);
      
         }
-
+        public override IMutationElement this[string key]
+        {
+            get
+            {
+                IMutationElement val;
+                return _mutationElements.TryGetValue(key, out val) ? val : _hidden[key];
+            }
+        }
         public MutationElementsContainer Hidden
         {
             get
@@ -113,7 +96,7 @@
             }
         }
 
-        public virtual IList<IMutationElement> RetrieveElements()
+        public virtual IList<IMutationElement> RetrieveNonHidden()
         {
             return _mutationElements.Values.ToList();
         }

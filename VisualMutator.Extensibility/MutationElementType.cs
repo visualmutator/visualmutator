@@ -4,7 +4,7 @@ namespace VisualMutator.Extensibility
 
     using Mono.Cecil;
 
-    public class MutationElementType : TypeIdentyfier, IMutationElement<TypeDefinition>
+    public class MutationElementType : TypeIdentifier, IMutationElement<TypeDefinition>
     {
         public MutationElementType(TypeDefinition type)
             : base(type)

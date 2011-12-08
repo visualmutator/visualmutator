@@ -29,7 +29,7 @@ namespace VisualMutator.Model.Mutations
             yield return new MutationTarget();
         }
 
-        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
+        public void Mutate(MutationContext context)
         {
             
         }

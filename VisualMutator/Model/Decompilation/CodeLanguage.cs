@@ -41,7 +41,7 @@
         public string Visualize(MutationTarget target, IList<AssemblyDefinition> assemblies)
         {
             var sb = new StringBuilder();
-            foreach (IMutationElement mutationElement in target.RetrieveElements())
+            foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
             {
 
 

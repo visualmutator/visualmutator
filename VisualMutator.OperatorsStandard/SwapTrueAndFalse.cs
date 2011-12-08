@@ -48,9 +48,9 @@ namespace VisualMutator.OperatorsStandard
                         select new MutationTarget().Add("AddInstr", method, instruction);*/
             return Enumerable.Empty<MutationTarget>();
         }
-        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
+        public void Mutate(MutationContext context)
         {
-            var methodAndInstruction = target.MethodAndInstruction("AddInstr").FindIn(assembliesToMutate);
+            var methodAndInstruction = context.MethodAndInstruction("AddInstr");
 
             var ilProcessor = methodAndInstruction.Method.Body.GetILProcessor();
             ilProcessor.Replace(methodAndInstruction.Instruction, Instruction.Create(OpCodes.Sub));

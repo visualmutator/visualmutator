@@ -11,9 +11,9 @@
     using VisualMutator.OperatorsStandard;
 
     [PackageExport]
-    public class StandardOperatorsPack : IOperatorsPack
+    public class ObjectOperatorsPackage : IOperatorsPackage
     {
-        public StandardOperatorsPack()
+        public ObjectOperatorsPackage()
         {
           ////  var catalog = new AssemblyCatalog(GetType().Assembly);
          //   var container = new CompositionContainer(catalog);
@@ -23,7 +23,7 @@
 
             Operators = new[]
             {
-                new ChangeAdditionIntoSubstraction(), 
+                new ChangeEqualsIntoComparison(), 
             };
 
         }

@@ -5,9 +5,9 @@ namespace VisualMutator.Extensibility
 
     using Mono.Cecil;
 
-    public class TypeIdentyfier
+    public class TypeIdentifier
     {
-        public TypeIdentyfier(TypeDefinition type)
+        public TypeIdentifier(TypeDefinition type)
         {
             _assemblyName = type.Module.Assembly.Name.Name;
             _typeFullName = type.FullName;

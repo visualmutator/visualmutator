@@ -185,10 +185,10 @@
         private void CreateMutantsForOperator(OperatorWithTargets oper, StoredAssemblies sourceAssemblies, 
             Func<int> generateId, ProgressCounter percentCompleted)
         {
-           
 
 
-            IList<MutationResult> results = new List<MutationResult>();
+
+            var results = new List<MutationContext>();
             try
             {
 
@@ -197,8 +197,9 @@
                 {
                     percentCompleted.Progress();
                     var assembliesToMutate = _assembliesManager.Load(sourceAssemblies);
-                    oper.Operator.Mutate(mutationTarget, assembliesToMutate);
-                    results.Add(new MutationResult(mutationTarget, assembliesToMutate));
+                    var context = new MutationContext(mutationTarget, assembliesToMutate);
+                    oper.Operator.Mutate(context);
+                    results.Add(context);
 
                 }
                 
@@ -209,9 +210,9 @@
                 throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(oper.Operator.Name), e);
             }
 
-            foreach (MutationResult mutationResult in results)
+            foreach (MutationContext mutationResult in results)
             {
-                var serializedMutant = _assembliesManager.Store(mutationResult.MutatedAssemblies.ToList());
+                var serializedMutant = _assembliesManager.Store(mutationResult.AssembliesToMutate.ToList());
                 var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationResult.MutationTarget, serializedMutant);
                 oper.ExecutedOperator.Children.Add(mutant);
             }

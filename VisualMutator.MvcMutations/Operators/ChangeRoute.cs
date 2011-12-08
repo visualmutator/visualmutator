@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Linq;
+    using System.Runtime.Remoting.Contexts;
 
     using Mono.Cecil;
     using Mono.Cecil.Cil;
@@ -22,26 +23,26 @@
             var methods = types.SelectMany(t => t.Methods).Where(m => m.HasBody); 
 
             return from method in methods
-                   from instrWithIndex in method.Body.Instructions.SelectWithIndexes()
-                   where instrWithIndex.Instruction.OpCode == OpCodes.Call
-                   let methodRef = (MethodReference)instrWithIndex.Instruction.Operand
+                   from instrWithIndex in method.Body.Instructions
+                   where instrWithIndex.OpCode == OpCodes.Call
+                   let methodRef = (MethodReference)instrWithIndex.Operand
                    where methodRef.DeclaringType.FullName == "System.Web.Mvc.RouteCollectionExtensions"
                    where methodRef.Name == "MapRoute"
                    where methodRef.ReturnType.FullName == "System.Web.Routing.Route"
                    where methodRef.FullName == "System.Web.Routing.Route System.Web.Mvc.RouteCollectionExtensions::MapRoute(System.Web.Routing.RouteCollection,System.String,System.String,System.Object)"
-                   where instrWithIndex.Instruction.Previous.OpCode == OpCodes.Newobj
-                   let constructorOperand = (MethodReference)instrWithIndex.Instruction.Previous.Operand
+                   where instrWithIndex.Previous.OpCode == OpCodes.Newobj
+                   let constructorOperand = (MethodReference)instrWithIndex.Previous.Operand
                    where constructorOperand.DeclaringType.Name.StartsWith("<>f__AnonymousType")
                          && constructorOperand.DeclaringType.IsGenericInstance
                    let generic = ((GenericInstanceType)constructorOperand.DeclaringType)
                    let ldstrRouteInstr = instrWithIndex.GoBackBy(generic.GenericArguments.Count + 2)
-                   select new MutationTarget().Add("ldstrRouteInstr", method, ldstrRouteInstr.Index);
+                   select new MutationTarget().Add("ldstrRouteInstr", method, ldstrRouteInstr);
         }
 
-        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
+        public void Mutate(MutationContext context)
         {
-            var instr = target.Method("ldstrRouteInstr").FindInstructionIn(assembliesToMutate);
-            instr.Operand = "MutatedString";
+            var instr = context.MethodAndInstruction("ldstrRouteInstr");
+            instr.Instruction.Operand = "MutatedString";
 
         }
 

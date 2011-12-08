@@ -37,8 +37,8 @@
 
             var root = new FakeOperatorPackageRootNode("Root");
 
-            IEnumerable<IOperatorsPack> packages = _loader.ReloadOperators();
-            foreach (IOperatorsPack operatorsPack in packages)
+            IEnumerable<IOperatorsPackage> packages = _loader.ReloadOperators();
+            foreach (IOperatorsPackage operatorsPack in packages)
             {
                 var package = new PackageNode(root,operatorsPack);
                 foreach (IMutationOperator mutationOperator in operatorsPack.Operators)

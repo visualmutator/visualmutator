@@ -69,17 +69,17 @@
            
      
         }
-        
-        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
+
+        public void Mutate(MutationContext context)
         {
-            MutationElementMethod methodToModifyElement = target.Method("MethodToModify");
-            MethodDefinition methodToModify = methodToModifyElement.FindIn(assembliesToMutate);
-            MethodDefinition methodToRedirectTo = target.Hidden.Method("MethodToRedirectTo").FindIn(assembliesToMutate);
+            var toModify = context.MethodAndInstruction("MethodToModify");
+            MethodDefinition methodToModify = toModify.Method;
+            MethodDefinition methodToRedirectTo = context.Method("MethodToRedirectTo");
 
             methodToModify.Body.SimplifyMacros();
 
             //  var callInstr = methodToModify.Body.GetInstructionAtOffset(target.InstructionOffset);
-            Instruction callInstr = methodToModifyElement.FindInstructionIn(methodToModify);
+            Instruction callInstr = toModify.Instruction;
          
 
             MethodDefinition redirectToActionMethod = GetRedirectToActionMethod(methodToModify.DeclaringType.Module);

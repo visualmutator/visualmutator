@@ -53,14 +53,14 @@
 
         }
 
-        public void Mutate(MutationTarget target, IList<AssemblyDefinition> assembliesToMutate)
+        public void Mutate(MutationContext context)
         {
-            var module = assembliesToMutate.First().MainModule;
+            var module = context.AssembliesToMutate.First().MainModule;
             var contructor = GetActionNameAttribute(module);
             var stringType = module.Import(typeof(string));
 
-            var method1 = target.Method("Method1").FindIn(assembliesToMutate);
-            var method2 = target.Method("Method2").FindIn(assembliesToMutate);
+            var method1 = context.Method("Method1");
+            var method2 = context.Method("Method2");
 
             
             var result = new CustomAttribute(contructor);
