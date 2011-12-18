@@ -9,7 +9,7 @@ namespace VisualMutator.Model.Tests
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.TestsTree;
 
-    public class TestSession : ModelElement
+    public class MutantTestSession : ModelElement
     {
         private IDictionary<string, TestNodeMethod> _testMap;
 
@@ -18,7 +18,7 @@ namespace VisualMutator.Model.Tests
 
         private TestsRootNode _testsRootNode;
 
-        public TestSession()
+        public MutantTestSession()
         {
             _testMap = new Dictionary<string, TestNodeMethod>();
             _testClassses = new List<TestNodeClass>();

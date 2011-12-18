@@ -53,7 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Operators\ChangeRoute.cs" />
+    <Compile Include="Operators\AspNetMvcOperator.cs" />
+    <Compile Include="Operators\ChangeMapRoutePattern.cs" />
+    <Compile Include="Operators\ChangeParameterName.cs" />
+    <Compile Include="Operators\RedirectToOtherAction.cs" />
+    <Compile Include="Operators\RemoveAuthorizeAttribute.cs" />
     <Compile Include="Operators\SwapActionNames.cs" />
     <Compile Include="Operators\ReplaceViewWithRedirectToAction.cs" />
     <Compile Include="MvcMutationOperatorPackage.cs" />

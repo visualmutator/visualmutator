@@ -32,9 +32,7 @@
                 <CheckBox Grid.Row="1" Content="Verify IL code of mutants" IsChecked="{Binding Options.IsMutantVerificationEnabled, Mode=TwoWay}"/>
                 <Separator Grid.Row="2"/>
                 <TextBlock Grid.Row="3" Text="External files:"
-                   ToolTip="Additional files that are required during 
-                           testing of mutated assemblies.
-                           They will be accessible for the executing mutant."/>
+                   ToolTip="Additional files that are required during testing of mutated assemblies. They will be copied to directory of the executing mutant."/>
                 <DockPanel Grid.Row="4">
                     <Button HorizontalAlignment="Left" Content="Browse..."
                   Command="{Binding CommandAdditionalFilesToCopy}"/>

@@ -7,6 +7,7 @@
 
     using Mono.Cecil;
     using Mono.Cecil.Cil;
+    using Mono.Collections.Generic;
 
     public static class CecilUtils
     {
@@ -47,4 +48,5 @@
             return new TypeDefinition(nameSpace, name, TypeAttributes.Public);
         }
     }
+
 }

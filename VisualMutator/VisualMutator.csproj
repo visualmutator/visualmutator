@@ -117,6 +117,7 @@
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
+    <Compile Include="Model\Exceptions\TestingCancelledException.cs" />
     <Compile Include="Model\MutantsCreationOptions.cs" />
     <Compile Include="Model\MutantsTestingOptions.cs" />
     <Compile Include="Model\MutationSessionChoices.cs" />
@@ -185,7 +186,7 @@
     <Compile Include="Model\Tests\Services\NUnitTestService.cs" />
     <Compile Include="Model\Tests\Services\NUnitWrapper.cs" />
     <Compile Include="Model\Tests\TestsContainer.cs" />
-    <Compile Include="Model\Tests\TestSession.cs" />
+    <Compile Include="Model\Tests\MutantTestSession.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeClass.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeMethod.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeNamespace.cs" />

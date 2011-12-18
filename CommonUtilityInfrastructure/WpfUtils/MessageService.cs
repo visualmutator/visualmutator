@@ -6,26 +6,28 @@
     using System.Globalization;
     using System.Windows;
     using System.Windows.Forms;
+    using System.Windows.Interop;
+    using System.Windows.Media;
 
     using log4net;
 
+    using IWin32Window = System.Windows.Forms.IWin32Window;
     using MessageBox = System.Windows.MessageBox;
     using MessageBoxOptions = System.Windows.MessageBoxOptions;
 
     #endregion
        public interface IMessageService
     {
-        void ShowMessage(object owner, string message);
+           void ShowMessage(IDialogView owner, string message);
 
-        void ShowWarning(object owner, string message);
+           void ShowWarning(IDialogView owner, string message);
 
-        void ShowFatalError(object owner, string message);
+           void ShowFatalError(IDialogView owner, string message);
 
-        bool? ShowQuestion(object owner, string message);
+ 
+           bool ShowYesNoQuestion(IDialogView owner, string message);
 
-        bool ShowYesNoQuestion(object owner, string message);
-
-           void ShowError(object owner, string message);
+           void ShowError(IDialogView owner, string message);
     }
     public class MessageService : IMessageService
     {
@@ -40,31 +42,47 @@
             _titleProvider = titleProvider;
             _provider = provider;
         }
-
-        private static MessageBoxResult MessageBoxResult
+        public static IWin32Window GetIWin32Window(Visual visual)
         {
-            get
-            {
-                return MessageBoxResult.None;
-            }
+            HwndSource source = PresentationSource.FromVisual(visual).CastTo<HwndSource>();
+           IWin32Window win = new OldWindow(source.Handle);
+            return win;
         }
 
-        private static MessageBoxOptions MessageBoxOptions
+        private class OldWindow : IWin32Window
         {
-            get
+            private readonly IntPtr _handle;
+            public OldWindow(IntPtr handle)
             {
-                return (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
-                           ? MessageBoxOptions.RtlReading
-                           : MessageBoxOptions.None;
+                _handle = handle;
             }
+
+
+            IntPtr IWin32Window.Handle
+            {
+                get
+                {
+                    return _handle;
+                }
+            }
+
         }
 
-        public void ShowMessage(object owner, string message)
+        private IWin32Window TransformWindow(IDialogView view)
         {
-            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
+            return GetIWin32Window((Window)view);
+        }
 
+        private IWin32Window GetWindow(IDialogView owner)
+        {
+            return owner == null ? _provider.GetWindow() : TransformWindow(owner);
+        }
+
+
+        public void ShowMessage(IDialogView owner, string message)
+        {
             System.Windows.Forms.MessageBox.Show(
-                   ownerWindow,
+                   GetWindow(owner),
                    message,
                    TitlePart() + "Information",
                    MessageBoxButtons.OK,
@@ -72,12 +90,12 @@
 
         }
 
-        public void ShowWarning(object owner, string message)
-        {
-            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
 
+  
+        public void ShowWarning(IDialogView owner, string message)
+        {
             System.Windows.Forms.MessageBox.Show(
-                   ownerWindow,
+                   GetWindow(owner),
                    message,
                    TitlePart() + "Warning",
                    MessageBoxButtons.OK,
@@ -88,54 +106,39 @@
         {
             return _titleProvider.GetTitle()+" - ";
         }
-        public void ShowFatalError(object owner, string message)
+        public void ShowFatalError(IDialogView owner, string message)
         {
-            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
 
             System.Windows.Forms.MessageBox.Show(
-                              ownerWindow,
+                              GetWindow(owner),
                               message,
                               TitlePart()+"Unhandled Exception",
                               MessageBoxButtons.OK,
                               MessageBoxIcon.Error);
 
         }
-        public void ShowError(object owner, string message)
+        public void ShowError(IDialogView owner, string message)
         {
-            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
 
             System.Windows.Forms.MessageBox.Show(
-                              ownerWindow,
+                              GetWindow(owner),
                               message,
                               TitlePart() + "Error",
                               MessageBoxButtons.OK,
                               MessageBoxIcon.Error);
         }
-        public bool? ShowQuestion(object owner, string message)
+        /*
+        public bool? ShowQuestion(IDialogView owner, string message)
         {
-            var ownerWindow = owner as Window;
-            MessageBoxResult result;
-            if (ownerWindow != null)
-            {
-                result = MessageBox.Show(
-                    ownerWindow,
-                    message,
-                    "",
-                    MessageBoxButton.YesNoCancel,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.Cancel,
-                    MessageBoxOptions);
-            }
-            else
-            {
-                result = MessageBox.Show(
-                    message,
-                    "",
-                    MessageBoxButton.YesNoCancel,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.Cancel,
-                    MessageBoxOptions);
-            }
+            MessageBoxResult result = MessageBox.Show( GetWindow(owner),
+                message,
+                "",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Question,
+                MessageBoxResult.Cancel,
+                MessageBoxOptions);
+           
+           
 
             if (result == MessageBoxResult.Yes)
             {
@@ -147,15 +150,12 @@
             }
 
             return null;
-        }
+        }*/
 
-        public bool ShowYesNoQuestion(object owner, string message)
+        public bool ShowYesNoQuestion(IDialogView owner, string message)
         {
-
-            var ownerWindow = owner as IWin32Window ?? _provider.GetWindow();
-
             DialogResult result = System.Windows.Forms.MessageBox.Show(
-                              ownerWindow,
+                              GetWindow(owner),
                               message,
                               TitlePart() + "Error",
                               MessageBoxButtons.YesNo,
@@ -177,100 +177,91 @@
 
     public static class MessageServiceExtensions
     {
-        public static void ShowMessage(this IMessageService service, string message)
+        public static void ShowMessage(this IMessageService service, string message, IDialogView view = null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
-            service.ShowMessage(null, message);
+            service.ShowMessage(view, message);
         }
 
-        public static void ShowWarning(this IMessageService service, string message)
+  
+        public static void ShowWarning(this IMessageService service, string message, ILog log = null, IDialogView view= null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
-            service.ShowWarning(null, message);
-        }
-        public static void ShowWarning(this IMessageService service, string message, ILog log)
-        {
-            if (service == null)
-            {
-                throw new ArgumentNullException("service");
-            }
-            log.Warn(message);
 
-            service.ShowWarning(null, message);
+            if(log!= null)  log.Warn(message);
+
+            service.ShowWarning(view, message);
         }
 
-        public static void ShowFatalError(this IMessageService service, string message, ILog log)
+        public static void ShowFatalError(this IMessageService service, string message, ILog log = null, IDialogView view = null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
-            log.Error(message);
-            service.ShowFatalError(null, message);
+            if (log != null)
+            {
+                log.Error(message);
+            }
+            service.ShowFatalError(view, message);
         }
 
-        public static bool? ShowQuestion(this IMessageService service, string message)
+
+
+        public static bool ShowYesNoQuestion(this IMessageService service, string message, IDialogView view = null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
-            return service.ShowQuestion(null, message);
+            return service.ShowYesNoQuestion(view, message);
         }
 
-        public static bool ShowYesNoQuestion(this IMessageService service, string message)
-        {
-            if (service == null)
-            {
-                throw new ArgumentNullException("service");
-            }
-            return service.ShowYesNoQuestion(null, message);
-        }
-
-        public static void ShowFatalError(this IMessageService service, Exception exception, ILog log)
+        public static void ShowFatalError(this IMessageService service, Exception exception, ILog log = null, IDialogView view = null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
 
-
-            log.Error("Fatal error occurred.", exception);
-            service.ShowFatalError(null, exception.ToString());
+            if (log != null)
+            {
+                log.Error("Fatal error occurred.", exception);
+            }
+            service.ShowFatalError(view, exception.ToString());
 
 
         }
-        public static void ShowError(this IMessageService service, string message)
+
+        public static void ShowError(this IMessageService service, Exception exception, ILog log = null, IDialogView view = null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
-            service.ShowError(null, message);
+            if (log != null)
+            {
+                log.Error("Error occurred.", exception);
+            }
+            service.ShowError(view, exception.Message);
         }
-        public static void ShowError(this IMessageService service, Exception exception, ILog log)
+        public static void ShowError(this IMessageService service, string message, ILog log = null, IDialogView view = null)
         {
             if (service == null)
             {
                 throw new ArgumentNullException("service");
             }
-            log.Error("Error occurred.", exception);
-            service.ShowError(null, exception.Message);
-        }
-        public static void ShowError(this IMessageService service, string message, ILog log)
-        {
-            if (service == null)
+            if (log != null)
             {
-                throw new ArgumentNullException("service");
+                log.Error(message);
             }
-            log.Error(message);
-            service.ShowError(null, message);
+            service.ShowError(view, message);
         }
     }
 }

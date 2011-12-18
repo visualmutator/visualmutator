@@ -38,7 +38,7 @@
         {
             List<Mutant> mutants = session.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
-            List<Mutant> testedMutants = mutants.Where(m => m.TestSession.IsComplete).ToList();
+            List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
 
             var mutantsNode = new XElement("Mutants",
@@ -70,8 +70,8 @@
                         .GetResult()
                         ),
                         new XElement("ErrorInfo",
-                             new XElement("Description", mutant.TestSession.ErrorDescription),
-                             new XElement("ExceptionMessage", mutant.TestSession.ErrorMessage)
+                             new XElement("Description", mutant.MutantTestSession.ErrorDescription),
+                             new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
                              ).InArrayIf(mutant.State == MutantResultState.Error)
                           
 
@@ -96,7 +96,7 @@
             }
 
             long totalTimeMs = session.MutantsGroupedByOperators.Sum(oper => oper.MutationTimeMiliseconds)
-                            + mutants.Sum(m => m.TestSession.TestingTimeMiliseconds);
+                            + mutants.Sum(m => m.MutantTestSession.TestingTimeMiliseconds);
             return
                 new XDocument(
                     new XElement("MutationTestingSession",
@@ -125,18 +125,18 @@
         {
             return new XElement("DetailedTestingResults",   
                 from mutant in mutants
-                where mutant.TestSession.IsComplete
-                let groupedTests = mutant.TestSession.TestMap.Values.GroupBy(m => m.State).ToList()
+                where mutant.MutantTestSession.IsComplete
+                let groupedTests = mutant.MutantTestSession.TestMap.Values.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("MutantId", mutant.Id),
-                    new XAttribute("TestingTimeMiliseconds", mutant.TestSession.TestingTimeMiliseconds),
-                    new XAttribute("LoadTestsTimeRawMiliseconds", mutant.TestSession.LoadTestsTimeRawMiliseconds),
-                    new XAttribute("RunTestsTimeRawMiliseconds", mutant.TestSession.RunTestsTimeRawMiliseconds),
+                    new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
+                    new XAttribute("LoadTestsTimeRawMiliseconds", mutant.MutantTestSession.LoadTestsTimeRawMiliseconds),
+                    new XAttribute("RunTestsTimeRawMiliseconds", mutant.MutantTestSession.RunTestsTimeRawMiliseconds),
                     new XElement("Tests",
                     new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
-                    from testClass in mutant.TestSession.TestClassses
+                    from testClass in mutant.MutantTestSession.TestClassses
                     select new XElement("TestClass",
                         new XAttribute("Name", testClass.Name),
                         new XAttribute("FullName", testClass.FullName),

@@ -64,7 +64,7 @@
             mutant.AssembliesPaths.Add( "a");
        
             //Act:
-            TestSession session = new TestSession();
+            MutantTestSession session = new MutantTestSession();
 
             container.LoadTests(mutant, session);
 

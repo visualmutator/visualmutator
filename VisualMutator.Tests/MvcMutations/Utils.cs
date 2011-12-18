@@ -6,6 +6,8 @@
     using System.Linq;
     using System.Text;
 
+    using CommonUtilityInfrastructure;
+
     using Mono.Cecil;
 
     using VisualMutator.Controllers;
@@ -63,7 +65,9 @@
             {
                 SelectedOperators = new[] { mutator },
                 Assemblies = new[] { assembly },
-                SelectedTypes = assembly.MainModule.Types
+                SelectedTypes = assembly.MainModule.Types,
+                MutantsCreationOptions = new MutantsCreationOptions(),
+
             };
 
             var assembliesManager = new AssembliesManager();
@@ -71,8 +75,8 @@
             MutantsContainer mutantsContainer = new MutantsContainer(assembliesManager);
 
             var mutationTestingSession = mutantsContainer.PrepareSession(mutationSessionChoices);
-         //TODO:   mutantsContainer.GenerateMutantsForOperators(mutationTestingSession);
-               var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
+            mutantsContainer.GenerateMutantsForOperators(mutationTestingSession, ProgressCounter.Inactive());
+            var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
 
             return executedOperator;
         }

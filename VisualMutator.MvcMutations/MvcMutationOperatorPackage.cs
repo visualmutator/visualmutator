@@ -22,9 +22,12 @@
 
             Operators = new IMutationOperator[]
             {
-                new ChangeRoute(), 
+                new ChangeMapRoutePattern(), 
                 new ReplaceViewWithRedirectToAction(), 
                 new SwapActionNames(), 
+                new RemoveAuthorizeAttribute(), 
+                new RedirectToOtherAction(), 
+                new ChangeParameterName(), 
             };
         }
       //  [ImportMany]
@@ -37,7 +40,7 @@
         {
             get
             {
-                return "ASP.NET MVC3 Operators";
+                return "ASP.NET MVC3";
             }
         }
 

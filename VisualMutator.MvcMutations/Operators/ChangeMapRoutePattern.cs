@@ -16,7 +16,7 @@
     #endregion
 
     [Export(typeof(IMutationOperator))]
-    public class ChangeRoute : IMutationOperator
+    public class ChangeMapRoutePattern : IMutationOperator
     {
         public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
         {
@@ -50,7 +50,7 @@
         {
             get
             {
-                return "Change MapRoute Patter String";
+                return "CMRA - Change MapRoute Address Pattern";
             }
         }
 

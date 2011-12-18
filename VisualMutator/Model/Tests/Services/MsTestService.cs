@@ -33,17 +33,17 @@
             _msTestLoader = msTestLoader;
         }
 
-        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, TestSession testSession)
+        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, MutantTestSession mutantTestSession)
         {
           
          
             var result = _msTestLoader.ScanAssemblies(assemblies);
           
-            testSession.AssembliesWithTests = result.AssembliesWithTests.ToList();
-            return CreateTree(result.TestMethods, testSession);
+            mutantTestSession.AssembliesWithTests = result.AssembliesWithTests.ToList();
+            return CreateTree(result.TestMethods, mutantTestSession);
         }
     
-        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods, TestSession testSession)
+        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods, MutantTestSession mutantTestSession)
         {
             var groupsByClass = methods.GroupBy(m => m.DeclaringType);
           
@@ -66,7 +66,7 @@
                     c.Children.Add(m);
 
                     string id = type.FullName + "," + method.Name;
-                    testSession.TestMap.Add(id, m);
+                    mutantTestSession.TestMap.Add(id, m);
                 }
 
           
@@ -76,12 +76,12 @@
             return list;
         }
 
-        public List<TestNodeMethod> RunTests(TestSession testSession)
+        public List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession)
         {
-            if (testSession.AssembliesWithTests.Any())//TODO: needed?
+            if (mutantTestSession.AssembliesWithTests.Any())//TODO: needed?
             {
-                XDocument results = _msTestWrapper.RunMsTest(testSession.AssembliesWithTests);
-                return ReadTestResults(results, testSession).ToList();
+                XDocument results = _msTestWrapper.RunMsTest(mutantTestSession.AssembliesWithTests);
+                return ReadTestResults(results, mutantTestSession).ToList();
             }
             else
             {
@@ -100,7 +100,7 @@
             //TODO: throw new NotImplementedException();
         }
 
-        public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc, TestSession testSession)
+        public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc, MutantTestSession mutantTestSession)
         {
        
             foreach (XElement testResult in doc.Root.DescendantsAnyNs("UnitTestResult"))
@@ -115,7 +115,7 @@
 
                 string fullClassName = longClassName.Substring(0, longClassName.IndexOf(","));
 
-                TestNodeMethod node = testSession.TestMap[fullClassName + "," + methodName];
+                TestNodeMethod node = mutantTestSession.TestMap[fullClassName + "," + methodName];
 
                 node.State = TranslateTestResultStatus(testResult.Attribute("outcome").Value);
 

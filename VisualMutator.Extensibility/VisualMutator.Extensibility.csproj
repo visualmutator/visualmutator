@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
+    <Compile Include="ILCrawler.cs" />
     <Compile Include="MutationElementMethodAndInstruction.cs" />
     <Compile Include="MutationContext.cs" />
     <Compile Include="MutationElementEvent.cs" />

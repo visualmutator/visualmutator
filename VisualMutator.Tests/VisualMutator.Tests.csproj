@@ -67,6 +67,7 @@
     <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="MvcMutations\ChangeRouteTest.cs" />
     <Compile Include="MvcMutations\ChangeAdditionIntoSubstractionTest.cs" />
+    <Compile Include="MvcMutations\RemoveAuthorizeAttributeTest.cs" />
     <Compile Include="MvcMutations\RedirectToAction.cs" />
     <Compile Include="MvcMutations\SwapActionNamesTests.cs" />
     <Compile Include="MvcMutations\Utils.cs" />

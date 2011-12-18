@@ -31,8 +31,8 @@
 
                 var validGroups = controllerType.Methods
                     .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList()
-                    .GroupBy(m => m.Parameters, new ParametersComparer()).ToList()
-                  .Where(g => g.Count() >= 2).ToList();
+                    .GroupBy(m => m.Parameters, new ParametersCollectionComparer()).ToList()
+                    .Where(g => g.Count() >= 2).ToList();
 
 
                 foreach (var group in validGroups)
@@ -45,8 +45,8 @@
                 }
             }
 
-            
-            var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) }).ToList();
+
+            var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) });
 
             return duplicatedSwapped.Select(pair => new MutationTarget()
                 .Add("Method1", pair.Item1).Add("Method2", pair.Item2));
@@ -91,7 +91,7 @@
         {
             get
             {
-                return "Swap Action Names";
+                return "SWAN - Swap Action Names";
             }
         }
 
@@ -108,26 +108,6 @@
 
 
   
-        public class ParametersComparer : IEqualityComparer<Collection<ParameterDefinition>>
-    
-        {
-
-
-            public bool Equals(Collection<ParameterDefinition> first, Collection<ParameterDefinition> second)
-            {
-                if(first.Count != second.Count)
-                {
-                    return false;
-                }
-                return !first.Where((t, i) => t.ParameterType.FullName != second[i].ParameterType.FullName).Any();
-            }
-
-            public int GetHashCode(Collection<ParameterDefinition> enumerable)
-            {
-                return enumerable.Aggregate(17, (sum, one) => 7 * sum + one.ParameterType.FullName.GetHashCode());
-            }
-
-        }
 
     }
 

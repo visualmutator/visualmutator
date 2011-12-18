@@ -23,7 +23,7 @@
 
             var assembly = Utils.ReadTestAssembly();
 
-            var executedOperator = Utils.ExecuteMutation(new ChangeRoute(), Utils.ReadTestAssembly());
+            var executedOperator = Utils.ExecuteMutation(new ChangeMapRoutePattern(), Utils.ReadTestAssembly());
 
                 
         }

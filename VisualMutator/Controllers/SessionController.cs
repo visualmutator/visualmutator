@@ -134,7 +134,7 @@
                    && !_testsContainer.VerifyMutant(storedMutantInfo, changelessMutant))
             {
                 _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
-                    changelessMutant.TestSession.Exception.Message), _log);
+                    changelessMutant.MutantTestSession.Exception.Message), _log);
 
                 _currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
             }
@@ -340,7 +340,7 @@
             else
             {
                 _requestedHaltState = RequestedHaltState.Stop;
-                _testsContainer.CancelTestRun();
+                _testsContainer.CancelAllTesting();
                 RaiseMinorStatusUpdate(OperationsState.Stopping, ProgressUpdateMode.PreserveValue);
 
             }
@@ -353,18 +353,18 @@
         private bool CheckForTestingErrors(Mutant changelessMutant)
         {
             if (changelessMutant.State == MutantResultState.Error && 
-                !(changelessMutant.TestSession.Exception is AssemblyVerificationException))
+                !(changelessMutant.MutantTestSession.Exception is AssemblyVerificationException))
             {
                 
                 _svc.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
-                        changelessMutant.TestSession.Exception.ToString()), _log);
+                        changelessMutant.MutantTestSession.Exception.ToString()), _log);
 
                 return false;
                 
             }
             else if (changelessMutant.State == MutantResultState.Killed)
             {
-                var test = changelessMutant.TestSession.TestMap.Values
+                var test = changelessMutant.MutantTestSession.TestMap.Values
                     .FirstOrDefault(t => t.State == TestNodeState.Failure);
 
                 string testName = null;
@@ -377,7 +377,7 @@
                 }
                 else
                 {
-                    var testInconcl = changelessMutant.TestSession.TestMap.Values
+                    var testInconcl = changelessMutant.MutantTestSession.TestMap.Values
                         .First(t =>t.State == TestNodeState.Inconclusive);
 
                     testName = testInconcl.Name;

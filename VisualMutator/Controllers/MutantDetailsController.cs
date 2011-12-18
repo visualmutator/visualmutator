@@ -80,14 +80,22 @@
             _commonServices.Threading.ScheduleAsync(
                 () =>
                 {
+                    if (mutant == null)
+                    {
+                        return null;
+                    }
                     return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
                         mutant, assemblies);
                    
                 },
                 code =>
                 {
-                    _viewModel.PresentCode(code);
-                    _viewModel.IsCodeLoading = false;
+                    if(code != null)
+                    {
+                        _viewModel.PresentCode(code);
+                        _viewModel.IsCodeLoading = false;
+                    }
+                   
                 });
            
         }
@@ -102,9 +110,9 @@
                 _listenerForCurrentMutant = null;
             }
 
-            if (mutant.TestSession.IsComplete)
+            if (mutant.MutantTestSession.IsComplete)
             {
-                _viewModel.TestNamespaces.AddRange(mutant.TestSession.TestNamespaces);
+                _viewModel.TestNamespaces.AddRange(mutant.MutantTestSession.TestNamespaces);
             }
             else
             {

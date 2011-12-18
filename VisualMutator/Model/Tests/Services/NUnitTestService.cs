@@ -15,6 +15,7 @@
     using NUnit.Core;
     using NUnit.Util;
 
+    using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Tests.TestsTree;
 
     using log4net;
@@ -27,6 +28,7 @@
 
         private readonly IMessageService _messageService;
 
+        private bool _currentRunCancelled;
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -46,9 +48,9 @@
         }
 
 
-        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, TestSession testSession)
+        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, MutantTestSession mutantTestSession)
         {
-
+            _currentRunCancelled = false;
             Exception exc = null;
             IEnumerable<TestNodeClass> tests = null;
             using (var job = new TestsLoadJob(this, assemblies))
@@ -58,8 +60,8 @@
                 job.Subscribe(arg =>
                 {
                     sw.Stop();
-                    testSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
-                    tests = BuildTestTree(arg, testSession);
+                    mutantTestSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                    tests = BuildTestTree(arg, mutantTestSession);
                 },
                 ex => exc = ex);
             }
@@ -72,15 +74,17 @@
             return tests;
         }
 
-        public List<TestNodeMethod> RunTests(TestSession testSession)
+        public List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession)
         {
+
             var list = new List<TestNodeMethod>();
             using (var eventObj = new ManualResetEventSlim())
             using (var job = new TestsRunJob(this))
             {
                 job.Subscribe(result =>
                 {
-                    TestNodeMethod node = testSession.TestMap[result.Test.TestName.UniqueName];
+
+                    TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.UniqueName];
                     node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
                     node.Message = result.Message;
                     list.Add(node);
@@ -93,8 +97,12 @@
                 eventObj.Wait();
                 sw.Stop();
 
-                testSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
 
+                if (_currentRunCancelled)
+                {
+                    throw new TestingCancelledException();
+                }
 
             }
             return list;
@@ -106,7 +114,7 @@
             _nUnitWrapper.UnloadProject();
         }
 
-        private IEnumerable<TestNodeClass> BuildTestTree(ITest test, TestSession testSession)
+        private IEnumerable<TestNodeClass> BuildTestTree(ITest test, MutantTestSession mutantTestSession)
         {
             var list = new List<TestNodeClass>();
             IEnumerable<ITest> classes = GetTestClasses(test).ToList();
@@ -124,10 +132,8 @@
                 {
                     var m = new TestNodeMethod(c, testMethod.TestName.Name);
                     c.Children.Add(m);
-                    testSession.TestMap.Add(testMethod.TestName.UniqueName, m);
+                    mutantTestSession.TestMap.Add(testMethod.TestName.UniqueName, m);
                 }
-
-                //TestMap.Add(testClass.TestName.UniqueName, c);
                 list.Add(c);
             }
             return list;
@@ -161,6 +167,7 @@
 
         public void Cancel()
         {
+            _currentRunCancelled = true;
             _nUnitWrapper.Cancel();
         }
 
@@ -182,8 +189,6 @@
             {
                 _service = service;
                 _assemblies = assemblies;
-
-                
             }
 
             public void Dispose()
@@ -215,7 +220,6 @@
 
             private void TestLoadFailedHandler(TestEventArgs sArgs)
             {
-                //_service._messageService.ShowFatalError(sArgs.Exception, _service._log);
                 _observer.OnError(sArgs.Exception);
             }
 
@@ -235,8 +239,6 @@
             private IDisposable _testFinished;
 
             private IObserver<TestResult> _observer;
- //  private IDisposable _suiteFinished;
-         
 
             public TestsRunJob(NUnitTestService service)
             {
@@ -248,7 +250,7 @@
             {
                 _testFinished.Dispose();
                 _runFinished.Dispose();
-                //  _suiteFinished.Dispose();
+               
             }
 
             public IDisposable Subscribe(IObserver<TestResult> observer)

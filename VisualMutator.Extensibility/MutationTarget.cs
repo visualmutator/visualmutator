@@ -44,12 +44,20 @@
                 return _mutationElements[key];
             }
         }
+        public virtual bool ContainsKey(string key)
+        {
+            return _mutationElements.ContainsKey(key);
+        }
         public MutationTarget Add(string key, MethodDefinition method, Instruction instruction)
         {
             ThrowIfKeyExists(key);
             int index = method.Body.Instructions.IndexOf(instruction);
             _mutationElements.Add(key, new MutationElementMethodAndInstruction(method, index));
             return _mutationTarget;
+        }
+        public MutationTarget Add(string key, MethodAndInstruction methodAndInstruction)
+        {
+            return Add(key,methodAndInstruction.Method, methodAndInstruction.Instruction);
         }
         public MutationTarget Add<TMemberDefinition>(string key, TMemberDefinition param) where TMemberDefinition : IMemberDefinition
         {
@@ -95,12 +103,15 @@
                 return _hidden;
             }
         }
-
+        public override bool ContainsKey(string key)
+        {
+            return _mutationElements.ContainsKey(key)|| _hidden.ContainsKey(key);
+        }
         public virtual IList<IMutationElement> RetrieveNonHidden()
         {
             return _mutationElements.Values.ToList();
         }
 
-
+        
     }
 }

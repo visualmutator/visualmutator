@@ -42,7 +42,7 @@ namespace VisualMutator.Views
         private void MenuItemMessage_Click(object sender, RoutedEventArgs e)
         {
 
-            string message = ((Mutant)Tree.SelectedItem).TestSession.ErrorMessage;
+            string message = ((Mutant)Tree.SelectedItem).MutantTestSession.ErrorMessage;
             MessageBox.Show(message);
         }
 

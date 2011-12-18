@@ -29,7 +29,7 @@
     public abstract class CreationController<TViewModel, TView> : Controller
         where TViewModel : CreationViewModel<TView> where TView : class, IDialogView
     {
-        protected ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        protected readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
 
@@ -42,10 +42,9 @@
         protected readonly TViewModel _viewModel;
 
 
-        public MutationSessionChoices Result { get; set; }
+        public MutationSessionChoices Result { get; protected set; }
 
-
-        public CreationController(
+        protected CreationController(
             TViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
@@ -84,7 +83,7 @@
                     if (_typesManager.IsAssemblyLoadError)
                     {
                         
-                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log);
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
                     }
                 });
 

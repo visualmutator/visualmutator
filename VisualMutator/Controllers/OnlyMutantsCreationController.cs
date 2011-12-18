@@ -67,7 +67,7 @@
                     }
                     catch (Exception)
                     {
-                        _svc.Logging.ShowError("Could not create directory.");
+                        _svc.Logging.ShowError("Could not create directory.", view:_viewModel.View);
                         return;
                     }
                     
@@ -90,12 +90,12 @@
                 }
                 else
                 {
-                    _svc.Logging.ShowError("Selected directory is not empty. Select empty directory.");
+                    _svc.Logging.ShowError("Selected directory is not empty. Select empty directory.", view: _viewModel.View);
                 }
             }
             else
             {
-                _svc.Logging.ShowError("Selected path is invalid");
+                _svc.Logging.ShowError("Selected path is invalid", view: _viewModel.View);
             }
         }
 

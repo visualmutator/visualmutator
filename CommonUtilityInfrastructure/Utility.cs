@@ -8,6 +8,8 @@
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Windows;
+    using System.Windows.Interop;
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure.WpfUtils;
@@ -17,36 +19,22 @@
     public static class Utility
     {
 
-        public static System.Windows.Forms.IWin32Window GetIWin32Window(this System.Windows.Media.Visual visual)
-        {
-            var source = System.Windows.PresentationSource.FromVisual(visual) as System.Windows.Interop.HwndSource;
-            System.Windows.Forms.IWin32Window win = new OldWindow(source.Handle);
-            return win;
-        }
-
-        private class OldWindow : System.Windows.Forms.IWin32Window
-        {
-            private readonly System.IntPtr _handle;
-            public OldWindow(System.IntPtr handle)
-            {
-                _handle = handle;
-            }
-
-            #region IWin32Window Members
-            System.IntPtr System.Windows.Forms.IWin32Window.Handle
-            {
-                get
-                {
-                    return _handle;
-                }
-            }
-            #endregion
-        }
 
         public static string RemoveInvalidPathCharacters(this string str)
         {
             return Path.GetInvalidPathChars().Aggregate(str, (current, ch) => current.Replace(ch, '_'));
         }
+        public static bool NullOrEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str);
+        }
+
+        public static T CastTo<T>( this object obj)
+        {
+            return (T)obj;
+        }
+
+
         public static T[] InArrayIf<T>(this T obj, bool condition)
         {
             if(condition)

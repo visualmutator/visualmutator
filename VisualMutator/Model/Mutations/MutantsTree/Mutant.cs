@@ -37,7 +37,7 @@ namespace VisualMutator.Model.Mutations.Structure
             _id = id;
             _mutationTarget = mutationTarget;
             _storedAssemblies = storedAssemblies;
-            _testSession  = new TestSession();
+            _mutantTestSession  = new MutantTestSession();
 
             Parent = parent;
         }
@@ -53,19 +53,18 @@ namespace VisualMutator.Model.Mutations.Structure
         {
             string stateText =
                 Switch.Into<string>().From(value)
-                //Functional.ValuedSwitch<MutantResultState, string>(value)
                 .Case(MutantResultState.Untested, "Untested")
                 .Case(MutantResultState.Tested, "Executing tests...")
                 .Case(MutantResultState.Killed, () =>
                 {
                     return Switch.Into<string>().From(KilledSubstate)
-                        .Case(MutantKilledSubstate.Normal, "Killed by {0} tests".Formatted(NumberOfFailedTests))
-                        .Case(MutantKilledSubstate.Inconclusive, "Killed by {0} tests".Formatted(NumberOfFailedTests))
-                        .Case(MutantKilledSubstate.TimedOut, "Killed by {0} tests".Formatted(NumberOfFailedTests))
+                        .Case(MutantKilledSubstate.Normal, ()=>"Killed by {0} tests".Formatted(NumberOfFailedTests))
+                        .Case(MutantKilledSubstate.Inconclusive, ()=>"Killed by {0} tests".Formatted(NumberOfFailedTests))
+                        .Case(MutantKilledSubstate.Cancelled, ()=>"Cancelled")
                         .GetResult();
                 })
                 .Case(MutantResultState.Live, "Live")
-                .Case(MutantResultState.Error, () => TestSession.ErrorDescription)
+                .Case(MutantResultState.Error, () => MutantTestSession.ErrorDescription)
                 .GetResult();
 
             DisplayedText = "#{0} {1}".Formatted(Id, stateText);
@@ -100,13 +99,13 @@ namespace VisualMutator.Model.Mutations.Structure
             }
         }
 
-        private TestSession _testSession;
+        private MutantTestSession _mutantTestSession;
 
-        public TestSession TestSession
+        public MutantTestSession MutantTestSession
         {
             get
             {
-                return _testSession;
+                return _mutantTestSession;
             }
 
         }
@@ -119,6 +118,6 @@ namespace VisualMutator.Model.Mutations.Structure
     {
         Normal,
         Inconclusive,
-        TimedOut,
+        Cancelled,
     }
 }

@@ -12,6 +12,7 @@
     using Mono.Cecil;
 
     using VisualMutator.Controllers;
+    using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.Services;
@@ -23,7 +24,7 @@
     {
        // TestSession LoadTests(StoredMutantInfo mutant);
 
-        void RunTests(TestSession testSession);
+        void RunTests(MutantTestSession mutantTestSession);
 
  
         void UnloadTests();
@@ -36,7 +37,7 @@
 
         void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo);
 
-        void CancelTestRun();
+        void CancelAllTesting();
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
@@ -57,7 +58,7 @@
 
         private StoredMutantInfo _currentMutant;
 
-     
+        private bool _allTestingCancelled;
 
         public TestsContainer(
             NUnitTestService nunit, 
@@ -109,9 +110,9 @@
             catch (AssemblyVerificationException e)
             {
 
-                mutant.TestSession.ErrorDescription = "Mutant assembly failed verification";
-                mutant.TestSession.ErrorMessage = e.Message;
-                mutant.TestSession.Exception = e;
+                mutant.MutantTestSession.ErrorDescription = "Mutant assembly failed verification";
+                mutant.MutantTestSession.ErrorMessage = e.Message;
+                mutant.MutantTestSession.Exception = e;
                 mutant.State = MutantResultState.Error;
                 return false;
             }
@@ -122,84 +123,96 @@
 
         public void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
+            if (_allTestingCancelled)
+            {
+                return;
+            }
+            bool testsLoaded = false;
             var sw = new Stopwatch();
             sw.Start();
 
             mutant.State = MutantResultState.Tested;
 
-       //     StoredMutantInfo storedMutantInfo= _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
-
             IDisposable timoutDisposable = null;
             try
             {
-                LoadTests(storedMutantInfo, mutant.TestSession);
+               
+                LoadTests(storedMutantInfo, mutant.MutantTestSession);
+
+                testsLoaded = true;
 
                 timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.Choices
-                    .MutantsTestingOptions.TestingTimeoutSeconds)).Subscribe(e => CancelTestRun());
-      
+                    .MutantsTestingOptions.TestingTimeoutSeconds)).Subscribe(e => CancelCurrentTestRun());
 
-                RunTests(mutant.TestSession);
-                
+
+                RunTests(mutant.MutantTestSession);
+
                 timoutDisposable.Dispose();
 
-                UnloadTests();
+                
 
 
                 ResolveMutantState(mutant);
 
-                mutant.TestSession.IsComplete = true;
+                mutant.MutantTestSession.IsComplete = true;
             }
-            
+            catch (TestingCancelledException)
+            {
+                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
+                mutant.State = MutantResultState.Killed;
+                
+            }
             catch (Exception e)
             {
 
-                mutant.TestSession.ErrorDescription = "Error ocurred";
-                mutant.TestSession.ErrorMessage = e.Message;
-                mutant.TestSession.Exception = e;
-                mutant.State = MutantResultState.Error;
+                SetError(mutant, e);
             }
             finally
             {
+                if (testsLoaded)
+                {
+                    UnloadTests();
+                }
+                
                 if (timoutDisposable != null)
                 {
                     timoutDisposable.Dispose();
                 }
                 sw.Stop();
-                mutant.TestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
-                
-                
+                mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds; 
             }
             
             
         }
 
+        private void SetError(Mutant mutant, Exception e)
+        {
+            mutant.MutantTestSession.ErrorDescription = "Error ocurred";
+            mutant.MutantTestSession.ErrorMessage = e.Message;
+            mutant.MutantTestSession.Exception = e;
+            mutant.State = MutantResultState.Error;
+        }
         private void ResolveMutantState(Mutant mutant)
         {
-            mutant.NumberOfFailedTests = mutant.TestSession.TestMap.Values
+            mutant.NumberOfFailedTests = mutant.MutantTestSession.TestMap.Values
                           .Count(t => t.State.IsIn(TestNodeState.Failure, TestNodeState.Inconclusive));
 
 
 
-            if (mutant.TestSession.TestMap.Values.Any(t => t.State == TestNodeState.Inconclusive))
+            if (mutant.MutantTestSession.TestMap.Values.Any(t => t.State == TestNodeState.Inconclusive))
             {
                 
                 mutant.KilledSubstate = MutantKilledSubstate.Inconclusive;
                 mutant.State = MutantResultState.Killed;
             }
-            else if (mutant.TestSession.TestMap.Values.Any(t => t.State == TestNodeState.Running))
-            {
-                
-                //TODO: not accurate and can be wrong
-                mutant.KilledSubstate = MutantKilledSubstate.TimedOut;
-                mutant.State = MutantResultState.Killed;
-            }
-            else if (mutant.TestSession.TestMap.Values.Any(t => t.State == TestNodeState.Failure))
+
+            else if (mutant.MutantTestSession.TestMap.Values.Any(t => t.State == TestNodeState.Failure))
             {
               
                 mutant.KilledSubstate = MutantKilledSubstate.Normal;
                 mutant.State = MutantResultState.Killed;
             }
-            else if (mutant.TestSession.TestMap.Values.All(t => t.State == TestNodeState.Success))
+            else if (mutant.MutantTestSession.TestMap.Values.All(t => t.State == TestNodeState.Success))
             {
                 mutant.State = MutantResultState.Live;
             }
@@ -210,7 +223,13 @@
 
         }
 
-        public void CancelTestRun()
+        public void CancelAllTesting()
+        {
+            _allTestingCancelled = true;
+            CancelCurrentTestRun();
+        }
+
+        private void CancelCurrentTestRun()
         {
             foreach (var service in _testServices)
             {
@@ -218,25 +237,23 @@
             }
         }
 
-        public void LoadTests(StoredMutantInfo mutant, TestSession testSession)
+        public void LoadTests(StoredMutantInfo mutant, MutantTestSession mutantTestSession)
         {
-            if (mutant == null)
-            {
-                throw new ArgumentNullException("mutant");
-            }
+            Throw.IfArgumentNull(mutant, "mutant");
+           
             _currentMutant = mutant;
       
 
             IEnumerable<TestNodeClass> testClassses = _testServices
-                .SelectMany(s => s.LoadTests(mutant.AssembliesPaths, testSession));
+                .SelectMany(s => s.LoadTests(mutant.AssembliesPaths, mutantTestSession));
 
-            testSession.TestClassses.AddRange(testClassses);
+            mutantTestSession.TestClassses.AddRange(testClassses);
 
-            List<TestNodeNamespace> testNamespaces = testSession.TestClassses
+            List<TestNodeNamespace> testNamespaces = mutantTestSession.TestClassses
                 .GroupBy(classNode => classNode.Namespace)
                 .Select(group =>
                 {
-                    var ns = new TestNodeNamespace(testSession.TestsRootNode, group.Key);
+                    var ns = new TestNodeNamespace(mutantTestSession.TestsRootNode, group.Key);
                     foreach (var nodeClass in group)
                     {
                         nodeClass.Parent = ns;
@@ -248,21 +265,21 @@
                 }).ToList();
 
 
-            testSession.TestsRootNode.Children.AddRange(testNamespaces);
-            testSession.TestsRootNode.State = TestNodeState.Inactive;
+            mutantTestSession.TestsRootNode.Children.AddRange(testNamespaces);
+            mutantTestSession.TestsRootNode.State = TestNodeState.Inactive;
 
           
         }
 
 
 
-        public void RunTests(TestSession testSession)
+        public void RunTests(MutantTestSession mutantTestSession)
         {
-            testSession.TestsRootNode.State = TestNodeState.Running;
+            mutantTestSession.TestsRootNode.State = TestNodeState.Running;
 
             foreach (var service in _testServices)
             {
-                service.RunTests(testSession);
+                service.RunTests(mutantTestSession);
             }
         }
 

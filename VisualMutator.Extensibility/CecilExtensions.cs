@@ -90,4 +90,25 @@
 
         }
     }
+
+
+    public class ParametersCollectionComparer : IEqualityComparer<Collection<ParameterDefinition>>
+    {
+
+
+        public bool Equals(Collection<ParameterDefinition> first, Collection<ParameterDefinition> second)
+        {
+            if (first.Count != second.Count)
+            {
+                return false;
+            }
+            return !first.Where((t, i) => t.ParameterType.FullName != second[i].ParameterType.FullName).Any();
+        }
+
+        public int GetHashCode(Collection<ParameterDefinition> enumerable)
+        {
+            return enumerable.Aggregate(17, (sum, one) => 7 * sum + one.ParameterType.FullName.GetHashCode());
+        }
+
+    }
 }

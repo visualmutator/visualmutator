@@ -9,6 +9,6 @@ namespace CommonUtilityInfrastructure.WpfUtils
 
         void SetOwner(Window window);
 
-        void SetOwnerAndCenter(Window window);
+       
     }
 }
