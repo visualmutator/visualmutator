@@ -60,9 +60,6 @@
         {
             return ((MutationElementEvent)_mutationTarget[key]).FindIn(_assembliesToMutate);
         }
-        public bool ContainsKey(string key)
-        {
-            return _mutationTarget.ContainsKey(key);
-        }
+     
     }
 }

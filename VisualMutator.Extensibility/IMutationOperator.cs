@@ -14,6 +14,7 @@ namespace VisualMutator.Extensibility
     {
       //  MutationResultDetails Mutate(ModuleDefinition module, IEnumerable<TypeDefinition> types);
 
+        string Identificator { get; }
         string Name { get; }
 
         string Description { get; }

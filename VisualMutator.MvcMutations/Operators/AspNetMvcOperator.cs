@@ -24,6 +24,7 @@
              
         }
 
+        public abstract string Identificator { get; }
 
         public abstract string Name { get; }
 

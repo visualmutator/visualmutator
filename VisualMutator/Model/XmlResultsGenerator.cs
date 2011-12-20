@@ -47,11 +47,19 @@
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
-                new XAttribute("TotalSizeInKilobytes", mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("TotalSizeKilobytes", mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("AverageSizeKilobytes", mutants.Average(mut => mut.StoredAssemblies.SizeInKilobytes())),
                 new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGroupedByOperators
                     .Sum(oper => oper.MutationTimeMiliseconds)),
+                new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGroupedByOperators
+                    .Average(oper => oper.MutationTimeMiliseconds)),
+                new XAttribute("TotalTestingTimeMiliseconds", testedMutants
+                    .Sum(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
+                new XAttribute("AverageTestingTimeMiliseconds", testedMutants
+                    .Average(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
+                    new XAttribute("Identificator", oper.Identificator),
                     new XAttribute("Name", oper.Name),
                     new XAttribute("NumberOfMutants", oper.Children.Count),
                     new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),

@@ -49,7 +49,7 @@
     public class OperatorNode : LeafNode<PackageNode, OperatorNode>
     {
         public OperatorNode(PackageNode parent, IMutationOperator mutationOperator)
-            : base(parent, mutationOperator.Name)
+            : base(parent,mutationOperator.Identificator+" - "+ mutationOperator.Name)
         {
             Operator = mutationOperator;
          

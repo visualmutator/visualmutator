@@ -46,11 +46,19 @@
 
         }
 
+        public string Identificator
+        {
+            get
+            {
+                return "CMRA";
+            }
+        }
+
         public string Name
         {
             get
             {
-                return "CMRA - Change MapRoute Address Pattern";
+                return "Change MapRoute Address Pattern";
             }
         }
 

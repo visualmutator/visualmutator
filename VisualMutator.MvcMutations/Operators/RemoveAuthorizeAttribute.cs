@@ -12,12 +12,19 @@
 
     public class RemoveAuthorizeAttribute : IMutationOperator
     {
+        public string Identificator
+        {
+            get
+            {
+                return "RAAT";
+            }
+        }
 
         public string Name
         {
             get
             {
-                return "RAAT - Remove Authorize Attribute";
+                return "Remove Authorize Attribute";
             }
         }
 
@@ -25,7 +32,7 @@
         {
             get
             {
-                return "Removes Authorize attribute";
+                return "Removes the Authorize attribute from an action or controller";
             }
         }
 

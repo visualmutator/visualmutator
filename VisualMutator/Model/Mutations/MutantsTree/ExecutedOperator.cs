@@ -7,9 +7,20 @@ namespace VisualMutator.Model.Mutations.Structure
 
     public class ExecutedOperator : MutationNode
     {
-        public ExecutedOperator(string name)
+        private readonly string _identificator;
+
+        public string Identificator
+        {
+            get
+            {
+                return _identificator;
+            }
+        }
+
+        public ExecutedOperator(string identificator, string name)
             : base( name, true)
         {
+            _identificator = identificator;
         }
 
         public IEnumerable<Mutant> Mutants
@@ -22,6 +33,8 @@ namespace VisualMutator.Model.Mutations.Structure
 
 
         private string _displayedText;
+
+     
 
         public string DisplayedText
         {
@@ -41,8 +54,8 @@ namespace VisualMutator.Model.Mutations.Structure
 
         public void UpdateDisplayedText()
         {
-           DisplayedText = "{0} - Mutants: {1}"
-                    .Formatted(Name, Children.Count);
+           DisplayedText = "{0} - {1} - Mutants: {2}"
+                    .Formatted(_identificator, Name, Children.Count);
         }
     }
 }

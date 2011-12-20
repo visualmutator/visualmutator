@@ -37,11 +37,19 @@ namespace VisualMutator.OperatorsStandard
             ilProcessor.Replace(methodAndInstruction.Instruction, Instruction.Create(OpCodes.Sub));
         }
 
+        public string Identificator
+        {
+            get
+            {
+                return "CEIC";
+            }
+        }
+
         public string Name
         {
             get
             {
-                return "Change Addition Into Substraction";
+                return "Change Equals Into Comparison";
             }
         }
 

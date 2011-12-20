@@ -56,6 +56,14 @@ namespace VisualMutator.OperatorsStandard
             ilProcessor.Replace(methodAndInstruction.Instruction, Instruction.Create(OpCodes.Sub));
         }
 
+        public string Identificator
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public string Name
         {
             get

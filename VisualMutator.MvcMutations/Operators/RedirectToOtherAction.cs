@@ -137,13 +137,19 @@
      */
         }
 
-
+        public string Identificator
+        {
+            get
+            {
+                return "CRAT";
+            }
+        }
 
         public string Name
         {
             get
             {
-                return "CRAT - Change RedirectToAction Target";
+                return "Change RedirectToAction Target";
             }
         }
 

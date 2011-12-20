@@ -86,12 +86,19 @@
        
         }
 
+        public string Identificator
+        {
+            get
+            {
+                return "SWAN";
+            }
+        }
 
         public string Name
         {
             get
             {
-                return "SWAN - Swap Action Names";
+                return "Swap Action Names";
             }
         }
 

@@ -35,6 +35,14 @@ namespace VisualMutator.OperatorsStandard
             ilProcessor.Replace(methodAndInstruction.Instruction, Instruction.Create(OpCodes.Sub));
         }
 
+        public string Identificator
+        {
+            get
+            {
+                return "CAIS";
+            }
+        }
+
         public string Name
         {
             get

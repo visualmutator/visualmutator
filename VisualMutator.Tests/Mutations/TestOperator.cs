@@ -11,6 +11,14 @@
 
     public class TestOperator : IMutationOperator
     {
+        public string Identificator
+        {
+            get
+            {
+                return "T";
+            }
+        }
+
         public string Name
         {
             get

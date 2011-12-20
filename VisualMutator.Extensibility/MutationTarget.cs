@@ -20,6 +20,9 @@
 
         protected readonly IDictionary<string, IMutationElement> _mutationElements;
 
+
+
+
         protected internal MutationElementsContainer(MutationTarget mutationTarget)
         {
             _mutationTarget = mutationTarget;
@@ -80,14 +83,28 @@
 
         private MutationElementsContainer _hidden;
 
+
+        private IDictionary<string, object> _userData;
+
+
         public MutationTarget()
             : base(null)
         {
             _mutationTarget = this;
-   
+
+            _userData = new Dictionary<string, object>();
             _hidden = new MutationElementsContainer(this);
      
         }
+
+        public IDictionary<string, object> UserData
+        {
+            get
+            {
+                return _userData;
+            }
+        }
+
         public override IMutationElement this[string key]
         {
             get

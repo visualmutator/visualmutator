@@ -12,12 +12,19 @@
 
     public class ChangeParameterName : AspNetMvcOperator
     {
+        public override string Identificator
+        {
+            get
+            {
+                return "CAPN";
+            }
+        }
 
         public override string Name
         {
             get
             {
-                return "CAPN - Change Action Parameter Name";
+                return "Change Action Parameter Name";
             }
         }
 

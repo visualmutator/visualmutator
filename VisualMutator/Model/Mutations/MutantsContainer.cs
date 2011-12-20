@@ -162,7 +162,7 @@
 
         public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<TypeDefinition> types)
         {
-            var result = new ExecutedOperator(mutOperator.Name);
+            var result = new ExecutedOperator(mutOperator.Identificator,mutOperator.Name);
 
             List<MutationTarget> targets;
             try

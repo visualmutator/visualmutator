@@ -119,13 +119,19 @@
         "System.Web.Mvc.RedirectToRouteResult System.Web.Mvc.Controller::RedirectToAction(System.String)");     
         }
 
-
+        public string Identificator
+        {
+            get
+            {
+                return "RVRA";
+            }
+        }
 
         public string Name
         {
             get
             {
-                return "RVRA - Replace View with RedirectToAction";
+                return "Replace View with RedirectToAction";
             }
         }
 

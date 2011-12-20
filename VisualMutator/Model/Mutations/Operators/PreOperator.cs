@@ -8,6 +8,14 @@ namespace VisualMutator.Model.Mutations
 
     class PreOperator : IMutationOperator
     {
+        public string Identificator
+        {
+            get
+            {
+                return "PRE";
+            }
+        }
+
         public string Name
         {
             get
