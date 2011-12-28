@@ -97,7 +97,7 @@
 
         public void Cancel()
         {
-            //TODO: throw new NotImplementedException();
+            _msTestWrapper.Cancel();
         }
 
         public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc, MutantTestSession mutantTestSession)

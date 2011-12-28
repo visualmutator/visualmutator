@@ -32,5 +32,10 @@
         {
             
         }
+
+        public bool ContainsKey(string mutationresultsfilepath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

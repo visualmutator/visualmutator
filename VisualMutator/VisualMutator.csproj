@@ -134,6 +134,7 @@
     <Compile Include="Infrastructure\UserMessages.cs" />
     <Compile Include="Infrastructure\VisualMutatorTitleProvider.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
+    <Compile Include="Model\Tests\Custom\DefaultTestEnvPreparer.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />

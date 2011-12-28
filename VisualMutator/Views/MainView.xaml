@@ -60,9 +60,9 @@
 
             
             
-            <DockPanel Grid.Row="0">
-                <TextBlock  HorizontalAlignment="Stretch" Text="{Binding OperationsStateDescription}" />
-                <DockPanel Grid.Row="1" HorizontalAlignment="Right">
+            <WrapPanel Grid.Row="0">
+                <TextBlock Width="180"  HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
+          
                     <Button  HorizontalAlignment="Right" Content="Generate to disk..." Command="{Binding CommandOnlyCreateMutants}"/>
                     <Button  HorizontalAlignment="Right" Content="New session..." Command="{Binding CommandCreateNewMutants}"/>
                     <!--<Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
@@ -87,9 +87,9 @@
                                           PressedImage="/VisualMutator;component/Views/images/button_pause_pressed.png"
                                           ImageSize="18" ToolTip="Pause"
                                           Command="{Binding CommandPause}"/>
-                </DockPanel>
-              
-            </DockPanel>
+
+
+            </WrapPanel>
 
             <DockPanel Grid.Row="1">
                 <TextBlock  DockPanel.Dock="Left" Text="{Binding MutantsRatio}" />

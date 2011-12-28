@@ -15,25 +15,16 @@
     {
         public StandardOperatorsPackage()
         {
-          ////  var catalog = new AssemblyCatalog(GetType().Assembly);
-         //   var container = new CompositionContainer(catalog);
-         //   container.ComposeParts(this);
-
-
-
             Operators = new[]
             {
                 new ChangeAdditionIntoSubstraction(), 
             };
-
         }
-     //   [ImportMany]
         public IEnumerable<IMutationOperator> Operators
         {
             get; 
             set;
         }
-
         public string Name
         {
             get
@@ -41,7 +32,6 @@
                 return "Standard";
             }
         }
-
         public string Description
         {
             get

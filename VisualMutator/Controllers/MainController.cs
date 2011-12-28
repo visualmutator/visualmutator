@@ -85,7 +85,7 @@ namespace VisualMutator.Controllers
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
             _viewModel.CommandStop = new BasicCommand(StopOperations,
-                () => _viewModel.OperationsState.IsIn(
+                () => _viewModel.OperationsState.IsIn(OperationsState.Mutating, OperationsState.PreCheck,
                     OperationsState.Testing, OperationsState.TestingPaused, OperationsState.Pausing))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 

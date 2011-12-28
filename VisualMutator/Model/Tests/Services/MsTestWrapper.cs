@@ -2,15 +2,21 @@
 {
     #region Usings
 
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
 
     using VisualMutator.Infrastructure;
+    using VisualMutator.Model.Exceptions;
+
+    using log4net;
 
     #endregion
 
@@ -18,6 +24,7 @@
     {
         //  IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly);
 
+        void Cancel();
         XDocument RunMsTest(IEnumerable<string> assemblies);
     }
 
@@ -25,9 +32,20 @@
     {
         private readonly IVisualStudioConnection _visualStudio;
 
-        public MsTestWrapper(IVisualStudioConnection visualStudio)
+        private readonly CommonServices _svc;
+
+        private Process _proc;
+
+        private object _locker = new object();
+
+        private bool _isCancelled;
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        public MsTestWrapper(
+            IVisualStudioConnection visualStudio,
+            CommonServices svc)
         {
             _visualStudio = visualStudio;
+            _svc = svc;
         }
 
         public XDocument RunMsTest(IEnumerable<string> assemblies)
@@ -48,22 +66,52 @@
 
             arguments.Append(@"-resultsfile:" + resultsFile.InQuotes());
 
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(Path.Combine(_visualStudio.InstallPath, @"Common7\IDE\MSTest.exe"))
+            
+            var startInfo = new ProcessStartInfo(Path.Combine(_visualStudio.InstallPath, @"Common7\IDE\MSTest.exe"))
             {   
                 Arguments = arguments.ToString(), 
                 WindowStyle = ProcessWindowStyle.Hidden, 
-                CreateNoWindow = true, 
+             //   CreateNoWindow = true, 
                 UseShellExecute = false, 
                 RedirectStandardOutput = true 
             };
 
-            p.Start();
+            lock (_locker)
+            {
+                if (_isCancelled)
+                {
+                    _isCancelled = false;
+                    throw new TestingCancelledException();
+                }
+                _proc = new Process();
+                _proc.StartInfo = startInfo;
+            }
 
-            StreamReader sr = p.StandardOutput;
-            string consoleOutput = sr.ReadToEnd();
+            StringBuilder sb = new StringBuilder();
 
-            p.WaitForExit();
+    
+       //     var asyncOut = Observable.FromEvent<DataReceivedEventArgs>(_proc, "OutputDataReceived")
+        //        .Subscribe((e) => sb.Append(e.EventArgs.Data));
+
+            _proc.Start();
+
+          //  StreamReader sr = _proc.StandardOutput;
+        //    _proc.BeginOutputReadLine();
+         //   string consoleOutput = sr.ReadToEnd();
+          //  string consoleOutput = "";
+            _proc.WaitForExit();
+
+            lock (_locker)
+            {
+             //   asyncOut.Dispose();
+                _proc = null;
+                if (_isCancelled)
+                {
+                    _isCancelled = false;
+                    throw new TestingCancelledException();
+                }
+            }
+           
 
             try
             {
@@ -71,8 +119,34 @@
             }
             catch (FileNotFoundException e)
             {
-                throw new MsTestException(consoleOutput, e);
+                throw new MsTestException(sb.ToString(), e);
             }
+        }
+
+      
+        public void Cancel()
+        {
+            lock (_locker)
+            {
+                if (!_isCancelled)
+                {
+                    _isCancelled = true;
+                    if (_proc != null)
+                    {
+                        try
+                        {
+                            _proc.Kill();
+                        }
+                        catch (Exception e)
+                        {
+                            _log.Warn(e);
+                        }
+
+                    }
+                }
+                
+            }
+            
         }
 
         private string TestSettings()

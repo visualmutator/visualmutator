@@ -26,8 +26,6 @@
         public ProgressCounter(Action<int> progress )
         {
             _progress = progress;
-
-            //     _all = all;
         }
 
         public void Initialize(int all, ProgressMode mode = ProgressMode.Before)
@@ -64,14 +62,8 @@
 
         public static ProgressCounter Inactive()
         {
-            var p = new ProgressCounter((c)=> { });
-            p.InitializeInactive();
-            return p;
-        }
-
-        private void InitializeInactive()
-        {
-            _inactive = true;
+            return new ProgressCounter((c) => { }) { _inactive = true };
+          
         }
 
         public static ProgressCounter Invoking(Action<int> action)

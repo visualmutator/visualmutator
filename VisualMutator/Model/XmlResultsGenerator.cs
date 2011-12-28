@@ -48,20 +48,24 @@
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
                 new XAttribute("TotalSizeKilobytes", mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
-                new XAttribute("AverageSizeKilobytes", mutants.Average(mut => mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("AverageSizeKilobytes", mutants.AverageOrZero(mut => mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGroupedByOperators
+                    .Sum(oper => oper.FindTargetsTimeMiliseconds)),
                 new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGroupedByOperators
                     .Sum(oper => oper.MutationTimeMiliseconds)),
                 new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGroupedByOperators
-                    .Average(oper => oper.MutationTimeMiliseconds)),
+                    .AverageOrZero(oper => oper.MutationTimeMiliseconds)),
                 new XAttribute("TotalTestingTimeMiliseconds", testedMutants
                     .Sum(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 new XAttribute("AverageTestingTimeMiliseconds", testedMutants
-                    .Average(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
+                    .AverageOrZero(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 from oper in session.MutantsGroupedByOperators
                 select new XElement("Operator",
                     new XAttribute("Identificator", oper.Identificator),
                     new XAttribute("Name", oper.Name),
                     new XAttribute("NumberOfMutants", oper.Children.Count),
+                    new XAttribute("NumberOfKilledMutants", oper.Mutants.Count(m=>m.State == MutantResultState.Killed)),
+                    new XAttribute("NumberOfLiveMutants", oper.Mutants.Count(m => m.State == MutantResultState.Live)),
                     new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),
                     new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
                     new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :

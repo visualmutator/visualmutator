@@ -29,7 +29,13 @@
             _mutationElements = new Dictionary<string, IMutationElement>();
         }
 
-   
+        internal virtual IMutationElement this[string key]
+        {
+            get
+            {
+                return _mutationElements[key];
+            }
+        }
 
   
         private void ThrowIfKeyExists(string key)
@@ -40,13 +46,7 @@
                 throw new ArgumentException("Entry with this key already exists: " + key);
             }
         }
-        public virtual IMutationElement this[string key]
-        {
-            get
-            {
-                return _mutationElements[key];
-            }
-        }
+  
         public virtual bool ContainsKey(string key)
         {
             return _mutationElements.ContainsKey(key);
@@ -105,14 +105,6 @@
             }
         }
 
-        public override IMutationElement this[string key]
-        {
-            get
-            {
-                IMutationElement val;
-                return _mutationElements.TryGetValue(key, out val) ? val : _hidden[key];
-            }
-        }
         public MutationElementsContainer Hidden
         {
             get
@@ -129,6 +121,13 @@
             return _mutationElements.Values.ToList();
         }
 
-        
+        internal override IMutationElement this[string key]
+        {
+            get
+            {
+                IMutationElement val;
+                return _mutationElements.TryGetValue(key, out val) ? val : _hidden[key];
+            }
+        }
     }
 }

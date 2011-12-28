@@ -9,5 +9,7 @@ namespace CommonUtilityInfrastructure
         }
 
         void Initialize();
+
+        bool ContainsKey(string key);
     }
 }

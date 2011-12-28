@@ -34,6 +34,14 @@
             return (T)obj;
         }
 
+        public static double AverageOrZero<T>(this IEnumerable<T> collection, Func<T, int> func) 
+        {
+            return collection.Any() ? collection.Average(func) : 0;
+        }
+        public static double AverageOrZero<T>(this IEnumerable<T> collection, Func<T, long> func)
+        {
+            return collection.Any() ? collection.Average(func) : 0;
+        }
 
         public static T[] InArrayIf<T>(this T obj, bool condition)
         {

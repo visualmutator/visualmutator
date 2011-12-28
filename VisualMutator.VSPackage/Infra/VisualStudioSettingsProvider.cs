@@ -55,6 +55,15 @@
 
         }
 
+
+        public bool ContainsKey(string key)
+        {
+            return userSettingsStore.PropertyExists(CollectionName, key);
+        }
+
+
+
+
         public string this[string key]
         {
             get

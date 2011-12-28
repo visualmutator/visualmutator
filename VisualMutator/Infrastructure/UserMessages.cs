@@ -6,6 +6,7 @@
     using System.Text;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     public static class UserMessages
     {
@@ -58,10 +59,12 @@ public static string WarningAssemblyNotLoaded()
     return
         @"One or more assemblies could not be loaded. Ensure that projects are built and their assemblies exist on disk.";
 }
-
-
-
-
-
+public static string ErrorPretest_Cancelled()
+{
+    return
+@"Testing was cancelled due to timeout.
+Do you want to continue mutation session?";
+}
+       
     }
 }

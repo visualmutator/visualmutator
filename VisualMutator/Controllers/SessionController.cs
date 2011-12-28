@@ -196,19 +196,33 @@
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
                 // _testsContainer.VerifyMutant(_currentSession, storedMutantInfo, changelessMutant);
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
+                return changelessMutant;
 
-                return CheckForTestingErrors(changelessMutant);
             },
-            canContinue =>
+            changelessMutant =>
             {
-                if (canContinue)
+                
+
+                if (_requestedHaltState != null)
                 {
-                    CreateMutants(continuation:RunTests);
+                    _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+                    _sessionState = SessionState.NotStarted;
+                    _requestedHaltState = null;
+                    
                 }
                 else
                 {
-                    FinishWithError();
+                    bool canContinue  = CheckForTestingErrors(changelessMutant);
+                    if (canContinue)
+                    {
+                        CreateMutants(continuation: RunTests);
+                    }
+                    else
+                    {
+                        FinishWithError();
+                    }
                 }
+                
             },
             onException: FinishWithError);
         }
@@ -232,13 +246,8 @@
 
         public void CreateMutants(Action continuation )
         {
-          //  Action<int> onMutationProgress = percent =>
-          //  {
-          //      RaiseMinorStatusUpdate(OperationsState.Mutating, percent);
-          //  };
+ 
             var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.Mutating);
-
-            //  onMutationProgress(0);
 
             _svc.Threading.ScheduleAsync(
             () =>
@@ -302,9 +311,12 @@
 
                 raiseTestingProgress();
             }
-            if (_requestedHaltState != null)
+            
+            _svc.Threading.InvokeOnGui(()=>
             {
-                Switch.On(_requestedHaltState)
+                if (_requestedHaltState != null)
+                {
+                    Switch.On(_requestedHaltState)
                     .Case(RequestedHaltState.Pause, () =>
                     {
                         _sessionState = SessionState.Paused;
@@ -312,12 +324,15 @@
                     })
                     .Case(RequestedHaltState.Stop, Finish)
                     .ThrowIfNoMatch();
-                _requestedHaltState = null;
-            }
-            else
-            {
-                Finish();
-            }
+                    _requestedHaltState = null;
+                }
+                else
+                {
+                    Finish();
+                }
+            });
+                
+            
         }
 
         public void PauseOperations()
@@ -364,6 +379,11 @@
             }
             else if (changelessMutant.State == MutantResultState.Killed)
             {
+                if (changelessMutant.KilledSubstate == MutantKilledSubstate.Cancelled)
+                {
+                    return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_Cancelled());
+                }
+
                 var test = changelessMutant.MutantTestSession.TestMap.Values
                     .FirstOrDefault(t => t.State == TestNodeState.Failure);
 

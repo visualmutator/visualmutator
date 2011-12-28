@@ -29,8 +29,7 @@ namespace VisualMutator.OperatorsStandard
         }
         public void Mutate(MutationContext context)
         {
-            var methodAndInstruction = context.MethodAndInstruction("AddInstr");
-
+            MethodAndInstruction methodAndInstruction = context.MethodAndInstruction("AddInstr");
             var ilProcessor = methodAndInstruction.Method.Body.GetILProcessor();
             ilProcessor.Replace(methodAndInstruction.Instruction, Instruction.Create(OpCodes.Sub));
         }

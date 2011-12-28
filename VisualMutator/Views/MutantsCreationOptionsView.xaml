@@ -1,45 +1,43 @@
 ﻿<UserControl x:Class="VisualMutator.Views.MutantsCreationOptionsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extToolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
-             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Global.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Resources/Global.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
 
-    <Grid d:DataContext="{d:DesignInstance ViewModels:MutantsCreationOptionsViewModel}">
+  <Grid d:DataContext="{d:DesignInstance ViewModels:MutantsCreationOptionsViewModel}">
 
+    <Grid.RowDefinitions>
+      <RowDefinition Height="25"/>
+      <RowDefinition Height="25"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="25"/>
+      <RowDefinition Height="Auto"/>
 
+    </Grid.RowDefinitions>
+<!-- 
+    <CheckBox Grid.Row="0" Content="Create 20 times more mutants"
+              IsChecked="{Binding Options.CreateMoreMutants, Mode=TwoWay}"/>-->
+      
+    <CheckBox Grid.Row="0" Content="Verify IL code of mutants"
+              IsChecked="{Binding Options.IsMutantVerificationEnabled, Mode=TwoWay}"/>
+    <Separator Grid.Row="1"/>
+    <TextBlock Grid.Row="2" Text="External files: (?)"
+               ToolTip="Additional files that are required during testing of mutated assemblies. They will be copied to directory of the executing mutant."/>
+    <DockPanel Grid.Row="3">
+      <Button HorizontalAlignment="Left" Content="Browse..."
+              Command="{Binding CommandAdditionalFilesToCopy}"/>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="Auto"/>
+    </DockPanel>
 
-        </Grid.RowDefinitions>
-
-        <CheckBox Grid.Row="0" Content="Create 20 times more mutants" IsChecked="{Binding Options.CreateMoreMutants, Mode=TwoWay}"/>
-                <CheckBox Grid.Row="1" Content="Verify IL code of mutants" IsChecked="{Binding Options.IsMutantVerificationEnabled, Mode=TwoWay}"/>
-                <Separator Grid.Row="2"/>
-                <TextBlock Grid.Row="3" Text="External files:"
-                   ToolTip="Additional files that are required during testing of mutated assemblies. They will be copied to directory of the executing mutant."/>
-                <DockPanel Grid.Row="4">
-                    <Button HorizontalAlignment="Left" Content="Browse..."
-                  Command="{Binding CommandAdditionalFilesToCopy}"/>
-
-                </DockPanel>
-
-
-
-    </Grid>
+  </Grid>
 </UserControl>

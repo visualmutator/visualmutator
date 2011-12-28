@@ -20,6 +20,8 @@
 
     using log4net;
 
+    using TypeAttributes = Mono.Cecil.TypeAttributes;
+
     #endregion
 
     public interface IMutantsContainer
@@ -66,8 +68,7 @@
         {
     
             var op = new PreOperator();
-
-            var targets = FindTargets(op, session.SelectedTypes);
+            var targets = FindTargets(op, new TypeDefinition("ns","name",new TypeAttributes()).InArrayIf(true));
             CreateMutantsForOperator(targets, session.StoredSourceAssemblies, () => 0, ProgressCounter.Inactive());
             return targets.ExecutedOperator.Mutants.First();
         }

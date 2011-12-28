@@ -44,7 +44,11 @@
             _viewModel.CommandClose = new BasicCommand(Close);
             _viewModel.CommandBrowse = new BasicCommand(BrowsePath);
 
-            _viewModel.TargetPath = _svc.Settings["MutationResultsFilePath"];
+            if (_svc.Settings.ContainsKey("MutationResultsFilePath"))
+            {
+                _viewModel.TargetPath = _svc.Settings["MutationResultsFilePath"];
+            }
+           
         }
 
         
