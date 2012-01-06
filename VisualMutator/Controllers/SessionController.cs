@@ -60,13 +60,14 @@
             CommonServices svc,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
-            IMutantsFileManager mutantsFileManager,
+IMutantsFileManager mutantsFileManager,
             XmlResultsGenerator xmlResultsGenerator)
         {
             _svc = svc;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _mutantsFileManager = mutantsFileManager;
+
             _xmlResultsGenerator = xmlResultsGenerator;
             _sessionState = SessionState.NotStarted;
 
@@ -112,8 +113,9 @@
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-                StoredMutantInfo storedMutantInfo = _mutantsFileManager
-                    .StoreMutant(_currentSession.TestEnvironment.Directory, changelessMutant);
+                StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+               // StoredMutantInfo storedMutantInfo = _mutantsFileManager
+              //      .StoreMutant(.DirectoryPath, changelessMutant);
 
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
@@ -155,6 +157,11 @@
                 }
 
                 _mutantsFileManager.WriteMutantsToDisk(_currentSession.Choices.MutantsCreationFolderPath,
+
+
+             //        StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+
+
                  _currentSession.MutantsGroupedByOperators, verify,counter);
 
 
@@ -191,7 +198,9 @@
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-                var storedMutantInfo = _mutantsFileManager.StoreMutant(_currentSession.TestEnvironment.Directory, changelessMutant);
+                var storedMutantInfo =_testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+              //  var storedMutantInfo = _mutantsFileManager.StoreMutant(_currentSession.TestEnvironment.DirectoryPath, changelessMutant);
+
 
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
                 // _testsContainer.VerifyMutant(_currentSession, storedMutantInfo, changelessMutant);
@@ -295,7 +304,8 @@
                 Mutant mutant = _mutantsToTest.Dequeue();
 
 
-                var storedMutantInfo = _mutantsFileManager.StoreMutant(_currentSession.TestEnvironment.Directory, mutant);
+                var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
+            //    var storedMutantInfo = _mutantsFileManager.StoreMutant(_currentSession.TestEnvironment.DirectoryPath, mutant);
 
                 if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
                 {

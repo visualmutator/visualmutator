@@ -122,11 +122,7 @@
 
         public IEnumerable<string> GetProjectPaths()
         {
-            // var win = _dte.Windows;
-            //  foreach (Window2 window in win)
-            //  {
-            //      window.Caption
-            // }
+
             IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
                 .Where(
                        p => p.ConfigurationManager != null

@@ -29,13 +29,13 @@
             foreach (var controllerType in controllers)
             {
 
-                var validGroups = controllerType.Methods
+                var groupedByParameters = controllerType.Methods
                     .Where(m => m.ReturnType.Resolve().IsOfType("System.Web.Mvc.ActionResult")).ToList()
                     .GroupBy(m => m.Parameters, new ParametersCollectionComparer()).ToList()
                     .Where(g => g.Count() >= 2).ToList();
 
 
-                foreach (var group in validGroups)
+                foreach (var group in groupedByParameters)
                 {
                     var chosen = group.Take(group.Count() - group.Count() % 2).ToArray();
                     for (int i = 0; i < chosen.Length; i += 2)
@@ -45,10 +45,7 @@
                 }
             }
 
-
-            var duplicatedSwapped = list.SelectMany(pair => new[] { pair, Tuple.Create(pair.Item2, pair.Item1) });
-
-            return duplicatedSwapped.Select(pair => new MutationTarget()
+            return list.Select(pair => new MutationTarget()
                 .Add("Method1", pair.Item1).Add("Method2", pair.Item2));
 
         }

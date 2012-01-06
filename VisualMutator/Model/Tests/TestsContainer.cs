@@ -41,7 +41,7 @@
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
-
+        StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant);
     }
 
     public class TestsContainer : ITestsContainer
@@ -86,6 +86,7 @@
         }
         public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
+           
             return _mutantsFileManager.InitTestEnvironment(currentSession);
         }
 
@@ -119,6 +120,11 @@
             return true;
                 
 
+        }
+
+        public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant)
+        {
+            return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath, changelessMutant);
         }
 
         public void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant)
@@ -234,6 +240,7 @@
             foreach (var service in _testServices)
             {
                 service.Cancel();
+                _mutantsFileManager.OnTestingCancelled();
             }
         }
 

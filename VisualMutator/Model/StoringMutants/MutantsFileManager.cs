@@ -15,6 +15,7 @@
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.Model.Tests.Custom;
 
     using log4net;
 
@@ -29,6 +30,8 @@
         void CleanupTestEnvironment(TestEnvironmentInfo info);
 
         void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
+
+        void OnTestingCancelled();
     }
 
  
@@ -45,6 +48,7 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
+        private DefaultTestEnvPreparer prep = new DefaultTestEnvPreparer();
 
 
         public MutantsFileManager(
@@ -65,6 +69,7 @@
             ProgressCounter onSavingProgress)
         {
 
+           
           //  var storedMutantsList = new List<Tuple<Mutant, StoredMutantInfo>>();
 
             onSavingProgress.Initialize(mutantsInOperators.Select(oper => oper.Children)
@@ -72,7 +77,7 @@
          
             foreach (ExecutedOperator oper in mutantsInOperators)
             {
-                string subFolder = Path.Combine(rootFolder, oper.Name.RemoveInvalidPathCharacters());
+                string subFolder = Path.Combine(rootFolder, oper.Identificator.RemoveInvalidPathCharacters());
                 
                 _fs.Directory.CreateDirectory(subFolder);
                 foreach (Mutant mutant in oper.Mutants)
@@ -90,28 +95,15 @@
          //   return storedMutantsList;
         }
 
-        public StoredMutantInfo StoreMutant(string directory,Mutant mutant)
+        public void OnTestingCancelled()
         {
-
-            var result = new StoredMutantInfo();
-
-            IList<AssemblyDefinition> assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
-            foreach (AssemblyDefinition assemblyDefinition in assemblyDefinitions)
-            {
-                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(directory, assemblyDefinition.Name.Name + ".dll");
-                _fs.File.Delete(file);
-                _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
-                result.AssembliesPaths.Add(file);
-            }
-
-            
-
-            return result;
+         //   prep.OnTestingCancelled();
         }
 
         public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
+         //   prep.Initialize(@"D:\PLIKI\Programowanie\C#\Source Code'y\ASP.NET MVC\MvcMusicStore 3\MvcMusicStore|2789");
+
             string mutantDirectoryPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             _fs.Directory.CreateDirectory(mutantDirectoryPath);
 
@@ -130,14 +122,43 @@
             return new TestEnvironmentInfo(mutantDirectoryPath);
         }
 
+        public StoredMutantInfo StoreMutant(string directory, Mutant mutant)
+        {
+
+
+            var result = new StoredMutantInfo();
+
+            IList<AssemblyDefinition> assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
+            foreach (AssemblyDefinition assemblyDefinition in assemblyDefinitions)
+            {
+                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                string file = Path.Combine(directory, assemblyDefinition.Name.Name + ".dll");
+                _fs.File.Delete(file);
+                _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
+                result.AssembliesPaths.Add(file);
+            }
+/*
+            prep.PrepareForMutant(directory, (dest) =>
+            {
+                foreach (var p in result.AssembliesPaths)
+                {
+                    _fs.File.Copy(p, Path.Combine(dest, Path.GetFileName(p)),true);
+                }
+
+            });
+*/
+            return result;
+        }
+
+
         public void CleanupTestEnvironment(TestEnvironmentInfo info)
         {
 
-            if (info != null && _fs.Directory.Exists(info.Directory))
+            if (info != null && _fs.Directory.Exists(info.DirectoryPath))
             {
                 try
                 {
-                    _fs.Directory.Delete(info.Directory, recursive: true);
+                    _fs.Directory.Delete(info.DirectoryPath, recursive: true);
                 }
                 catch (UnauthorizedAccessException e)
                 {
@@ -147,11 +168,7 @@
             }
         }
 
-        public void DeleteMutantFiles(StoredMutantInfo mutant)
-        {
-           // _fs.Directory.Delete(mutant.DirectoryPath, recursive: true);
-        }
-       
+    
 
     }
 
@@ -159,9 +176,9 @@
     {
         public TestEnvironmentInfo(string directory)
         {
-            Directory = directory;
+            DirectoryPath = directory;
         }
 
-        public string Directory { get; set; }
+        public string DirectoryPath { get; set; }
     }
 }
