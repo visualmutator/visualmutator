@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -10,10 +11,12 @@
     using System.Text;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
 
     using VisualMutator.Model.Mutations.Structure;
 
-    public class DefaultTestEnvPreparer
+    [Export(typeof(ITestingProcessExtension))]
+    public class AspNetTestingProcessExtension : ITestingProcessExtension
     {
         private string _projectPath;
 
@@ -21,21 +24,23 @@
 
         private string cmdPath;
 
-        public DefaultTestEnvPreparer()
+        public AspNetTestingProcessExtension()
         {
             
         }
 
-        public void Initialize(string parameter)
+        public void Initialize(string parameter, IList<DirectoryPathAbsolute> projectPaths)
         {
 
-            var paramss = parameter.Split('|');
+            _projectPath = projectPaths
+             .First(ass => ass.ChildrenFilesPath.Where(p => p.FileName == "Web.config").Any()).Path;
 
-            _projectPath = paramss[0];
-            _port = paramss[1];
+
+            _port = parameter;
             string content =
 @"taskkill /F /IM WebDev.WebServer40.EXE
-START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"" /B WebDev.WebServer40.EXE /port:" + _port + @" /path:" + _projectPath.InQuotes() + @" /vpath:""/""";
+START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"" /B WebDev.WebServer40.EXE /port:" 
++ _port + @" /path:" + _projectPath.InQuotes() + @" /vpath:""/""";
 
              cmdPath = Path.GetTempFileName();
             
@@ -45,9 +50,16 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
             //_projectPath = @"D:\PLIKI\Programowanie\C#\Source Code'y\ASP.NET MVC\MvcMusicStore 3\MvcMusicStore";
 
 
+
+
+         
+  
+
+           //// 
+
         }
 
-        public void PrepareForMutant(string mutantDestination, Action<string> copyTo)
+        public void PrepareForMutant(string mutantDestination, List<string> mutantFilePaths)
         {
             string src = @"D:\PLIKI\Programowanie\C#\Source Code'y\ASP.NET MVC\MvcMusicStore 3\chromedriver.exe";
 
@@ -58,7 +70,13 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
             }
 
             
-            copyTo(Path.Combine(_projectPath, "bin"));
+        //    copyTo();
+
+            foreach (var p in mutantFilePaths)
+            {
+                File.Copy(p, Path.Combine(Path.Combine(_projectPath, "bin"), Path.GetFileName(p)), true);
+            }
+
 
             Process.Start(cmdPath);
 
@@ -69,6 +87,20 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
             Kill("WebDev.WebServer40");
         }
 
+        public void OnSessionFinished()
+        {
+            
+        }
+
+
+
+        public string Name
+        {
+            get
+            {
+                return "ASP.NET Devevelopment Server Support";
+            }
+        }
 
         private void Kill(string name)
         {

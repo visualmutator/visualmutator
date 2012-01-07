@@ -18,16 +18,16 @@
     #endregion
        public interface IMessageService
     {
-           void ShowMessage(IDialogView owner, string message);
+           void ShowMessage(IWindow owner, string message);
 
-           void ShowWarning(IDialogView owner, string message);
+           void ShowWarning(IWindow owner, string message);
 
-           void ShowFatalError(IDialogView owner, string message);
+           void ShowFatalError(IWindow owner, string message);
 
  
-           bool ShowYesNoQuestion(IDialogView owner, string message);
+           bool ShowYesNoQuestion(IWindow owner, string message);
 
-           void ShowError(IDialogView owner, string message);
+           void ShowError(IWindow owner, string message);
     }
     public class MessageService : IMessageService
     {
@@ -68,18 +68,18 @@
 
         }
 
-        private IWin32Window TransformWindow(IDialogView view)
+        private IWin32Window TransformWindow(IWindow view)
         {
             return GetIWin32Window((Window)view);
         }
 
-        private IWin32Window GetWindow(IDialogView owner)
+        private IWin32Window GetWindow(IWindow owner)
         {
             return owner == null ? _provider.GetWindow() : TransformWindow(owner);
         }
 
 
-        public void ShowMessage(IDialogView owner, string message)
+        public void ShowMessage(IWindow owner, string message)
         {
             System.Windows.Forms.MessageBox.Show(
                    GetWindow(owner),
@@ -92,7 +92,7 @@
 
 
   
-        public void ShowWarning(IDialogView owner, string message)
+        public void ShowWarning(IWindow owner, string message)
         {
             System.Windows.Forms.MessageBox.Show(
                    GetWindow(owner),
@@ -106,7 +106,7 @@
         {
             return _titleProvider.GetTitle()+" - ";
         }
-        public void ShowFatalError(IDialogView owner, string message)
+        public void ShowFatalError(IWindow owner, string message)
         {
 
             System.Windows.Forms.MessageBox.Show(
@@ -117,7 +117,7 @@
                               MessageBoxIcon.Error);
 
         }
-        public void ShowError(IDialogView owner, string message)
+        public void ShowError(IWindow owner, string message)
         {
 
             System.Windows.Forms.MessageBox.Show(
@@ -152,7 +152,7 @@
             return null;
         }*/
 
-        public bool ShowYesNoQuestion(IDialogView owner, string message)
+        public bool ShowYesNoQuestion(IWindow owner, string message)
         {
             DialogResult result = System.Windows.Forms.MessageBox.Show(
                               GetWindow(owner),
@@ -177,7 +177,7 @@
 
     public static class MessageServiceExtensions
     {
-        public static void ShowMessage(this IMessageService service, string message, IDialogView view = null)
+        public static void ShowMessage(this IMessageService service, string message, IWindow view = null)
         {
             if (service == null)
             {
@@ -187,7 +187,7 @@
         }
 
   
-        public static void ShowWarning(this IMessageService service, string message, ILog log = null, IDialogView view= null)
+        public static void ShowWarning(this IMessageService service, string message, ILog log = null, IWindow view= null)
         {
             if (service == null)
             {
@@ -199,7 +199,7 @@
             service.ShowWarning(view, message);
         }
 
-        public static void ShowFatalError(this IMessageService service, string message, ILog log = null, IDialogView view = null)
+        public static void ShowFatalError(this IMessageService service, string message, ILog log = null, IWindow view = null)
         {
             if (service == null)
             {
@@ -214,7 +214,7 @@
 
 
 
-        public static bool ShowYesNoQuestion(this IMessageService service, string message, IDialogView view = null)
+        public static bool ShowYesNoQuestion(this IMessageService service, string message, IWindow view = null)
         {
             if (service == null)
             {
@@ -223,7 +223,7 @@
             return service.ShowYesNoQuestion(view, message);
         }
 
-        public static void ShowFatalError(this IMessageService service, Exception exception, ILog log = null, IDialogView view = null)
+        public static void ShowFatalError(this IMessageService service, Exception exception, ILog log = null, IWindow view = null)
         {
             if (service == null)
             {
@@ -239,7 +239,7 @@
 
         }
 
-        public static void ShowError(this IMessageService service, Exception exception, ILog log = null, IDialogView view = null)
+        public static void ShowError(this IMessageService service, Exception exception, ILog log = null, IWindow view = null)
         {
             if (service == null)
             {
@@ -251,7 +251,7 @@
             }
             service.ShowError(view, exception.Message);
         }
-        public static void ShowError(this IMessageService service, string message, ILog log = null, IDialogView view = null)
+        public static void ShowError(this IMessageService service, string message, ILog log = null, IWindow view = null)
         {
             if (service == null)
             {

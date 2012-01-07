@@ -87,6 +87,10 @@
             Kernel.Bind<IOnlyMutantsCreationView>().To<OnlyMutantsCreationView>();
 
 
+ 
+            Kernel.Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
+            Kernel.Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
+
             Kernel.Bind<MainController>().ToSelf().InSingletonScope();
             Kernel.Bind<MutationResultsViewModel>().ToSelf();
             Kernel.Bind<IMutationResultsView>().To<MutationResultsView>();

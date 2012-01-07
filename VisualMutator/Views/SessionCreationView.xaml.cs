@@ -16,7 +16,7 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface ISessionCreationView : IDialogView
+    public interface ISessionCreationView : IWindow
     {
  
     }
@@ -32,9 +32,15 @@ namespace VisualMutator.Views
             InitializeComponent();
         }
 
-        public bool? SetOwnerAndShowDialog()
+        public bool? ShowDialog(IWindow owner)
         {
-            _windowProvider.SetOwner(this);
+            Owner = (Window)owner;
+            return ShowDialog();
+        }
+
+        public bool? SetDefaultOwnerAndShowDialog()
+        {
+            _windowProvider.SetOwnerFor(this);
             return ShowDialog();
         }
     }

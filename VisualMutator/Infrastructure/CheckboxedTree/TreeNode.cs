@@ -88,9 +88,9 @@
                 return _name;
             }
         }
-        private BetterObservableCollection<TreeNode> _children;
+        private NotifyingCollection<TreeNode> _children;
 
-        protected BetterObservableCollection<TreeNode> Children
+        protected NotifyingCollection<TreeNode> Children
         {
             set
             {

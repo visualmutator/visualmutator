@@ -36,14 +36,14 @@ namespace VisualMutator.Infrastructure.CheckboxedTree
     public class NormalNode : Node
   
     {
-        private BetterObservableCollection<NormalNode> _children;
+        private NotifyingCollection<NormalNode> _children;
 
         protected NormalNode(string name, bool hasChildren)
             : base(name)
         {
        
             if (hasChildren)
-                _children = new BetterObservableCollection<NormalNode>();
+                _children = new NotifyingCollection<NormalNode>();
 
         }
 
@@ -62,7 +62,7 @@ namespace VisualMutator.Infrastructure.CheckboxedTree
             }
         }
 
-        public BetterObservableCollection<NormalNode> Children
+        public NotifyingCollection<NormalNode> Children
         {
             get
             {

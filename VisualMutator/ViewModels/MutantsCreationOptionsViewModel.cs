@@ -18,7 +18,7 @@
             : base(view)
         {
            Options = new MutantsCreationOptions();
-           Options.AdditionalFilesToCopy = new BetterObservableCollection<string>();
+           Options.AdditionalFilesToCopy = new NotifyingCollection<string>();
            Options.IsMutantVerificationEnabled = true;
 
            CommandAdditionalFilesToCopy = new BasicCommand(ChooseFiles);

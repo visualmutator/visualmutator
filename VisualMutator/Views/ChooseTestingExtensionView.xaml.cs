@@ -16,15 +16,15 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface IOnlyMutantsCreationView : IWindow
+    public interface IChooseTestingExtensionView : IWindow
     {
 
     }
-    public partial class OnlyMutantsCreationView : Window, IOnlyMutantsCreationView
+    public partial class ChooseTestingExtensionView : Window, IChooseTestingExtensionView
     {
         private readonly IOwnerWindowProvider _windowProvider;
 
-        public OnlyMutantsCreationView(IOwnerWindowProvider windowProvider)
+        public ChooseTestingExtensionView(IOwnerWindowProvider windowProvider)
         {
             _windowProvider = windowProvider;
             InitializeComponent();
@@ -41,5 +41,7 @@ namespace VisualMutator.Views
             _windowProvider.SetOwnerFor(this);
             return ShowDialog();
         }
+
+    
     }
 }

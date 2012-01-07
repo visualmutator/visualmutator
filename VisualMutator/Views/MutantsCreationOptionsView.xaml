@@ -18,10 +18,7 @@
 
     <Grid.RowDefinitions>
       <RowDefinition Height="25"/>
-      <RowDefinition Height="25"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="25"/>
-      <RowDefinition Height="Auto"/>
+
 
     </Grid.RowDefinitions>
 <!-- 
@@ -30,14 +27,7 @@
       
     <CheckBox Grid.Row="0" Content="Verify IL code of mutants"
               IsChecked="{Binding Options.IsMutantVerificationEnabled, Mode=TwoWay}"/>
-    <Separator Grid.Row="1"/>
-    <TextBlock Grid.Row="2" Text="External files: (?)"
-               ToolTip="Additional files that are required during testing of mutated assemblies. They will be copied to directory of the executing mutant."/>
-    <DockPanel Grid.Row="3">
-      <Button HorizontalAlignment="Left" Content="Browse..."
-              Command="{Binding CommandAdditionalFilesToCopy}"/>
-
-    </DockPanel>
+    
 
   </Grid>
 </UserControl>

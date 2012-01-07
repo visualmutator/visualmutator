@@ -7,7 +7,7 @@ namespace CommonUtilityInfrastructure.WpfUtils
     {
         IWin32Window GetWindow();
 
-        void SetOwner(Window window);
+        void SetOwnerFor(Window window);
 
        
     }

@@ -30,7 +30,7 @@
             return _visualStudio.GetWindow();
         }
 
-        public void SetOwner(Window window)
+        public void SetOwnerFor(Window window)
         {
             NativeWindowInfo vsWindow = _visualStudio.WindowInfo;
             WindowInteropHelper helper = new WindowInteropHelper(window);

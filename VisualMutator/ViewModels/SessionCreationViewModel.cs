@@ -28,6 +28,8 @@
             : base(view, typesTree, mutationsTree, mutantsCreation)
         {
             MutantsTesting = mutantsTesting;
+            MutantsTesting.Initialize(View);
+
         }
 
 

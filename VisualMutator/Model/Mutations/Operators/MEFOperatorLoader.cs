@@ -11,6 +11,7 @@
     using System.Linq;
     using System.Reflection;
 
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.DependencyInjection;
 
     using VisualMutator.Extensibility;
@@ -37,54 +38,24 @@
         public IEnumerable<IOperatorsPackage> ReloadOperators()
         {
             OperatorPacks = null;
-            string p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            var extensionDirectory = new Uri(Assembly.GetExecutingAssembly().CodeBase)
+                .LocalPath.ToFilePathAbsolute().ParentDirectoryPath;
 
-            string path = Path.GetDirectoryName(p);
-            var catalog =
-                new DirectoryCatalog(path);
-
-            //catalog.Parts.
-
+       //     string path = Path.GetDirectoryName(p);
+            var catalog = new DirectoryCatalog(extensionDirectory.Path);
             var container = new CompositionContainer(catalog);
 
-          /*  var filteredCat = new FilteredCatalog(catalog,
-                def => def..Metadata.ContainsKey(CompositionConstants.PartCreationPolicyMetadataName) &&
-                ((CreationPolicy)def.Metadata[CompositionConstants.PartCreationPolicyMetadataName]) == CreationPolicy.NonShared);
-            var child = new CompositionContainer(filteredCat, parent);
-
-            var root = child.GetExportedObject<Root>();
-            child.Dispose();
-           * 
-           * 
-*/ 
+/*
             var compositionBatch = new CompositionBatch();
 
             foreach (var composablePart in SelectParts(catalog))
             {
-               //compositionBatch.
+
                 compositionBatch.AddPart(composablePart);
-            }
+            }*/
 
-
-           
-     
-            //compositionBatch.AddExport(new Export());
-
-           // container.Compose(compositionBatch);
-
-          //  OperatorPacks = container.GetExportedValues<IOperatorsPack>();
             container.ComposeParts(this);
-/*
-            foreach (IOperatorsPack operatorsPack in OperatorPacks)
-            {
-                var catalog2 = new AssemblyCatalog(operatorsPack.GetType().Assembly);
-                var container2 = new CompositionContainer(catalog2);
 
-                var pack = new LoadedOperatorPack();
-
-                container2.ComposeParts(pack);
-            }
-*/
             return OperatorPacks;
         }
     }

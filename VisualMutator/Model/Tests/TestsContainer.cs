@@ -60,6 +60,8 @@
 
         private bool _allTestingCancelled;
 
+        private MutationTestingSession _currentSession;
+
         public TestsContainer(
             NUnitTestService nunit, 
             MsTestService ms,
@@ -86,7 +88,7 @@
         }
         public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
-           
+            _currentSession = currentSession;
             return _mutantsFileManager.InitTestEnvironment(currentSession);
         }
 
@@ -150,13 +152,9 @@
                 timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.Choices
                     .MutantsTestingOptions.TestingTimeoutSeconds)).Subscribe(e => CancelCurrentTestRun());
 
-
                 RunTests(mutant.MutantTestSession);
 
                 timoutDisposable.Dispose();
-
-                
-
 
                 ResolveMutantState(mutant);
 
@@ -240,7 +238,10 @@
             foreach (var service in _testServices)
             {
                 service.Cancel();
-                _mutantsFileManager.OnTestingCancelled();
+
+                _currentSession.Choices.MutantsTestingOptions
+                    .TestingProcessExtensionOptions.TestingProcessExtension.OnTestingCancelled();
+               // _mutantsFileManager.OnTestingCancelled();
             }
         }
 

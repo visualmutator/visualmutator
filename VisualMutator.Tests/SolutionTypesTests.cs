@@ -5,6 +5,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using CommonUtilityInfrastructure;
+
     using Mono.Cecil;
 
     using Moq;
@@ -60,7 +62,7 @@
 
 
             var m = new Mock<IVisualStudioConnection>();
-            m.Setup(_ => _.GetProjectPaths()).Returns(new[] { path });
+            m.Setup(_ => _.GetProjectAssemblyPaths()).Returns(new[] { path.ToFilePathAbsolute() });
 
             var manager = new SolutionTypesManager(mock.Object, m.Object);
 
@@ -93,7 +95,7 @@
 
 
             var m = new Mock<IVisualStudioConnection>();
-            m.Setup(_ => _.GetProjectPaths()).Returns(new[] { path });
+            m.Setup(_ => _.GetProjectAssemblyPaths()).Returns(new[] { path.ToFilePathAbsolute() });
 
             var manager = new SolutionTypesManager(mock.Object, m.Object);
 

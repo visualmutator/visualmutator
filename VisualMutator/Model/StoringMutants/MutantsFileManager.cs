@@ -48,7 +48,7 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        private DefaultTestEnvPreparer prep = new DefaultTestEnvPreparer();
+        private AspNetTestingProcessExtension prep = new AspNetTestingProcessExtension();
 
 
         public MutantsFileManager(
@@ -137,6 +137,8 @@
                 _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
                 result.AssembliesPaths.Add(file);
             }
+
+
 /*
             prep.PrepareForMutant(directory, (dest) =>
             {
@@ -147,9 +149,14 @@
 
             });
 */
+
+
+
             return result;
+
         }
 
+       
 
         public void CleanupTestEnvironment(TestEnvironmentInfo info)
         {

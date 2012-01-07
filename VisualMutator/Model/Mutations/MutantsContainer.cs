@@ -49,7 +49,7 @@
 
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
         {
-            StoredAssemblies sourceAssemblies = _assembliesManager.Store(choices.Assemblies);
+            StoredAssemblies sourceAssemblies = _assembliesManager.Store(choices.Assemblies.Select(a=>a.AssemblyDefinition).ToList());
             IList<AssemblyDefinition> reloadedAssemblies = _assembliesManager.Load(sourceAssemblies);
 
             var copiedTypes = ProjectTypesToCopiedAssemblies(choices.SelectedTypes, reloadedAssemblies);

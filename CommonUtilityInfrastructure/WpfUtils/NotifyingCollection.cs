@@ -7,13 +7,13 @@
 
     #endregion
 
-    public class BetterObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>
+    public class NotifyingCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>
     {
-        public BetterObservableCollection()
+        public NotifyingCollection()
         {
         }
 
-        public BetterObservableCollection(IEnumerable<T> collection)
+        public NotifyingCollection(IEnumerable<T> collection)
             : base(collection)
         {
         }

@@ -9,6 +9,8 @@ namespace VisualMutator.Infrastructure
     using System.Text;
     using System.Windows.Forms;
 
+    using CommonUtilityInfrastructure.Paths;
+
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
 
     public interface IVisualStudioConnection
@@ -24,7 +26,7 @@ namespace VisualMutator.Infrastructure
 
         NativeWindowInfo WindowInfo { get; }
 
-        IEnumerable<string> GetProjectPaths();
+        IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths();
 
         string GetMutantsRootFolderPath();
 
@@ -43,5 +45,7 @@ namespace VisualMutator.Infrastructure
         void OpenFile(string className);
 
         IWin32Window GetWindow();
+
+        IEnumerable<DirectoryPathAbsolute> GetProjectPaths();
     }
 }

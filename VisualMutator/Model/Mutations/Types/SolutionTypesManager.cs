@@ -10,6 +10,7 @@ namespace VisualMutator.Model.Mutations.Types
     using System.Reflection;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
 
     using Mono.Cecil;
 
@@ -29,6 +30,8 @@ namespace VisualMutator.Model.Mutations.Types
         IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
 
         bool IsAssemblyLoadError { get; set; }
+
+        IEnumerable<DirectoryPathAbsolute> ProjectPaths { get; }
     }
 
     public class SolutionTypesManager : ITypesManager
@@ -38,6 +41,15 @@ namespace VisualMutator.Model.Mutations.Types
 
         private readonly IVisualStudioConnection _visualStudio;
 
+        private IEnumerable<DirectoryPathAbsolute> _projectPaths;
+
+        public IEnumerable<DirectoryPathAbsolute> ProjectPaths
+        {
+            get
+            {
+                return _projectPaths;
+            }
+        }
 
         public bool IsAssemblyLoadError { get; set; }
    
@@ -47,6 +59,8 @@ namespace VisualMutator.Model.Mutations.Types
         {
             _assemblyReaderWriter = assemblyReaderWriter;
             _visualStudio = visualStudio;
+
+            _projectPaths = _visualStudio.GetProjectPaths();
         }
 
 
@@ -60,21 +74,33 @@ namespace VisualMutator.Model.Mutations.Types
         public IList<AssemblyNode> GetTypesFromAssemblies()
         {
 
-            IEnumerable<string> paths = _visualStudio.GetProjectPaths();
+            
 
-            var ass = LoadAssemblies(paths);
+            var root = new FakeNode();
+            var loadedAssemblies = LoadAssemblies(root, _visualStudio.GetProjectAssemblyPaths());
+            root.IsIncluded = true;
 
-            return BuildTree(ass);
+            return loadedAssemblies;
         }
 
-        private IEnumerable<AssemblyDefinition> LoadAssemblies(IEnumerable<string> projectsPaths)
+        private IList<AssemblyNode> LoadAssemblies(FakeNode root, IEnumerable<FilePathAbsolute> assembliesPaths)
         {
-            var loadedAssemblies = new List<AssemblyDefinition>();
-            foreach (var assembly in projectsPaths)
+            var assemblyTreeNodes = new List<AssemblyNode>();
+            foreach (FilePathAbsolute assemblyPath in assembliesPaths)
             {
+                
                 try
                 {
-                    loadedAssemblies.Add(_assemblyReaderWriter.ReadAssembly(assembly));
+                    var assemblyDefinition = _assemblyReaderWriter.ReadAssembly((string)assemblyPath);
+                   
+                    var assemblyNode = new AssemblyNode(assemblyDefinition.Name.Name, assemblyDefinition);
+                    assemblyNode.AssemblyPath = assemblyPath;
+
+                    GroupTypes(assemblyNode, "", ChooseTypes(assemblyDefinition).ToList());
+
+                    root.Children.Add(assemblyNode);
+                    assemblyTreeNodes.Add(assemblyNode);
+
                 }
                 catch (AssemblyReadException e)
                 {
@@ -82,32 +108,9 @@ namespace VisualMutator.Model.Mutations.Types
                     IsAssemblyLoadError = true;
                 }
             }
-            return loadedAssemblies;
-        }
-        private IList<AssemblyNode> BuildTree(IEnumerable<AssemblyDefinition> loadedAssemblies)
-        {
-       
-            var assemblyTreeNodes = new List<AssemblyNode>();
-          
-            var root = new FakeNode();
-
-
-
-
-            foreach (var assembly in loadedAssemblies)
-            {
-                var assemblyNode = new AssemblyNode(assembly.Name.Name, assembly);
-                GroupTypes(assemblyNode, "", ChooseTypes(assembly).ToList());
-
-                root.Children.Add(assemblyNode);
-                assemblyTreeNodes.Add(assemblyNode);
-            }
-
-            root.IsIncluded = true;
-
             return assemblyTreeNodes;
         }
-
+  
         private static IEnumerable<TypeDefinition> ChooseTypes(AssemblyDefinition assembly)
         {
             return assembly.MainModule.Types

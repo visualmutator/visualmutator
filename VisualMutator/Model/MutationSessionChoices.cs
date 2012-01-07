@@ -2,12 +2,14 @@ namespace VisualMutator.Controllers
 {
     using System.Collections.Generic;
 
+    using CommonUtilityInfrastructure.Paths;
+
     using Mono.Cecil;
 
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
+    using VisualMutator.Model.Mutations.Types;
 
- 
     public class MutationSessionChoices 
     {
         public IList<IMutationOperator> SelectedOperators
@@ -16,7 +18,12 @@ namespace VisualMutator.Controllers
             set;
         }
 
-        public IList<AssemblyDefinition> Assemblies
+        public IList<AssemblyNode> Assemblies
+        {
+            get;
+            set;
+        }
+        public IList<DirectoryPathAbsolute> ProjectPaths
         {
             get;
             set;

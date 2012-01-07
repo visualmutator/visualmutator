@@ -15,6 +15,7 @@
     using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Structure;
+    using VisualMutator.Model.Mutations.Types;
     using VisualMutator.MvcMutations;
 
     public class TestAssemblyFile : IDisposable
@@ -64,7 +65,7 @@
             var mutationSessionChoices = new MutationSessionChoices
             {
                 SelectedOperators = new[] { mutator },
-                Assemblies = new[] { assembly },
+                Assemblies = new[] { new AssemblyNode("da", assembly) },
                 SelectedTypes = assembly.MainModule.Types,
                 MutantsCreationOptions = new MutantsCreationOptions(),
 

@@ -13,7 +13,7 @@
     using VisualMutator.Views;
 
     public class CreationViewModel<TView> : ViewModel<TView>
-        where TView : class, IDialogView
+        where TView : class, IWindow
     {
 
 
@@ -94,7 +94,7 @@
 
         public void ShowDialog()
         {
-            View.SetOwnerAndShowDialog();
+            View.SetDefaultOwnerAndShowDialog();
         }
 
         public void Close()

@@ -9,14 +9,15 @@ namespace CommonUtilityInfrastructure.WpfUtils
     using System.Text;
     using System.Windows;
 
-    public interface IDialogView : IView
+    public interface IWindow : IView
     {
         bool? ShowDialog();
-        bool? SetOwnerAndShowDialog();
+        bool? ShowDialog(IWindow owner);
+        bool? SetDefaultOwnerAndShowDialog();
 
         void Close();
 
-        Window Owner { get; set; }
+      //  IView Owner { get; set; }
 
     
     }

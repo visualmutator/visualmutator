@@ -12,6 +12,7 @@
     using System.Windows.Interop;
     using System.Xml.Linq;
 
+    using CommonUtilityInfrastructure.Paths;
     using CommonUtilityInfrastructure.WpfUtils;
 
     #endregion
@@ -42,7 +43,22 @@
         {
             return collection.Any() ? collection.Average(func) : 0;
         }
-
+        public static FilePathRelative ToFilePathRelative(this string collection)
+        {
+            return new FilePathRelative(collection);
+        }
+        public static FilePathAbsolute ToFilePathAbsolute(this string collection)
+        {
+            return new FilePathAbsolute(collection);
+        }
+        public static DirectoryPathRelative ToDirectoryPathRelative(this string collection)
+        {
+            return new DirectoryPathRelative(collection);
+        }
+        public static DirectoryPathAbsolute ToDirectoryPathAbsolute(this string collection)
+        {
+            return new DirectoryPathAbsolute(collection);
+        }
         public static T[] InArrayIf<T>(this T obj, bool condition)
         {
             if(condition)
@@ -65,9 +81,9 @@
             
         }
   
-        public static BetterObservableCollection<T> ToObsCollection<T>(this IEnumerable<T> collection)
+        public static NotifyingCollection<T> ToObsCollection<T>(this IEnumerable<T> collection)
         {
-            var obs = new BetterObservableCollection<T>();
+            var obs = new NotifyingCollection<T>();
             foreach (T item in collection)
             {
                 obs.Add(item);

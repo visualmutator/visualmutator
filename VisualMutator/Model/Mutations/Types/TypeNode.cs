@@ -2,6 +2,8 @@
 {
     #region Usings
 
+    using CommonUtilityInfrastructure.Paths;
+
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
@@ -25,6 +27,12 @@
             {
                 return _assemblyDefinition;
             }
+        }
+
+        public FilePathAbsolute AssemblyPath
+        {
+            get;
+            set;
         }
     }
 

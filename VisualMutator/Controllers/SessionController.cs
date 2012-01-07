@@ -17,6 +17,7 @@
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests;
+    using VisualMutator.Model.Tests.Custom;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.ViewModels;
 
@@ -55,6 +56,8 @@
         private SessionState _sessionState;
 
         private List<Mutant> _testedMutants;
+
+        private TestingProcessExtensionOptions _testingProcessExtensionOptions;
 
         public SessionController(
             CommonServices svc,
@@ -186,24 +189,37 @@ IMutantsFileManager mutantsFileManager,
 
         }
 
+        public void OnTestingStarting(string directory, Mutant mutant)
+        {
+
+        }
+
         public void RunMutationSession(MutationSessionChoices choices)
         {
             _sessionState = SessionState.Running;
-
+            
             RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
 
+            _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
+
+                _testingProcessExtensionOptions.TestingProcessExtension.Initialize(
+                    _testingProcessExtensionOptions.Parameter, choices.ProjectPaths);
+
+
                 var storedMutantInfo =_testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
-              //  var storedMutantInfo = _mutantsFileManager.StoreMutant(_currentSession.TestEnvironment.DirectoryPath, changelessMutant);
-
-
+            
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
-                // _testsContainer.VerifyMutant(_currentSession, storedMutantInfo, changelessMutant);
+
+
+
+                _testingProcessExtensionOptions.TestingProcessExtension
+                    .PrepareForMutant(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
                 return changelessMutant;
 
@@ -241,6 +257,7 @@ IMutantsFileManager mutantsFileManager,
             _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
+            _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             _sessionEventsSubject.OnCompleted();
         }
 
@@ -250,6 +267,7 @@ IMutantsFileManager mutantsFileManager,
 
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Error, 0);
+            _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             _sessionEventsSubject.OnCompleted();
         }
 
@@ -305,12 +323,15 @@ IMutantsFileManager mutantsFileManager,
 
 
                 var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
-            //    var storedMutantInfo = _mutantsFileManager.StoreMutant(_currentSession.TestEnvironment.DirectoryPath, mutant);
-
+          
                 if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
                 {
                     _testsContainer.VerifyMutant(storedMutantInfo, mutant);
                 }
+
+                _testingProcessExtensionOptions.TestingProcessExtension
+                    .PrepareForMutant(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+
                 
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, mutant);
                 _testedMutants.Add(mutant);

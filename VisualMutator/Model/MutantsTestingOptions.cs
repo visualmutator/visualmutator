@@ -2,6 +2,8 @@ namespace VisualMutator.Model.Mutations
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
+    using VisualMutator.Model.Tests.Custom;
+
     public class MutantsTestingOptions : ModelElement
     {
 
@@ -18,5 +20,22 @@ namespace VisualMutator.Model.Mutations
                 SetAndRise(ref _testingTimeoutSeconds, value, () => TestingTimeoutSeconds);
             }
         }
+
+
+        private TestingProcessExtensionOptions _testingProcessExtensionOptions;
+
+        public TestingProcessExtensionOptions TestingProcessExtensionOptions
+        {
+            get
+            {
+                return _testingProcessExtensionOptions;
+            }
+            set
+            {
+                SetAndRise(ref _testingProcessExtensionOptions, value, () => TestingProcessExtensionOptions);
+            }
+        }
+      
+
     }
 }

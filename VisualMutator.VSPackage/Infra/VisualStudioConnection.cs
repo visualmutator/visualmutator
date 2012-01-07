@@ -9,6 +9,9 @@
     using System.Reflection;
     using System.Windows.Forms;
 
+    using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
+
     using EnvDTE;
 
     using EnvDTE80;
@@ -120,7 +123,14 @@
             }
         }
 
-        public IEnumerable<string> GetProjectPaths()
+/*
+        public void GetSolutionPaths()
+        {
+           var properties = _dte.Solution.Properties.Cast<Property>().ToList();
+            properties.Single(p=>p.)
+        }
+*/
+        public IEnumerable<DirectoryPathAbsolute> GetProjectPaths()
         {
 
             IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
@@ -128,7 +138,28 @@
                        p => p.ConfigurationManager != null
                             && p.ConfigurationManager.ActiveConfiguration != null
                             && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
-            var list = new List<string>();
+            var list = new List<DirectoryPathAbsolute>();
+            foreach (Project project in chosenProjects)
+            {
+                IEnumerable<Property> properties = project.Properties.Cast<Property>().ToList();
+
+                var localPath = (string)properties
+                                            .Single(prop => prop.Name == "LocalPath").Value;
+
+
+                list.Add(localPath.ToDirectoryPathAbsolute());
+            }
+            return list;
+        }
+        public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
+        {
+
+            IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
+                .Where(
+                       p => p.ConfigurationManager != null
+                            && p.ConfigurationManager.ActiveConfiguration != null
+                            && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
+            var list = new List<FilePathAbsolute>();
             foreach (Project project in chosenProjects)
             {
                 IEnumerable<Property> properties = project.Properties.Cast<Property>().ToList();
@@ -143,20 +174,20 @@
                                              .ActiveConfiguration.Properties.Cast<Property>()
                                              .Single(prop => prop.Name == "OutputPath").Value;
 
-                list.Add(Path.Combine(localPath, outputPath, outputFileName));
+                list.Add(Path.Combine(localPath, outputPath, outputFileName).ToFilePathAbsolute());
             }
             return list;
         }
 
         public IEnumerable<string> GetReferencedAssemblies()
         {
-            var projects = GetProjectPaths().ToList();
+            var projects = GetProjectAssemblyPaths().ToList();
             // string binDir = Path.GetDirectoryName(projects.First());
             var list = new List<string>();
-            foreach (string binDir in projects.Select(p => Path.GetDirectoryName(p)))
+            foreach (var binDir in projects.Select(p => p.ParentDirectoryPath))
             {
-                var files = Directory.GetFiles(binDir, "*.dll", SearchOption.AllDirectories)
-                    .Where(p => !projects.Contains(p));
+                var files = Directory.GetFiles(binDir.Path, "*.dll", SearchOption.AllDirectories)
+                    .Where(p => !projects.Contains(p.ToFilePathAbsolute()));
                 list.AddRange(files);
             }
             return list;

@@ -18,9 +18,9 @@ namespace VisualMutator.Controllers
             }
         }
 
-        private BetterObservableCollection<string> _additionalFilesToCopy;
+        private NotifyingCollection<string> _additionalFilesToCopy;
 
-        public BetterObservableCollection<string> AdditionalFilesToCopy
+        public NotifyingCollection<string> AdditionalFilesToCopy
         {
             get
             {

@@ -12,17 +12,17 @@ namespace VisualMutator.ViewModels
         public MutantDetailsViewModel(IMutantDetailsView view)
             : base(view)
         {
-            TestNamespaces = new BetterObservableCollection<TestNodeNamespace>();
+            TestNamespaces = new NotifyingCollection<TestNodeNamespace>();
 
-            CodeLanguages = new BetterObservableCollection<CodeLanguage> { CodeLanguage.CSharp, CodeLanguage.IL };
+            CodeLanguages = new NotifyingCollection<CodeLanguage> { CodeLanguage.CSharp, CodeLanguage.IL };
 
             SelectedLanguage = CodeLanguage.CSharp;
         }
 
 
-        private BetterObservableCollection<TestNodeNamespace> _testNamespaces;
+        private NotifyingCollection<TestNodeNamespace> _testNamespaces;
 
-        public BetterObservableCollection<TestNodeNamespace> TestNamespaces
+        public NotifyingCollection<TestNodeNamespace> TestNamespaces
         {
             get
             {
@@ -87,9 +87,9 @@ namespace VisualMutator.ViewModels
             View.ClearCode();
         }
 
-        private BetterObservableCollection<CodeLanguage> _codeLanguages;
+        private NotifyingCollection<CodeLanguage> _codeLanguages;
 
-        public BetterObservableCollection<CodeLanguage> CodeLanguages
+        public NotifyingCollection<CodeLanguage> CodeLanguages
         {
             get
             {

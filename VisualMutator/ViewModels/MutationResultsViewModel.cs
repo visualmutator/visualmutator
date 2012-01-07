@@ -21,7 +21,7 @@
             : base(view)
         {
 
-            Operators = new BetterObservableCollection<ExecutedOperator>();
+            Operators = new NotifyingCollection<ExecutedOperator>();
 
 
         }
@@ -120,9 +120,9 @@
                 SetAndRise(ref _commandPause, value, () => CommandPause);
             }
         }
-        private BetterObservableCollection<ExecutedOperator> _operators;
+        private NotifyingCollection<ExecutedOperator> _operators;
 
-        public BetterObservableCollection<ExecutedOperator> Operators
+        public NotifyingCollection<ExecutedOperator> Operators
         {
             get
             {

@@ -16,7 +16,7 @@ namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
 
-    public interface IResultsSavingView : IDialogView
+    public interface IResultsSavingView : IWindow
     {
       
 
@@ -31,9 +31,16 @@ namespace VisualMutator.Views
             _windowProvider = windowProvider;
             InitializeComponent();
         }
-        public bool? SetOwnerAndShowDialog()
+
+        public bool? ShowDialog(IWindow owner)
         {
-            _windowProvider.SetOwner(this);
+            Owner = (Window)owner;
+            return ShowDialog();
+        }
+
+        public bool? SetDefaultOwnerAndShowDialog()
+        {
+            _windowProvider.SetOwnerFor(this);
             return ShowDialog();
         }
     }

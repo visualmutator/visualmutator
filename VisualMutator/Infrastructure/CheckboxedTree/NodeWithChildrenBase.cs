@@ -11,12 +11,12 @@ namespace VisualMutator.Infrastructure.CheckboxedTree
             IHasChildren<TThis, TChild>
         where TChild : Node, IHasParent<TThis, TChild>
     {
-        private BetterObservableCollection<TChild> _children;
+        private NotifyingCollection<TChild> _children;
 
         protected NodeWithChildrenBase(string name)
             : base(name)
         {
-            this._children = new BetterObservableCollection<TChild>();
+            this._children = new NotifyingCollection<TChild>();
         }
 
         public IList<TChild> Children

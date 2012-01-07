@@ -27,7 +27,7 @@
     #endregion
 
     public abstract class CreationController<TViewModel, TView> : Controller
-        where TViewModel : CreationViewModel<TView> where TView : class, IDialogView
+        where TViewModel : CreationViewModel<TView> where TView : class, IWindow
     {
         protected readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
