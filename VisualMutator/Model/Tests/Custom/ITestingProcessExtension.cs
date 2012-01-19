@@ -6,9 +6,9 @@ namespace VisualMutator.Model.Tests.Custom
 
     public interface ITestingProcessExtension
     {
-        void Initialize(string parameter, IList<DirectoryPathAbsolute> projectPaths);
+        void OnSessionStarting(string parameter, IList<string> projectPaths);
 
-        void PrepareForMutant(string mutantDestination, List<string> mutantFilePaths);
+        void OnTestingOfMutantStarting(string mutantDestination, IList<string> mutantFilePaths);
 
         void OnTestingCancelled();
 

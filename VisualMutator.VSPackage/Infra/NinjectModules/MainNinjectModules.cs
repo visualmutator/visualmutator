@@ -92,7 +92,7 @@
             Kernel.Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
 
             Kernel.Bind<MainController>().ToSelf().InSingletonScope();
-            Kernel.Bind<MutationResultsViewModel>().ToSelf();
+            Kernel.Bind<MainViewModel>().ToSelf();
             Kernel.Bind<IMutationResultsView>().To<MutationResultsView>();
 
 

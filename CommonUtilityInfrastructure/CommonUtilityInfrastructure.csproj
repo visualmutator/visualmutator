@@ -85,6 +85,7 @@
     <Compile Include="Paths\FilePathRelative.cs" />
     <Compile Include="Paths\InternalStringHelper.cs" />
     <Compile Include="Paths\ListOfPathHelper.cs" />
+    <Compile Include="Paths\PathExtensions.cs" />
     <Compile Include="Paths\PathHelper.cs" />
     <Compile Include="ProgressCounter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

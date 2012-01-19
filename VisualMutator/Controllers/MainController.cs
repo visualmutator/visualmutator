@@ -32,7 +32,7 @@ namespace VisualMutator.Controllers
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly MutationResultsViewModel _viewModel;
+        private readonly MainViewModel _viewModel;
 
         private readonly IFactory<SessionCreationController> _mutantsCreationFactory;
 
@@ -52,7 +52,7 @@ namespace VisualMutator.Controllers
 
 
         public MainController(
-            MutationResultsViewModel viewModel,
+            MainViewModel viewModel,
             IFactory<SessionCreationController> mutantsCreationFactory,
             IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
             IFactory<SessionController> sessionControllerFactory,
@@ -174,7 +174,7 @@ namespace VisualMutator.Controllers
                                  args.NumberOfAllMutants);
 
                          _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllMutantsTested);
-                         _viewModel.MutationScore = string.Format("Mutation score: {0:F2}", args.MutationScore);
+                         _viewModel.MutationScore = string.Format(@"Mutation score: {0}%", args.MutationScore.AsPercentageOf(1.0d));
                          _viewModel.Progress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
                      });
                  }),
@@ -270,7 +270,7 @@ namespace VisualMutator.Controllers
             SetState(OperationsState.None);
         }
 
-        public MutationResultsViewModel ViewModel
+        public MainViewModel ViewModel
         {
             get
             {

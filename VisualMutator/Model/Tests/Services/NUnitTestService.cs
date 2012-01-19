@@ -74,6 +74,10 @@
             return tests;
         }
 
+        public void name()
+        {
+     
+        }
         public List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession)
         {
 

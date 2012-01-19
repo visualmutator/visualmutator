@@ -132,12 +132,11 @@
 */
         public IEnumerable<DirectoryPathAbsolute> GetProjectPaths()
         {
-
+/*
             IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
-                .Where(
-                       p => p.ConfigurationManager != null
-                            && p.ConfigurationManager.ActiveConfiguration != null
-                            && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
+                .Where(p => p.ConfigurationManager != null
+                         && p.ConfigurationManager.ActiveConfiguration != null
+                         && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
             var list = new List<DirectoryPathAbsolute>();
             foreach (Project project in chosenProjects)
             {
@@ -148,35 +147,30 @@
 
 
                 list.Add(localPath.ToDirectoryPathAbsolute());
-            }
-            return list;
+            }*/
+           // return list;
+
+
+            return from project in _dte.Solution.Cast<Project>()
+                   let confManager = project.ConfigurationManager
+                   where confManager != null
+                         && confManager.ActiveConfiguration != null
+                         && confManager.ActiveConfiguration.IsBuildable
+                   let values = project.Properties.Cast<Property>().ToDictionary(prop => prop.Name)
+                   select values["LocalPath"].Value.CastTo<string>().ToDirectoryPathAbsolute();
         }
         public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
         {
-
-            IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
-                .Where(
-                       p => p.ConfigurationManager != null
-                            && p.ConfigurationManager.ActiveConfiguration != null
-                            && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
-            var list = new List<FilePathAbsolute>();
-            foreach (Project project in chosenProjects)
-            {
-                IEnumerable<Property> properties = project.Properties.Cast<Property>().ToList();
-
-                var localPath = (string)properties
-                                            .Single(prop => prop.Name == "LocalPath").Value;
-                var outputFileName = (string)properties
-                                                 .Single(prop => prop.Name == "OutputFileName").
-                                                 Value;
-
-                var outputPath = (string)project.ConfigurationManager
-                                             .ActiveConfiguration.Properties.Cast<Property>()
-                                             .Single(prop => prop.Name == "OutputPath").Value;
-
-                list.Add(Path.Combine(localPath, outputPath, outputFileName).ToFilePathAbsolute());
-            }
-            return list;
+            return from project in _dte.Solution.Cast<Project>()
+                   where project.ConfigurationManager != null
+                   let config = project.ConfigurationManager.ActiveConfiguration
+                   where config != null && config.IsBuildable
+                   let values = project.Properties.Cast<Property>().ToDictionary(p => p.Name)
+                   let localPath = values["LocalPath"].Value.CastTo<string>()
+                   let outputFileName = values["OutputFileName"].Value.CastTo<string>()
+                   let outputDir = (string)config.Properties.Cast<Property>()
+                        .Single(p => p.Name == "OutputPath").Value
+                   select Path.Combine(localPath, outputDir, outputFileName).ToFilePathAbsolute();
         }
 
         public IEnumerable<string> GetReferencedAssemblies()

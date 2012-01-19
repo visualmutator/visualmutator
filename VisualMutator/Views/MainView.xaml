@@ -32,7 +32,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid d:DataContext="{d:DesignInstance ViewModels:MutationResultsViewModel}" 
+    <Grid d:DataContext="{d:DesignInstance ViewModels:MainViewModel}" 
         
         >
         <!-- Visibility="{Binding IsVisible, Converter={Converters:BoolToVisibilityConverter}}"-->

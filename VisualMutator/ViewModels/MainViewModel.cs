@@ -15,9 +15,9 @@
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 
-    public class MutationResultsViewModel : ViewModel<IMutationResultsView>
+    public class MainViewModel : ViewModel<IMutationResultsView>
     {
-        public MutationResultsViewModel(IMutationResultsView view)
+        public MainViewModel(IMutationResultsView view)
             : base(view)
         {
 

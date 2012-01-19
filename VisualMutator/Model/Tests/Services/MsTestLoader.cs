@@ -62,6 +62,16 @@
         public IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly)
         {
             AssemblyDefinition ad = _assemblyReaderWriter.ReadAssembly(assembly);
+
+            return from type in ad.MainModule.Types
+                   where type.CustomAttributes.Any(a => a.AttributeType.FullName
+                        == @"Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute")
+                   from method in type.Methods
+                   where method.CustomAttributes.Any(a => a.AttributeType.FullName
+                        == @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute")
+                   select method;
+
+            /*
             IEnumerable<TypeDefinition> types =
                 ad.MainModule.Types.Where(
                     t =>
@@ -74,7 +84,7 @@
                 m => m.CustomAttributes.Any(
                     a =>
                     a.AttributeType.FullName ==
-                    @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));
+                    @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));*/
         }
 
    

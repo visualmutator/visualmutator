@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:Views="clr-namespace:VisualMutator.Views" xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
-        xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" mc:Ignorable="d"  Title="VisualMutator - Create and save mutants"
+        xmlns:Converters="clr-namespace:VisualMutator.Views.Converters" mc:Ignorable="d"  Title="VisualMutator - Choose testing process extension"
        Width="451" Height="343" 
              d:DesignHeight="547" d:DesignWidth="698" WindowStartupLocation="CenterOwner">
 

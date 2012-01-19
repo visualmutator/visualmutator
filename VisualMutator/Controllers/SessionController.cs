@@ -208,8 +208,8 @@ IMutantsFileManager mutantsFileManager,
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
 
-                _testingProcessExtensionOptions.TestingProcessExtension.Initialize(
-                    _testingProcessExtensionOptions.Parameter, choices.ProjectPaths);
+                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionStarting(
+                    _testingProcessExtensionOptions.Parameter, choices.ProjectPaths.Select(p=>p.Path).ToList());
 
 
                 var storedMutantInfo =_testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
@@ -219,7 +219,7 @@ IMutantsFileManager mutantsFileManager,
 
 
                 _testingProcessExtensionOptions.TestingProcessExtension
-                    .PrepareForMutant(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+                    .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
                 return changelessMutant;
 
@@ -330,7 +330,7 @@ IMutantsFileManager mutantsFileManager,
                 }
 
                 _testingProcessExtensionOptions.TestingProcessExtension
-                    .PrepareForMutant(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+                    .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
                 
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, mutant);

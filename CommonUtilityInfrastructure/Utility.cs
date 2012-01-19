@@ -43,22 +43,8 @@
         {
             return collection.Any() ? collection.Average(func) : 0;
         }
-        public static FilePathRelative ToFilePathRelative(this string collection)
-        {
-            return new FilePathRelative(collection);
-        }
-        public static FilePathAbsolute ToFilePathAbsolute(this string collection)
-        {
-            return new FilePathAbsolute(collection);
-        }
-        public static DirectoryPathRelative ToDirectoryPathRelative(this string collection)
-        {
-            return new DirectoryPathRelative(collection);
-        }
-        public static DirectoryPathAbsolute ToDirectoryPathAbsolute(this string collection)
-        {
-            return new DirectoryPathAbsolute(collection);
-        }
+       
+
         public static T[] InArrayIf<T>(this T obj, bool condition)
         {
             if(condition)
@@ -80,7 +66,25 @@
             }
             
         }
-  
+        public static Dictionary<TKey, T> ToSparseDictionary<T, TKey>(this IEnumerable<T> collection, 
+            ICollection<TKey> keySpace, Func<T,TKey> keySelector)
+        {
+            var list = new List<T>();
+            foreach (T item in collection)
+            {
+                var key = keySelector(item);
+                if (keySpace.Contains(key))
+                {
+                    keySpace.Remove(key);
+                    list.Add(item);
+                    if (keySpace.Count == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            return list.ToDictionary(keySelector);
+        }
         public static NotifyingCollection<T> ToObsCollection<T>(this IEnumerable<T> collection)
         {
             var obs = new NotifyingCollection<T>();
@@ -118,6 +122,11 @@
         {
             Throw.If(part < 0 || all < 0 || part > all || all == 0);
             return (int)(((double)part / all) * 100);
+        }
+        public static int AsPercentageOf(this double part, double all)
+        {
+            Throw.If(part < 0 || all < 0 || part > all || Math.Abs(all - 0) < 0.0000001);
+            return (int)Math.Round((part / all) * 100d);
         }
         public static double RoundToSignificantDigits(this double d, int digits)
         {

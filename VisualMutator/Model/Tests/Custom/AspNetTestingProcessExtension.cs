@@ -18,50 +18,40 @@
     [Export(typeof(ITestingProcessExtension))]
     public class AspNetTestingProcessExtension : ITestingProcessExtension
     {
-        private string _projectPath;
+        private DirectoryPathAbsolute _projectPath;
 
         private string _port;
 
         private string cmdPath;
 
-        public AspNetTestingProcessExtension()
-        {
-            
-        }
+  
 
-        public void Initialize(string parameter, IList<DirectoryPathAbsolute> projectPaths)
+        public void OnSessionStarting(string parameter, IList<string> projectPaths)
         {
 
-            _projectPath = projectPaths
-             .First(ass => ass.ChildrenFilesPath.Where(p => p.FileName == "Web.config").Any()).Path;
+            _projectPath = projectPaths.Select(p => new DirectoryPathAbsolute(p))
+             .First(ass => ass.ChildrenFilesPath.Where(p => p.FileName == "Web.config").Any());
 
 
             _port = parameter;
             string content =
 @"taskkill /F /IM WebDev.WebServer40.EXE
 START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"" /B WebDev.WebServer40.EXE /port:" 
-+ _port + @" /path:" + _projectPath.InQuotes() + @" /vpath:""/""";
++ _port + @" /path:" + _projectPath.Path.InQuotes() + @" /vpath:""/""";
 
              cmdPath = Path.GetTempFileName();
             
 
             cmdPath = Path.ChangeExtension(cmdPath, "cmd");
             File.WriteAllText(cmdPath, content, Encoding.ASCII);
-            //_projectPath = @"D:\PLIKI\Programowanie\C#\Source Code'y\ASP.NET MVC\MvcMusicStore 3\MvcMusicStore";
+       
 
-
-
-
-         
-  
-
-           //// 
 
         }
 
-        public void PrepareForMutant(string mutantDestination, List<string> mutantFilePaths)
+        public void OnTestingOfMutantStarting(string mutantDestination, IList<string> mutantFilePaths)
         {
-            string src = @"D:\PLIKI\Programowanie\C#\Source Code'y\ASP.NET MVC\MvcMusicStore 3\chromedriver.exe";
+            string src = _projectPath.Concat("chromedriver.exe").Path;
 
             string dest = Path.Combine(mutantDestination, "chromedriver.exe");
             if (!File.Exists(dest))
@@ -69,18 +59,25 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
                 File.Copy(src, dest, true);
             }
 
-            
-        //    copyTo();
-
-            foreach (var p in mutantFilePaths)
+            foreach (var p in mutantFilePaths.Select(path=>new FilePathAbsolute(path)))
             {
-                File.Copy(p, Path.Combine(Path.Combine(_projectPath, "bin"), Path.GetFileName(p)), true);
+                var mutdest = _projectPath.Concat("bin");//.Concat(p.FileName).Path;
+             /*   if(File.Exists(mutdest.Concat(p.FileName).Path))
+                {
+                    File.Move(mutdest.Concat(p.FileName).Path, mutdest.Concat(p.FileNameWithoutExtension).Concat(".dlltmp").Path);
+                }*/
+
+                File.Copy(p.Path, mutdest.Concat(p.FileName).Path, true);
             }
 
 
             Process.Start(cmdPath);
 
         }
+
+        /// <summary>
+        /// Run on cancellation of current test run or whole mutantion testing operation.
+        /// </summary>
         public void OnTestingCancelled()
         {
             Kill("chromedriver");
@@ -98,7 +95,7 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
         {
             get
             {
-                return "ASP.NET Devevelopment Server Support";
+                return "ASP.NET Development Server Support";
             }
         }
 

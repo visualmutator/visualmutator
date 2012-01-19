@@ -11,12 +11,12 @@ namespace VisualMutator.Model.Tests.Custom
         public const string ConstName = "None";
 
 
-        public void Initialize(string parameter, IList<DirectoryPathAbsolute> projectPaths)
+        public void OnSessionStarting(string parameter, IList<string> projectPaths)
         {
       
         }
 
-        public void PrepareForMutant(string mutantDestination, List<string> mutantFilePaths)
+        public void OnTestingOfMutantStarting(string mutantDestination, IList<string> mutantFilePaths)
         {
             
         }

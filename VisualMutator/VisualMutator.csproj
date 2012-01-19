@@ -200,7 +200,7 @@
     <Compile Include="Model\Tests\TestsTree\TestTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\SessionCreationViewModel.cs" />
-    <Compile Include="ViewModels\MutationResultsViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Controllers\OperationsState.cs" />
     <Compile Include="ViewModels\ResultsSavingViewModel.cs" />
     <Compile Include="ViewModels\TypesTreeViewModel.cs" />
