@@ -34,9 +34,11 @@
     <Reference Include="DiffLib">
       <HintPath>..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.Decompiler, Version=1.0.0.1000, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ICSharpCode.Decompiler">
+      <HintPath>..\packages\ICSharpCode.Decompiler.dll</HintPath>
+    </Reference>
     <Reference Include="ILSpy">
-      <HintPath>..\..\..\..\..\..\..\PORTABLE\Programowanie\ILSpy\ILSpy.exe</HintPath>
+      <HintPath>..\packages\ILSpy.exe</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
@@ -80,25 +82,25 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.CoreEx, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <HintPath>..\packages\System.CoreEx.dll</HintPath>
     </Reference>
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Linq.Async, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <HintPath>..\packages\System.Linq.Async.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Reactive, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <HintPath>..\packages\System.Reactive.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.ClientProfile, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <HintPath>..\packages\System.Reactive.ClientProfile.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.ExtendedProfile, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <HintPath>..\packages\System.Reactive.ExtendedProfile.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Testing, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <HintPath>..\packages\System.Reactive.Testing.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
