@@ -14,7 +14,7 @@ namespace VisualMutator.OperatorsStandard
 
     using VisualMutator.Extensibility;
 
-    using OpCodes = Mono.Cecil.Cil.OpCodes;
+   // using OpCodes = Mono.Cecil.Cil.OpCodes;
 
     public class ChangeEqualsIntoComparison : IMutationOperator
     {

@@ -109,11 +109,11 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
                     KillProcessAndChildren(p.Id);
                   //  p.Kill();
                 }
-                catch (Win32Exception winException)
+                catch (Win32Exception )
                 {
                     // process was terminating or can't be terminated - deal with it
                 }
-                catch (InvalidOperationException invalidException)
+                catch (InvalidOperationException )
                 {
                     // process has already exited - might be able to let this one go
                 }
