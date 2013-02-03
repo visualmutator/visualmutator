@@ -1,0 +1,42 @@
+(\w+)\)\r?\n[ ]+{
+$&if(Process($1)){visitor.Visit($1);}
+$&if(Process($1)){var $1New = rewriter.Rewrite($1); return base.Rewrite($1New);}
+
+private OperatorCodeVisitor visitor;
+VisualCodeVisitor(OperatorCodeVisitor visitor)
+{
+	this.visitor = visitor;
+	
+	
+}
+
+
+
+
+  private readonly List<int> _mutationTargets;
+        private readonly List<string> _allowedTypes;
+        private int elementCounter;
+        private OperatorCodeRewriter rewriter;
+
+        public VisualCodeRewriter(IMetadataHost host, List<int> mutationTargets, List<string> allowedTypes, OperatorCodeRewriter rewriter,
+            bool copyAndRewriteImmutableReferences = false) 
+            : base(host, copyAndRewriteImmutableReferences)
+        {
+            _mutationTargets = mutationTargets;
+            _allowedTypes = allowedTypes;
+            this.rewriter = rewriter;
+        }
+
+        private bool Process(object obj)
+        {
+            elementCounter++;
+            return _mutationTargets.Contains(elementCounter);
+        }
+
+        public override void RewriteChildren(NamespaceTypeDefinition namespaceTypeDefinition)
+        {
+            if (_allowedTypes.Contains(namespaceTypeDefinition.Name.Value))
+            {
+                base.RewriteChildren(namespaceTypeDefinition);
+            }
+        }
