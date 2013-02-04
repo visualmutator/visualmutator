@@ -71,14 +71,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Operators\AspNetMvcOperator.cs" />
-    <Compile Include="Operators\ChangeMapRoutePattern.cs" />
-    <Compile Include="Operators\ChangeParameterName.cs" />
-    <Compile Include="Operators\RedirectToOtherAction.cs" />
-    <Compile Include="Operators\RemoveAuthorizeAttribute.cs" />
-    <Compile Include="Operators\SwapActionNames.cs" />
-    <Compile Include="Operators\ReplaceViewWithRedirectToAction.cs" />
-    <Compile Include="MvcMutationOperatorPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +85,9 @@
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Operators\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

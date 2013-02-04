@@ -10,6 +10,8 @@
 
         private List<MutationTarget> mutationTargets;
 
+        private IMethodDefinition _currentMethod;
+
         public List<MutationTarget> MutationTargets
         {
             get { return mutationTargets; }
@@ -31,8 +33,29 @@
 
         public void MarkMutationTarget(object o)
         {
-            mutationTargets.Add(new MutationTarget(elementCounter));
+            var mutationTarget = new MutationTarget(elementCounter);
+            if(_currentMethod != null)
+            {
+                //mutationTarget.Method = new 
+            }
+            mutationTargets.Add(mutationTarget);
         }
+
+
+        public void MethodEnter(IMethodDefinition method)
+        {
+            _currentMethod = method;
+        }
+
+        public void MethodExit(IMethodDefinition method)
+        {
+            _currentMethod = null;
+        }
+
+
+
+
+
         public override void Visit(IAddition addition)
         {if(Process(addition)){visitor.Visit(addition);}
             base.Visit(addition);
@@ -909,5 +932,6 @@
         }
 
 
+       
     }
 }

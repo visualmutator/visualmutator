@@ -65,44 +65,50 @@
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.CodeModel">
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.CodeModel.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.CodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CodeModelToIL">
+      <HintPath>..\packages\CCI\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ILGenerator">
+      <HintPath>..\packages\CCI\Microsoft.Cci.ILGenerator.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.ILToCodeModel">
-      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.ILToCodeModel.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.ILToCodeModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.MetadataHelper">
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MetadataHelper.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.MetadataHelper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.MetadataModel">
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MetadataModel.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.MetadataModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.MutableCodeModel">
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.MutableCodeModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.MutableMetadataModel">
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.PdbReader">
-      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PdbReader.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.PdbReader.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.PdbWriter">
-      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PdbWriter.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.PdbWriter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.PeReader">
-      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PeReader.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.PeWriter">
-      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PeWriter.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.PeWriter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.SourceModel">
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.SourceModel.dll</HintPath>
+      <HintPath>..\packages\CCI\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Mono.Cecil.dll</HintPath>
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.dll</HintPath>
@@ -397,10 +403,6 @@
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
-      <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
-      <Name>VisualMutator.MvcMutations</Name>
     </ProjectReference>
     <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
       <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>

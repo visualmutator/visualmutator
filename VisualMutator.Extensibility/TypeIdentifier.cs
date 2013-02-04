@@ -7,11 +7,11 @@
 
     public class TypeIdentifier
     {
-        private readonly Guid _modulePersistentIdentifier;
+        private readonly string _moduleName;
 
-        public Guid ModulePersistentIdentifier
+        public string ModuleName
         {
-            get { return _modulePersistentIdentifier; }
+            get { return _moduleName; }
         }
 
         private readonly string _typeName;
@@ -24,19 +24,19 @@
             {
                 throw new Exception(type.Name.Value + " has invalid container.");
             }
-            _modulePersistentIdentifier = module.PersistentIdentifier;
+            _moduleName = module.ModuleName.Value;
             _typeName = type.Name.Value;
         }
 
         public INamespaceTypeDefinition FindIn(IEnumerable<IModule> modules)
         {
-            return modules.Single(m => m.PersistentIdentifier == _modulePersistentIdentifier)
+            return modules.Single(m => m.ModuleName.Value == _moduleName)
                 .GetAllTypes().OfType<INamespaceTypeDefinition>().Single(t => t.Name.Value == _typeName);
         }
 
         protected bool Equals(TypeIdentifier other)
         {
-            return string.Equals(_typeName, other._typeName) && _modulePersistentIdentifier.Equals(other._modulePersistentIdentifier);
+            return string.Equals(_typeName, other._typeName) && _moduleName.Equals(other._moduleName);
         }
 
         public override bool Equals(object obj)
@@ -51,7 +51,7 @@
         {
             unchecked
             {
-                return (_typeName.GetHashCode()*397) ^ _modulePersistentIdentifier.GetHashCode();
+                return (_typeName.GetHashCode()*397) ^ _moduleName.GetHashCode();
             }
         }
     }

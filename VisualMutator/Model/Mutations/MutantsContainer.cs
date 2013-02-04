@@ -71,8 +71,10 @@
     
             var op = new PreOperator();
             var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
-            CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
-            var mutant = targets.ExecutedOperator.Mutants.First();
+          //  CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
+            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget(-1));
+            targets.ExecutedOperator.Children.Add(mutant);
+           // var mutant = targets.ExecutedOperator.Mutants.First();
             var copiedModules = session.StoredSourceAssemblies.Modules
                                                          .Select(_assembliesManager.Copy).Cast<IModule>().ToList();
             mutant.MutatedModules = copiedModules;
@@ -145,7 +147,7 @@
 
         public class OperatorWithTargets
         {
-            public IDictionary<Guid, List<MutationTarget>> MutationTargets
+            public IDictionary<string, List<MutationTarget>> MutationTargets
             {
                 get;
                 set;
@@ -163,21 +165,21 @@
 
             try
             {
-                var map = new Dictionary<Guid, List<MutationTarget>>();
+                var map = new Dictionary<string, List<MutationTarget>>();
                 OperatorCodeVisitor operatorVisitor = mutOperator.FindTargets();
                 foreach (var module in modules)
                 {
              
                     var visitor = new VisualCodeVisitor(operatorVisitor);
-
+                    operatorVisitor.MarkMutationTarget = visitor.MarkMutationTarget;
                     var traverser = new VisualCodeTraverser(allowedTypes)
-                       // .Where(i => i.ModulePersistentIdentifier == module.PersistentIdentifier).ToList())
+                       // .Where(i => i.ModuleName == module.PersistentIdentifier).ToList())
                     {
                         PreorderVisitor = visitor,
                     };
                     traverser.Traverse(module);
 
-                    map.Add(module.PersistentIdentifier, visitor.MutationTargets);
+                    map.Add(module.ModuleName.Value, visitor.MutationTargets);
                 }
                 
            
