@@ -124,9 +124,9 @@
 
         }
 
-        public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant)
+        public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant mutant)
         {
-            return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath, changelessMutant);
+            return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath, mutant);
         }
 
         public void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant)

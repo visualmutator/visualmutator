@@ -5,16 +5,16 @@
 
     public class VisualCodeTraverser : CodeTraverser
     {
-        private readonly IList<string> _allowedTypesName;
+        private readonly IList<TypeIdentifier> _allowedTypesName;
 
-        public VisualCodeTraverser(IList<string> allowedTypesName)
+        public VisualCodeTraverser(IList<TypeIdentifier> allowedTypesName)
         {
             _allowedTypesName = allowedTypesName;
         }
 
         public override void TraverseChildren(INamespaceTypeDefinition namespaceTypeDefinition)
         {
-            if (_allowedTypesName.Contains(namespaceTypeDefinition.Name.Value))
+            if (_allowedTypesName.Contains(new TypeIdentifier(namespaceTypeDefinition)))
             {
                 base.TraverseChildren(namespaceTypeDefinition);
             }

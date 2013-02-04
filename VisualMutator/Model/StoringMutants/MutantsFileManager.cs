@@ -8,7 +8,7 @@
 
     using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure;
-
+    using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
@@ -29,7 +29,7 @@
 
         void CleanupTestEnvironment(TestEnvironmentInfo info);
 
-        void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
+        void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
 
         void OnTestingCancelled();
     }
@@ -42,6 +42,7 @@
         private readonly IAssemblyReaderWriter _assemblyReaderWriter;
 
         private readonly IAssembliesManager _assembliesManager;
+        private readonly ICommonCompilerAssemblies _commonCompilerAssemblies;
 
         private readonly IFileSystem _fs;
 
@@ -55,17 +56,19 @@
             IVisualStudioConnection visualStudio,
             IAssemblyReaderWriter assemblyReaderWriter,
             IAssembliesManager assembliesManager,
+            ICommonCompilerAssemblies commonCompilerAssemblies,
             IFileSystem fs)
         {
             _visualStudio = visualStudio;
             _assemblyReaderWriter = assemblyReaderWriter;
             _assembliesManager = assembliesManager;
+            _commonCompilerAssemblies = commonCompilerAssemblies;
             _fs = fs;
         }
 
 
         public void WriteMutantsToDisk(string rootFolder, 
-            IList<ExecutedOperator> mutantsInOperators, Action<Mutant, StoredMutantInfo> verify, 
+            IList<ExecutedOperator> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, 
             ProgressCounter onSavingProgress)
         {
 
@@ -125,19 +128,21 @@
         public StoredMutantInfo StoreMutant(string directory, Mutant mutant)
         {
 
-
+            
             var result = new StoredMutantInfo();
 
-            IList<AssemblyDefinition> assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
-            foreach (AssemblyDefinition assemblyDefinition in assemblyDefinitions)
+            //IList<AssemblyDefinition> assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies).Assemblies;
+            foreach (IModule module in mutant.MutatedModules)
             {
+                
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(directory, assemblyDefinition.Name.Name + ".dll");
-                _fs.File.Delete(file);
-                _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
+                string file = Path.Combine(directory, module.Name.Value + ".dll");
+                _commonCompilerAssemblies.WriteToFile(module, file);
+               // _fs.File.Delete(file);
+            //    _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
                 result.AssembliesPaths.Add(file);
             }
-
+     
 
 /*
             prep.PrepareForMutant(directory, (dest) =>

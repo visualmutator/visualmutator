@@ -4,10 +4,17 @@ namespace VisualMutator.Model.Mutations.Structure
     using System.Linq;
 
     using CommonUtilityInfrastructure;
+    using Extensibility;
 
     public class ExecutedOperator : MutationNode
     {
         private readonly string _identificator;
+        private readonly IMutationOperator _mutOperator;
+
+        public IMutationOperator Operator
+        {
+            get { return _mutOperator; }
+        }
 
         public string Identificator
         {
@@ -17,10 +24,11 @@ namespace VisualMutator.Model.Mutations.Structure
             }
         }
 
-        public ExecutedOperator(string identificator, string name)
+        public ExecutedOperator(string identificator, string name, IMutationOperator mutOperator)
             : base( name, true)
         {
             _identificator = identificator;
+            _mutOperator = mutOperator;
         }
 
         public IEnumerable<Mutant> Mutants

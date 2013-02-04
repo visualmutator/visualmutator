@@ -8,14 +8,14 @@ namespace VisualMutator.Extensibility
 
     public class MutationElementMethodAndInstruction : MutationElementMethod
     {
-        private TypeIdentifier _typeIdentifier;
+        private MonoCecilTypeIdentifier _typeIdentifier;
 
         private string _methodFullName;
 
         public MutationElementMethodAndInstruction(MethodDefinition method, int instructionIndex )
             : base(method)
         {
-            _typeIdentifier = new TypeIdentifier(method.DeclaringType);
+            _typeIdentifier = new MonoCecilTypeIdentifier(method.DeclaringType);
             _methodFullName = method.FullName;
             _instructionIndex = instructionIndex;
         }

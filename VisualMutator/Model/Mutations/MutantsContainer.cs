@@ -9,10 +9,8 @@
     using System.Reflection;
 
     using CommonUtilityInfrastructure;
-
-    using Mono.Cecil;
-    using Mono.Collections.Generic;
-
+    using Microsoft.Cci;
+ 
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Exceptions;
@@ -20,7 +18,6 @@
 
     using log4net;
 
-    using TypeAttributes = Mono.Cecil.TypeAttributes;
 
     #endregion
 
@@ -33,15 +30,19 @@
         Mutant CreateChangelessMutant(MutationTestingSession session);
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
+
+        void ExecuteMutation( Mutant mutant, IList<IModule> modules,
+                        ICommonCompilerAssemblies env, IList<TypeIdentifier> allowedTypes,
+                        ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly IAssembliesManager _assembliesManager;
+        private readonly ICommonCompilerAssemblies _assembliesManager;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MutantsContainer(IAssembliesManager assembliesManager
+        public MutantsContainer(ICommonCompilerAssemblies assembliesManager
             )
         {
             _assembliesManager = assembliesManager;
@@ -49,15 +50,16 @@
 
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
         {
-            StoredAssemblies sourceAssemblies = _assembliesManager.Store(choices.Assemblies.Select(a=>a.AssemblyDefinition).ToList());
-            IList<AssemblyDefinition> reloadedAssemblies = _assembliesManager.Load(sourceAssemblies);
+            var copiedModules = new StoredAssemblies(choices.Assemblies.Select(a => a.AssemblyDefinition)
+                                                         .Select(_assembliesManager.Copy).Cast<IModule>().ToList());
 
-            var copiedTypes = ProjectTypesToCopiedAssemblies(choices.SelectedTypes, reloadedAssemblies);
 
+            List<TypeIdentifier> copiedTypes = choices.SelectedTypes.Types.Select(t => new TypeIdentifier(t)).ToList();//
+     
             return new MutationTestingSession
             {
-                OriginalAssemblies = reloadedAssemblies,
-                StoredSourceAssemblies = sourceAssemblies,
+                OriginalAssemblies = null,//TODO: something 
+                StoredSourceAssemblies = copiedModules,
                 SelectedTypes = copiedTypes,
                 Choices = choices,
 
@@ -68,9 +70,13 @@
         {
     
             var op = new PreOperator();
-            var targets = FindTargets(op, new TypeDefinition("ns","name",new TypeAttributes()).InArrayIf(true));
-            CreateMutantsForOperator(targets, session.StoredSourceAssemblies, () => 0, ProgressCounter.Inactive());
-            return targets.ExecutedOperator.Mutants.First();
+            var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
+            CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
+            var mutant = targets.ExecutedOperator.Mutants.First();
+            var copiedModules = session.StoredSourceAssemblies.Modules
+                                                         .Select(_assembliesManager.Copy).Cast<IModule>().ToList();
+            mutant.MutatedModules = copiedModules;
+            return mutant;
         }
 
         public void SaveMutantsToDisk(MutationTestingSession currentSession)
@@ -78,21 +84,11 @@
             
         }
 
-        public IList<TypeDefinition> ProjectTypesToCopiedAssemblies(IList<TypeDefinition> sourceTypes, 
-            IList<AssemblyDefinition> destinationAssemblies)
-        {
-            return sourceTypes
-              .Select(t1 =>
-                      destinationAssemblies.SelectMany(a => a.MainModule.Types)
-                          .Single(t2 => t1.Module.Assembly.Name.Name == t2.Module.Assembly.Name.Name
-                                        && t1.FullName == t2.FullName)).ToList();
-
-        }
-
+       
         public void GenerateMutantsForOperators(MutationTestingSession session, ProgressCounter percentCompleted )
         {
-           session.MutantsGroupedByOperators = new List<ExecutedOperator>();
-            MutationRootNode root = new MutationRootNode();
+            session.MutantsGroupedByOperators = new List<ExecutedOperator>();
+            var root = new MutationRootNode();
 
             int[] id = { 1 };
             Func<int> genId = () => id[0]++;
@@ -101,14 +97,14 @@
             percentCompleted.Initialize(session.Choices.SelectedOperators.Count);
 
             var sw = new Stopwatch();
-            //sw.Start();
+        
 
             List<OperatorWithTargets> operatorsWithTargets = session.Choices.SelectedOperators
                 .Select(oper =>
                 {
                     percentCompleted.Progress();
                     sw.Restart();
-                    var targets = FindTargets(oper, session.SelectedTypes);
+                    var targets = FindTargets(oper, session.StoredSourceAssemblies.Modules, session.SelectedTypes.ToList());
                     targets.ExecutedOperator.FindTargetsTimeMiliseconds =  sw.ElapsedMilliseconds;
                     return targets;
 
@@ -126,7 +122,7 @@
                 sw.Restart();
                 for (int i = 0; i < times; i++)
                 {
-                    CreateMutantsForOperator(op, session.StoredSourceAssemblies, genId, percentCompleted);
+                    CreateMutantsForOperator(op,  genId, percentCompleted);
                 }
                 sw.Stop();
                 executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
@@ -141,7 +137,7 @@
             }
             root.State = MutantResultState.Untested;
 
-            _assembliesManager.SessionEnded();
+         //   _assembliesManager.SessionEnded();
 
 
         
@@ -149,7 +145,7 @@
 
         public class OperatorWithTargets
         {
-            public List<MutationTarget> MutationTargets
+            public IDictionary<Guid, List<MutationTarget>> MutationTargets
             {
                 get;
                 set;
@@ -161,37 +157,115 @@
         }
 
 
-        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<TypeDefinition> types)
+        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, IList<TypeIdentifier> allowedTypes)
         {
-            var result = new ExecutedOperator(mutOperator.Identificator,mutOperator.Name);
+            var result = new ExecutedOperator(mutOperator.Identificator, mutOperator.Name, mutOperator);
 
-            List<MutationTarget> targets;
             try
             {
-                targets = types.Count != 0 ? mutOperator.FindTargets(types).ToList() : new List<MutationTarget>();
+                var map = new Dictionary<Guid, List<MutationTarget>>();
+                OperatorCodeVisitor operatorVisitor = mutOperator.FindTargets();
+                foreach (var module in modules)
+                {
+             
+                    var visitor = new VisualCodeVisitor(operatorVisitor);
+
+                    var traverser = new VisualCodeTraverser(allowedTypes)
+                       // .Where(i => i.ModulePersistentIdentifier == module.PersistentIdentifier).ToList())
+                    {
+                        PreorderVisitor = visitor,
+                    };
+                    traverser.Traverse(module);
+
+                    map.Add(module.PersistentIdentifier, visitor.MutationTargets);
+                }
+                
+           
+
+                return new OperatorWithTargets
+                {
+                    MutationTargets = map,
+                    Operator = mutOperator,
+                    ExecutedOperator = result,
+                };
+
+                
             }
             catch (Exception e)
             {
                 throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Name), e);
             }
-            return new OperatorWithTargets
-            {
-                MutationTargets = targets,
-                Operator = mutOperator,
-                ExecutedOperator = result,
-            };
+            
 
         }
 
-        private void CreateMutantsForOperator(OperatorWithTargets oper, StoredAssemblies sourceAssemblies, 
+        public void ExecuteMutation(Mutant mutant, IList<IModule> sourceModules, 
+            ICommonCompilerAssemblies env, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
+        {
+            try
+            {
+                var copiedModules = sourceModules.Select(_assembliesManager.Copy).Cast<IModule>().ToList();
+                mutant.MutatedModules = new List<IModule>();
+                foreach (var module in copiedModules)
+                {
+                    percentCompleted.Progress();
+                    var visitor2 = new VisualCodeVisitorBack(mutant.MutationTarget.InList());
+                    var traverser2 = new VisualCodeTraverser(allowedTypes)
+                    {
+                        PreorderVisitor = visitor2,
+                    };
+                    traverser2.Traverse(module);
+
+                    var operatorCodeRewriter = mutant.ExecutedOperator.Operator.Mutate();
+                    var rewriter = new VisualCodeRewriter(env.Host, visitor2.MutationTargetsElements, allowedTypes, operatorCodeRewriter);
+                    IModule rewrittenModule = rewriter.Rewrite(module);
+                    mutant.MutatedModules.Add(rewrittenModule);
+                }
+                
+            }
+            catch (Exception e)
+            {
+                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutant.ExecutedOperator.Operator.Name), e);
+            }
+        }
+
+
+        private void CreateMutantsForOperator(OperatorWithTargets oper,
             Func<int> generateId, ProgressCounter percentCompleted)
         {
+            foreach (MutationTarget mutationTarget in oper.MutationTargets.Values.SelectMany(v => v))
+            {
+                percentCompleted.Progress();
+                var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationTarget);
+                oper.ExecutedOperator.Children.Add(mutant);
 
-
+            }
+            /*
 
             var results = new List<MutationContext>();
             try
             {
+                var visitor2 = new VisualCodeVisitorBack(visitor.MutationTargets);
+                var traverser2 = new VisualCodeTraverser(allowed)
+                {
+                    PreorderVisitor = visitor2,
+                };
+                traverser2.Traverse(mutableModule);
+
+                var stringList = myvisitor.AllElements.Select(elem => elem.MethodType + " ==== "
+                    + elem.Obj.GetType().ToString() + " --- " + elem.Obj.ToString());
+                //var builder = new StringBuilder();
+                foreach (var str in stringList)
+                {
+                    Console.WriteLine(str);
+                }
+
+                Assert.AreEqual(visitor2.MutationTargetsElements.Count, 1);
+                //Rewrite the mutable Code Model. In a real application CodeRewriter would be a subclass that actually does something.
+                //(This is why decompiled source method bodies must recompile themselves, rather than just use the IL from which they were decompiled.)
+                var rewriter = new VisualCodeRewriter(host, visitor2.MutationTargetsElements, allowed, new MyRewriter());
+                IModule rewrittenModule = rewriter.Rewrite(mutableModule);
+
 
                 
                 foreach (MutationTarget mutationTarget in oper.MutationTargets)
@@ -213,11 +287,10 @@
 
             foreach (MutationContext mutationResult in results)
             {
-                var serializedMutant = _assembliesManager.Store(mutationResult.AssembliesToMutate.ToList());
-                var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationResult.MutationTarget, serializedMutant);
+                var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationResult.MutationTarget);
                 oper.ExecutedOperator.Children.Add(mutant);
             }
-
+            */
        
         }
     }

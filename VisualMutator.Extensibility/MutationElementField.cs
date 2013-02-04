@@ -7,13 +7,13 @@ namespace VisualMutator.Extensibility
 
     public class MutationElementField : IMutationElement<FieldDefinition>
     {
-        private TypeIdentifier _typeIdentifier;
+        private MonoCecilTypeIdentifier _typeIdentifier;
 
         private string _fieldFullName;
 
         public MutationElementField(FieldDefinition field)
         {
-            _typeIdentifier = new TypeIdentifier(field.DeclaringType);
+            _typeIdentifier = new MonoCecilTypeIdentifier(field.DeclaringType);
             _fieldFullName = field.FullName;
       
         }

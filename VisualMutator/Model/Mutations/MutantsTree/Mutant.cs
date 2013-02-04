@@ -1,9 +1,9 @@
 namespace VisualMutator.Model.Mutations.Structure
 {
     using System;
-
+    using System.Collections.Generic;
     using CommonUtilityInfrastructure;
-
+    using Microsoft.Cci;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Tests;
 
@@ -13,14 +13,10 @@ namespace VisualMutator.Model.Mutations.Structure
 
         private readonly MutationTarget _mutationTarget;
 
-        private readonly StoredAssemblies _storedAssemblies;
-
-        public StoredAssemblies StoredAssemblies
+        public List<IModule> MutatedModules
         {
-            get
-            {
-                return _storedAssemblies;
-            }
+            get;
+            set;
         }
 
         public MutationTarget MutationTarget
@@ -30,13 +26,19 @@ namespace VisualMutator.Model.Mutations.Structure
                 return _mutationTarget;
             }
         }
-
-        public Mutant(int id, MutationNode parent, MutationTarget mutationTarget, StoredAssemblies storedAssemblies)
+        public ExecutedOperator ExecutedOperator
+        {
+            get
+            {
+                return Parent.CastTo<ExecutedOperator>();
+            }
+        }
+        public Mutant(int id, ExecutedOperator parent, MutationTarget mutationTarget)
             : base( "Mutant", false)
         {
             _id = id;
             _mutationTarget = mutationTarget;
-            _storedAssemblies = storedAssemblies;
+    
             _mutantTestSession  = new MutantTestSession();
 
             Parent = parent;

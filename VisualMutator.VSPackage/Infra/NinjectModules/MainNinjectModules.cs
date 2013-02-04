@@ -153,6 +153,7 @@
             Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().AndFromFactory();//.InSingletonScope();
             Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().AndFromFactory();//.InSingletonScope();
             Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>();//.InSingletonScope();
+            Kernel.Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InSingletonScope();
         }
 
         public void Tests()

@@ -3,31 +3,20 @@ namespace VisualMutator.Model.Mutations.Structure
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Microsoft.Cci;
 
     public class StoredAssemblies
     {
-        private readonly IList<byte[]> _streams;
+        private readonly List<IModule> _modules;
 
-        public StoredAssemblies(IList<byte[]> streams)
+        public List<IModule> Modules
         {
-            _streams = streams;
+            get { return _modules; }
         }
 
-        public IList<byte[]> Streams
+        public StoredAssemblies(List<IModule> modules)
         {
-            get
-            {
-                return _streams;
-            }
+            _modules = modules;
         }
-
-
-
-        public int SizeInKilobytes()
-        {
-            int sizeBytes = Streams.Aggregate(0, (all, next) => all + next.Length);
-            return (int)(((double)sizeBytes) / 1024);
-        }
-
     }
 }

@@ -11,7 +11,7 @@ namespace VisualMutator.Model.Mutations.Types
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Paths;
-
+    using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
@@ -27,7 +27,7 @@ namespace VisualMutator.Model.Mutations.Types
        
         IList<AssemblyNode> GetTypesFromAssemblies();
 
-        IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
+        LoadedTypes GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
 
         bool IsAssemblyLoadError { get; set; }
 
@@ -36,12 +36,12 @@ namespace VisualMutator.Model.Mutations.Types
 
     public class SolutionTypesManager : ITypesManager
     {
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IAssemblyReaderWriter _assemblyReaderWriter;
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ICommonCompilerAssemblies _assemblyReaderWriter;
 
         private readonly IVisualStudioConnection _visualStudio;
 
-        private IEnumerable<DirectoryPathAbsolute> _projectPaths;
+        private readonly IEnumerable<DirectoryPathAbsolute> _projectPaths;
 
         public IEnumerable<DirectoryPathAbsolute> ProjectPaths
         {
@@ -54,7 +54,7 @@ namespace VisualMutator.Model.Mutations.Types
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
-            IAssemblyReaderWriter assemblyReaderWriter,
+            ICommonCompilerAssemblies assemblyReaderWriter,
             IVisualStudioConnection visualStudio)
         {
             _assemblyReaderWriter = assemblyReaderWriter;
@@ -64,11 +64,12 @@ namespace VisualMutator.Model.Mutations.Types
         }
 
 
-        public IList<TypeDefinition> GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
+        public LoadedTypes GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
         {
-            return assemblies
+            var types = assemblies
                 .SelectManyRecursive<NormalNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
                 .Cast<TypeNode>().Select(type=>type.TypeDefinition).ToList();
+            return new LoadedTypes(types);
         }
        
         public IList<AssemblyNode> GetTypesFromAssemblies()
@@ -91,12 +92,12 @@ namespace VisualMutator.Model.Mutations.Types
                 
                 try
                 {
-                    var assemblyDefinition = _assemblyReaderWriter.ReadAssembly((string)assemblyPath);
+                    IModule module = _assemblyReaderWriter.AppendFromFile((string)assemblyPath);
                    
-                    var assemblyNode = new AssemblyNode(assemblyDefinition.Name.Name, assemblyDefinition);
+                    var assemblyNode = new AssemblyNode(module.Name.Value, module);
                     assemblyNode.AssemblyPath = assemblyPath;
 
-                    GroupTypes(assemblyNode, "", ChooseTypes(assemblyDefinition).ToList());
+                    GroupTypes(assemblyNode, "", ChooseTypes(module).ToList());
 
                     root.Children.Add(assemblyNode);
                     assemblyTreeNodes.Add(assemblyNode);
@@ -110,24 +111,26 @@ namespace VisualMutator.Model.Mutations.Types
             }
             return assemblyTreeNodes;
         }
-  
-        private static IEnumerable<TypeDefinition> ChooseTypes(AssemblyDefinition assembly)
+        //TODO: nessessary?
+        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module)
         {
-            return assembly.MainModule.Types
-                .Where(t => t.Name != "<Module>")
-                .Where(t => !t.Name.StartsWith("<>"));
+            return module.GetAllTypes()
+                .OfType<INamespaceTypeDefinition>()
+                .Where(t => t.Name.Value != "<Module>")
+                .Where(t => !t.Name.Value.StartsWith("<>"));
+
         }
 
-        public void GroupTypes(NormalNode parent, string currentNamespace, ICollection<TypeDefinition> types)
+        public void GroupTypes(NormalNode parent, string currentNamespace, ICollection<INamespaceTypeDefinition> types)
         {
             var groupsByNamespaces = types
-                .Where(t => t.Namespace != currentNamespace)
-                .OrderBy(t => t.Namespace)
-                .GroupBy(t => ExtractNextNamespacePart(t.Namespace, currentNamespace))
+                .Where(t => t.ContainingNamespace.Name.Value != currentNamespace)
+                .OrderBy(t => t.ContainingNamespace.Name.Value)
+                .GroupBy(t => ExtractNextNamespacePart(t.ContainingNamespace.Name.Value, currentNamespace))
                 .ToList();
 
             var leafTypes = types
-                .Where(t => t.Namespace == currentNamespace)
+                .Where(t => t.ContainingNamespace.Name.Value == currentNamespace)
                 .OrderBy(t => t.Name)
                 .ToList();
 
@@ -147,9 +150,9 @@ namespace VisualMutator.Model.Mutations.Types
                     parent.Children.Add(node);
                 }
 
-                foreach (TypeDefinition typeDefinition in leafTypes)
+                foreach (INamespaceTypeDefinition typeDefinition in leafTypes)
                 {
-                    parent.Children.Add(new TypeNode(parent, typeDefinition.Name, typeDefinition));
+                    parent.Children.Add(new TypeNode(parent, typeDefinition.Name.Value, typeDefinition));
                   
                 }
             }

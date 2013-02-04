@@ -58,11 +58,51 @@
     <Reference Include="ILSpy">
       <HintPath>..\packages\ILSpy.exe</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\packages\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Cci.CodeModel">
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.CodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ILToCodeModel">
+      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.ILToCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MetadataHelper">
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MetadataHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MetadataModel">
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MetadataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MutableCodeModel">
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MutableMetadataModel">
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbReader">
+      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PdbReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbWriter">
+      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PdbWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeReader">
+      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PeReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeWriter">
+      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.PeWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceModel">
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.SourceModel.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.dll</HintPath>
@@ -125,8 +165,13 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
+    <Compile Include="Model\AssembliesProvider.cs" />
+    <Compile Include="Model\CommonCompilerAssemblies.cs" />
+    <Compile Include="Model\CommonCompilerAssemblyManager.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\Exceptions\TestingCancelledException.cs" />
+    <Compile Include="Model\LoadedTypes.cs" />
+    <Compile Include="Model\MonoCecilAssemblyManager.cs" />
     <Compile Include="Model\MutantsCreationOptions.cs" />
     <Compile Include="Model\MutantsTestingOptions.cs" />
     <Compile Include="Model\MutationSessionChoices.cs" />

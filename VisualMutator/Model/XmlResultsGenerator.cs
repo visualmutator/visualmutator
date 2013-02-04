@@ -47,8 +47,8 @@
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
-                new XAttribute("TotalSizeKilobytes", mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
-                new XAttribute("AverageSizeKilobytes", mutants.AverageOrZero(mut => mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("TotalSizeKilobytes", -1),//mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
+                new XAttribute("AverageSizeKilobytes", -1),//mutants.AverageOrZero(mut => mut.StoredAssemblies.SizeInKilobytes())),
                 new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGroupedByOperators
                     .Sum(oper => oper.FindTargetsTimeMiliseconds)),
                 new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGroupedByOperators
@@ -118,7 +118,7 @@
                         optionalElements));
             
         }
-        public XElement CreateCodeDifferenceListings(List<Mutant> mutants, IList<AssemblyDefinition> originalAssemblies)
+        public XElement CreateCodeDifferenceListings(List<Mutant> mutants, AssembliesProvider originalAssemblies)
         {
 
             return new XElement("CodeDifferenceListings",

@@ -32,15 +32,14 @@ namespace VisualMutator.Model.Mutations
             }
         }
 
-        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
+        public OperatorCodeVisitor FindTargets()
         {
-            yield return new MutationTarget();
+            return new OperatorCodeVisitor();
         }
 
-        public void Mutate(MutationContext context)
+        public OperatorCodeRewriter Mutate()
         {
-            
+            return new OperatorCodeRewriter();
         }
-
     }
 }

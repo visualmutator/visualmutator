@@ -7,13 +7,13 @@ namespace VisualMutator.Extensibility
 
     public class MutationElementEvent: IMutationElement<EventDefinition>
     {
-        private TypeIdentifier _typeIdentifier;
+        private MonoCecilTypeIdentifier _typeIdentifier;
 
         private string _eventFullName;
 
         public MutationElementEvent(EventDefinition property)
         {
-            _typeIdentifier = new TypeIdentifier(property.DeclaringType);
+            _typeIdentifier = new MonoCecilTypeIdentifier(property.DeclaringType);
             _eventFullName = property.FullName;
       
         }

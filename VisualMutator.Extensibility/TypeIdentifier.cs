@@ -1,44 +1,58 @@
-namespace VisualMutator.Extensibility
+﻿namespace VisualMutator.Extensibility
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Mono.Cecil;
+    using Microsoft.Cci;
 
     public class TypeIdentifier
     {
-        public TypeIdentifier(TypeDefinition type)
+        private readonly Guid _modulePersistentIdentifier;
+
+        public Guid ModulePersistentIdentifier
         {
-            _assemblyName = type.Module.Assembly.Name.Name;
-            _typeFullName = type.FullName;
+            get { return _modulePersistentIdentifier; }
         }
 
-        private string _assemblyName;
+        private readonly string _typeName;
 
-        public string AssemblyName
+
+        public TypeIdentifier(INamespaceTypeDefinition type)
         {
-            get
+            var module = type.ContainingUnitNamespace.Unit as IModule;
+            if (module == null || module == Dummy.Module || module == Dummy.Assembly)
             {
-                return _assemblyName;
+                throw new Exception(type.Name.Value + " has invalid container.");
             }
+            _modulePersistentIdentifier = module.PersistentIdentifier;
+            _typeName = type.Name.Value;
         }
 
-        private string _typeFullName;
-
-        public string TypeFullName
+        public INamespaceTypeDefinition FindIn(IEnumerable<IModule> modules)
         {
-            get
-            {
-                return _typeFullName;
-            }
-
+            return modules.Single(m => m.PersistentIdentifier == _modulePersistentIdentifier)
+                .GetAllTypes().OfType<INamespaceTypeDefinition>().Single(t => t.Name.Value == _typeName);
         }
 
+        protected bool Equals(TypeIdentifier other)
+        {
+            return string.Equals(_typeName, other._typeName) && _modulePersistentIdentifier.Equals(other._modulePersistentIdentifier);
+        }
 
-        public TypeDefinition FindType(ICollection<AssemblyDefinition> assemblies)
-        {//TODO: Problem with assembly fullname - different versions
-            var aa = assemblies.Single(a => a.Name.Name == _assemblyName).MainModule;
-            return aa.Types.Single(t => t.FullName == _typeFullName);
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TypeIdentifier) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_typeName.GetHashCode()*397) ^ _modulePersistentIdentifier.GetHashCode();
+            }
         }
     }
 }

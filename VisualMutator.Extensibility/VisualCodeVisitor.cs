@@ -8,9 +8,9 @@
         private IOperatorCodeVisitor visitor;
         protected int elementCounter;
 
-        private List<int> mutationTargets;
+        private List<MutationTarget> mutationTargets;
 
-        public List<int> MutationTargets
+        public List<MutationTarget> MutationTargets
         {
             get { return mutationTargets; }
         }
@@ -18,8 +18,8 @@
         public VisualCodeVisitor(IOperatorCodeVisitor visitor)
         {
             this.visitor = visitor;
-            
-            mutationTargets = new List<int>();
+
+            mutationTargets = new List<MutationTarget>();
         }
 
 
@@ -31,7 +31,7 @@
 
         public void MarkMutationTarget(object o)
         {
-            mutationTargets.Add(elementCounter);
+            mutationTargets.Add(new MutationTarget(elementCounter));
         }
         public override void Visit(IAddition addition)
         {if(Process(addition)){visitor.Visit(addition);}

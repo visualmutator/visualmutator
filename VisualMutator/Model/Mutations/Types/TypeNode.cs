@@ -3,7 +3,7 @@
     #region Usings
 
     using CommonUtilityInfrastructure.Paths;
-
+    using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
@@ -12,16 +12,16 @@
     #endregion
     public class AssemblyNode : NormalNode
     {
-        private AssemblyDefinition _assemblyDefinition;
-        
+        private IModule _assemblyDefinition;
 
-        public AssemblyNode(string name, AssemblyDefinition assemblyDefinition)
+
+        public AssemblyNode(string name, IModule assemblyDefinition)
             : base( name, true)
         {
             _assemblyDefinition = assemblyDefinition;
         }
 
-        public AssemblyDefinition AssemblyDefinition
+        public IModule AssemblyDefinition
         {
             get
             {
@@ -50,16 +50,16 @@
 
     public class TypeNode : NormalNode
     {
-        private readonly TypeDefinition _typeDefinition;
+        private readonly INamespaceTypeDefinition _typeDefinition;
 
-        public TypeNode(NormalNode parent, string name, TypeDefinition typeDefinition)
+        public TypeNode(NormalNode parent, string name, INamespaceTypeDefinition typeDefinition)
             : base( name, false)
         {
             _typeDefinition = typeDefinition;
             Parent = parent;
         }
 
-        public TypeDefinition TypeDefinition
+        public INamespaceTypeDefinition TypeDefinition
         {
             get
             {

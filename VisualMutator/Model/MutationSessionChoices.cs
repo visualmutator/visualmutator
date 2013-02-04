@@ -3,7 +3,7 @@ namespace VisualMutator.Controllers
     using System.Collections.Generic;
 
     using CommonUtilityInfrastructure.Paths;
-
+    using Model;
     using Mono.Cecil;
 
     using VisualMutator.Extensibility;
@@ -29,7 +29,7 @@ namespace VisualMutator.Controllers
             set;
         }
 
-        public IList<TypeDefinition> SelectedTypes
+        public LoadedTypes SelectedTypes
         {
             get;
             set;

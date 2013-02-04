@@ -8,11 +8,11 @@
     public class VisualCodeRewriter : CodeRewriter
     {
         private readonly List<object> _mutationTargets;
-        private readonly List<string> _allowedTypes;
+        private readonly IList<TypeIdentifier> _allowedTypes;
        
         private OperatorCodeRewriter rewriter;
 
-        public VisualCodeRewriter(IMetadataHost host, List<object> mutationTargets, List<string> allowedTypes, OperatorCodeRewriter rewriter,
+        public VisualCodeRewriter(IMetadataHost host, List<object> mutationTargets, IList<TypeIdentifier> allowedTypes, OperatorCodeRewriter rewriter,
             bool copyAndRewriteImmutableReferences = false)
             : base(host, copyAndRewriteImmutableReferences)
         {
@@ -29,7 +29,7 @@
 
         public override void RewriteChildren(NamespaceTypeDefinition namespaceTypeDefinition)
         {
-            if (_allowedTypes.Contains(namespaceTypeDefinition.Name.Value))
+            if (_allowedTypes.Contains(new TypeIdentifier(namespaceTypeDefinition)))
             {
                 base.RewriteChildren(namespaceTypeDefinition);
             }

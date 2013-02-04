@@ -36,8 +36,9 @@ namespace VisualMutator.OperatorTests
                 {
                     LeftOperand = addition.LeftOperand,
                     RightOperand = addition.RightOperand,
+                    Type = addition.Type,
+                    Locations = addition.Locations.ToList()
                 };
-                
             }
         }
 
@@ -96,7 +97,8 @@ namespace VisualMutator.OperatorTests
                     };
                     traverser2.Traverse(mutableModule);
 
-                    var stringList = myvisitor.AllElements.Select(elem => elem.GetType().ToString() + " --- " + elem.ToString());
+                    var stringList = myvisitor.AllElements.Select(elem => elem.MethodType+" ==== "
+                        +elem.Obj.GetType().ToString() + " --- " + elem.Obj.ToString());
                     //var builder = new StringBuilder();
                     foreach (var str in stringList)
                     {

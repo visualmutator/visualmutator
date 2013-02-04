@@ -33,7 +33,7 @@
 
         private IDisposable _listenerForCurrentMutant;
 
-        private IList<AssemblyDefinition> _currentOriginalAssemblies;
+        private AssembliesProvider _currentOriginalAssemblies;
 
         private Mutant _currentMutant;
 
@@ -52,7 +52,7 @@
             _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
 
         }
-        public void LoadDetails(Mutant mutant, IList<AssemblyDefinition> originalAssemblies)
+        public void LoadDetails(Mutant mutant, AssembliesProvider originalAssemblies)
         {
             _currentOriginalAssemblies = originalAssemblies;
             _currentMutant = mutant;

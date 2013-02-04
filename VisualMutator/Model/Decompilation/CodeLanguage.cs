@@ -23,8 +23,8 @@
     {
 
 
-        CodePair CreateCodesToCompare(MutationTarget target,IList<AssemblyDefinition> originalAssemblies,
-            IList<AssemblyDefinition> mutatedAssemblies );
+        CodePair CreateCodesToCompare(MutationTarget target, AssembliesProvider originalAssemblies,
+            AssembliesProvider mutatedAssemblies);
     }
 
     public class CodeVisualizer : ICodeVisualizer
@@ -38,10 +38,10 @@
 
 
 
-        public string Visualize(MutationTarget target, IList<AssemblyDefinition> assemblies)
+        public string Visualize(MutationTarget target, AssembliesProvider assemblies)
         {
             var sb = new StringBuilder();
-            foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
+         /*   foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
             {
 
 
@@ -53,11 +53,11 @@
                     .GetResult();
 
                 sb.Append(output);
-            }
+            }*/
             return sb.ToString();
         }
         public CodePair CreateCodesToCompare(MutationTarget target,
-            IList<AssemblyDefinition> originalAssemblies, IList<AssemblyDefinition> mutatedAssemblies)
+            AssembliesProvider originalAssemblies, AssembliesProvider mutatedAssemblies)
         {
             return new CodePair
             {

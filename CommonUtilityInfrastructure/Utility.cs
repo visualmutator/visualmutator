@@ -43,8 +43,13 @@
         {
             return collection.Any() ? collection.Average(func) : 0;
         }
-       
 
+        public static List<T> InList<T>(this T obj)
+        {
+            var arr = new List<T>(1);
+            arr[0] = obj;
+            return arr;
+        }
         public static T[] InArrayIf<T>(this T obj, bool condition)
         {
             if(condition)

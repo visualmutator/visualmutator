@@ -35,6 +35,7 @@
         private readonly ITestsContainer _testsContainer;
 
         private readonly IMutantsFileManager _mutantsFileManager;
+        private readonly ICommonCompilerAssemblies _commonCompilerAssemblies;
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
 
@@ -63,13 +64,15 @@
             CommonServices svc,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
-IMutantsFileManager mutantsFileManager,
+            IMutantsFileManager mutantsFileManager,
+            ICommonCompilerAssemblies commonCompilerAssemblies,
             XmlResultsGenerator xmlResultsGenerator)
         {
             _svc = svc;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _mutantsFileManager = mutantsFileManager;
+            _commonCompilerAssemblies = commonCompilerAssemblies;
 
             _xmlResultsGenerator = xmlResultsGenerator;
             _sessionState = SessionState.NotStarted;
@@ -321,7 +324,8 @@ IMutantsFileManager mutantsFileManager,
 
                 Mutant mutant = _mutantsToTest.Dequeue();
 
-
+                _mutantsContainer.ExecuteMutation(mutant, _currentSession.StoredSourceAssemblies.Modules,
+                    _commonCompilerAssemblies, _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
                 var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
           
                 if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)

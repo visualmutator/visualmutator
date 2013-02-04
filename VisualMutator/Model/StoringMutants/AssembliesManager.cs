@@ -6,69 +6,56 @@ namespace VisualMutator.Model.Mutations
     using System.IO.Compression;
     using System.Linq;
     using System.Text;
-
+    using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Model.Mutations.Structure;
 
     public interface IAssembliesManager
     {
-        StoredAssemblies Store(IList<AssemblyDefinition> assemblies);
+        StoredAssemblies Store(AssembliesProvider assemblies);
 
-        IList<AssemblyDefinition> Load(StoredAssemblies assemblies);
-
+        AssembliesProvider Load(StoredAssemblies assemblies);
+       
         void SessionEnded();
+      
     }
+
+
+
     public class AssembliesManager : IAssembliesManager
     {
-        private ClearableCacheAssemblyResolver _assemblyResolver;
+        private MonoCecilAssemblyManager _monoCecil;
+        private CommonCompilerAssemblies _commonCompiler;
 
-        public AssembliesManager()
+
+      //  private ClearableCacheAssemblyResolver _assemblyResolver;
+
+        public AssembliesManager(CommonCompilerAssemblies commonCompiler)
         {
-            _assemblyResolver = new ClearableCacheAssemblyResolver();
+            _monoCecil = new MonoCecilAssemblyManager();
+            _commonCompiler = commonCompiler;
+            // _assemblyResolver = new ClearableCacheAssemblyResolver();
         }
 
-        public StoredAssemblies Store(IList<AssemblyDefinition> assemblies)
+        public StoredAssemblies Store(AssembliesProvider assemblies)
         {
-          //  IEnumerable<Stream> memoryStreams = Write(assemblies);
-
-            return new StoredAssemblies(assemblies.Select(Write).ToList());
-        }
-
-        public IList<AssemblyDefinition> Load(StoredAssemblies assemblies)
-        {
-            return assemblies.Streams.Select(Read).ToList();
-        }
-
-        private byte[] Write(AssemblyDefinition assemblyDefinition)
-        {
+          
+            return _monoCecil.Store(assemblies);
             
-            var stream = new MemoryStream();
+        }
+      
+      
+      
 
-            assemblyDefinition.Write(stream, new WriterParameters());
-
-            return Compress(stream.ToArray());
-            /* stream.Position = 0;
-
-            var resultStream = new MemoryStream();
-            using (DeflateStream compress = new DeflateStream(resultStream, CompressionMode.Compress))
-            {
-                stream.CopyTo(compress);
-            }
-            
-
-            Compress
-
-            if (resultStream.Length == 0)
-            {
-                throw new InvalidOperationException("resultStream.Length == 0");
-            }
-            return resultStream;
-*/
-
+        public AssembliesProvider Load(StoredAssemblies assemblies)
+        {
+            return _monoCecil.Load(assemblies);
         }
 
-        private static byte[] Compress(byte[] b)
+
+
+        public static byte[] Compress(byte[] b)
         {
             using (var ms = new MemoryStream())
             {
@@ -92,41 +79,12 @@ namespace VisualMutator.Model.Mutations
             }
         }
 
-        private AssemblyDefinition Read(byte[] stream)
-        {
-            
-             /*   stream.Position = 0;
-
-
-                var resultStream = new MemoryStream();
-                using (DeflateStream decompress = new DeflateStream(stream, CompressionMode.Decompress))
-                {
-                    decompress.CopyTo(resultStream);
-                }
-
-                
-
-                if (resultStream.Length == 0)
-                {
-                    throw new InvalidOperationException("resultStream.Length == 0");
-                }
-                resultStream.Position = 0;*/
-
-
-            byte[] bytes = Decompress(stream);
-
-
-            var param = new ReaderParameters(ReadingMode.Immediate)
-            {
-                AssemblyResolver = _assemblyResolver
-            };
-            return AssemblyDefinition.ReadAssembly(new MemoryStream(bytes, 0, bytes.Length), param);
-         
-        }
-
         public void SessionEnded()
         {
-            _assemblyResolver.ClearCache();
+            _monoCecil.SessionEnded();
+           // _commonCompiler.SessionEnded();
         }
+
+        
     }
 }

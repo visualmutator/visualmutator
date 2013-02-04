@@ -28,11 +28,11 @@
 
         public StoredAssemblies StoredSourceAssemblies { get; set; }
 
-        public IList<TypeDefinition> SelectedTypes { get; set; }
+        public ICollection<TypeIdentifier> SelectedTypes { get; set; }
 
     //    public IList<IMutationOperator> SelectedOperators { get; set; }
 
-        public IList<AssemblyDefinition> OriginalAssemblies { get; set; }
+        public AssembliesProvider OriginalAssemblies { get; set; }
 
       
 

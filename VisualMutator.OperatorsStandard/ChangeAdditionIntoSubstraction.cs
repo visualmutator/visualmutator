@@ -7,7 +7,8 @@ namespace VisualMutator.OperatorsStandard
 {
     using System.Collections;
     using System.ComponentModel.Composition;
-
+    using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
     using Mono.Cecil;
     using Mono.Cecil.Cil;
 
@@ -16,22 +17,27 @@ namespace VisualMutator.OperatorsStandard
 
     public class ChangeAdditionIntoSubstraction : IMutationOperator
     {
-
-        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
+        public class MyVisitor : OperatorCodeVisitor
         {
-            return from type in types
-            from method in type.Methods
-            where method.HasBody
-            from instruction in method.Body.Instructions
-            where instruction.OpCode == OpCodes.Add
-            select new MutationTarget().Add("AddInstr", method, instruction);
-
+            public override void Visit(IAddition addition)
+            {
+                if (addition.RightOperand is CompileTimeConstant)
+                {
+                    MarkMutationTarget(addition);
+                }
+            }
         }
-        public void Mutate(MutationContext context)
+        public class MyRewriter : OperatorCodeRewriter
         {
-            MethodAndInstruction methodAndInstruction = context.MethodAndInstruction("AddInstr");
-            var ilProcessor = methodAndInstruction.Method.Body.GetILProcessor();
-            ilProcessor.Replace(methodAndInstruction.Instruction, Instruction.Create(OpCodes.Sub));
+            public override IExpression Rewrite(IAddition addition)
+            {
+                return new Subtraction
+                {
+                    LeftOperand = addition.LeftOperand,
+                    RightOperand = addition.RightOperand,
+                };
+
+            }
         }
 
         public string Identificator
@@ -58,5 +64,14 @@ namespace VisualMutator.OperatorsStandard
             }
         }
 
+        public OperatorCodeVisitor FindTargets()
+        {
+            return new MyVisitor();
+        }
+
+        public OperatorCodeRewriter Mutate()
+        {
+            return new MyRewriter();
+        }
     }
 }

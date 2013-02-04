@@ -29,7 +29,7 @@
     {
 
         CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant,
-            IList<AssemblyDefinition> currentOriginalAssemblies);
+            AssembliesProvider currentOriginalAssemblies);
     }
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
@@ -56,11 +56,12 @@
             };
         }
 
-        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, IList<AssemblyDefinition> currentOriginalAssemblies)
+        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, AssembliesProvider currentOriginalAssemblies)
         {
             var codeVisualizer = new CodeVisualizer(language);
 
-            var assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies);
+            AssembliesProvider assemblyDefinitions = null;//TODO: something
+           // _assembliesManager.Load(mutant.StoredAssemblies);
             CodePair pair = null;
             try
             {
