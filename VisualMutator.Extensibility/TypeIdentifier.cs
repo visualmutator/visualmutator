@@ -16,6 +16,10 @@
 
         private readonly string _typeName;
 
+        public string TypeName
+        {
+            get { return _typeName; }
+        }
 
         public TypeIdentifier(INamespaceTypeDefinition type)
         {

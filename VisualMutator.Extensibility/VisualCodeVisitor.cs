@@ -36,7 +36,7 @@
             var mutationTarget = new MutationTarget(elementCounter);
             if(_currentMethod != null)
             {
-                //mutationTarget.Method = new 
+                mutationTarget.Method = new MethodIdentifier(_currentMethod);
             }
             mutationTargets.Add(mutationTarget);
         }

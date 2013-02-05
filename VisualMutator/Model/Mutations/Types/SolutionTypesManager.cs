@@ -131,7 +131,7 @@ namespace VisualMutator.Model.Mutations.Types
 
             var leafTypes = types
                 .Where(t => t.ContainingNamespace.Name.Value == currentNamespace)
-                .OrderBy(t => t.Name)
+                .OrderBy(t => t.Name.Value)
                 .ToList();
 
             // Maybe we can merge namespace nodes:

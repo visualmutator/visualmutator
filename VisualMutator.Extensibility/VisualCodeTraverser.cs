@@ -8,10 +8,11 @@
         private readonly IList<TypeIdentifier> _allowedTypesName;
         private readonly VisualCodeVisitor _visitor;
 
-        public VisualCodeTraverser(IList<TypeIdentifier> allowedTypesName)
+        public VisualCodeTraverser(IList<TypeIdentifier> allowedTypesName, VisualCodeVisitor visitor)
         {
             _allowedTypesName = allowedTypesName;
-            _visitor = (VisualCodeVisitor) PreorderVisitor;
+            _visitor = visitor;
+            PreorderVisitor = visitor;
         }
 
         public override void TraverseChildren(INamespaceTypeDefinition namespaceTypeDefinition)

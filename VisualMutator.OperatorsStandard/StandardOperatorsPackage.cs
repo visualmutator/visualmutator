@@ -15,9 +15,12 @@
     {
         public StandardOperatorsPackage()
         {
-            Operators = new[]
+            Operators = new IMutationOperator[]
             {
                 new ChangeAdditionIntoSubstraction(), 
+                new ChangeSubstractionIntoAddition(), 
+                new SwapLogicalEquality(), 
+
             };
         }
         public IEnumerable<IMutationOperator> Operators

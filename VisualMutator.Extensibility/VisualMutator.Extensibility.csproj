@@ -90,6 +90,7 @@
     <Compile Include="DebugOperatorCodeVisitor.cs" />
     <Compile Include="ILCrawler.cs" />
     <Compile Include="IOperatorCodeVisitor.cs" />
+    <Compile Include="MethodIdentifier.cs" />
     <Compile Include="MutationElementMethodAndInstruction.cs" />
     <Compile Include="MutationElementEvent.cs" />
     <Compile Include="IMutationElement.cs" />

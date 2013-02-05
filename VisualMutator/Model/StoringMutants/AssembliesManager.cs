@@ -6,9 +6,10 @@ namespace VisualMutator.Model.Mutations
     using System.IO.Compression;
     using System.Linq;
     using System.Text;
+    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Mono.Cecil;
-
+    using Types;
     using VisualMutator.Model.Mutations.Structure;
 
     public interface IAssembliesManager
@@ -16,7 +17,7 @@ namespace VisualMutator.Model.Mutations
         StoredAssemblies Store(AssembliesProvider assemblies);
 
         AssembliesProvider Load(StoredAssemblies assemblies);
-       
+        AssembliesProvider Load(IList<IModule> assemblies);
         void SessionEnded();
       
     }
@@ -26,15 +27,20 @@ namespace VisualMutator.Model.Mutations
     public class AssembliesManager : IAssembliesManager
     {
         private MonoCecilAssemblyManager _monoCecil;
-        private CommonCompilerAssemblies _commonCompiler;
+        private ICommonCompilerAssemblies _commonCompiler;
+        private readonly CommonServices _services;
+        private readonly IAssemblyReaderWriter _assemblyReaderWriter;
 
 
-      //  private ClearableCacheAssemblyResolver _assemblyResolver;
+        //  private ClearableCacheAssemblyResolver _assemblyResolver;
 
-        public AssembliesManager(CommonCompilerAssemblies commonCompiler)
+        public AssembliesManager(ICommonCompilerAssemblies commonCompiler, CommonServices services,
+            IAssemblyReaderWriter assemblyReaderWriter)
         {
             _monoCecil = new MonoCecilAssemblyManager();
             _commonCompiler = commonCompiler;
+            _services = services;
+            _assemblyReaderWriter = assemblyReaderWriter;
             // _assemblyResolver = new ClearableCacheAssemblyResolver();
         }
 
@@ -44,13 +50,33 @@ namespace VisualMutator.Model.Mutations
             return _monoCecil.Store(assemblies);
             
         }
-      
-      
-      
 
         public AssembliesProvider Load(StoredAssemblies assemblies)
         {
             return _monoCecil.Load(assemblies);
+        }
+
+      
+
+        public AssembliesProvider Load(IList<IModule> assemblies)
+        {
+            var pro = new AssembliesProvider()
+                {
+                    Assemblies = new List<AssemblyDefinition>()
+                };
+            _services.FileSystem.Directory.CreateDirectory(@"C:\VisualMutatorTemp");
+            foreach (var module in assemblies)
+            {
+                
+                string file = @"C:\VisualMutatorTemp\" + module.Name.Value;
+                _commonCompiler.WriteToFile(module, file);
+                var assemblyDefinition = _assemblyReaderWriter.ReadAssembly(file);
+                _services.FileSystem.File.Delete(file);
+                pro.Assemblies.Add(assemblyDefinition);
+            }
+
+
+            return pro;
         }
 
 

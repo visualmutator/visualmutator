@@ -39,13 +39,15 @@
     public class MutantsContainer : IMutantsContainer
     {
         private readonly ICommonCompilerAssemblies _assembliesManager;
+        private readonly IAssembliesManager _assembliesManagerOld;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MutantsContainer(ICommonCompilerAssemblies assembliesManager
+        public MutantsContainer(ICommonCompilerAssemblies assembliesManager, IAssembliesManager assembliesManagerOld
             )
         {
             _assembliesManager = assembliesManager;
+            _assembliesManagerOld = assembliesManagerOld;
         }
 
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
@@ -58,7 +60,7 @@
      
             return new MutationTestingSession
             {
-                OriginalAssemblies = null,//TODO: something 
+                OriginalAssemblies = _assembliesManagerOld.Load(copiedModules.Modules),//null,//TODO: something 
                 StoredSourceAssemblies = copiedModules,
                 SelectedTypes = copiedTypes,
                 Choices = choices,
@@ -172,11 +174,9 @@
              
                     var visitor = new VisualCodeVisitor(operatorVisitor);
                     operatorVisitor.MarkMutationTarget = visitor.MarkMutationTarget;
-                    var traverser = new VisualCodeTraverser(allowedTypes)
+                    var traverser = new VisualCodeTraverser(allowedTypes, visitor);
                        // .Where(i => i.ModuleName == module.PersistentIdentifier).ToList())
-                    {
-                        PreorderVisitor = visitor,
-                    };
+                  
                     traverser.Traverse(module);
 
                     map.Add(module.ModuleName.Value, visitor.MutationTargets);
@@ -212,10 +212,7 @@
                 {
                     percentCompleted.Progress();
                     var visitor2 = new VisualCodeVisitorBack(mutant.MutationTarget.InList());
-                    var traverser2 = new VisualCodeTraverser(allowedTypes)
-                    {
-                        PreorderVisitor = visitor2,
-                    };
+                    var traverser2 = new VisualCodeTraverser(allowedTypes, visitor2);
                     traverser2.Traverse(module);
 
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.Mutate();
@@ -236,8 +233,8 @@
             Func<int> generateId, ProgressCounter percentCompleted)
         {
             foreach (MutationTarget mutationTarget in oper.MutationTargets.Values.SelectMany(v => v))
-            {
-                percentCompleted.Progress();
+            {//TODO:progress
+                //percentCompleted.Progress();
                 var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationTarget);
                 oper.ExecutedOperator.Children.Add(mutant);
 

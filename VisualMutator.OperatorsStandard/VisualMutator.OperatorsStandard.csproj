@@ -94,6 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeAdditionIntoSubstraction.cs" />
+    <Compile Include="ChangeSubstractionIntoAddition.cs" />
+    <Compile Include="Copy of ChangeSubstractionIntoAddition.cs" />
     <Compile Include="SwapTrueAndFalse.cs" />
     <Compile Include="StandardOperatorsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

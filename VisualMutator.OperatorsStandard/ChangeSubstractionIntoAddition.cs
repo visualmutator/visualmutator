@@ -15,25 +15,25 @@ namespace VisualMutator.OperatorsStandard
     using VisualMutator.Extensibility;
 
 
-    public class ChangeAdditionIntoSubstraction : IMutationOperator
+    public class ChangeSubstractionIntoAddition : IMutationOperator
     {
         public class MyVisitor : OperatorCodeVisitor
         {
-            public override void Visit(IAddition addition)
+            public override void Visit(ISubtraction subtraction)
             {
-                
-                MarkMutationTarget(addition);
+
+                MarkMutationTarget(subtraction);
                 
             }
         }
         public class MyRewriter : OperatorCodeRewriter
         {
-            public override IExpression Rewrite(IAddition addition)
+            public override IExpression Rewrite(ISubtraction subtraction)
             {
-                return new Subtraction
+                return new Addition
                 {
-                    LeftOperand = addition.LeftOperand,
-                    RightOperand = addition.RightOperand,
+                    LeftOperand = subtraction.LeftOperand,
+                    RightOperand = subtraction.RightOperand,
                 };
 
             }
@@ -43,7 +43,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "CAIS";
+                return "CSIA";
             }
         }
 
@@ -51,7 +51,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "Change Addition Into Substraction";
+                return "Change Substraction Into Addition";
             }
         }
 
@@ -59,7 +59,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "Replaces every occurence of addition with substaction.";
+                return "Replaces every occurence of substaction with addition.";
             }
         }
 

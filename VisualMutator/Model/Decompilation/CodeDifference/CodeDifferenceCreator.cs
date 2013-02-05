@@ -60,8 +60,7 @@
         {
             var codeVisualizer = new CodeVisualizer(language);
 
-            AssembliesProvider assemblyDefinitions = null;//TODO: something
-           // _assembliesManager.Load(mutant.StoredAssemblies);
+            AssembliesProvider assemblyDefinitions = _assembliesManager.Load(mutant.MutatedModules);
             CodePair pair = null;
             try
             {

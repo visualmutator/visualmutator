@@ -15,25 +15,40 @@ namespace VisualMutator.OperatorsStandard
     using VisualMutator.Extensibility;
 
 
-    public class ChangeAdditionIntoSubstraction : IMutationOperator
+    public class SwapLogicalEquality : IMutationOperator
     {
         public class MyVisitor : OperatorCodeVisitor
         {
-            public override void Visit(IAddition addition)
+            public override void Visit(IEquality equality)
             {
+
+                MarkMutationTarget(equality);
                 
-                MarkMutationTarget(addition);
-                
+            }
+            public override void Visit(INotEquality notEquality)
+            {
+
+                MarkMutationTarget(notEquality);
+
             }
         }
         public class MyRewriter : OperatorCodeRewriter
         {
-            public override IExpression Rewrite(IAddition addition)
+            public override IExpression Rewrite(IEquality equality)
             {
-                return new Subtraction
+                return new NotEquality
                 {
-                    LeftOperand = addition.LeftOperand,
-                    RightOperand = addition.RightOperand,
+                    LeftOperand = equality.LeftOperand,
+                    RightOperand = equality.RightOperand,
+                };
+
+            }
+            public override IExpression Rewrite(INotEquality notEquality)
+            {
+                return new Equality
+                {
+                    LeftOperand = notEquality.LeftOperand,
+                    RightOperand = notEquality.RightOperand,
                 };
 
             }
@@ -43,7 +58,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "CAIS";
+                return "SLE";
             }
         }
 
@@ -51,7 +66,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "Change Addition Into Substraction";
+                return "Swap Logical Equality";
             }
         }
 
@@ -59,7 +74,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "Replaces every occurence of addition with substaction.";
+                return "Replaces every occurence of equality with not equality and vice versa.";
             }
         }
 

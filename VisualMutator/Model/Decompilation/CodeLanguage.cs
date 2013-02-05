@@ -41,7 +41,15 @@
         public string Visualize(MutationTarget target, AssembliesProvider assemblies)
         {
             var sb = new StringBuilder();
-         /*   foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
+            if(target.Method != null)
+            {  var method = assemblies.Assemblies.SelectMany(a => a.MainModule.Types)
+              .Single(t=>t.Name == target.Method.TypeName).Methods
+              .Single(m => m.Name == target.Method.MethodName);
+
+            sb.Append(_decompiler.DecompileMethod(method));
+
+            }
+          /*  foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
             {
 
 
