@@ -6,7 +6,9 @@
 
     public class OperatorCodeRewriter 
     {
+      
 
+        public MutationTarget MutationTarget { get; set; }
 
         /// <summary>
         /// Rewrites the given addition.

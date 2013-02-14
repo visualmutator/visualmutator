@@ -31,14 +31,25 @@
             return true;
         }
 
-        public void MarkMutationTarget(object o)
+        public void MarkMutationTarget(object o, List<string> passesInfo)
         {
-            var mutationTarget = new MutationTarget(elementCounter);
-            if(_currentMethod != null)
+            if (passesInfo == null)
             {
-                mutationTarget.Method = new MethodIdentifier(_currentMethod);
+                passesInfo = new List<string>
+                {
+                    ""
+                };
             }
-            mutationTargets.Add(mutationTarget);
+            for (int i = 0; i < passesInfo.Count; i++)
+            {
+                var mutationTarget = new MutationTarget(elementCounter, i, passesInfo[i]);
+                if (_currentMethod != null)
+                {
+                    mutationTarget.Method = new MethodIdentifier(_currentMethod);
+                }
+                mutationTargets.Add(mutationTarget);
+            }
+           
         }
 
 

@@ -87,7 +87,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
-    <Compile Include="DebugOperatorCodeVisitor.cs" />
     <Compile Include="ILCrawler.cs" />
     <Compile Include="IOperatorCodeVisitor.cs" />
     <Compile Include="MethodIdentifier.cs" />

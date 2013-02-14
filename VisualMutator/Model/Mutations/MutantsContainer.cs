@@ -216,6 +216,7 @@
                     traverser2.Traverse(module);
 
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.Mutate();
+                    operatorCodeRewriter.MutationTarget = mutant.MutationTarget;
                     var rewriter = new VisualCodeRewriter(env.Host, visitor2.MutationTargetsElements, allowedTypes, operatorCodeRewriter);
                     IModule rewrittenModule = rewriter.Rewrite(module);
                     mutant.MutatedModules.Add(rewrittenModule);

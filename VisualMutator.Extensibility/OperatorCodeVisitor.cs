@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Extensibility
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using Microsoft.Cci;
 
@@ -12,8 +13,8 @@
             get;
             set;
         }
-
-        public Action<object> MarkMutationTarget;
+        public delegate void DelMarkMutationTarget(object obj, List<string> passesInfo  = null);
+        public DelMarkMutationTarget MarkMutationTarget;
 
         /// <summary>
         /// Performs some computation with the given addition.

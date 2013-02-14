@@ -15,43 +15,117 @@ namespace VisualMutator.OperatorsStandard
     using VisualMutator.Extensibility;
 
 
-    public class SwapLogicalEquality : IMutationOperator
+    public class ArithmeticOperatorInsertion : IMutationOperator
     {
-        public class MyVisitor : OperatorCodeVisitor
+        public class ArithmeticOperatorInsertionVisitor : OperatorCodeVisitor
         {
-            public override void Visit(IEquality equality)
+            private void ProcessOperation(IBinaryOperation operation)
             {
-
-                MarkMutationTarget(equality);
+                var passes = new List<string>
+                {
+                    "Addition",
+                    "Subtraction",
+                    "Multiplication",
+                    "Division",
+                    "Modulus",
+                }.Where(elem => elem != operation.GetType().Name).ToList();
                 
+                if(operation.LeftOperand is BoundExpression)
+                {
+                    passes.Add("LeftParam");
+                }
+                if (operation.RightOperand is BoundExpression)
+                {
+                    passes.Add("RightParam");
+                }
+                MarkMutationTarget(operation, passes);
             }
-            public override void Visit(INotEquality notEquality)
+
+            public override void Visit(IAddition operation)
             {
-
-                MarkMutationTarget(notEquality);
-
+                ProcessOperation(operation);
+            }
+            public override void Visit(ISubtraction operation)
+            {
+                ProcessOperation(operation);
+            }
+            public override void Visit(IMultiplication operation)
+            {
+                ProcessOperation(operation);
+            }
+            public override void Visit(IDivision operation)
+            {
+                ProcessOperation(operation);
+            }
+            public override void Visit(IModulus operation)
+            {
+                ProcessOperation(operation);
             }
         }
-        public class MyRewriter : OperatorCodeRewriter
+        public class ArithmeticOperatorInsertionRewriter : OperatorCodeRewriter
         {
-            public override IExpression Rewrite(IEquality equality)
+            private List<Type> input = new List<Type>
             {
-                return new NotEquality
-                {
-                    LeftOperand = equality.LeftOperand,
-                    RightOperand = equality.RightOperand,
-                };
+                typeof(Addition),
+                typeof(Subtraction),
+                typeof(Multiplication),
+                typeof(Division),
+                typeof(Modulus),
 
-            }
-            public override IExpression Rewrite(INotEquality notEquality)
+            };
+            private List<Type> output = new List<Type>
             {
-                return new Equality
+                typeof(Addition),
+                typeof(Subtraction),
+                typeof(Multiplication),
+                typeof(Division),
+                typeof(Modulus),
+                typeof(BoundExpression),
+                typeof(BoundExpression),
+            };
+            private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
+            {
+                input.RemoveAll(delegate(Type t)
                 {
-                    LeftOperand = notEquality.LeftOperand,
-                    RightOperand = notEquality.RightOperand,
-                };
+                    return t.GetInterfaces().Contains(operation.GetType());
 
+                });
+                Expression result;
+                if(MutationTarget.CurrentPass <= 3)
+                {
+                    Type t = Type.GetType("Microsoft.Cci." + MutationTarget.PassInfo);
+                    BinaryOperation replacement = (BinaryOperation)Activator.CreateInstance(t);
+                    replacement.LeftOperand = operation.LeftOperand;
+                    replacement.RightOperand = operation.RightOperand;
+                    replacement.ResultIsUnmodifiedLeftOperand = operation.ResultIsUnmodifiedLeftOperand;
+                    result = replacement;
+                }
+                else
+                {
+                    if(MutationTarget.PassInfo == "LeftParam")
+                    {
+                      //  BoundExpression replacement = new BoundExpression();
+                     //   replacement.Definition = operation.LeftOperand;
+                        //  replacement.
+                        result = (Expression)operation.LeftOperand;
+                    }
+                    else// if (MutationTarget.PassInfo == "RightParam")
+                    {
+                        //  BoundExpression replacement = new BoundExpression();
+                        //   replacement.Definition = operation.LeftOperand;
+                        //  replacement.
+                        result = (Expression)operation.RightOperand;
+                    }
+                }
+                result.Locations = operation.Locations.ToList();
+                result.Type = operation.Type;
+                return result;
             }
+            public override IExpression Rewrite(IAddition operation)
+            {
+                return ReplaceOperation(operation);
+            }
+            
         }
 
         public string Identificator
@@ -80,12 +154,12 @@ namespace VisualMutator.OperatorsStandard
 
         public OperatorCodeVisitor FindTargets()
         {
-            return new MyVisitor();
+            return new ArithmeticOperatorInsertionVisitor();
         }
 
         public OperatorCodeRewriter Mutate()
         {
-            return new MyRewriter();
+            return new ArithmeticOperatorInsertionRewriter();
         }
     }
 }
