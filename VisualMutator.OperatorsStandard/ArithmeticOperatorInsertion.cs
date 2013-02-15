@@ -7,6 +7,7 @@ namespace VisualMutator.OperatorsStandard
 {
     using System.Collections;
     using System.ComponentModel.Composition;
+    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using Mono.Cecil;
@@ -24,7 +25,7 @@ namespace VisualMutator.OperatorsStandard
                 var passes = new List<string>
                 {
                     "Addition",
-                    "Substraction",
+                    "Subtraction",
                     "Multiplication",
                     "Division",
                     "Modulus",
@@ -71,8 +72,15 @@ namespace VisualMutator.OperatorsStandard
                 Expression result;
                 if(MutationTarget.CurrentPass <= 3)
                 {
-                    Type t = Type.GetType("Microsoft.Cci.MutableCodeModel." + MutationTarget.PassInfo);
-                    var replacement = (BinaryOperation)Activator.CreateInstance(t);
+                   var replacement = Switch.Into<BinaryOperation>()
+                        .From(MutationTarget.PassInfo)
+                        .Case("Addition", new Addition())
+                        .Case("Subtraction", new Subtraction())
+                        .Case("Multiplication", new Multiplication())
+                        .Case("Division", new Division())
+                        .Case("Modulus", new Modulus())
+                        .GetResult();
+                   
                     replacement.LeftOperand = operation.LeftOperand;
                     replacement.RightOperand = operation.RightOperand;
                     replacement.ResultIsUnmodifiedLeftOperand = operation.ResultIsUnmodifiedLeftOperand;
