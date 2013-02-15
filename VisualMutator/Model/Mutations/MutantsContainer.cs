@@ -74,7 +74,7 @@
             var op = new PreOperator();
             var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
           //  CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
-            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget(-1));
+            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget(-1, 0, ""));
             targets.ExecutedOperator.Children.Add(mutant);
            // var mutant = targets.ExecutedOperator.Mutants.First();
             var copiedModules = session.StoredSourceAssemblies.Modules

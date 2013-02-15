@@ -19,7 +19,7 @@
             {
                 new ChangeAdditionIntoSubstraction(), 
                 new ChangeSubstractionIntoAddition(), 
-                new SwapLogicalEquality(), 
+                new ArithmeticOperatorInsertion(), 
 
             };
         }

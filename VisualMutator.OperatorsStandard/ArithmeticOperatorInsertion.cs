@@ -24,7 +24,7 @@ namespace VisualMutator.OperatorsStandard
                 var passes = new List<string>
                 {
                     "Addition",
-                    "Subtraction",
+                    "Substraction",
                     "Multiplication",
                     "Division",
                     "Modulus",
@@ -64,37 +64,15 @@ namespace VisualMutator.OperatorsStandard
         }
         public class ArithmeticOperatorInsertionRewriter : OperatorCodeRewriter
         {
-            private List<Type> input = new List<Type>
-            {
-                typeof(Addition),
-                typeof(Subtraction),
-                typeof(Multiplication),
-                typeof(Division),
-                typeof(Modulus),
-
-            };
-            private List<Type> output = new List<Type>
-            {
-                typeof(Addition),
-                typeof(Subtraction),
-                typeof(Multiplication),
-                typeof(Division),
-                typeof(Modulus),
-                typeof(BoundExpression),
-                typeof(BoundExpression),
-            };
+           
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
             {
-                input.RemoveAll(delegate(Type t)
-                {
-                    return t.GetInterfaces().Contains(operation.GetType());
-
-                });
+               
                 Expression result;
                 if(MutationTarget.CurrentPass <= 3)
                 {
-                    Type t = Type.GetType("Microsoft.Cci." + MutationTarget.PassInfo);
-                    BinaryOperation replacement = (BinaryOperation)Activator.CreateInstance(t);
+                    Type t = Type.GetType("Microsoft.Cci.MutableCodeModel." + MutationTarget.PassInfo);
+                    var replacement = (BinaryOperation)Activator.CreateInstance(t);
                     replacement.LeftOperand = operation.LeftOperand;
                     replacement.RightOperand = operation.RightOperand;
                     replacement.ResultIsUnmodifiedLeftOperand = operation.ResultIsUnmodifiedLeftOperand;
@@ -132,7 +110,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "SLE";
+                return "AOR";
             }
         }
 
@@ -140,7 +118,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "Swap Logical Equality";
+                return "Arithmetic Operator Replacement";
             }
         }
 
@@ -148,7 +126,7 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return "Replaces every occurence of equality with not equality and vice versa.";
+                return "";
             }
         }
 
