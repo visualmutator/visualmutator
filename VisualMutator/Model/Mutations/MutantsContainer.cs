@@ -7,17 +7,15 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
- 
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Mutations.Structure;
 
     using log4net;
-
+    using Module = Microsoft.Cci.MutableCodeModel.Module;
 
     #endregion
 
@@ -31,8 +29,7 @@
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        void ExecuteMutation( Mutant mutant, IList<IModule> modules,
-                        ICommonCompilerAssemblies env, IList<TypeIdentifier> allowedTypes,
+        void ExecuteMutation( Mutant mutant, IList<IModule> modules, IList<TypeIdentifier> allowedTypes,
                         ProgressCounter percentCompleted);
     }
 
@@ -181,9 +178,9 @@
 
                     map.Add(module.ModuleName.Value, visitor.MutationTargets);
                 }
-                
-           
 
+
+                result.OperatorCodeVisitor = operatorVisitor;
                 return new OperatorWithTargets
                 {
                     MutationTargets = map,
@@ -201,8 +198,7 @@
 
         }
 
-        public void ExecuteMutation(Mutant mutant, IList<IModule> sourceModules, 
-            ICommonCompilerAssemblies env, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
+        public void ExecuteMutation(Mutant mutant, IList<IModule> sourceModules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
         {
             try
             {
@@ -217,7 +213,11 @@
 
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.Mutate();
                     operatorCodeRewriter.MutationTarget = mutant.MutationTarget;
-                    var rewriter = new VisualCodeRewriter(env.Host, visitor2.MutationTargetsElements, allowedTypes, operatorCodeRewriter);
+                    operatorCodeRewriter.NameTable = _assembliesManager.Host.NameTable;
+                    operatorCodeRewriter.Host = _assembliesManager.Host;
+                    operatorCodeRewriter.Module = (Module)module;
+                    operatorCodeRewriter.OperatorCodeVisitor = mutant.ExecutedOperator.OperatorCodeVisitor;
+                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitor2.MutationTargetsElements, allowedTypes, operatorCodeRewriter);
                     IModule rewrittenModule = rewriter.Rewrite(module);
                     mutant.MutatedModules.Add(rewrittenModule);
                 }

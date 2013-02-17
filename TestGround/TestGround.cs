@@ -29,5 +29,9 @@
                  return y + 5;
              }
          }
+        public int Something2(int x)
+        {
+            return -x;
+        }
     }
 }

@@ -324,8 +324,9 @@
 
                 Mutant mutant = _mutantsToTest.Dequeue();
 
-                _mutantsContainer.ExecuteMutation(mutant, _currentSession.StoredSourceAssemblies.Modules,
-                    _commonCompilerAssemblies, _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
+                _mutantsContainer.ExecuteMutation(mutant, 
+                    _currentSession.StoredSourceAssemblies.Modules,
+                    _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
                 var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
           
                 if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)

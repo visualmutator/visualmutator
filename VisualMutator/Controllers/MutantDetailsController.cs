@@ -29,21 +29,28 @@
 
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
+
         private readonly CommonServices _commonServices;
+
+        private readonly IMutantsContainer _mutantsContainer;
 
         private IDisposable _listenerForCurrentMutant;
 
-        private AssembliesProvider _currentOriginalAssemblies;
+       
 
         private Mutant _currentMutant;
+        private MutationTestingSession _session;
 
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
             ICodeDifferenceCreator codeDifferenceCreator,
+            IMutantsContainer mutantsContainer,
             CommonServices commonServices)
         {
             _viewModel = viewModel;
             _codeDifferenceCreator = codeDifferenceCreator;
+            _mutantsContainer = mutantsContainer;
+
             _commonServices = commonServices;
 
             _viewModel.RegisterPropertyChanged(_=>_.SelectedTabHeader)
@@ -52,9 +59,9 @@
             _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
 
         }
-        public void LoadDetails(Mutant mutant, AssembliesProvider originalAssemblies)
+        public void LoadDetails(Mutant mutant, MutationTestingSession session)
         {
-            _currentOriginalAssemblies = originalAssemblies;
+            _session = session;
             _currentMutant = mutant;
 
             LoadData(_viewModel.SelectedTabHeader);
@@ -76,13 +83,18 @@
             _viewModel.ClearCode();
 
             var mutant = _currentMutant;
-            var assemblies = _currentOriginalAssemblies;
+            var assemblies = _session.OriginalAssemblies;
             _commonServices.Threading.ScheduleAsync(
                 () =>
                 {
                     if (mutant == null)
                     {
                         return null;
+                    }
+                    if (mutant.MutatedModules == null)
+                    {
+                        _mutantsContainer.ExecuteMutation(mutant, _session.StoredSourceAssemblies.Modules,
+                             _session.SelectedTypes.ToList(), ProgressCounter.Inactive());
                     }
                     return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
                         mutant, assemblies);
@@ -133,7 +145,7 @@
         public void Clean()
         {
             _currentMutant = null;
-            _currentOriginalAssemblies = null;
+           
             _viewModel.IsCodeLoading = false;
             _viewModel.TestNamespaces.Clear();
             _viewModel.SelectedLanguage = CodeLanguage.CSharp;

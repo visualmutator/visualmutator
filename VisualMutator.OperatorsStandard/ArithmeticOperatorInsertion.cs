@@ -10,8 +10,7 @@ namespace VisualMutator.OperatorsStandard
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using Mono.Cecil;
-    using Mono.Cecil.Cil;
+  
 
     using VisualMutator.Extensibility;
 
@@ -30,12 +29,12 @@ namespace VisualMutator.OperatorsStandard
                     "Division",
                     "Modulus",
                 }.Where(elem => elem != operation.GetType().Name).ToList();
-                
-                if(operation.LeftOperand is BoundExpression)
+
+                if (operation.LeftOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
                 {
                     passes.Add("LeftParam");
                 }
-                if (operation.RightOperand is BoundExpression)
+                if (operation.RightOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
                 {
                     passes.Add("RightParam");
                 }
@@ -111,7 +110,22 @@ namespace VisualMutator.OperatorsStandard
             {
                 return ReplaceOperation(operation);
             }
-            
+            public override IExpression Rewrite(ISubtraction operation)
+            {
+                return ReplaceOperation(operation);
+            }
+            public override IExpression Rewrite(IMultiplication operation)
+            {
+                return ReplaceOperation(operation);
+            }
+            public override IExpression Rewrite(IDivision operation)
+            {
+                return ReplaceOperation(operation);
+            }
+            public override IExpression Rewrite(IModulus operation)
+            {
+                return ReplaceOperation(operation);
+            }
         }
 
         public string Identificator

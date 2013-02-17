@@ -44,6 +44,30 @@
             return collection.Any() ? collection.Average(func) : 0;
         }
 
+        public static bool IsAnyOf<T>(this object obj)
+        {
+            return obj is T;
+        }
+        public static bool IsAnyOf<T1,T2>(this object obj)
+        {
+            return obj is T1 || obj is T2 ;
+        }
+        public static bool IsAnyOf<T1, T2, T3>(this object obj)
+        {
+            return obj is T1 || obj is T2 || obj is T3;
+        }
+        public static bool IsAnyOf<T1, T2, T3, T4>(this object obj)
+        {
+            return obj is T1 || obj is T2 || obj is T3 || obj is T4;
+        }
+        public static bool IsAnyOf<T1, T2, T3, T4, T5>(this object obj)
+        {
+            return obj is T1 || obj is T2 || obj is T3 || obj is T4 || obj is T5;
+        }
+        public static bool IsAnyOf<T1, T2, T3, T4, T5, T6>(this object obj)
+        {
+            return obj is T1 || obj is T2 || obj is T3 || obj is T4 || obj is T5 || obj is T6;
+        }
         public static List<T> InList<T>(this T obj)
         {
             var arr = new List<T>();

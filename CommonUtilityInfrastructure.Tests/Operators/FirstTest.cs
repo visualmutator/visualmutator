@@ -78,37 +78,37 @@ namespace VisualMutator.OperatorTests
                     //(ISourceMethodBody does not know about the Source Model, so this information must be provided explicitly.)
                     var copier = new CodeDeepCopier(host, sourceLocationProvider);
                     Module mutableModule = copier.Copy(decompiledModule);
+                    /*
+                                        var allowed = new List<string> {"TestGround"};
+                                        var myvisitor = new DebugOperatorCodeVisitor();
+                                        var visitor = new VisualCodeVisitor(myvisitor);
+                                       // myvisitor.MarkMutationTarget = visitor.MarkMutationTarget;
+                                        //Traverse the mutable copy. In a real application the traversal will collect information to be used during rewriting.
+                                        var traverser = new VisualCodeTraverser(allowed)
+                                        {
+                                            PreorderVisitor = visitor,
+                                        };
+                                        traverser.Traverse(mutableModule);
 
-                    var allowed = new List<string> {"TestGround"};
-                    var myvisitor = new DebugOperatorCodeVisitor();
-                    var visitor = new VisualCodeVisitor(myvisitor);
-                   // myvisitor.MarkMutationTarget = visitor.MarkMutationTarget;
-                    //Traverse the mutable copy. In a real application the traversal will collect information to be used during rewriting.
-                    var traverser = new VisualCodeTraverser(allowed)
-                    {
-                        PreorderVisitor = visitor,
-                    };
-                    traverser.Traverse(mutableModule);
+                                        var visitor2 = new VisualCodeVisitorBack(visitor.MutationTargets);
+                                        var traverser2 = new VisualCodeTraverser(allowed)
+                                        {
+                                            PreorderVisitor = visitor2,
+                                        };
+                                        traverser2.Traverse(mutableModule);
 
-                    var visitor2 = new VisualCodeVisitorBack(visitor.MutationTargets);
-                    var traverser2 = new VisualCodeTraverser(allowed)
-                    {
-                        PreorderVisitor = visitor2,
-                    };
-                    traverser2.Traverse(mutableModule);
-
-                    var stringList = myvisitor.AllElements.Select(elem => elem.MethodType+" ==== "
-                        +elem.Obj.GetType().ToString() + " --- " + elem.Obj.ToString());
-                    //var builder = new StringBuilder();
-                    foreach (var str in stringList)
-                    {
-                        Console.WriteLine(str);
-                    }
-                    
-                    Assert.AreEqual(visitor2.MutationTargetsElements.Count, 1);
+                                        var stringList = myvisitor.AllElements.Select(elem => elem.MethodType+" ==== "
+                                            +elem.Obj.GetType().ToString() + " --- " + elem.Obj.ToString());
+                                        //var builder = new StringBuilder();
+                                        foreach (var str in stringList)
+                                        {
+                                            Console.WriteLine(str);
+                                        }
+                                        */
+                    //Assert.AreEqual(visitor2.MutationTargetsElements.Count, 1);
                     //Rewrite the mutable Code Model. In a real application CodeRewriter would be a subclass that actually does something.
                     //(This is why decompiled source method bodies must recompile themselves, rather than just use the IL from which they were decompiled.)
-                    var rewriter = new VisualCodeRewriter(host, visitor2.MutationTargetsElements, allowed, new MyRewriter());
+                    var rewriter = new CodeRewriter(host);
                     IModule rewrittenModule = rewriter.Rewrite(mutableModule);
 
                     //Write out the Code Model by traversing it as the Metadata Model that it also is.

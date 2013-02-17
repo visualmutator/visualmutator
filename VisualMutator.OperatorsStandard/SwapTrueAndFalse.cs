@@ -8,8 +8,7 @@ namespace VisualMutator.OperatorsStandard
     using System.Collections;
     using System.ComponentModel.Composition;
 
-    using Mono.Cecil;
-    using Mono.Cecil.Cil;
+ 
 
     using VisualMutator.Extensibility;
 

@@ -9,8 +9,7 @@ namespace VisualMutator.OperatorsStandard
     using System.ComponentModel.Composition;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using Mono.Cecil;
-    using Mono.Cecil.Cil;
+  
 
     using VisualMutator.Extensibility;
 

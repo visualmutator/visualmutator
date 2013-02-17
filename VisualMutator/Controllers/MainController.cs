@@ -101,7 +101,7 @@ namespace VisualMutator.Controllers
 
             _viewModel.RegisterPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
                 .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, 
-                    _sessionController.Session.OriginalAssemblies));
+                    _sessionController.Session ));
 
             _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;
 

@@ -15,7 +15,10 @@
         }
         public delegate void DelMarkMutationTarget(object obj, List<string> passesInfo  = null);
         public DelMarkMutationTarget MarkMutationTarget;
-
+        public virtual void Initialize()
+        {
+            
+        }
         /// <summary>
         /// Performs some computation with the given addition.
         /// </summary>

@@ -20,6 +20,7 @@
                 new ChangeAdditionIntoSubstraction(), 
                 new ChangeSubstractionIntoAddition(), 
                 new ArithmeticOperatorInsertion(), 
+                new AbsoluteValueInsertion(),
 
             };
         }
