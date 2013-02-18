@@ -71,7 +71,7 @@ namespace VisualMutator.Model.Mutations
                 string file = @"C:\VisualMutatorTemp\" + module.Name.Value;
                 _commonCompiler.WriteToFile(module, file);
                 var assemblyDefinition = _assemblyReaderWriter.ReadAssembly(file);
-                _services.FileSystem.File.Delete(file);
+               // _services.FileSystem.File.Delete(file);
                 pro.Assemblies.Add(assemblyDefinition);
             }
 

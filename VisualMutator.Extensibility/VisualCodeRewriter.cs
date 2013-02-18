@@ -8,23 +8,24 @@
     public class VisualCodeRewriter : CodeRewriter
     {
         private readonly List<object> _mutationTargets;
+        private readonly List<object> _commonTargetsElements;
         private readonly IList<TypeIdentifier> _allowedTypes;
        
-        private OperatorCodeRewriter rewriter;
+        private IOperatorCodeRewriter rewriter;
 
-        public VisualCodeRewriter(IMetadataHost host, List<object> mutationTargets, IList<TypeIdentifier> allowedTypes, OperatorCodeRewriter rewriter,
-            bool copyAndRewriteImmutableReferences = false)
+        public VisualCodeRewriter(IMetadataHost host, List<object> mutationTargets, List<object> commonTargetsElements, IList<TypeIdentifier> allowedTypes, IOperatorCodeRewriter rewriter, bool copyAndRewriteImmutableReferences = false)
             : base(host, copyAndRewriteImmutableReferences)
         {
             _mutationTargets = mutationTargets;
+            _commonTargetsElements = commonTargetsElements;
             _allowedTypes = allowedTypes;
             this.rewriter = rewriter;
         }
 
         private bool Process(object obj)
         {
-       
-            return _mutationTargets.Contains(obj);
+
+            return _mutationTargets.Remove(obj) || _commonTargetsElements.Contains(obj);
         }
 
         public override void RewriteChildren(NamespaceTypeDefinition namespaceTypeDefinition)

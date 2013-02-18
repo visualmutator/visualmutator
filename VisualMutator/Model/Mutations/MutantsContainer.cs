@@ -71,7 +71,7 @@
             var op = new PreOperator();
             var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
           //  CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
-            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget(-1, 0, ""));
+            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget(-1, 0, ""), new List<MutationTarget>());
             targets.ExecutedOperator.Children.Add(mutant);
            // var mutant = targets.ExecutedOperator.Mutants.First();
             var copiedModules = session.StoredSourceAssemblies.Modules
@@ -155,6 +155,8 @@
             public IMutationOperator Operator { get; set; }
 
             public ExecutedOperator ExecutedOperator { get; set; }
+
+            public List<MutationTarget> CommonTargets { get; set; }
         }
 
 
@@ -164,25 +166,39 @@
 
             try
             {
+                var commonTargets = new List<MutationTarget>();
                 var map = new Dictionary<string, List<MutationTarget>>();
-                OperatorCodeVisitor operatorVisitor = mutOperator.FindTargets();
+                var ded = mutOperator.FindTargets();
+                IOperatorCodeVisitor operatorVisitor = ded;
+                operatorVisitor.Host = _assembliesManager.Host;
+                operatorVisitor.Initialize();
                 foreach (var module in modules)
                 {
              
                     var visitor = new VisualCodeVisitor(operatorVisitor);
                     operatorVisitor.MarkMutationTarget = visitor.MarkMutationTarget;
+                    operatorVisitor.MarkCommon = visitor.MarkCommon;
                     var traverser = new VisualCodeTraverser(allowedTypes, visitor);
                        // .Where(i => i.ModuleName == module.PersistentIdentifier).ToList())
                   
                     traverser.Traverse(module);
 
                     map.Add(module.ModuleName.Value, visitor.MutationTargets);
+                    commonTargets.AddRange(visitor.CommonTargets);
+                    var visitor2 = new VisualCodeVisitorBack(visitor.MutationTargets, visitor.CommonTargets);
+                    var traverser2 = new VisualCodeTraverser(allowedTypes, visitor2);
+                    traverser2.Traverse(module);
+                    List<object> mutationTargetsElements = visitor2.MutationTargetsElements;
                 }
 
+              //  var stringList = ded.AllElements.Select(elem => elem.MethodType + " ==== "
+            //            + elem.Obj.GetType().ToString() + " --- " + elem.Obj.ToString());
+            //    var allElems = stringList.Aggregate((a, b) => a +Environment.NewLine+ b);
 
                 result.OperatorCodeVisitor = operatorVisitor;
                 return new OperatorWithTargets
                 {
+                    CommonTargets = commonTargets,
                     MutationTargets = map,
                     Operator = mutOperator,
                     ExecutedOperator = result,
@@ -207,7 +223,7 @@
                 foreach (var module in copiedModules)
                 {
                     percentCompleted.Progress();
-                    var visitor2 = new VisualCodeVisitorBack(mutant.MutationTarget.InList());
+                    var visitor2 = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitor2);
                     traverser2.Traverse(module);
 
@@ -217,7 +233,8 @@
                     operatorCodeRewriter.Host = _assembliesManager.Host;
                     operatorCodeRewriter.Module = (Module)module;
                     operatorCodeRewriter.OperatorCodeVisitor = mutant.ExecutedOperator.OperatorCodeVisitor;
-                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitor2.MutationTargetsElements, allowedTypes, operatorCodeRewriter);
+                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, 
+                        visitor2.MutationTargetsElements, visitor2.CommonTargetsElements, allowedTypes, operatorCodeRewriter);
                     IModule rewrittenModule = rewriter.Rewrite(module);
                     mutant.MutatedModules.Add(rewrittenModule);
                 }
@@ -236,7 +253,7 @@
             foreach (MutationTarget mutationTarget in oper.MutationTargets.Values.SelectMany(v => v))
             {//TODO:progress
                 //percentCompleted.Progress();
-                var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationTarget);
+                var mutant = new Mutant(generateId(), oper.ExecutedOperator, mutationTarget, oper.CommonTargets);
                 oper.ExecutedOperator.Children.Add(mutant);
 
             }

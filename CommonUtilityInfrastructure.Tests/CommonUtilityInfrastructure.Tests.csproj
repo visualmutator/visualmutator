@@ -93,6 +93,10 @@
     <Reference Include="Microsoft.Cci.SourceModel">
       <HintPath>..\packages\CCI\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -126,6 +130,14 @@
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ed2443ea-aeff-4eaf-8bed-4cfa8f721598}</Project>
       <Name>VisualMutator.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
+      <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
+      <Name>VisualMutator.OperatorsStandard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
+      <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
+      <Name>VisualMutator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

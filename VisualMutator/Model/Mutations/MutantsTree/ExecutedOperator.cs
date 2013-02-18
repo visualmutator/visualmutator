@@ -60,7 +60,7 @@ namespace VisualMutator.Model.Mutations.Structure
 
         public long FindTargetsTimeMiliseconds { get; set; }
 
-        public OperatorCodeVisitor OperatorCodeVisitor { get; set; }
+        public IOperatorCodeVisitor OperatorCodeVisitor { get; set; }
 
         public void UpdateDisplayedText()
         {

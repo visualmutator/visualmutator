@@ -128,11 +128,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeAdditionIntoSubstraction.cs" />
-    <Compile Include="ChangeSubstractionIntoAddition.cs" />
     <Compile Include="ArithmeticOperatorInsertion.cs" />
     <Compile Include="AbsoluteValueInsertion.cs" />
-    <Compile Include="SwapTrueAndFalse.cs" />
     <Compile Include="StandardOperatorsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

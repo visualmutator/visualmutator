@@ -15,9 +15,9 @@ namespace VisualMutator.OperatorsStandard
     using VisualMutator.Extensibility;
 
 
-    public class ArithmeticOperatorInsertion : IMutationOperator
+    public class ArithmeticOperatorReplacement : IMutationOperator
     {
-        public class ArithmeticOperatorInsertionVisitor : OperatorCodeVisitor
+        public class ArithmeticOperatorReplacementVisitor : OperatorCodeVisitor
         {
             private void ProcessOperation(IBinaryOperation operation)
             {
@@ -62,7 +62,7 @@ namespace VisualMutator.OperatorsStandard
                 ProcessOperation(operation);
             }
         }
-        public class ArithmeticOperatorInsertionRewriter : OperatorCodeRewriter
+        public class ArithmeticOperatorReplacementRewriter : OperatorCodeRewriter
         {
            
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
@@ -152,14 +152,14 @@ namespace VisualMutator.OperatorsStandard
             }
         }
 
-        public OperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor FindTargets()
         {
-            return new ArithmeticOperatorInsertionVisitor();
+            return new ArithmeticOperatorReplacementVisitor();
         }
 
-        public OperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter Mutate()
         {
-            return new ArithmeticOperatorInsertionRewriter();
+            return new ArithmeticOperatorReplacementRewriter();
         }
     }
 }

@@ -9,6 +9,7 @@
         protected int elementCounter;
 
         private List<MutationTarget> mutationTargets;
+        private List<MutationTarget> commonTargets;
 
         private IMethodDefinition _currentMethod;
 
@@ -16,12 +17,19 @@
         {
             get { return mutationTargets; }
         }
-
+        public List<MutationTarget> CommonTargets
+        {
+            get
+            {
+                return commonTargets;
+            }
+        }
         public VisualCodeVisitor(IOperatorCodeVisitor visitor)
         {
             this.visitor = visitor;
 
             mutationTargets = new List<MutationTarget>();
+            commonTargets = new List<MutationTarget>();
         }
 
 
@@ -52,6 +60,15 @@
            
         }
 
+        public void MarkCommon(object o)
+        {
+
+            var mutationTarget = new MutationTarget(elementCounter, 0, "");
+
+            commonTargets.Add(mutationTarget);
+
+
+        }
 
         public void MethodEnter(IMethodDefinition method)
         {

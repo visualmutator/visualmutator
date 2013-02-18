@@ -1,9 +1,11 @@
 namespace VisualMutator.Extensibility
 {
+    using System;
     using Microsoft.Cci;
 
     public interface IOperatorCodeVisitor
     {
+
         /// <summary>
         /// Performs some computation with the given addition.
         /// </summary>
@@ -970,5 +972,19 @@ namespace VisualMutator.Extensibility
         /// Performs some computation with the given Win32 resource.
         /// </summary>
         void Visit(IWin32Resource win32Resource);
+    
+        VisualCodeVisitor Parent { get; set; }
+        MetadataReaderHost Host { get; set; }
+        OperatorCodeVisitor.DelMarkMutationTarget MarkMutationTarget
+        {
+            get;
+            set;
+        }
+        Action<object> MarkCommon
+        {
+            get;
+            set;
+        }
+        void Initialize();
     }
 }

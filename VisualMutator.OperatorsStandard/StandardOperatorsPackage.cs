@@ -17,9 +17,8 @@
         {
             Operators = new IMutationOperator[]
             {
-                new ChangeAdditionIntoSubstraction(), 
-                new ChangeSubstractionIntoAddition(), 
-                new ArithmeticOperatorInsertion(), 
+  
+                new ArithmeticOperatorReplacement(), 
                 new AbsoluteValueInsertion(),
 
             };

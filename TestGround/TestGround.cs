@@ -1,5 +1,19 @@
 ﻿namespace TestGround
 {
+    using System;
+
+    public class NewTestGround
+    {
+        public static int FailOnZero(int x)
+        {
+            if (x == 0)
+            {
+                throw new InvalidOperationException("VisualMutator: x == 0");
+            }
+            return x;
+        }
+    }
+
     public class TestGround
     {
         public class TestGroundInner

@@ -12,6 +12,12 @@ namespace VisualMutator.Model.Mutations.Structure
         private readonly int _id;
 
         private readonly MutationTarget _mutationTarget;
+        private readonly List<MutationTarget> _commonTargets;
+
+        public List<MutationTarget> CommonTargets
+        {
+            get { return _commonTargets; }
+        }
 
         public List<IModule> MutatedModules
         {
@@ -33,12 +39,13 @@ namespace VisualMutator.Model.Mutations.Structure
                 return Parent.CastTo<ExecutedOperator>();
             }
         }
-        public Mutant(int id, ExecutedOperator parent, MutationTarget mutationTarget)
+        public Mutant(int id, ExecutedOperator parent, MutationTarget mutationTarget, List<MutationTarget> commonTargets)
             : base( "Mutant", false)
         {
             _id = id;
             _mutationTarget = mutationTarget;
-    
+            _commonTargets = commonTargets;
+
             _mutantTestSession  = new MutantTestSession();
 
             Parent = parent;

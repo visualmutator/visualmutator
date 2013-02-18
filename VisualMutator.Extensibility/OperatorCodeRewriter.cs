@@ -4,7 +4,7 @@
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
 
-    public class OperatorCodeRewriter
+    public class OperatorCodeRewriter : IOperatorCodeRewriter
     {
         public MutationTarget MutationTarget { get; set; }
 
@@ -12,9 +12,9 @@
 
         public MetadataReaderHost Host { get; set; }
 
-        public Module Module { get; set; }
+        public IModule Module { get; set; }
 
-        public OperatorCodeVisitor OperatorCodeVisitor { get; set; }
+        public IOperatorCodeVisitor OperatorCodeVisitor { get; set; }
 
         /// <summary>
         /// Rewrites the given addition.
