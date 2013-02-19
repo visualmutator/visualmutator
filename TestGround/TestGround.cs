@@ -2,8 +2,12 @@
 {
     using System;
 
-    public class NewTestGround
+    public class NewTestGround : TestGround
     {
+        public override int Something(int x)
+        {
+            return x + 5;
+        }
         public static int FailOnZero(int x)
         {
             if (x == 0)
@@ -32,7 +36,7 @@
             set { y = value; }
         }
 
-        public int Something(int x)
+        public virtual int Something(int x)
          {
              if (x > 10)
              {

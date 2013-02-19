@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbsoluteValueInsertion.cs" />
     <Compile Include="ChangeEqualsIntoComparison.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ObjectOperatorsPackage.cs" />
