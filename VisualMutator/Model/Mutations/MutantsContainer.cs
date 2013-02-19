@@ -162,7 +162,7 @@
 
         public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, IList<TypeIdentifier> allowedTypes)
         {
-            var result = new ExecutedOperator(mutOperator.Identificator, mutOperator.Name, mutOperator);
+            var result = new ExecutedOperator(mutOperator.Info.Id, mutOperator.Info.Name, mutOperator);
 
             try
             {
@@ -208,7 +208,7 @@
             }
             catch (Exception e)
             {
-                throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Name), e);
+                throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Info.Name), e);
             }
             
 
@@ -242,7 +242,7 @@
             }
             catch (Exception e)
             {
-                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutant.ExecutedOperator.Operator.Name), e);
+                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutant.ExecutedOperator.Operator.Info.Name), e);
             }
         }
 

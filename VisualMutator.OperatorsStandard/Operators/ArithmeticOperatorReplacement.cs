@@ -127,30 +127,14 @@ namespace VisualMutator.OperatorsStandard
                 return ReplaceOperation(operation);
             }
         }
-
-        public string Identificator
+        public OperatorInfo Info
         {
             get
             {
-                return "AOR";
+                return new OperatorInfo("AOR", "Arithmetic Operator Replacement", "");
             }
         }
-
-        public string Name
-        {
-            get
-            {
-                return "Arithmetic Operator Replacement";
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return "";
-            }
-        }
+     
 
         public IOperatorCodeVisitor FindTargets()
         {

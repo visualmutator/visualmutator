@@ -73,30 +73,14 @@ namespace VisualMutator.OperatorsStandard
             }
             
         }
-
-        public string Identificator
+        public OperatorInfo Info
         {
             get
             {
-                return "SOR";
+                return new OperatorInfo("SOR", "Shift Operator Replacement", "");
             }
         }
 
-        public string Name
-        {
-            get
-            {
-                return "Shift Operator Replacement";
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return "";
-            }
-        }
 
         public IOperatorCodeVisitor FindTargets()
         {

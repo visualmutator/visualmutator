@@ -13,12 +13,8 @@ namespace VisualMutator.Extensibility
     public interface IMutationOperator
     {
      
-        string Identificator { get; }
-        string Name { get; }
-
-        string Description { get; }
-
-   
+        OperatorInfo Info { get; }
+       
         IOperatorCodeVisitor FindTargets();
 
         IOperatorCodeRewriter Mutate();

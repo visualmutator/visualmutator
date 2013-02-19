@@ -17,6 +17,7 @@
         IModule AppendFromFile(string filePath);
         Module Copy(IModule module);
         void WriteToFile(IModule module, string filePath);
+        void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
     }
 

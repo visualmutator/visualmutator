@@ -131,12 +131,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArithmeticOperatorInsertion.cs" />
-    <Compile Include="AbsoluteValueInsertion.cs" />
-    <Compile Include="Copy of OverloadingMethodDeletion.cs" />
-    <Compile Include="OverloadingMethodDeletion.cs" />
+    <Compile Include="Operators\AbsoluteValueInsertion.cs" />
+    <Compile Include="Operators\ArithmeticOperatorReplacement.cs" />
+    <Compile Include="Operators\LogicalOperatorReplacement.cs" />
+    <Compile Include="Operators\RelationalOperatorReplacement.cs" />
+    <Compile Include="Operators\ShiftOperatorReplacement.cs" />
     <Compile Include="StandardOperatorsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Operators\UnaryOperatorInsertion.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">

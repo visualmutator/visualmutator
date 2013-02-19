@@ -17,24 +17,15 @@
     {
         #region IMutationOperator Members
 
-        public string Identificator
-        {
-            get { return "UOI"; }
-        }
-
-        public string Name
+        public OperatorInfo Info
         {
             get
             {
-                return "Unary Operator Insertion";
+                return new OperatorInfo("UOI", "Unary Operator Insertion", "");
             }
         }
 
-        public string Description
-        {
-            get { return ""; }
-        }
-
+     
         public IOperatorCodeVisitor FindTargets()
         {
             return new UnaryOperatorInsertionVisitor();

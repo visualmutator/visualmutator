@@ -11,6 +11,7 @@
     {
       //  IGrouping<string, TypeDefinition> GetTypesFromAssembly(string path, out AssemblyDefinition ad);
         AssemblyDefinition ReadAssembly(string path);
+        AssemblyDefinition ReadAssembly(Stream path);
 
         void WriteAssembly(AssemblyDefinition assembly, string path);
     }
@@ -38,6 +39,26 @@
                 throw new AssemblyReadException("", e);
             }
             
+        }
+        public AssemblyDefinition ReadAssembly(Stream stream)
+        {
+            try
+            {
+                return AssemblyDefinition.ReadAssembly(stream);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new AssemblyReadException("", e);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw new AssemblyReadException("", e);
+            }
+            catch (IOException e)
+            {
+                throw new AssemblyReadException("", e);
+            }
+
         }
         public void WriteAssembly(AssemblyDefinition assembly, string path)
         {

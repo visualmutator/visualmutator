@@ -20,25 +20,12 @@
     {
         #region IMutationOperator Members
 
-        public string Identificator
+        public OperatorInfo Info
         {
             get
             {
-                return "OAO";
+                return new OperatorInfo("OAO", "Argument Order Change", "");
             }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return "Argument Order Change";
-            }
-        }
-
-        public string Description
-        {
-            get { return ""; }
         }
 
         public IOperatorCodeVisitor FindTargets()
@@ -53,7 +40,7 @@
 
         #endregion
 
-        #region Nested type: AbsoluteValueInsertionRewriter
+        #region Nested type: ExceptionHandlerRemovalRewriter
 
         public class AbsoluteValueInsertionRewriter : OperatorCodeRewriter
         {
@@ -68,29 +55,40 @@
 
         #endregion
 
-        #region Nested type: AbsoluteValueInsertionVisitor
+        #region Nested type: ExceptionHandlerRemovalVisitor
 
         public class AbsoluteValueInsertionVisitor : OperatorCodeVisitor
         {
-           
-    
-            public override void Visit(IMethodCall method)
+
+
+            public override void Visit(IMethodCall methodCall)
             {
-                var thisMethod = method.MethodToCall.ResolvedMethod;
-                var currentDefinition = thisMethod.ContainingTypeDefinition;
-                var allOverloadingMethods = 
-                currentDefinition.GetMatchingMembersNamed(thisMethod.Name,
-                    false, member => member is IMethodDefinition).ToList();
                 
-                while (currentDefinition.BaseClasses.Any() )
+                var thisMethod = methodCall.MethodToCall.ResolvedMethod;
+                var currentDefinition = thisMethod.ContainingTypeDefinition;
+                //Find overloads in this class
+                List<IMethodDefinition> allOverloadingMethods = 
+                currentDefinition.GetMatchingMembersNamed(thisMethod.Name,
+                    false, member => member is IMethodDefinition).Cast<IMethodDefinition>().ToList();
+
+                //Add overloads from base classes
+                while (currentDefinition.BaseClasses.Any())
                 {
                     allOverloadingMethods.AddRange(currentDefinition.BaseClasses.Single()
                         .ResolvedType.GetMatchingMembersNamed(thisMethod.Name,
-                    false, member => member is IMethodDefinition));
+                    false, member => member is IMethodDefinition).Cast<IMethodDefinition>());
                 }
-                thisMethod.ContainingTypeDefinition.GetMatchingMembersNamed(thisMethod.Name, 
-                    false, member => member is IMethodDefinition)
-                    .Concat(thisMethod.ContainingTypeDefinition.BaseClasses)
+
+                allOverloadingMethods = allOverloadingMethods.Where(m =>
+                    !TypeHelper.ParameterListsAreEquivalent(m.Parameters, thisMethod.Parameters)).ToList();
+
+                allOverloadingMethods = allOverloadingMethods.Where(m =>
+                    m.Parameters.Count() == thisMethod.Parameters.Count()).ToList();
+
+                foreach (var method in allOverloadingMethods)
+                {
+                    method.Parameters.Di
+                }
 
 
 

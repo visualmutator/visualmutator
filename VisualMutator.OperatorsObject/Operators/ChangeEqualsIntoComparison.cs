@@ -19,39 +19,23 @@ namespace VisualMutator.OperatorsStandard
     public class ChangeEqualsIntoComparison : IMutationOperator
     {
 
-       
 
-        public string Identificator
+        public OperatorInfo Info
         {
             get
             {
-                return "CEIC";
+                return new OperatorInfo("CEIC", "Change Equals Into Comparison", "");
             }
         }
+      
 
-        public string Name
-        {
-            get
-            {
-                return "Change Equals Into Comparison";
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return "Replaces every occurence of addition with substaction.";
-            }
-        }
-
-        public OperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor FindTargets()
         {
             return new OperatorCodeVisitor();
 
         }
 
-        public OperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter Mutate()
         {
             return new OperatorCodeRewriter();
         }

@@ -16,24 +16,14 @@
     public class AbsoluteValueInsertion : IMutationOperator
     {
         #region IMutationOperator Members
-
-        public string Identificator
-        {
-            get { return "ABS"; }
-        }
-
-        public string Name
+        public OperatorInfo Info
         {
             get
             {
-                return "Absolute Value Insertion";
+                return new OperatorInfo("ABS", "Absolute Value Insertion", "");
             }
         }
-
-        public string Description
-        {
-            get { return ""; }
-        }
+       
 
         public IOperatorCodeVisitor FindTargets()
         {
@@ -320,31 +310,6 @@
                 MarkCommon(ns);
             }
 
-            /*
-            public override void Visit(IAddition operation)
-            {
-                ProcessOperation(operation);
-            }
-
-            public override void Visit(ISubtraction operation)
-            {
-                ProcessOperation(operation);
-            }
-
-            public override void Visit(IMultiplication operation)
-            {
-                ProcessOperation(operation);
-            }
-
-            public override void Visit(IDivision operation)
-            {
-                ProcessOperation(operation);
-            }
-
-            public override void Visit(IModulus operation)
-            {
-                ProcessOperation(operation);
-            }*/
         }
 
         #endregion

@@ -91,29 +91,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CecilExtensions.cs" />
     <Compile Include="DebugOperatorCodeVisitor.cs" />
-    <Compile Include="ILCrawler.cs" />
     <Compile Include="IOperatorCodeRewriter.cs" />
     <Compile Include="IOperatorCodeVisitor.cs" />
     <Compile Include="MethodIdentifier.cs" />
-    <Compile Include="MutationElementMethodAndInstruction.cs" />
-    <Compile Include="MutationElementEvent.cs" />
-    <Compile Include="IMutationElement.cs" />
     <Compile Include="IMutationOperator.cs" />
     <Compile Include="IOperatorsPackage.cs" />
-    <Compile Include="MethodAndInstruction.cs" />
-    <Compile Include="MutationElementField.cs" />
-    <Compile Include="MutationElementMethod.cs" />
-    <Compile Include="MutationElementProperty.cs" />
-    <Compile Include="MutationElementType.cs" />
     <Compile Include="MutationTarget.cs" />
     <Compile Include="OperatorCodeRewriter.cs" />
     <Compile Include="OperatorCodeVisitor.cs" />
+    <Compile Include="OperatorInfo.cs" />
     <Compile Include="PackageInfoAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferencedAssemblyNotFoundException.cs" />
-    <Compile Include="MonoCecilTypeIdentifier.cs" />
     <Compile Include="TypeIdentifier.cs" />
     <Compile Include="VisualCodeRewriter.cs" />
     <Compile Include="VisualCodeTraverser.cs" />

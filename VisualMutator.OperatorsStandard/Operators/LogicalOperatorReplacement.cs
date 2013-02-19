@@ -89,30 +89,14 @@ namespace VisualMutator.OperatorsStandard
             }
             
         }
-
-        public string Identificator
+        public OperatorInfo Info
         {
             get
             {
-                return "LOR";
+                return new OperatorInfo("LOR", "Logical Operator Replacement", "");
             }
         }
-
-        public string Name
-        {
-            get
-            {
-                return "Logical Operator Replacement";
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                return "";
-            }
-        }
+      
 
         public IOperatorCodeVisitor FindTargets()
         {

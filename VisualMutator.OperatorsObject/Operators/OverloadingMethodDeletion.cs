@@ -16,27 +16,15 @@
     public class OverloadingMethodDeletion : IMutationOperator
     {
         #region IMutationOperator Members
-
-        public string Identificator
+        public OperatorInfo Info
         {
             get
             {
-                return "OMD";
+                return new OperatorInfo("OMD", "Overloading Method Deletion", "");
             }
         }
-
-        public string Name
-        {
-            get
-            {
-                return "Overloading Method Deletion";
-            }
-        }
-
-        public string Description
-        {
-            get { return ""; }
-        }
+      
+        
 
         public IOperatorCodeVisitor FindTargets()
         {
@@ -50,7 +38,7 @@
 
         #endregion
 
-        #region Nested type: AbsoluteValueInsertionRewriter
+        #region Nested type: ExceptionHandlerRemovalRewriter
 
         public class AbsoluteValueInsertionRewriter : OperatorCodeRewriter
         {
@@ -65,7 +53,7 @@
 
         #endregion
 
-        #region Nested type: AbsoluteValueInsertionVisitor
+        #region Nested type: ExceptionHandlerRemovalVisitor
 
         public class AbsoluteValueInsertionVisitor : OperatorCodeVisitor
         {

@@ -12,6 +12,8 @@ namespace VisualMutator.Model.Mutations
     using Types;
     using VisualMutator.Model.Mutations.Structure;
 
+
+
     public interface IAssembliesManager
     {
         StoredAssemblies Store(AssembliesProvider assemblies);
@@ -64,13 +66,13 @@ namespace VisualMutator.Model.Mutations
                 {
                     Assemblies = new List<AssemblyDefinition>()
                 };
-            _services.FileSystem.Directory.CreateDirectory(@"C:\VisualMutatorTemp");
+          //  _services.FileSystem.Directory.CreateDirectory(@"C:\VisualMutatorTemp");
             foreach (var module in assemblies)
             {
-                
-                string file = @"C:\VisualMutatorTemp\" + module.Name.Value;
-                _commonCompiler.WriteToFile(module, file);
-                var assemblyDefinition = _assemblyReaderWriter.ReadAssembly(file);
+                var memoryStream = new MemoryStream();
+                //     string file = @"C:\VisualMutatorTemp\" + module.Name.Value;
+                _commonCompiler.WriteToStream(module, memoryStream);
+                var assemblyDefinition = _assemblyReaderWriter.ReadAssembly(memoryStream);
                // _services.FileSystem.File.Delete(file);
                 pro.Assemblies.Add(assemblyDefinition);
             }
