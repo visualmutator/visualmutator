@@ -21,33 +21,38 @@ namespace VisualMutator.OperatorsStandard
         {
             private void ProcessOperation(IBinaryOperation operation)
             {
+                var operandTypeCode = operation.LeftOperand.Type.TypeCode;
                 var passes = new List<string>
                     {
                         "True",
                         "False",
                     };
 
-                if (operation.LeftOperand.Type.TypeCode != PrimitiveTypeCode.Boolean 
-                    && operation.RightOperand.Type.TypeCode != PrimitiveTypeCode.Boolean)
+                //ALL: true, false
+                //integer: all
+                // float less, greater
+                // bool, object: equals, ne
+
+            
+                if (operandTypeCode.IsIn(PrimitiveTypeCode.Float32, PrimitiveTypeCode.Float64))
                 {
-                    var passesOperandNotBool = new List<string>
-                    {
-                        "LessThan",
-                        "GreaterThan",
-                    }.Where(elem => elem != operation.GetType().Name).ToList();
-                    passes.AddRange(passesOperandNotBool);
+                    passes.AddRange("LessThan", "GreaterThan");
                 }
-                if (!operation.Type.TypeCode.IsIn(PrimitiveTypeCode.Float32, PrimitiveTypeCode.Float64))
+                else if (operandTypeCode.IsIn(PrimitiveTypeCode.Boolean, 
+                    PrimitiveTypeCode.NotPrimitive, PrimitiveTypeCode.Char, 
+                    PrimitiveTypeCode.Reference, PrimitiveTypeCode.String))
                 {
-                    var passesNotFloat = new List<string>
-                        {
-                            "GreaterThanOrEqual",
-                            "LessThanOrEqual",
-                            "Equality",
-                            "NotEquality",
-                        }.Where(elem => elem != operation.GetType().Name);
-                    passes.AddRange(passesNotFloat);
+                    passes.AddRange("Equality", "NotEquality");
                 }
+                else
+                {
+                    passes.AddRange("LessThan", "GreaterThan");
+                    passes.AddRange("LessThanOrEqual", "GreaterThanOrEqual");
+                    passes.AddRange("Equality", "NotEquality");
+                }
+                passes = passes.Where(elem => elem != operation.GetType().Name).ToList();
+             
+
                 MarkMutationTarget(operation, passes);
             }
 

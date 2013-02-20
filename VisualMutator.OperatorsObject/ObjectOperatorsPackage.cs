@@ -23,7 +23,7 @@
 
             Operators = new[]
             {
-                new ChangeEqualsIntoComparison(), 
+                new EqualityOperatorChange(), 
             };
 
         }

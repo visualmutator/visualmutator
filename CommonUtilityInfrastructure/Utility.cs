@@ -29,12 +29,23 @@
         {
             return string.IsNullOrEmpty(str);
         }
-
+        public static IList<Tuple<T1,T2>> Pairs<T1, T2>(params object[] elements)
+        {
+            var result = new List<Tuple<T1, T2>>();
+            for (int i = 0; i < elements.Length; i+=2)
+            {
+                result.Add(new Tuple<T1, T2>((T1) elements[i], (T2) elements[i+1]));
+            }
+            return result;
+        }
         public static T CastTo<T>( this object obj)
         {
             return (T)obj;
         }
-
+        public static void AddRange<T>(this ICollection<T> collection, params T[] toAdd)
+        {
+            collection.AddRange(toAdd.AsEnumerable());
+        }
         public static double AverageOrZero<T>(this IEnumerable<T> collection, Func<T, int> func) 
         {
             return collection.Any() ? collection.Average(func) : 0;
