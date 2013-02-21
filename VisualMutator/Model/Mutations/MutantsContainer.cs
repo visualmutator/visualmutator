@@ -57,7 +57,7 @@
      
             return new MutationTestingSession
             {
-                OriginalAssemblies = _assembliesManagerOld.Load(copiedModules.Modules),//null,//TODO: something 
+                OriginalAssemblies = _assembliesManagerOld.Load(copiedModules.Modules),
                 StoredSourceAssemblies = copiedModules,
                 SelectedTypes = copiedTypes,
                 Choices = choices,
@@ -160,7 +160,8 @@
         }
 
 
-        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, IList<TypeIdentifier> allowedTypes)
+        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, 
+            IList<TypeIdentifier> allowedTypes)
         {
             var result = new ExecutedOperator(mutOperator.Info.Id, mutOperator.Info.Name, mutOperator);
 
@@ -185,10 +186,12 @@
 
                     map.Add(module.ModuleName.Value, visitor.MutationTargets);
                     commonTargets.AddRange(visitor.CommonTargets);
+
+                    /*
                     var visitor2 = new VisualCodeVisitorBack(visitor.MutationTargets, visitor.CommonTargets);
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitor2);
                     traverser2.Traverse(module);
-                    List<object> mutationTargetsElements = visitor2.MutationTargetsElements;
+                    List<object> mutationTargetsElements = visitor2.MutationTargetsElements;*/
                 }
 
               //  var stringList = ded.AllElements.Select(elem => elem.MethodType + " ==== "

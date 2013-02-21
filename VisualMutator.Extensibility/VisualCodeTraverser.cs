@@ -5,19 +5,19 @@
 
     public class VisualCodeTraverser : CodeTraverser
     {
-        private readonly IList<TypeIdentifier> _allowedTypesName;
+        private readonly IList<TypeIdentifier> _allowedTypes;
         private readonly VisualCodeVisitor _visitor;
 
-        public VisualCodeTraverser(IList<TypeIdentifier> allowedTypesName, VisualCodeVisitor visitor)
+        public VisualCodeTraverser(IList<TypeIdentifier> allowedTypes, VisualCodeVisitor visitor)
         {
-            _allowedTypesName = allowedTypesName;
+            _allowedTypes = allowedTypes;
             _visitor = visitor;
             PreorderVisitor = visitor;
         }
 
         public override void TraverseChildren(INamespaceTypeDefinition namespaceTypeDefinition)
         {
-            if (_allowedTypesName.Contains(new TypeIdentifier(namespaceTypeDefinition)))
+            if (_allowedTypes.Count == 0 || _allowedTypes.Contains(new TypeIdentifier(namespaceTypeDefinition)))
             {
                 base.TraverseChildren(namespaceTypeDefinition);
             }

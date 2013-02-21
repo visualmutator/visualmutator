@@ -10,7 +10,6 @@
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
 
-    using NList;
 
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
@@ -85,7 +84,7 @@
                 allOverloadingMethods = allOverloadingMethods.Where(m =>
                     m.Parameters.Count() == thisMethod.Parameters.Count()).ToList();
 
-                foreach (var method in allOverloadingMethods)
+              /*  foreach (var method in allOverloadingMethods)
                 {
                     method.Parameters.Di
                 }
@@ -109,7 +108,7 @@
                     .ResolvedType.GetMembersNamed(method.Name, false).Any())
                 {
                     MarkMutationTarget(method);
-                }
+                }*/
             }
 
         }

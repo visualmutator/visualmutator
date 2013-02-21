@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace VisualMutator.OperatorsStandard
+﻿namespace VisualMutator.OperatorsObject.Operators
 {
-    using System.Collections;
-    using System.ComponentModel.Composition;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using Mono.Cecil;
-    using Mono.Cecil.Cil;
-
     using VisualMutator.Extensibility;
 
-   // using OpCodes = Mono.Cecil.Cil.OpCodes;
+    // using OpCodes = Mono.Cecil.Cil.OpCodes;
 
     public class EqualityOperatorChange : IMutationOperator
     {
@@ -50,12 +43,33 @@ namespace VisualMutator.OperatorsStandard
 
             public override IExpression Rewrite(IMethodCall methodCall)
             {
-
+                var equality = new Equality();
+                equality.LeftOperand = methodCall.ThisArgument;
+                equality.RightOperand = methodCall.Arguments.Single();
+                equality.Type = Host.PlatformType.SystemBoolean;
                 return methodCall;
             }
-            public override IExpression Rewrite(IEquality methodCall)
+            public override IExpression Rewrite(IEquality operation)
             {
-
+                var methodCall = new MethodCall();
+                IExpression thisArgument;
+                IExpression argument;
+                if (MutationTarget.PassInfo == "Left")
+                {
+                    thisArgument = operation.LeftOperand;
+                    argument = operation.RightOperand;
+                }
+                else
+                {
+                    thisArgument = operation.RightOperand;
+                    argument = operation.LeftOperand;
+                }
+                methodCall.ThisArgument = thisArgument;
+                methodCall.MethodToCall = TypeHelper.GetMethod(thisArgument.Type.ResolvedType.Members,
+                                                                  Host.NameTable.GetNameFor("Equals"),
+                                                                  Host.PlatformType.SystemObject);
+                methodCall.Arguments = argument.InList();
+                
                 return methodCall;
             }
         }
@@ -75,6 +89,7 @@ namespace VisualMutator.OperatorsStandard
                 var methodDefinition = methodCall.MethodToCall.ResolvedMethod;
                 var containingType = methodCall.MethodToCall.ContainingType.ResolvedType;
 
+                //Check if the type overrides the Equals method
                 if (methodCall.MethodToCall.Name.Value == "Equals" && containingType.IsClass 
                     && containingType.BaseClasses.Any()
                     && TypeHelper.ParameterListsAreEquivalent(methodDefinition.Parameters,
@@ -87,13 +102,18 @@ namespace VisualMutator.OperatorsStandard
             }
             public override void Visit(IEquality operation)
             {
-                var passes = (from pair in Utility.Pairs<IExpression, string>(operation.LeftOperand, "Left", 
-                                                                              operation.RightOperand, "Right")
-                              let operandType = pair.Item1.Type.ResolvedType
-                              where operandType.BaseClasses.Any() && operandType.IsClass 
-                                  && TypeHelper.GetMethod(operandType.Members, Host.NameTable.GetNameFor("Equals"), 
-                                  Host.PlatformType.SystemObject) != Dummy.MethodDefinition
-                              select pair.Item2).ToList();
+                var passes = new List<string>();
+                foreach (Tuple<IExpression, string> pair in 
+                    Utility.Pairs<IExpression, string>(operation.LeftOperand, "Left", operation.RightOperand, "Right"))
+                {
+                    ITypeDefinition operandType = pair.Item1.Type.ResolvedType;
+                    if (operandType.BaseClasses.Any() && operandType.IsClass 
+                        && TypeHelper.GetMethod(operandType.Members, 
+                        Host.NameTable.GetNameFor("Equals"), Host.PlatformType.SystemObject) != Dummy.MethodDefinition)
+                    {
+                        passes.Add(pair.Item2);
+                    }
+                }
                 if(passes.Any())
                 {
                     MarkMutationTarget(operation, passes);

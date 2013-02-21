@@ -143,7 +143,7 @@
   <ItemGroup>
     <Compile Include="Operators\ArgumentOrderChange.cs" />
     <Compile Include="Operators\ExceptionHandlerRemoval.cs" />
-    <Compile Include="Operators\ChangeEqualsIntoComparison.cs" />
+    <Compile Include="Operators\EqualityOperatorChange.cs" />
     <Compile Include="Operators\OverloadingMethodDeletion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ObjectOperatorsPackage.cs" />
