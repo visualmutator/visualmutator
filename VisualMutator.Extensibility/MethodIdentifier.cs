@@ -16,5 +16,9 @@
         {
             _methodName = method.Name.Value;
         }
+        public override string ToString()
+        {
+            return string.Format("Identifier: Module: {0}, Type: {1}, Method: {2}", ModuleName, TypeName, MethodName);
+        }
     }
 }

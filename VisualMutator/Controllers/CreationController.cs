@@ -69,7 +69,7 @@
            
         }
 
-        public void Run()
+        public async void Run()
         {
             
             _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),

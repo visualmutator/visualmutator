@@ -33,12 +33,8 @@ namespace VisualMutator.OperatorsStandard
                 // float less, greater
                 // bool, object: equals, ne
 
-            
-                if (operandTypeCode.IsIn(PrimitiveTypeCode.Float32, PrimitiveTypeCode.Float64))
-                {
-                    passes.AddRange("LessThan", "GreaterThan");
-                }
-                else if (operandTypeCode.IsIn(PrimitiveTypeCode.Boolean, 
+
+                if (operandTypeCode.IsIn(PrimitiveTypeCode.Boolean, 
                     PrimitiveTypeCode.NotPrimitive, PrimitiveTypeCode.Char, 
                     PrimitiveTypeCode.Reference, PrimitiveTypeCode.String))
                 {

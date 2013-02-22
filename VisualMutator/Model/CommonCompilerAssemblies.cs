@@ -4,11 +4,17 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
+
     using Exceptions;
     using JetBrains.Annotations;
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
+
+    using log4net;
+
+    using Module = Microsoft.Cci.MutableCodeModel.Module;
 
     public interface ICommonCompilerAssemblies
     {
@@ -25,6 +31,9 @@
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
+
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public List<IModule> Modules
         {
@@ -61,6 +70,7 @@
 
         public IModule AppendFromFile(string filePath)
         {
+            _log.Info("CommonCompilerAssemblies.AppendFromFile:" + filePath);
             IModule module = _host.LoadUnitFrom(filePath) as IModule;
             if (module == null || module == Dummy.Module || module == Dummy.Assembly)
             {
@@ -123,6 +133,7 @@
         }
         public Module Copy(IModule module)
         {
+            _log.Info("CommonCompilerAssemblies.Module:" + module.Name);
             var info = FindModuleInfo(module);
             var copier = new CodeDeepCopier(_host, info.SourceLocationProvider, info.LocalScopeProvider);
             return copier.Copy(module);
@@ -130,6 +141,7 @@
 
         public void WriteToFile(IModule module, string filePath)
         {
+            _log.Info("CommonCompilerAssemblies.WriteToFile:" + module.Name);
             var info = FindModuleInfo(module);
             using (FileStream peStream = File.Create(filePath))
             {

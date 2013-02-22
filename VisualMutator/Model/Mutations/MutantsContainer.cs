@@ -71,7 +71,7 @@
             var op = new PreOperator();
             var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
           //  CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
-            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget(-1, 0, ""), new List<MutationTarget>());
+            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget("", -1, 0, ""), new List<MutationTarget>());
             targets.ExecutedOperator.Children.Add(mutant);
            // var mutant = targets.ExecutedOperator.Mutants.First();
             var copiedModules = session.StoredSourceAssemblies.Modules
@@ -165,6 +165,8 @@
         {
             var result = new ExecutedOperator(mutOperator.Info.Id, mutOperator.Info.Name, mutOperator);
 
+            _log.Info("Finding targets for mutation operator: " + mutOperator.Info);
+
             try
             {
                 var commonTargets = new List<MutationTarget>();
@@ -198,6 +200,7 @@
             //            + elem.Obj.GetType().ToString() + " --- " + elem.Obj.ToString());
             //    var allElems = stringList.Aggregate((a, b) => a +Environment.NewLine+ b);
 
+                _log.Info("Got: " + map.Values.Flatten().Count()+" mutation targets.");
                 result.OperatorCodeVisitor = operatorVisitor;
                 return new OperatorWithTargets
                 {
@@ -221,6 +224,7 @@
         {
             try
             {
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " on " + sourceModules.Count + " modules. Allowed: " + allowedTypes);
                 var copiedModules = sourceModules.Select(_assembliesManager.Copy).Cast<IModule>().ToList();
                 mutant.MutatedModules = new List<IModule>();
                 foreach (var module in copiedModules)

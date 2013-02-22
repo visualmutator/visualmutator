@@ -7,6 +7,8 @@
 
     public class MutationTarget
     {
+        private readonly string _name;
+
         private readonly int _counterValue;
         private readonly int _currentPass;
 
@@ -26,11 +28,20 @@
             set;
         }
 
-        public MutationTarget(int counterValue, int currentPass, string passInfo)
+        public MutationTarget(string name, int counterValue, int currentPass, string passInfo)
         {
+            _name = name;
             _counterValue = counterValue;
             _currentPass = currentPass;
             _passInfo = passInfo;
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
         }
 
         public int CounterValue
@@ -43,6 +54,11 @@
             {
                 return _currentPass;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("MutationTarget: {0} - {1}", _name, _passInfo);
         }
     }
 }

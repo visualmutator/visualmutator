@@ -50,7 +50,7 @@
             }
             for (int i = 0; i < passesInfo.Count; i++)
             {
-                var mutationTarget = new MutationTarget(elementCounter, i, passesInfo[i]);
+                var mutationTarget = new MutationTarget(o.GetType().Name, elementCounter, i, passesInfo[i]);
                 if (_currentMethod != null)
                 {
                     mutationTarget.Method = new MethodIdentifier(_currentMethod);
@@ -63,7 +63,7 @@
         public void MarkCommon(object o)
         {
 
-            var mutationTarget = new MutationTarget(elementCounter, 0, "");
+            var mutationTarget = new MutationTarget(o.GetType().Name, elementCounter, 0, "");
 
             commonTargets.Add(mutationTarget);
 

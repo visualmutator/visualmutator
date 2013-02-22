@@ -54,7 +54,10 @@
         {
             return collection.Any() ? collection.Average(func) : 0;
         }
-
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> collection)
+        {
+            return collection.SelectMany(e => e);
+        }
         public static bool IsAnyOf<T>(this object obj)
         {
             return obj is T;

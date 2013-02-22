@@ -58,5 +58,10 @@
                 return (_typeName.GetHashCode()*397) ^ _moduleName.GetHashCode();
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("Identifier: Module: {0}, TypeName: {1}", _moduleName, _typeName);
+        }
     }
 }

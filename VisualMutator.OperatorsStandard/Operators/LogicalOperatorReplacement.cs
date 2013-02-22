@@ -7,6 +7,8 @@ namespace VisualMutator.OperatorsStandard
 {
     using System.Collections;
     using System.ComponentModel.Composition;
+    using System.Reflection;
+
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
@@ -14,13 +16,20 @@ namespace VisualMutator.OperatorsStandard
 
     using VisualMutator.Extensibility;
 
+    using log4net;
 
     public class LogicalOperatorReplacement : IMutationOperator
     {
+
+        protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         public class LogicalOperatorReplacementVisitor : OperatorCodeVisitor
         {
             private void ProcessOperation(IBinaryOperation operation)
             {
+                _log.Info("Visiting: " + operation);
+                
                 var passes = new List<string>
                     {
                         "BitwiseAnd",
@@ -52,6 +61,8 @@ namespace VisualMutator.OperatorsStandard
            
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
             {
+                _log.Info("Rewriting: " + operation + " Pass: " + MutationTarget.PassInfo);
+                
                 var replacement = Switch.Into<Expression>()
                     .From(MutationTarget.PassInfo)
                     .Case("BitwiseAnd", new BitwiseAnd())
