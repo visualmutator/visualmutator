@@ -8,6 +8,7 @@
     using System.Text;
 
     using VisualMutator.Extensibility;
+    using VisualMutator.OperatorsObject.Operators;
     using VisualMutator.OperatorsStandard;
 
     [PackageExport]

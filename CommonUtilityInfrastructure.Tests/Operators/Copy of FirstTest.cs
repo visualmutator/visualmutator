@@ -22,6 +22,9 @@ namespace VisualMutator.OperatorTests
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
     using Tests.Util;
+
+    using VisualMutator.OperatorsObject.Operators;
+
     using Decompiler = Microsoft.Cci.ILToCodeModel.Decompiler;
 
 
@@ -46,13 +49,14 @@ namespace VisualMutator.OperatorTests
             ilStream.Close();
             return outputFileName;
         }
-        List<Mutant> CreateMutants(string code, IMutationOperator operatorr, MutantsContainer container, CommonCompilerAssemblies cci)
+        List<Mutant> CreateMutants(string code, IMutationOperator operatorr, 
+            MutantsContainer container, CommonCompilerAssemblies cci, AssembliesManager manager)
         {
 
 
             cci.AppendFromFile(CreateModule(code));
-
-            var operatorWithTargets = container.FindTargets(operatorr, cci.Modules, new List<TypeIdentifier>());
+            var copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
+            var operatorWithTargets = container.FindTargets(operatorr, copiedModules, new List<TypeIdentifier>());
             var mutants = new List<Mutant>();
             foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Values.SelectMany(v => v))
             {
@@ -94,13 +98,13 @@ namespace VisualMutator.OperatorTests
             var container = new MutantsContainer(cci, manager);
             var original = manager.Load(cci.Modules);
 
-            var mutants = CreateMutants(code, new EqualityOperatorChange(), container, cci);
+            var mutants = CreateMutants(code, new EqualityOperatorChange(), container, cci, manager);
 
             var diff = new CodeDifferenceCreator(manager);
             foreach (var mutant in mutants)
             {
                 var codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant, original);
-                Console.WriteLine(codeWithDifference);
+                Console.WriteLine(codeWithDifference.Code);
             }
 
             Assert.IsTrue(mutants.Count == 1);

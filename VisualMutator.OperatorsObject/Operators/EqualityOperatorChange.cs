@@ -65,7 +65,7 @@
                     argument = operation.LeftOperand;
                 }
                 methodCall.ThisArgument = thisArgument;
-                methodCall.MethodToCall = TypeHelper.GetMethod(thisArgument.Type.ResolvedType.Members,
+                methodCall.MethodToCall = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
                                                                   Host.NameTable.GetNameFor("Equals"),
                                                                   Host.PlatformType.SystemObject);
                 methodCall.Arguments = argument.InList();
@@ -86,17 +86,27 @@
                 var defaultEqualsDefinition = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
                                                                   Host.NameTable.GetNameFor("Equals"),
                                                                   Host.PlatformType.SystemObject);
+               
+                
                 var methodDefinition = methodCall.MethodToCall.ResolvedMethod;
-                var containingType = methodCall.MethodToCall.ContainingType.ResolvedType;
+                var containingType = methodCall.ThisArgument.Type.ResolvedType;
 
                 //Check if the type overrides the Equals method
-                if (methodCall.MethodToCall.Name.Value == "Equals" && containingType.IsClass 
-                    && containingType.BaseClasses.Any()
-                    && TypeHelper.ParameterListsAreEquivalent(methodDefinition.Parameters,
-                    defaultEqualsDefinition.Parameters))
+                if (methodDefinition.Equals(defaultEqualsDefinition) && containingType.IsClass
+                    && containingType.BaseClasses.Any())
                 {
-                    MarkMutationTarget(methodCall);
+                    var overridingMethod = TypeHelper.GetMethod(containingType.Members,
+                        Host.NameTable.GetNameFor("Equals"),
+                        Host.PlatformType.SystemObject);
+
+                    if(overridingMethod.IsVirtual)
+                    {
+                        MarkMutationTarget(methodCall);
+                    }
+
                 }
+
+                
 
 
             }

@@ -11,6 +11,7 @@
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.DependencyInjection;
+    using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
 
@@ -118,7 +119,7 @@
 
             var threading = new Threading(new FakeDispatcherExecute(), threadPooolExecuteMock.Object,messageService);
 
-            return new CommonServices(messageService, eventService, threading,null,null);
+            return new CommonServices(messageService, eventService, threading,null,new FileSystemService());
         }
 
 

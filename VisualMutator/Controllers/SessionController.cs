@@ -35,7 +35,7 @@
         private readonly ITestsContainer _testsContainer;
 
         private readonly IMutantsFileManager _mutantsFileManager;
-        private readonly ICommonCompilerAssemblies _commonCompilerAssemblies;
+       
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
 
@@ -65,14 +65,13 @@
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             IMutantsFileManager mutantsFileManager,
-            ICommonCompilerAssemblies commonCompilerAssemblies,
             XmlResultsGenerator xmlResultsGenerator)
         {
             _svc = svc;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _mutantsFileManager = mutantsFileManager;
-            _commonCompilerAssemblies = commonCompilerAssemblies;
+   
 
             _xmlResultsGenerator = xmlResultsGenerator;
             _sessionState = SessionState.NotStarted;

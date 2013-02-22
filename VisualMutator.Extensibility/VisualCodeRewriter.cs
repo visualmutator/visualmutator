@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using MethodReference = Microsoft.Cci.MutableCodeModel.MethodReference;
@@ -24,13 +25,17 @@
 
         private bool Process(object obj)
         {
-
-            return _mutationTargets.Remove(obj) || _commonTargetsElements.Contains(obj);
+            if (_mutationTargets.Contains(obj))
+            {
+               // Debugger.Break();
+            }
+            return _mutationTargets.Contains(obj) || _commonTargetsElements.Contains(obj);
         }
 
         public override void RewriteChildren(NamespaceTypeDefinition namespaceTypeDefinition)
         {
-            if (_allowedTypes.Contains(new TypeIdentifier(namespaceTypeDefinition)))
+
+            if (_allowedTypes.Count == 0 || _allowedTypes.Contains(new TypeIdentifier(namespaceTypeDefinition)))
             {
                 base.RewriteChildren(namespaceTypeDefinition);
             }

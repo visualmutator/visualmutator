@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Threading.Tasks;
     using System.Windows.Controls;
 
     using CommonUtilityInfrastructure;
@@ -77,39 +78,36 @@
 
   
 
-        public void LoadCode(CodeLanguage selectedLanguage)
+        public async void LoadCode(CodeLanguage selectedLanguage)
         {
             _viewModel.IsCodeLoading = true;
             _viewModel.ClearCode();
 
             var mutant = _currentMutant;
             var assemblies = _session.OriginalAssemblies;
-            _commonServices.Threading.ScheduleAsync(
-                () =>
+
+            if(mutant != null)
+            {
+                CodeWithDifference diff = await GetCodeWithDifference(selectedLanguage, mutant, assemblies);
+                if (diff != null)
                 {
-                    if (mutant == null)
-                    {
-                        return null;
-                    }
-                    if (mutant.MutatedModules == null)
-                    {
-                        _mutantsContainer.ExecuteMutation(mutant, _session.StoredSourceAssemblies.Modules,
-                             _session.SelectedTypes.ToList(), ProgressCounter.Inactive());
-                    }
-                    return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
-                        mutant, assemblies);
-                   
-                },
-                code =>
-                {
-                    if(code != null)
-                    {
-                        _viewModel.PresentCode(code);
-                        _viewModel.IsCodeLoading = false;
-                    }
-                   
-                });
+                    _viewModel.PresentCode(diff);
+                    _viewModel.IsCodeLoading = false;
+                }
+            }
+         
            
+        }
+
+        private async Task<CodeWithDifference> GetCodeWithDifference(CodeLanguage selectedLanguage, Mutant mutant, AssembliesProvider assemblies)
+        {
+            if (mutant.MutatedModules == null)
+            {
+                _mutantsContainer.ExecuteMutation(mutant, _session.StoredSourceAssemblies.Modules,
+                    _session.SelectedTypes.ToList(), ProgressCounter.Inactive());
+            }
+            return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
+                mutant, assemblies);
         }
 
         private void LoadTests(Mutant mutant)

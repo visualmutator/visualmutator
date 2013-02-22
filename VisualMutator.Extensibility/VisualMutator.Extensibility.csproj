@@ -91,7 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugOperatorCodeVisitor.cs" />
     <Compile Include="IOperatorCodeRewriter.cs" />
     <Compile Include="IOperatorCodeVisitor.cs" />
     <Compile Include="MethodIdentifier.cs" />
