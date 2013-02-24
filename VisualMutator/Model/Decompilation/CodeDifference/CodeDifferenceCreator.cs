@@ -26,13 +26,13 @@
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IAssembliesManager _assembliesManager;
+        private readonly ICodeVisualizer _codeVisualizer;
 
-        public CodeDifferenceCreator(IAssembliesManager assembliesManager)
+        public CodeDifferenceCreator(IAssembliesManager assembliesManager, ICodeVisualizer codeVisualizer)
         {
             _assembliesManager = assembliesManager;
-
+            _codeVisualizer = codeVisualizer;
         }
-
 
 
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
@@ -48,13 +48,13 @@
 
         public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, AssembliesProvider currentOriginalAssemblies)
         {
-            var codeVisualizer = new CodeVisualizer(language);
+         //   var codeVisualizer = new CodeVisualizer(language);
 
             AssembliesProvider assemblyDefinitions = _assembliesManager.Load(mutant.MutatedModules);
             CodePair pair = null;
             try
             {
-                pair = codeVisualizer.CreateCodesToCompare(
+                pair = _codeVisualizer.CreateCodesToCompare(language,
                     mutant.MutationTarget, currentOriginalAssemblies, assemblyDefinitions);
 
             }

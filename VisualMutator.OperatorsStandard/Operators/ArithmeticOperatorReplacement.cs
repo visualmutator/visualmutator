@@ -30,14 +30,14 @@ namespace VisualMutator.OperatorsStandard
                     "Modulus",
                 }.Where(elem => elem != operation.GetType().Name).ToList();
 
-                if (operation.LeftOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
-                {
+               // if (operation.LeftOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
+              //  {
                     passes.Add("LeftParam");
-                }
-                if (operation.RightOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
-                {
+              //  }
+              //  if (operation.RightOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
+           //     {
                     passes.Add("RightParam");
-                }
+          //      }
                 MarkMutationTarget(operation, passes);
             }
 
@@ -68,7 +68,7 @@ namespace VisualMutator.OperatorsStandard
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
             {
                
-                Expression result;
+                IExpression result;
                 if(MutationTarget.CurrentPass <= 3)
                 {
                    var replacement = Switch.Into<BinaryOperation>()
@@ -83,27 +83,23 @@ namespace VisualMutator.OperatorsStandard
                     replacement.LeftOperand = operation.LeftOperand;
                     replacement.RightOperand = operation.RightOperand;
                     replacement.ResultIsUnmodifiedLeftOperand = operation.ResultIsUnmodifiedLeftOperand;
+                    replacement.Type = operation.Type;
                     result = replacement;
                 }
                 else
                 {
                     if(MutationTarget.PassInfo == "LeftParam")
                     {
-                      //  BoundExpression replacement = new BoundExpression();
-                     //   replacement.Definition = operation.LeftOperand;
-                        //  replacement.
-                        result = (Expression)operation.LeftOperand;
+                        result = operation.LeftOperand;
                     }
                     else// if (MutationTarget.PassInfo == "RightParam")
                     {
-                        //  BoundExpression replacement = new BoundExpression();
-                        //   replacement.Definition = operation.LeftOperand;
-                        //  replacement.
-                        result = (Expression)operation.RightOperand;
+ 
+                        result = operation.RightOperand;
                     }
                 }
-                result.Locations = operation.Locations.ToList();
-                result.Type = operation.Type;
+                //result.Locations = operation.Locations.ToList();
+                
                 return result;
             }
             public override IExpression Rewrite(IAddition operation)

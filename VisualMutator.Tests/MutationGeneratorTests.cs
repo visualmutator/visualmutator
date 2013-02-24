@@ -11,12 +11,6 @@
 
     using NUnit.Framework;
 
-    [TestClass]
-    public class MutationGeneratorTests
-    {
-
-
-        
-    }
+   
 }
 

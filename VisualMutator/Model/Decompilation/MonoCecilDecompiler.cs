@@ -5,7 +5,7 @@ namespace VisualMutator.Model.Decompilation
     using ICSharpCode.ILSpy;
     using Mono.Cecil;
 
-    public interface IDecompiler
+    public interface IMonoCecilDecompiler
     {
         string DecompileType(TypeDefinition type);
 
@@ -16,13 +16,13 @@ namespace VisualMutator.Model.Decompilation
         string DecompileField(FieldDefinition field);
     }
 
-    public class Decompiler : IDecompiler
+    public class MonoCecilDecompiler : IMonoCecilDecompiler
     {
         private DecompilationOptions _opt;
 
         private Language _decompiler;
 
-        public Decompiler(CodeLanguage language)
+        public MonoCecilDecompiler(CodeLanguage language)
         {
 
             _decompiler = Functional.ValuedSwitch<CodeLanguage, Language>(language)

@@ -5,7 +5,9 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-
+    using CSharpSourceEmitter;
+    using Decompilation;
+    using Decompilation.PeToText;
     using Exceptions;
     using JetBrains.Annotations;
     using Microsoft.Cci;
@@ -67,7 +69,12 @@
             _moduleInfoList.Clear();
         }
 
-
+        public SourceEmitter GetSourceEmitter(CodeLanguage lang, IModule module,SourceEmitterOutputString output)
+        {
+             var reader = FindModuleInfo(module).PdbReader;
+          //  SourceEmitterOutputString sourceEmitterOutput = new SourceEmitterOutputString();
+             return new VisualSourceEmitter(output, Host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
+        }
         public IModule AppendFromFile(string filePath)
         {
             _log.Info("CommonCompilerAssemblies.AppendFromFile:" + filePath);
@@ -76,14 +83,14 @@
             {
                 throw new AssemblyReadException(filePath + " is not a PE file containing a CLR module or assembly.");
             }
-
+          
             PdbReader /*?*/ pdbReader = null;
-          /*  string pdbFile = Path.ChangeExtension(module.Location, "pdb");
+            string pdbFile = Path.ChangeExtension(module.Location, "pdb");
             if (File.Exists(pdbFile))
             {
                 Stream pdbStream = File.OpenRead(pdbFile);
                 pdbReader = new PdbReader(pdbStream, _host);  
-            }*/
+            }
             Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
             ISourceLocationProvider sourceLocationProvider = pdbReader;
             ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
@@ -127,7 +134,7 @@
         }
 
 
-        private ModuleInfo FindModuleInfo(IModule module)
+        public ModuleInfo FindModuleInfo(IModule module)
         {
             return _moduleInfoList.First(m => m.Module.Name == module.Name);
         }
@@ -172,7 +179,7 @@
 
         #region Nested type: ModuleInfo
 
-        private class ModuleInfo
+        public class ModuleInfo
         {
             public IModule Module { get; set; }
 

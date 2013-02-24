@@ -3,6 +3,8 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using CSharpSourceEmitter;
+    using Microsoft.Cci;
     using VisualMutator.Extensibility;
     using log4net;
 
@@ -10,36 +12,46 @@
     {
 
 
-        CodePair CreateCodesToCompare(MutationTarget target, AssembliesProvider originalAssemblies,
+        CodePair CreateCodesToCompare(CodeLanguage language,  MutationTarget target, AssembliesProvider originalAssemblies,
             AssembliesProvider mutatedAssemblies);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private IDecompiler _decompiler;
+        private readonly CommonCompilerAssemblies _cci;
+        
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public CodeVisualizer(CodeLanguage language)
+        public CodeVisualizer(CommonCompilerAssemblies cci)
         {
-            _decompiler = new Decompiler(language);
+            _cci = cci;
         }
 
 
-
-        public string Visualize(MutationTarget target, AssembliesProvider assemblies)
+        public string Visualize(CodeLanguage language, MutationTarget target, AssembliesProvider assemblies)
         {
+            
+           //.// GetSourceEmitter
 
             var sb = new StringBuilder();
             if (target.Method != null)
-            {
+            {//TODO: handle namespaces
                 _log.Info("Visualize: " + target + " method: " + target.Method);
-                var method = assemblies.Assemblies.SelectMany(a => a.MainModule.Types)
-              .Single(t => t.Name == target.Method.TypeName).Methods
-              .Single(m => m.Name == target.Method.MethodName);
+                var method = assemblies.Assemblies.SelectMany(a => a.GetAllTypes())
+              .Single(t => t.Name.Value == target.Method.TypeName).Methods
+              .Single(m => m.Name.Value == target.Method.MethodName);
 
-                sb.Append(_decompiler.DecompileMethod(method));
+                var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
+                var sourceEmitterOutput = new SourceEmitterOutputString();
+
+                var sourceEmitter = _cci.GetSourceEmitter(language, module, sourceEmitterOutput);
+                sourceEmitter.Traverse(method);
+       
+                sb.Append(sourceEmitterOutput.Data);
+
+               
 
             }
             /*  foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
@@ -57,13 +69,13 @@
               }*/
             return sb.ToString();
         }
-        public CodePair CreateCodesToCompare(MutationTarget target,
+        public CodePair CreateCodesToCompare(CodeLanguage language, MutationTarget target,
             AssembliesProvider originalAssemblies, AssembliesProvider mutatedAssemblies)
         {
             return new CodePair
             {
-                OriginalCode = Visualize(target, originalAssemblies),
-                MutatedCode = Visualize(target, mutatedAssemblies),
+                OriginalCode = Visualize(language, target, originalAssemblies),
+                MutatedCode = Visualize(language, target, mutatedAssemblies),
             };
 
 

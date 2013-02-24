@@ -60,6 +60,9 @@
     <Reference Include="Microsoft.Cci.CodeModel">
       <HintPath>..\packages\CCI\Microsoft.Cci.CodeModel.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
+      <HintPath>..\packages\CCI\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Cci.ILToCodeModel">
       <HintPath>..\packages\CCI\Microsoft.Cci.ILToCodeModel.dll</HintPath>
     </Reference>
@@ -104,6 +107,9 @@
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="nunit.util, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="PeToText">
+      <HintPath>..\packages\CCI\PeToText.exe</HintPath>
+    </Reference>
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Roslyn.Compilers.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -119,7 +125,7 @@
     <Compile Include="Mutations\MutantsContainerTests.cs" />
     <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="Operators\Common.cs" />
-    <Compile Include="Operators\FirstTest.cs" />
+    <Compile Include="Operators\TestArithmeticOperatorReplacement.cs" />
     <Compile Include="Operators\TestEqualityOperatorChange.cs" />
     <Compile Include="Operators\TestLogicalOperatorReplacement.cs" />
     <Compile Include="Operators\TestRelationalOperatorReplacement.cs" />

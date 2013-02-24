@@ -57,6 +57,9 @@
     <Reference Include="DiffLib">
       <HintPath>..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
     </Reference>
+    <Reference Include="DiffPlex">
+      <HintPath>..\packages\DiffPlex.1.2.0\lib\Net40\DiffPlex.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.Decompiler">
       <HintPath>..\packages\ICSharpCode.Decompiler.dll</HintPath>
     </Reference>
@@ -74,6 +77,9 @@
     </Reference>
     <Reference Include="Microsoft.Cci.CodeModelToIL">
       <HintPath>..\packages\CCI\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
+      <HintPath>..\VisualMutator.Tests\bin\x86\Debug\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.ILGenerator">
       <HintPath>..\packages\CCI\Microsoft.Cci.ILGenerator.dll</HintPath>
@@ -130,6 +136,9 @@
     <Reference Include="nunit.util">
       <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.util.dll</HintPath>
     </Reference>
+    <Reference Include="PeToText">
+      <HintPath>..\packages\CCI\PeToText.exe</HintPath>
+    </Reference>
     <Reference Include="pnunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
     </Reference>
@@ -179,6 +188,7 @@
     <Compile Include="Model\AssembliesProvider.cs" />
     <Compile Include="Model\CommonCompilerAssemblies.cs" />
     <Compile Include="Model\CommonCompilerAssemblyManager.cs" />
+    <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\Exceptions\TestingCancelledException.cs" />
     <Compile Include="Model\LoadedTypes.cs" />
@@ -208,7 +218,7 @@
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />
     <Compile Include="Model\Decompilation\CodePair.cs" />
     <Compile Include="Model\Decompilation\CodeVisualizer.cs" />
-    <Compile Include="Model\Decompilation\Decompiler.cs" />
+    <Compile Include="Model\Decompilation\MonoCecilDecompiler.cs" />
     <Compile Include="Model\Mutations\Operators\PreOperator.cs" />
     <Compile Include="Model\Mutations\MutantsTree\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />

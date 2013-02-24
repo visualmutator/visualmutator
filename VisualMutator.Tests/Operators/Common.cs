@@ -7,6 +7,7 @@
     using System.Reflection;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
+    using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
     using Model.StoringMutants;
@@ -33,10 +34,10 @@
 
             mutants = Common.CreateMutants(code, oper,  container, cci, manager);
             original = manager.Load(cci.Modules);
-
-            diff = new CodeDifferenceCreator(manager);
+            var visualizer = new CodeVisualizer(cci);
+            diff = new CodeDifferenceCreator(manager, visualizer);
         }
-
+      
         public static string CreateModule(string code)
         {
             _log.Info("Parsing test code...");
@@ -50,7 +51,9 @@
             var outputFileName = Path.Combine(Path.GetTempPath(), "MyCompilation.lib");
             var ilStream = new FileStream(outputFileName, FileMode.OpenOrCreate);
             _log.Info("Emiting file...");
-            
+           // var pdbStream = new FileStream(Path.ChangeExtension(outputFileName, "pdb"), FileMode.OpenOrCreate);
+          //  _log.Info("Emiting pdb file...");
+
             var result = comp.Emit(ilStream);
             ilStream.Close();
             if(!result.Success)
