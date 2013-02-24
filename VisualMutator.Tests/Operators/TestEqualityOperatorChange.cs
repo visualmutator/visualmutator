@@ -1,32 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace VisualMutator.OperatorTests
+﻿namespace VisualMutator.Tests.Operators
 {
-    using System.IO;
-    using CommonUtilityInfrastructure;
-    using Extensibility;
-    using Microsoft.Cci;
-    using Microsoft.Cci.MutableCodeModel;
-    using Model;
-    using Model.CodeDifference;
-    using Model.Exceptions;
-    using Model.Mutations;
-    using Model.Mutations.Structure;
-    using Model.Mutations.Types;
-    using Mono.Cecil;
+    using System;
+    using System.Collections.Generic;
+    using Model.Decompilation;
+    using Model.Decompilation.CodeDifference;
+    using Model.Mutations.MutantsTree;
+    using VisualMutator.Model;
+    using VisualMutator.Model.Mutations;
     using NUnit.Framework;
-    using OperatorsStandard;
-    using Roslyn.Compilers;
-    using Roslyn.Compilers.CSharp;
-    using Tests.Util;
-
     using VisualMutator.OperatorsObject.Operators;
-
-    using Decompiler = Microsoft.Cci.ILToCodeModel.Decompiler;
-
 
     [TestFixture]
     public class TestEqualityOperatorChange

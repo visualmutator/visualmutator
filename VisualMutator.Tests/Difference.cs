@@ -6,12 +6,10 @@
     using System.Text;
 
     using CommonUtilityInfrastructure.Comparers;
-
-
+    using Model.Decompilation.CodeDifference;
     using NUnit.Framework;
 
     using VisualMutator.Model;
-    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Mutations;
 
@@ -87,8 +85,8 @@
 
 ";
 
-            var diff = new CodeDifferenceCreator(
-                new AssembliesManager()).GetDiff(CodeLanguage.CSharp, testMethod, mutatedMethod);
+          //  var diff = new CodeDifferenceCreator(
+         //       new AssembliesManager()).GetDiff(CodeLanguage.CSharp, testMethod, mutatedMethod);
         }
     }
 }

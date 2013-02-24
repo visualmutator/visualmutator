@@ -1,9 +1,5 @@
-namespace VisualMutator.Model.Mutations
+namespace VisualMutator.Model.Mutations.Operators
 {
-    using System.Collections.Generic;
-
-    using Mono.Cecil;
-
     using VisualMutator.Extensibility;
 
     class PreOperator : IMutationOperator

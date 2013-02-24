@@ -5,7 +5,7 @@
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model.StoringMutants;
     using Mono.Cecil;
 
     using Moq;

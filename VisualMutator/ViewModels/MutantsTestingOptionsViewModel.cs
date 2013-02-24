@@ -8,7 +8,7 @@
 
     using CommonUtilityInfrastructure.DependencyInjection;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model;
     using VisualMutator.Controllers;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Types;

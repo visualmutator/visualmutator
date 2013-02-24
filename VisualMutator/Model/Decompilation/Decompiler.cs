@@ -1,10 +1,8 @@
-namespace VisualMutator.Model.Mutations
+namespace VisualMutator.Model.Decompilation
 {
     using CommonUtilityInfrastructure;
-
     using ICSharpCode.Decompiler;
     using ICSharpCode.ILSpy;
-
     using Mono.Cecil;
 
     public interface IDecompiler

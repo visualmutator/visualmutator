@@ -1,12 +1,10 @@
-﻿namespace VisualMutator.Model.Mutations.Structure
+﻿namespace VisualMutator.Model.Mutations.MutantsTree
 {
     #region Usings
 
     using System;
     using System.Linq;
-
     using CommonUtilityInfrastructure;
-
     using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion

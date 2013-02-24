@@ -1,8 +1,8 @@
 namespace VisualMutator.ViewModels
 {
     using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Model.CodeDifference;
+    using Model.Decompilation;
+    using Model.Decompilation.CodeDifference;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;

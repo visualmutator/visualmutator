@@ -1,11 +1,9 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Decompilation
 {
     using System.Linq;
     using System.Reflection;
     using System.Text;
-
     using VisualMutator.Extensibility;
-
     using log4net;
 
     public interface ICodeVisualizer

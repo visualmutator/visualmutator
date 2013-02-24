@@ -1,4 +1,4 @@
-namespace VisualMutator.Controllers
+namespace VisualMutator.Model
 {
     using CommonUtilityInfrastructure.WpfUtils;
 

@@ -1,7 +1,6 @@
-namespace VisualMutator.Model.Mutations
+namespace VisualMutator.Model
 {
     using CommonUtilityInfrastructure.WpfUtils;
-
     using VisualMutator.Model.Tests.Custom;
 
     public class MutantsTestingOptions : ModelElement

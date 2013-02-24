@@ -13,8 +13,6 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Paths;
 
-    using VisualMutator.Model.Mutations.Structure;
-
     [Export(typeof(ITestingProcessExtension))]
     public class AspNetTestingProcessExtension : ITestingProcessExtension
     {

@@ -20,12 +20,14 @@
     using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
-    using VisualMutator.Model.CodeDifference;
+    using VisualMutator.Model.Decompilation.CodeDifference;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
+    using VisualMutator.Model.StoringMutants;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;
+    using VisualMutator.Model.Verification;
     using VisualMutator.ViewModels;
     using VisualMutator.Views;
 

@@ -141,12 +141,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Operators\Common.cs" />
-    <Compile Include="Operators\TestLogicalOperatorReplacement.cs" />
-    <Compile Include="Operators\TestEqualityOperatorChange.cs" />
-    <Compile Include="Operators\FirstTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Operators\TestRelationalOperatorReplacement.cs" />
     <Compile Include="Tests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +172,9 @@
       <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
       <Name>VisualMutator</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Operators\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

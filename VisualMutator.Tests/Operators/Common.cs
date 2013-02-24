@@ -1,28 +1,22 @@
-﻿namespace VisualMutator.OperatorTests
+﻿namespace VisualMutator.Tests.Operators
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-
     using CommonUtilityInfrastructure;
-
     using Microsoft.Cci;
-
+    using Model.Decompilation.CodeDifference;
+    using Model.Mutations.MutantsTree;
+    using Model.StoringMutants;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
-
     using VisualMutator.Extensibility;
     using VisualMutator.Model;
-    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.OperatorsObject.Operators;
     using VisualMutator.Tests.Util;
-
     using log4net;
 
     public class Common

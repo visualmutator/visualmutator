@@ -1,10 +1,9 @@
-namespace VisualMutator.Model.Mutations.Structure
+namespace VisualMutator.Model.Mutations.MutantsTree
 {
     using System.Collections.Generic;
     using System.Linq;
-
     using CommonUtilityInfrastructure;
-    using Extensibility;
+    using VisualMutator.Extensibility;
 
     public class ExecutedOperator : MutationNode
     {

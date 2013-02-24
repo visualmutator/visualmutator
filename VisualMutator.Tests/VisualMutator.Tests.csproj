@@ -60,9 +60,6 @@
     <Reference Include="Microsoft.Cci.CodeModel">
       <HintPath>..\packages\CCI\Microsoft.Cci.CodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModelToIL">
-      <HintPath>..\packages\CCI\Microsoft.Cci.CodeModelToIL.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Cci.ILToCodeModel">
       <HintPath>..\packages\CCI\Microsoft.Cci.ILToCodeModel.dll</HintPath>
     </Reference>
@@ -106,21 +103,14 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.mocks">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.util, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
-    <Reference Include="pnunit.framework">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
-    </Reference>
+    <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Roslyn.Compilers.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.CoreEx, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Reactive, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -128,13 +118,11 @@
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
     <Compile Include="Mutations\TestOperator.cs" />
-    <Compile Include="MvcMutations\ChangeRouteTest.cs" />
-    <Compile Include="MvcMutations\ChangeAdditionIntoSubstractionTest.cs" />
-    <Compile Include="MvcMutations\RemoveAuthorizeAttributeTest.cs" />
-    <Compile Include="MvcMutations\RedirectToAction.cs" />
-    <Compile Include="MvcMutations\SwapActionNamesTests.cs" />
-    <Compile Include="MvcMutations\Utils.cs" />
+    <Compile Include="Operators\Common.cs" />
     <Compile Include="Operators\FirstTest.cs" />
+    <Compile Include="Operators\TestEqualityOperatorChange.cs" />
+    <Compile Include="Operators\TestLogicalOperatorReplacement.cs" />
+    <Compile Include="Operators\TestRelationalOperatorReplacement.cs" />
     <Compile Include="Results\XmlResultsGeneratorTests.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
     <Compile Include="Util\CecilUtils.cs" />
@@ -163,9 +151,9 @@
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.MvcMutations\VisualMutator.MvcMutations.csproj">
-      <Project>{5794DB15-7ADA-4EBB-AB56-F608A1090FF4}</Project>
-      <Name>VisualMutator.MvcMutations</Name>
+    <ProjectReference Include="..\VisualMutator.OperatorsObject\VisualMutator.OperatorsObject.csproj">
+      <Project>{0AEFE663-70C8-4466-98B7-E506215D1B58}</Project>
+      <Name>VisualMutator.OperatorsObject</Name>
     </ProjectReference>
     <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
       <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
@@ -176,6 +164,7 @@
       <Name>VisualMutator</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

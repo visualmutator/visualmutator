@@ -1,11 +1,10 @@
-namespace VisualMutator.Model.Mutations.Structure
+namespace VisualMutator.Model.Mutations.MutantsTree
 {
-    using System;
     using System.Collections.Generic;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
+    using Tests;
     using VisualMutator.Extensibility;
-    using VisualMutator.Model.Tests;
 
     public class Mutant : MutationNode
     {

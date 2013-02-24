@@ -14,11 +14,10 @@ namespace VisualMutator.Controllers
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.DependencyInjection;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model.Mutations.MutantsTree;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.TestsTree;

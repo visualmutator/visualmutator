@@ -1,8 +1,6 @@
-namespace VisualMutator.Model.Mutations.Structure
+namespace VisualMutator.Model.StoringMutants
 {
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using Microsoft.Cci;
 
     public class StoredAssemblies

@@ -18,9 +18,8 @@ namespace VisualMutator.Views
 
     using CommonUtilityInfrastructure.Comparers;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model.Decompilation.CodeDifference;
     using VisualMutator.Controllers;
-    using VisualMutator.Model.CodeDifference;
     using VisualMutator.ViewModels;
 
     /// <summary>

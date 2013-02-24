@@ -9,7 +9,6 @@
 
     using VisualMutator.Extensibility;
     using VisualMutator.OperatorsObject.Operators;
-    using VisualMutator.OperatorsStandard;
 
     [PackageExport]
     public class ObjectOperatorsPackage : IOperatorsPackage

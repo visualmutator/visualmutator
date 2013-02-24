@@ -8,12 +8,12 @@
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
-
+    using Decompilation;
+    using Decompilation.CodeDifference;
     using Mono.Cecil;
-
-    using VisualMutator.Model.CodeDifference;
+    using Mutations.MutantsTree;
+    using StoringMutants;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.TestsTree;
 
     #endregion

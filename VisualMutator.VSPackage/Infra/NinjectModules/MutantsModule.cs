@@ -10,7 +10,6 @@
 
     using VisualMutator.Controllers;
     using VisualMutator.Model;
-    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;

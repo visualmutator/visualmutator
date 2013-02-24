@@ -7,8 +7,8 @@
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
              xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
              xmlns:Views="clr-namespace:VisualMutator.Views"
-             xmlns:Structure="clr-namespace:VisualMutator.Model.Mutations.Structure"
-             xmlns:Controls="clr-namespace:VisualMutator.Views.Controls" mc:Ignorable="d" 
+             xmlns:Controls="clr-namespace:VisualMutator.Views.Controls"
+             xmlns:MutantsTree="clr-namespace:VisualMutator.Model.Mutations.MutantsTree" mc:Ignorable="d" 
              d:DesignHeight="488" d:DesignWidth="544" Visibility="Hidden">
 
     <UserControl.Resources>
@@ -115,7 +115,7 @@
 
                 </ContextMenu>
                 
-                <HierarchicalDataTemplate DataType="{x:Type Structure:ExecutedOperator}"
+                <HierarchicalDataTemplate DataType="{x:Type MutantsTree:ExecutedOperator}"
                                     ItemsSource="{Binding Children}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
@@ -131,7 +131,7 @@
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
 
-                <DataTemplate DataType="{x:Type Structure:Mutant}">
+                <DataTemplate DataType="{x:Type MutantsTree:Mutant}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
                         <TextBlock Text="{Binding DisplayedText}"/>

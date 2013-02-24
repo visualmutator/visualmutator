@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model.CodeDifference
+﻿namespace VisualMutator.Model.Decompilation.CodeDifference
 {
     #region Usings
 
@@ -7,20 +7,10 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
-
     using CommonUtilityInfrastructure;
-
     using DiffLib;
-
-    using ICSharpCode.Decompiler;
-    using ICSharpCode.ILSpy;
-
-    using Mono.Cecil;
-
-    using VisualMutator.Extensibility;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
-
+    using Mutations.MutantsTree;
+    using StoringMutants;
     using log4net;
 
     #endregion

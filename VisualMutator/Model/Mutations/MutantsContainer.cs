@@ -9,11 +9,12 @@
     using System.Reflection;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
+    using MutantsTree;
+    using Operators;
+    using StoringMutants;
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Exceptions;
-    using VisualMutator.Model.Mutations.Structure;
-
     using log4net;
     using Module = Microsoft.Cci.MutableCodeModel.Module;
 

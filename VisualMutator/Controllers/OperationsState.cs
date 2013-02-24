@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.ViewModels
+﻿namespace VisualMutator.Controllers
 {
     using System;
 

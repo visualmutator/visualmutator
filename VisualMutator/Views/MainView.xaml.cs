@@ -15,8 +15,7 @@ using System.Windows.Shapes;
 namespace VisualMutator.Views
 {
     using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Model.Mutations.Structure;
+    using Model.Mutations.MutantsTree;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.ViewModels;
 

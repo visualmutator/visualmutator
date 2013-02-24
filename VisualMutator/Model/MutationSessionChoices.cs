@@ -1,13 +1,8 @@
-namespace VisualMutator.Controllers
+namespace VisualMutator.Model
 {
     using System.Collections.Generic;
-
     using CommonUtilityInfrastructure.Paths;
-    using Model;
-    using Mono.Cecil;
-
     using VisualMutator.Extensibility;
-    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Types;
 
     public class MutationSessionChoices 

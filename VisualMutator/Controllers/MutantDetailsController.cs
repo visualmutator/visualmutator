@@ -15,13 +15,13 @@
     using ICSharpCode.Decompiler;
 
     using ICSharpCode.ILSpy;
-
+    using Model.Decompilation;
+    using Model.Decompilation.CodeDifference;
+    using Model.Mutations.MutantsTree;
     using Mono.Cecil;
 
     using VisualMutator.Model;
-    using VisualMutator.Model.CodeDifference;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.ViewModels;
 
     public class MutantDetailsController : Controller

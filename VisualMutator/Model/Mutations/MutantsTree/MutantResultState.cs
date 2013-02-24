@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model.Mutations.Structure
+﻿namespace VisualMutator.Model.Mutations.MutantsTree
 {
     public enum MutantResultState
     {

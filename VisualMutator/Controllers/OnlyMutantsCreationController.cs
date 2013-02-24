@@ -13,7 +13,7 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;

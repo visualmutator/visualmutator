@@ -7,7 +7,7 @@
     using System.Text;
 
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model;
     using VisualMutator.Controllers;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Views;

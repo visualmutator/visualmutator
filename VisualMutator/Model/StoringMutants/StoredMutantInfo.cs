@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model.Tests
+﻿namespace VisualMutator.Model.StoringMutants
 {
     #region Usings
 

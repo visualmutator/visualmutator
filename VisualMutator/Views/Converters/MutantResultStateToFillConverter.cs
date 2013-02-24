@@ -10,9 +10,8 @@
     using System.Windows.Media;
 
     using CommonUtilityInfrastructure;
-
+    using Model.Mutations.MutantsTree;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.TestsTree;
 
     #endregion

@@ -3,7 +3,7 @@
     using System.IO;
     using Mono.Cecil;
     using Mutations;
-    using Mutations.Structure;
+    using StoringMutants;
 
     public class MonoCecilAssemblyManager
     {

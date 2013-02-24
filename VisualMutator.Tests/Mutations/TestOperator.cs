@@ -11,45 +11,15 @@
 
     public class TestOperator : IMutationOperator
     {
-        public string Identificator
+        public OperatorInfo Info { get{return new OperatorInfo("Test", "", "");} }
+        public IOperatorCodeVisitor FindTargets()
         {
-            get
-            {
-                return "T";
-            }
+            return new OperatorCodeVisitor();
         }
 
-        public string Name
+        public IOperatorCodeRewriter Mutate()
         {
-            get
-            {
-                return "TestOperatorName";
-            }
+            return new OperatorCodeRewriter();
         }
-
-        public string Description
-        {
-            get
-            {
-                return "TestOperatorDescription";
-            }
-        }
-
-        public IEnumerable<MutationTarget> FindTargets(ICollection<TypeDefinition> types)
-        {
-            
-
-        }
-
-        public void Mutate(MutationContext context)
-        {
-            context.Method("0").Name = "MutatedMethodName";
-
-
-        }
-
-    
-
-
     }
 }

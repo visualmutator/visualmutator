@@ -1,18 +1,10 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Verification
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Xml.Linq;
-
     using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FileSystem;
-
-    using VisualMutator.Model.Tests.Services;
 
     public interface IAssemblyVerifier
     {

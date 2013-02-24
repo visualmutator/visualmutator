@@ -1,17 +1,8 @@
-﻿namespace VisualMutator.OperatorsStandard
+﻿namespace VisualMutator.OperatorsObject.Operators
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using CommonUtilityInfrastructure;
-    using Extensibility;
+    using VisualMutator.Extensibility;
     using Microsoft.Cci;
-    using Microsoft.Cci.ILToCodeModel;
-    using Microsoft.Cci.MutableCodeModel;
-    using Roslyn.Compilers;
-    using Roslyn.Compilers.CSharp;
-    using SourceMethodBody = Microsoft.Cci.MutableCodeModel.SourceMethodBody;
 
     public class OverloadingMethodDeletion : IMutationOperator
     {

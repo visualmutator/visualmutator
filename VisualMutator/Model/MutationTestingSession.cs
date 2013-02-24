@@ -1,13 +1,9 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model
 {
     using System.Collections.Generic;
-
-    using Mono.Cecil;
-
-    using VisualMutator.Controllers;
+    using Mutations.MutantsTree;
+    using StoringMutants;
     using VisualMutator.Extensibility;
-    using VisualMutator.Model.Mutations.Structure;
-    using VisualMutator.Model.Tests;
 
     public class MutationTestingSession
     {

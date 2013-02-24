@@ -1,22 +1,17 @@
-﻿namespace VisualMutator.Model.Tests
+﻿namespace VisualMutator.Model.StoringMutants
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-
     using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
-    using Mono.Cecil;
-
+    using Mutations.MutantsTree;
     using VisualMutator.Infrastructure;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Model.Tests.Custom;
-
     using log4net;
 
     public interface IMutantsFileManager

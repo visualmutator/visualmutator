@@ -10,11 +10,12 @@
     using CommonUtilityInfrastructure;
 
     using Mono.Cecil;
-
+    using Mutations.MutantsTree;
+    using StoringMutants;
+    using Verification;
     using VisualMutator.Controllers;
     using VisualMutator.Model.Exceptions;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;
 

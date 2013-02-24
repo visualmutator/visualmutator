@@ -11,11 +11,12 @@
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model.Mutations.MutantsTree;
+    using Model.StoringMutants;
+    using Model.Verification;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Custom;
     using VisualMutator.Model.Tests.TestsTree;

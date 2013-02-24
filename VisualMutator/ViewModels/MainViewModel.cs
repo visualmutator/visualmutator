@@ -9,9 +9,8 @@
     using System.Windows;
 
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using Model.Mutations.MutantsTree;
     using VisualMutator.Controllers;
-    using VisualMutator.Model.Mutations.Structure;
     using VisualMutator.Model.Tests.TestsTree;
     using VisualMutator.Views;
 

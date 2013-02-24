@@ -1,4 +1,4 @@
-namespace VisualMutator.Model.CodeDifference
+namespace VisualMutator.Model.Decompilation.CodeDifference
 {
     public enum LineChangeType
     {

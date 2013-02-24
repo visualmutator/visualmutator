@@ -1,18 +1,12 @@
-namespace VisualMutator.Model.Mutations
+namespace VisualMutator.Model.StoringMutants
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.IO.Compression;
-    using System.Linq;
-    using System.Text;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Mono.Cecil;
-    using Types;
-    using VisualMutator.Model.Mutations.Structure;
-
-
+    using VisualMutator.Model.Mutations.Types;
 
     public interface IAssembliesManager
     {
