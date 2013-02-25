@@ -30,6 +30,7 @@
 
             mutationTargets = new List<MutationTarget>();
             commonTargets = new List<MutationTarget>();
+            visitor.Parent = this;
         }
 
 
