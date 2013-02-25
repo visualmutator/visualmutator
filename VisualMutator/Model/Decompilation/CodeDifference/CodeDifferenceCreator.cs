@@ -48,15 +48,16 @@
 
         public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, AssembliesProvider currentOriginalAssemblies)
         {
-         //   var codeVisualizer = new CodeVisualizer(language);
 
             AssembliesProvider assemblyDefinitions = _assembliesManager.Load(mutant.MutatedModules);
-            CodePair pair = null;
             try
             {
-                pair = _codeVisualizer.CreateCodesToCompare(language,
-                    mutant.MutationTarget, currentOriginalAssemblies, assemblyDefinitions);
-
+                CodePair pair = new CodePair
+                {
+                    OriginalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, currentOriginalAssemblies),
+                    MutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, assemblyDefinitions),
+                };
+                return GetDiff(language, pair.OriginalCode, pair.MutatedCode);
             }
             catch (Exception e)
             {
@@ -68,9 +69,13 @@
                 };
             }
 
-            return GetDiff(language,pair.OriginalCode, pair.MutatedCode);
+            
         }
+        public string GetListing(CodeLanguage language, AssembliesProvider assemblies)
+        {
+            return _codeVisualizer.Visualize(language, assemblies);
 
+        }
         private LineChange NewLineChange(LineChangeType type, 
             StringBuilder diff, int startIndex, int endIndex)
         {

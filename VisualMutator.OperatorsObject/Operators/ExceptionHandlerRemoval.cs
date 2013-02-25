@@ -2,12 +2,16 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
+    using log4net;
 
     public class ExceptionHandlerRemoval : IMutationOperator
     {
+        protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         #region IMutationOperator Members
 
         public OperatorInfo Info
@@ -38,6 +42,7 @@
      
             public override IStatement Rewrite(ITryCatchFinallyStatement operation)
             {
+                _log.Info("Rewriting ITryCatchFinallyStatement: " + operation + " Pass: " + MutationTarget.PassInfo);
                 var tryCatch = new TryCatchFinallyStatement(operation);
                 if (MutationTarget.PassInfo == "Finally")
                 {
@@ -61,6 +66,7 @@
         
             public override void Visit(ITryCatchFinallyStatement operation)
             {
+                _log.Info("Visit ITryCatchFinallyStatement: " + operation );
                 if(operation.CatchClauses.Count() >= 2 || 
                     (operation.CatchClauses.Count() == 1 && operation.FinallyBody != null))
                 {

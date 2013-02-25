@@ -25,7 +25,8 @@
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static void RunMutations(string code, IMutationOperator oper, out List<Mutant>  mutants, out AssembliesProvider original, out CodeDifferenceCreator diff)
+        public static void RunMutations(string code, IMutationOperator oper, out List<Mutant>  mutants, 
+            out AssembliesProvider original, out CodeDifferenceCreator diff)
         {
             _log.Info("Common.RunMutations configuring for "+oper+"...");
                 
@@ -33,11 +34,18 @@
             var utils = new OperatorUtils(cci);
             var manager = new AssembliesManager(cci, Create.TestServices(), new AssemblyReaderWriter());
             var container = new MutantsContainer(cci, utils ,manager );
+            var visualizer = new CodeVisualizer(cci);
+            diff = new CodeDifferenceCreator(manager, visualizer);
+
             container.DebugConfig = true;
             mutants = Common.CreateMutants(code, oper,  container, cci, manager);
             original = manager.Load(cci.Modules);
-            var visualizer = new CodeVisualizer(cci);
-            diff = new CodeDifferenceCreator(manager, visualizer);
+
+            Console.WriteLine("ORIGINAL:");
+            var listing = diff.GetListing(CodeLanguage.CSharp, original);
+            Console.WriteLine(listing);
+
+            
         }
       
         public static string CreateModule(string code)
@@ -72,6 +80,9 @@
             cci.AppendFromFile(CreateModule(code));
             _log.Info("Copying assemblies...");
             var copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
+
+            
+
             var operatorWithTargets = container.FindTargets(operatorr, copiedModules, new List<TypeIdentifier>());
             var mutants = new List<Mutant>();
             foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Values.SelectMany(v => v))

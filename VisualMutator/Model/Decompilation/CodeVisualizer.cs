@@ -12,8 +12,8 @@
     {
 
 
-        CodePair CreateCodesToCompare(CodeLanguage language,  MutationTarget target, AssembliesProvider originalAssemblies,
-            AssembliesProvider mutatedAssemblies);
+        string Visualize(CodeLanguage language, MutationTarget target, AssembliesProvider assemblies);
+        string Visualize(CodeLanguage language, AssembliesProvider assemblies);
     }
 
     public class CodeVisualizer : ICodeVisualizer
@@ -29,6 +29,21 @@
             _cci = cci;
         }
 
+        public string Visualize(CodeLanguage language, AssembliesProvider assemblies)
+        {
+            var sb = new StringBuilder();
+     
+            
+            foreach (var assembly in assemblies.Assemblies)
+            {
+                var sourceEmitterOutput = new SourceEmitterOutputString();
+                var sourceEmitter = _cci.GetSourceEmitter(language, assembly, sourceEmitterOutput);
+                sourceEmitter.Traverse(assembly);
+                sb.Append(sourceEmitterOutput.Data);
+            }  
+  
+            return sb.ToString();
+        }
 
         public string Visualize(CodeLanguage language, MutationTarget target, AssembliesProvider assemblies)
         {
@@ -69,16 +84,6 @@
               }*/
             return sb.ToString();
         }
-        public CodePair CreateCodesToCompare(CodeLanguage language, MutationTarget target,
-            AssembliesProvider originalAssemblies, AssembliesProvider mutatedAssemblies)
-        {
-            return new CodePair
-            {
-                OriginalCode = Visualize(language, target, originalAssemblies),
-                MutatedCode = Visualize(language, target, mutatedAssemblies),
-            };
-
-
-        }
+      
     }
 }
