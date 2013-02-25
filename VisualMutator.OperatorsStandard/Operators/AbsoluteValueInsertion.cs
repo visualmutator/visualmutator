@@ -8,6 +8,7 @@
     using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
+    using Microsoft.Cci.Immutable;
     using Microsoft.Cci.MutableCodeModel;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
@@ -51,7 +52,7 @@
                         return operation;
                     }
                 }
-
+              
                 var coreAssembly = OperatorCodeVisitor.CastTo<AbsoluteValueInsertionVisitor>().CoreAssembly;
                 if (MutationTarget.PassInfo.IsIn("Abs", "NegAbs"))
                 {
@@ -81,7 +82,7 @@
                 }
                 else
                 {
-                    INamedTypeDefinition systemConsole = UnitHelper.FindType(NameTable, Module, "VisualMutatorGeneratedNamespace.VisualMutatorGeneratedClass");
+                    INamedTypeDefinition systemConsole = UnitHelper.FindType(NameTable, Module, "VisualMutatorGeneratedClass");
                   //  IMethodDefinition abs = TypeHelper.GetMethod(systemConsole, NameTable.GetNameFor("FailOnZero"), operation.Type);
                     IMethodDefinition abs = (IMethodDefinition) systemConsole.GetMembersNamed(NameTable.GetNameFor("FailOnZero"), false).Single();
                     var call = new MethodCall
@@ -111,7 +112,8 @@
                     Methods = new List<IMethodDefinition>(1),
                     Name = NameTable.GetNameFor("VisualMutatorGeneratedClass"),
                 };
-
+                ((RootUnitNamespace)root).Members.Add(testClass);
+                ((Assembly)Module).AllTypes.Add(testClass);
 
 
                 var mainMethod = new MethodDefinition
@@ -133,14 +135,14 @@
                             }
                     };
                 testClass.Methods.Add(mainMethod);
-
+                
                 var body = new SourceMethodBody(Host)
                 {
                     MethodDefinition = mainMethod,
                     LocalsAreZeroed = true
                 };
                 mainMethod.Body = body;
-
+                /*
                 var block = new BlockStatement();
                 body.Block = block;
 
@@ -181,8 +183,12 @@
 
                    */
 
-
-
+            //    var generatedClass = OperatorCodeVisitor.CastTo<AbsoluteValueInsertionVisitor>().GeneratedBlock;
+              //  var methodBody = TypeHelper.GetMethod(generatedClass, 
+              //      NameTable.GetNameFor("FailOnZero"), Host.PlatformType.SystemInt32).Body;
+               // var generatedBody = (SourceMethodBody) methodBody;
+                body.Block = OperatorCodeVisitor.CastTo<AbsoluteValueInsertionVisitor>().GeneratedBlock;
+                
 
                 /*
                 var testClass = OperatorCodeVisitor.CastTo<AbsoluteValueInsertionVisitor>().GeneratedType;
@@ -201,9 +207,9 @@
                 testClass.ContainingUnitNamespace = ss;
                 testClass.InternFactory = Host.InternFactory;
                 ((RootUnitNamespace)root).Members.Add(ss);
-                ((Assembly) Module).AllTypes.Add(testClass);*/
-            
-                return root;
+                ((Assembly) Module).AllTypes.Add(testClass);
+            */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                return root;
             }
         /*    public override IExpression Rewrite(ISubtraction operation)
             {
@@ -230,6 +236,11 @@
         public class AbsoluteValueInsertionVisitor : OperatorCodeVisitor
         {
             public NamespaceTypeDefinition GeneratedType { get; set; }
+            public IBlockStatement GeneratedBlock
+            {
+                get;
+                set;
+            }
             public IAssembly CoreAssembly
             {
                 get;
@@ -237,54 +248,33 @@
             }
 
             public override void Initialize()
-            {//TODO:float itp
-
-
-                /*
+            {
                 CoreAssembly = Host.LoadAssembly(Host.CoreAssemblySymbolicIdentity);
 
-                var tree = SyntaxTree.ParseText(
-                @"using System;
-                namespace VisualMutatorGeneratedNamespace
-                {
-                    public class VisualMutatorGeneratedClass
-                    {
-                        public static int FailOnZero(int x)
-                        {
-                            if(x == 0) throw new InvalidOperationException(""FailOnZero: x"");
-                            return x;
-                        }
-                    }
-                }");
-
-                var comp = Compilation.Create("MyCompilation", 
-                    new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                    .AddSyntaxTrees(tree)
-                    .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location));
-
-                var outputFileName = Path.Combine(Path.GetTempPath(), "MyCompilation.lib");
-                var ilStream = new FileStream(outputFileName, FileMode.OpenOrCreate);
-
-                var result = comp.Emit(ilStream);
-                ilStream.Close();
-
-                using (var host = new PeReader.DefaultHost())
-                {
-                    var module = host.LoadUnitFrom(outputFileName) as IModule;
-                    if (module == null || module == Dummy.Module || module == Dummy.Assembly)
-                    {
-                        throw new InvalidOperationException(outputFileName + " is not a PE file containing a CLR module or assembly.");
-                    }
-
-
-                    Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(host, module, null);
-                    GeneratedType = (NamespaceTypeDefinition) decompiledModule.AllTypes.Single(t => t.Name.Value == "VisualMutatorGeneratedClass");
-
-
-                }*/
+                var host = new PeReader.DefaultHost();
+                IModule module = OperatorUtils.CompileModuleFromCode(
+@"using System;
+namespace VisualMutatorGeneratedNamespace
+{
+    public class VisualMutatorGeneratedClass
+    {
+        public static int FailOnZero(int x)
+        {
+            if(x == 0) throw new InvalidOperationException(""FailOnZero: x"");
+            return x;
+        }                                                                                                                                                                                                                 
+    }
+}", host);
+                GeneratedType = (NamespaceTypeDefinition)module.GetAllTypes().Single(t => t.Name.Value == "VisualMutatorGeneratedClass");
+                var methodBody = TypeHelper.GetMethod(GeneratedType,
+                    host.NameTable.GetNameFor("FailOnZero"), host.PlatformType.SystemInt32).Body;
+                var generatedBody = (SourceMethodBody)methodBody;
+                GeneratedBlock = generatedBody.Block;
             }
 
             
+
+
             private void ProcessOperation(IExpression operation)
             {
                 //TODO:other types

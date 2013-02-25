@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Extensibility
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -7,7 +8,7 @@
     {
         private readonly ICollection<MutationTarget> _mutationTargets;
         private readonly List<MutationTarget> _commonTargets;
-        private readonly List<object> _mutationTargetsElements;
+        private readonly List<Tuple<object,string>> _mutationTargetsElements;
         private readonly List<object> _commonTargetsElements;
 
         public List<object> CommonTargetsElements
@@ -15,7 +16,7 @@
             get { return _commonTargetsElements; }
         }
 
-        public List<object> MutationTargetsElements
+        public List<Tuple<object, string>> MutationTargetsElements
         {
             get { return _mutationTargetsElements; }
         }
@@ -25,7 +26,7 @@
         {
             _mutationTargets = mutationTargets;
             _commonTargets = commonTargets;
-            _mutationTargetsElements = new List<object>();
+            _mutationTargetsElements = new List<Tuple<object, string>>();
             _commonTargetsElements = new List<object>();
         }
 
@@ -33,9 +34,10 @@
         protected override bool Process(object obj)
         {
             base.Process(obj);
-            if (_mutationTargets.Any(t => t.CounterValue == elementCounter))
+            var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == elementCounter);
+            if (target != null)
             {
-                _mutationTargetsElements.Add(obj);
+                _mutationTargetsElements.Add(Tuple.Create(obj, target.CallTypeName));
             }
             if (_commonTargets.Any(t => t.CounterValue == elementCounter))
             {

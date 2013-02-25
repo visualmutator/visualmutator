@@ -1,6 +1,7 @@
 namespace VisualMutator.Extensibility
 {
     using System;
+    using System.Collections.Generic;
     using Microsoft.Cci;
 
     public interface IOperatorCodeVisitor
@@ -975,16 +976,15 @@ namespace VisualMutator.Extensibility
     
         VisualCodeVisitor Parent { get; set; }
         MetadataReaderHost Host { get; set; }
-        OperatorCodeVisitor.DelMarkMutationTarget MarkMutationTarget
-        {
-            get;
-            set;
-        }
-        Action<object> MarkCommon
+        
+
+        IOperatorUtils OperatorUtils
         {
             get;
             set;
         }
         void Initialize();
+        void MarkMutationTarget<T>(T obj, List<string> passesInfo = null);
+        void MarkCommon<T>(T obj);
     }
 }

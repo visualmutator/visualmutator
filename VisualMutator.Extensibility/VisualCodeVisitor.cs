@@ -39,7 +39,7 @@
             return true;
         }
 
-        public void MarkMutationTarget(object o, List<string> passesInfo)
+        public void MarkMutationTarget<T>(T obj, List<string> passesInfo)
         {
             if (passesInfo == null)
             {
@@ -50,7 +50,7 @@
             }
             for (int i = 0; i < passesInfo.Count; i++)
             {
-                var mutationTarget = new MutationTarget(o.GetType().Name, elementCounter, i, passesInfo[i]);
+                var mutationTarget = new MutationTarget(obj.GetType().Name, elementCounter, i, passesInfo[i], typeof(T).Name);
                 if (_currentMethod != null)
                 {
                     mutationTarget.Method = new MethodIdentifier(_currentMethod);
@@ -60,10 +60,10 @@
            
         }
 
-        public void MarkCommon(object o)
+        public void MarkCommon<T>(T o)
         {
 
-            var mutationTarget = new MutationTarget(o.GetType().Name, elementCounter, 0, "");
+            var mutationTarget = new MutationTarget(o.GetType().Name, elementCounter, 0, "", "");
 
             commonTargets.Add(mutationTarget);
 

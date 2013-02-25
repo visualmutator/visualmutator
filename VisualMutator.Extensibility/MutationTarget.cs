@@ -13,6 +13,12 @@
         private readonly int _currentPass;
 
         private readonly string _passInfo;
+        private readonly string _callTypeName;
+
+        public string CallTypeName
+        {
+            get { return _callTypeName; }
+        }
 
         public string PassInfo
         {
@@ -28,12 +34,13 @@
             set;
         }
 
-        public MutationTarget(string name, int counterValue, int currentPass, string passInfo)
+        public MutationTarget(string name, int counterValue, int currentPass, string passInfo, string callTypeName)
         {
             _name = name;
             _counterValue = counterValue;
             _currentPass = currentPass;
             _passInfo = passInfo;
+            _callTypeName = callTypeName;
         }
 
         public string Name

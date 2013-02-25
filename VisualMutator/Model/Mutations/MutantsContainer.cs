@@ -37,14 +37,25 @@
     public class MutantsContainer : IMutantsContainer
     {
         private readonly ICommonCompilerAssemblies _assembliesManager;
+        private readonly IOperatorUtils _operatorUtils;
         private readonly IAssembliesManager _assembliesManagerOld;
+        private bool _debugConfig ;
+
+        public bool DebugConfig
+        {
+            get { return _debugConfig; }
+            set { _debugConfig = value; }
+        }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MutantsContainer(ICommonCompilerAssemblies assembliesManager, IAssembliesManager assembliesManagerOld
+        public MutantsContainer(ICommonCompilerAssemblies assembliesManager, 
+            IOperatorUtils operatorUtils,
+            IAssembliesManager assembliesManagerOld
             )
         {
             _assembliesManager = assembliesManager;
+            _operatorUtils = operatorUtils;
             _assembliesManagerOld = assembliesManagerOld;
         }
 
@@ -72,7 +83,7 @@
             var op = new PreOperator();
             var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
           //  CreateMutantsForOperator(targets,  () => 0, ProgressCounter.Inactive());
-            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget("", -1, 0, ""), new List<MutationTarget>());
+            var mutant = new Mutant(0, targets.ExecutedOperator, new MutationTarget("", -1, 0, "",""), new List<MutationTarget>());
             targets.ExecutedOperator.Children.Add(mutant);
            // var mutant = targets.ExecutedOperator.Mutants.First();
             var copiedModules = session.StoredSourceAssemblies.Modules
@@ -175,13 +186,14 @@
                 var ded = mutOperator.FindTargets();
                 IOperatorCodeVisitor operatorVisitor = ded;
                 operatorVisitor.Host = _assembliesManager.Host;
+                operatorVisitor.OperatorUtils = _operatorUtils;
                 operatorVisitor.Initialize();
                 foreach (var module in modules)
                 {
              
                     var visitor = new VisualCodeVisitor(operatorVisitor);
-                    operatorVisitor.MarkMutationTarget = visitor.MarkMutationTarget;
-                    operatorVisitor.MarkCommon = visitor.MarkCommon;
+                  //  operatorVisitor.MarkMutationTarget = visitor.MarkMutationTarget;
+                 //   operatorVisitor.MarkCommon = visitor.MarkCommon;
                     var traverser = new VisualCodeTraverser(allowedTypes, visitor);
                        // .Where(i => i.ModuleName == module.PersistentIdentifier).ToList())
                   
@@ -215,7 +227,14 @@
             }
             catch (Exception e)
             {
-                throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Info.Name), e);
+                if (!DebugConfig)
+                {
+                    throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Info.Name), e);
+                }
+                else
+                {
+                    throw;
+                }
             }
             
 
@@ -241,8 +260,9 @@
                     operatorCodeRewriter.Host = _assembliesManager.Host;
                     operatorCodeRewriter.Module = (Module)module;
                     operatorCodeRewriter.OperatorCodeVisitor = mutant.ExecutedOperator.OperatorCodeVisitor;
-                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, 
-                        visitor2.MutationTargetsElements, visitor2.CommonTargetsElements, allowedTypes, operatorCodeRewriter);
+
+                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitor2.MutationTargetsElements
+                        , visitor2.CommonTargetsElements, allowedTypes, operatorCodeRewriter);
                     IModule rewrittenModule = rewriter.Rewrite(module);
                     mutant.MutatedModules.Add(rewrittenModule);
                 }
@@ -250,7 +270,15 @@
             }
             catch (Exception e)
             {
-                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutant.ExecutedOperator.Operator.Info.Name), e);
+                if (!DebugConfig)
+                {
+                    throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutant.ExecutedOperator.Operator.Info.Name), e);
+                }
+                else
+                {
+                    throw;
+                }
+                
             }
         }
 

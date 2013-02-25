@@ -10,6 +10,7 @@
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
+    using Model.Mutations.Operators;
     using Model.StoringMutants;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
@@ -29,9 +30,10 @@
             _log.Info("Common.RunMutations configuring for "+oper+"...");
                 
             var cci = new CommonCompilerAssemblies();
+            var utils = new OperatorUtils(cci);
             var manager = new AssembliesManager(cci, Create.TestServices(), new AssemblyReaderWriter());
-            var container = new MutantsContainer(cci, manager);
-
+            var container = new MutantsContainer(cci, utils ,manager );
+            container.DebugConfig = true;
             mutants = Common.CreateMutants(code, oper,  container, cci, manager);
             original = manager.Load(cci.Modules);
             var visualizer = new CodeVisualizer(cci);

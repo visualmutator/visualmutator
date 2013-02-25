@@ -14,12 +14,22 @@
             set;
         }
 
+        public IOperatorUtils OperatorUtils
+        {
+            get;
+            set;
+        }
         public MetadataReaderHost Host { get; set; }
-        public DelMarkMutationTarget MarkMutationTarget { get; set; }
-        public Action<object> MarkCommon { get; set; }
-
-        public delegate void DelMarkMutationTarget(object obj, List<string> passesInfo  = null);
-      
+        public void MarkMutationTarget<T>(T obj, List<string> passesInfo = null)
+        {
+            Parent.MarkMutationTarget(obj, passesInfo);
+        }
+        public void MarkCommon<T>(T obj)
+        {
+            Parent.MarkCommon(obj);
+        }
+       
+        
         public virtual void Initialize()
         {
             

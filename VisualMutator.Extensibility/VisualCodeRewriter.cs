@@ -5,16 +5,17 @@
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using MethodReference = Microsoft.Cci.MutableCodeModel.MethodReference;
-
+    using System;
+    using System.Linq;
     public class VisualCodeRewriter : CodeRewriter
     {
-        private readonly List<object> _mutationTargets;
+        private List<Tuple<object, string>> _mutationTargets;
         private readonly List<object> _commonTargetsElements;
         private readonly IList<TypeIdentifier> _allowedTypes;
        
         private IOperatorCodeRewriter rewriter;
 
-        public VisualCodeRewriter(IMetadataHost host, List<object> mutationTargets, List<object> commonTargetsElements, IList<TypeIdentifier> allowedTypes, IOperatorCodeRewriter rewriter, bool copyAndRewriteImmutableReferences = false)
+        public VisualCodeRewriter(IMetadataHost host, List<Tuple<object, string>> mutationTargets, List<object> commonTargetsElements, IList<TypeIdentifier> allowedTypes, IOperatorCodeRewriter rewriter, bool copyAndRewriteImmutableReferences = false)
             : base(host, copyAndRewriteImmutableReferences)
         {
             _mutationTargets = mutationTargets;
@@ -23,13 +24,17 @@
             this.rewriter = rewriter;
         }
 
-        private bool Process(object obj)
+        private bool Process<T>(T obj) where T : class
         {
-            if (_mutationTargets.Contains(obj))
+            string typeName = typeof (T).Name;
+            var newList = _mutationTargets.Where(t => t.Item1 != obj || t.Item2 != typeName).ToList();
+            if (newList.Count != _mutationTargets.Count)
             {
-               // Debugger.Break();
+                _mutationTargets = newList;
+                return true;
             }
-            return _mutationTargets.Contains(obj) || _commonTargetsElements.Contains(obj);
+            return _commonTargetsElements.Contains(obj);
+       
         }
 
         public override void RewriteChildren(NamespaceTypeDefinition namespaceTypeDefinition)

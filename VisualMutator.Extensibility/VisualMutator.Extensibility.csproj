@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="IOperatorCodeRewriter.cs" />
     <Compile Include="IOperatorCodeVisitor.cs" />
+    <Compile Include="IOperatorUtils.cs" />
     <Compile Include="MethodIdentifier.cs" />
     <Compile Include="IMutationOperator.cs" />
     <Compile Include="IOperatorsPackage.cs" />
