@@ -87,19 +87,13 @@
         {
       
 
-            public override void Initialize()
-            {//TODO:float itp
-
-               
-            }
-
             
             private void ProcessOperation(IExpression operation)
             {
                 //TODO:other types
                 if (operation.Type.TypeCode == PrimitiveTypeCode.Int32)
                 {
-                    MarkMutationTarget(operation, new List<string>{"Plus", "Negation"});
+                    MarkMutationTarget(operation, new List<string>{"Negation"});
                     
                 }
                 else if (operation.Type.TypeCode == PrimitiveTypeCode.Boolean)

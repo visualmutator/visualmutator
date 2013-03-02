@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Operators\ArgumentOrderChange.cs" />
+    <Compile Include="Operators\ModiﬁerMethodChange.cs" />
     <Compile Include="Operators\ExceptionHandlerRemoval.cs" />
     <Compile Include="Operators\EqualityOperatorChange.cs" />
     <Compile Include="Operators\OverloadingMethodDeletion.cs" />

@@ -19,6 +19,7 @@ namespace VisualMutator.OperatorsStandard
     {
         public class RelationalOperatorReplacementVisitor : OperatorCodeVisitor
         {
+
             private void ProcessOperation(IBinaryOperation operation)
             {
                 var operandTypeCode = operation.LeftOperand.Type.TypeCode;

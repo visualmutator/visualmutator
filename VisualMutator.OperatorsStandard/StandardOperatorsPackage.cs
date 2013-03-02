@@ -20,6 +20,10 @@
   
                 new ArithmeticOperatorReplacement(), 
                 new AbsoluteValueInsertion(),
+                new ShiftOperatorReplacement(), 
+                new UnaryOperatorInsertion(), 
+                new LogicalOperatorReplacement(), 
+                new RelationalOperatorReplacement(), 
 
             };
         }

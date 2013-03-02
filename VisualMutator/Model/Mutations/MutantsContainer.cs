@@ -244,7 +244,7 @@
         {
             try
             {
-                _log.Info("Execute mutation of " + mutant.MutationTarget + " on " + sourceModules.Count + " modules. Allowed: " + allowedTypes);
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
                 var copiedModules = sourceModules.Select(_assembliesManager.Copy).Cast<IModule>().ToList();
                 mutant.MutatedModules = new List<IModule>();
                 foreach (var module in copiedModules)

@@ -15,11 +15,7 @@
     {
         public ObjectOperatorsPackage()
         {
-          ////  var catalog = new AssemblyCatalog(GetType().Assembly);
-         //   var container = new CompositionContainer(catalog);
-         //   container.ComposeParts(this);
-
-
+ 
 
             Operators = new[]
             {
@@ -27,7 +23,7 @@
             };
 
         }
-     //   [ImportMany]
+
         public IEnumerable<IMutationOperator> Operators
         {
             get; 
@@ -38,7 +34,7 @@
         {
             get
             {
-                return "Standard";
+                return "Object";
             }
         }
 
@@ -46,7 +42,7 @@
         {
             get
             {
-                return "Standard imperative operators.";
+                return "Object oriented Operators.";
             }
         }
     }

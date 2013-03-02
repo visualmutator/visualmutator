@@ -1,0 +1,1044 @@
+﻿<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Cci.ILGenerator</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Cci.ILGenerator">
+      <summary>
+            Generates Microsoft intermediate language (MSIL) instructions.
+            </summary>
+      <remarks>
+            A typical use of the ILGenerator class is to produce the values of the properties of an IMethodBody object.
+            This could be a SourceMethodBody from the mutable Code Model or an instance of ILGeneratorMethodBody (or perhaps a derived class).
+            In the former case, the ILGenerator is a part of the private state of an instance of CodeModelToILConverter (or a derived class) that
+            is usually part of a code model mutator. In the latter case, the ILGenerator may have been used to generate a method body for which no
+            Code Model has been built.
+            </remarks>
+      <invariant>this.host != null</invariant>
+      <invariant>this.method != null</invariant>
+      <invariant>this.location != null</invariant>
+      <invariant>this.handlers != null</invariant>
+      <invariant>this.operations != null</invariant>
+      <invariant>this.scopes != null</invariant>
+      <invariant>this.scopeStack != null</invariant>
+      <invariant>this.tryBodyStack != null</invariant>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.#ctor(Microsoft.Cci.IMetadataHost,Microsoft.Cci.IMethodDefinition,Microsoft.Cci.IMethodDefinition)">
+      <summary>
+            Allocates an object that helps with the generation of Microsoft intermediate language (MSIL) instructions corresponding to a method body.
+            </summary>
+      <param name="host">Provides a standard abstraction over the applications that host components that provide or consume objects from the metadata model.</param>
+      <param name="methodDefinition">The method to generate MSIL for.</param>
+      <param name="asyncMethodDefinition">The async method for which this generator will generate the "MoveNext" method of its state class.</param>
+      <requires csharp="host != null" vb="host &lt;&gt; Nothing">host != null</requires>
+      <requires csharp="methodDefinition != null" vb="methodDefinition &lt;&gt; Nothing">methodDefinition != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.AddConstantToCurrentScope(Microsoft.Cci.ILocalDefinition)">
+      <summary>
+            Adds the given local constant to the current lexical scope.
+            </summary>
+      <param name="local">The local constant to add to the current scope.</param>
+      <requires csharp="local != null" vb="local &lt;&gt; Nothing">local != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.AddVariableToCurrentScope(Microsoft.Cci.ILocalDefinition)">
+      <summary>
+            Adds the given local variable to the current lexical scope.
+            </summary>
+      <param name="local">The local variable to add to the current scope.</param>
+      <requires csharp="local != null" vb="local &lt;&gt; Nothing">local != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.AddExceptionHandlerInformation(Microsoft.Cci.HandlerKind,Microsoft.Cci.ITypeReference,Microsoft.Cci.ILGeneratorLabel,Microsoft.Cci.ILGeneratorLabel,Microsoft.Cci.ILGeneratorLabel,Microsoft.Cci.ILGeneratorLabel,Microsoft.Cci.ILGeneratorLabel)">
+      <summary>
+            Adds an exception handler entry to the generated body. This intended for IL rewriting scenarios and should not be used in conjunction with methods such as BeginCatchBlock,
+            which are intended for CodeModel to IL generation scenarios. The calls to AddExceptionHandler should result in a list of handlers that 
+            satisfies CLI rules with respect to ordering and nesting.
+            </summary>
+      <param name="kind">The kind of handler being added.</param>
+      <param name="exceptionType">The type of exception this handler will handle (may be Dummy.TypeReference).</param>
+      <param name="tryStart">A label identifying the first instruction in the try body.</param>
+      <param name="tryEnd">A label identifying the first instruction following the try body.</param>
+      <param name="handlerStart">A label identifying the first instruction in the handler body.</param>
+      <param name="handlerEnd">A label identifying the first instruction following the handler body.</param>
+      <param name="filterStart">A label identifying the first instruction of the filter decision block. May be null.</param>
+      <requires csharp="exceptionType != null" vb="exceptionType &lt;&gt; Nothing">exceptionType != null</requires>
+      <requires csharp="tryStart != null" vb="tryStart &lt;&gt; Nothing">tryStart != null</requires>
+      <requires csharp="tryEnd != null" vb="tryEnd &lt;&gt; Nothing">tryEnd != null</requires>
+      <requires csharp="handlerStart != null" vb="handlerStart &lt;&gt; Nothing">handlerStart != null</requires>
+      <requires csharp="handlerEnd != null" vb="handlerEnd &lt;&gt; Nothing">handlerEnd != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.AdjustBranchSizesToBestFit(System.Boolean)">
+      <summary>
+            Performs one or more extra passes over the list of operations, changing long branches to short if possible and short branches to
+            long branches if necessary.
+            </summary>
+      <remarks>If any long branches in this.operations could have been short, they are adjusted to be short. 
+            This can result in an updated version of this.operations where some branches that had to be long in the previous
+            version can now be short as well. Consequently, the adjustment process iterates until no further changes are possible.
+            Note that all decisions are made based on the offsets at the start of an iteration. </remarks>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginCatchBlock(Microsoft.Cci.ITypeReference)">
+      <summary>
+            Begins a catch block.
+            </summary>
+      <param name="exceptionType">The Type object that represents the exception.</param>
+      <requires csharp="exceptionType != null" vb="exceptionType &lt;&gt; Nothing">exceptionType != null</requires>
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginFilterBlock">
+      <summary>
+            Begins an exception block for a filtered exception. See also BeginFilterBody.
+            </summary>
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginFilterBody">
+      <summary>
+            Begins the part of a filter handler that is invoked on the second pass if the filter condition returns true on the first pass.
+            </summary>
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginTryBody">
+      <summary>
+            Begins the body of a try statement.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginFaultBlock">
+      <summary>
+             Begins an exception fault block in the Microsoft intermediate language (MSIL) stream.
+            </summary>
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginFinallyBlock">
+      <summary>
+            Begins a finally block in the Microsoft intermediate language (MSIL) instruction stream.
+            </summary>
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginScope">
+      <summary>
+            Begins a lexical scope.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginScope(System.UInt32)">
+      <summary>
+            Begins a lexical scope.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode)">
+      <summary>
+            Puts the specified instruction onto the stream of instructions.
+            </summary>
+      <param name="opcode">The Intermediate Language (IL) instruction to be put onto the stream.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Object)">
+      <summary>
+            Calls a type specific overload of Emit, based on the runtime type of the given object. Use this when copying IL operations.
+            </summary>
+      <param name="opcode">The Intermediate Language (IL) instruction to be put onto the stream.</param>
+      <param name="value">An argument that parameterizes the IL instruction at compile time (not a runtime operand for the instruction).</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Byte)">
+      <summary>
+            Puts the specified instruction and unsigned 8 bit integer argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The unsigned 8 bit integer argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Double)">
+      <summary>
+            Puts the specified instruction and 64 bit floating point argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The 64 bit floating point argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.IFieldReference)">
+      <summary>
+            Puts the specified instruction and a field reference onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="field">A reference to a field.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Single)">
+      <summary>
+            Puts the specified instruction and 32 bit floating point argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The 32 bit floating point argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Int32)">
+      <summary>
+            Puts the specified instruction and 32 bit integer argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The 32 bit integer argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.ILGeneratorLabel)">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream and leaves space to include a label when fixes are done.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="label">The label to which to branch from this location.</param>
+      <requires csharp="label != null" vb="label &lt;&gt; Nothing">label != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.ILGeneratorLabel[])">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream and leaves space to include an array of labels when fixes are done.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="labels">An array of labels to which to branch from this location.</param>
+      <requires csharp="labels != null" vb="labels &lt;&gt; Nothing">labels != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.ILocalDefinition)">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream followed by the index of the given local variable.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="local">A local variable.</param>
+      <requires csharp="local != null" vb="local &lt;&gt; Nothing">local != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Int64)">
+      <summary>
+            Puts the specified instruction and 64 bit integer argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The 64 bit integer argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.IMethodReference)">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream followed by a token for the given method reference.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="meth">A reference to a method. Generic methods can only be referenced via instances.</param>
+      <requires csharp="meth != null" vb="meth &lt;&gt; Nothing">meth != null</requires>
+      <requires csharp="meth.GenericParameterCount == default(ushort) || meth is Microsoft.Cci.IGenericMethodInstanceReference" vb="meth.GenericParameterCount = Nothing OrElse meth Is Microsoft.Cci.IGenericMethodInstanceReference">meth.GenericParameterCount == default(ushort) || meth is Microsoft.Cci.IGenericMethodInstanceReference</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.IParameterDefinition)">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream followed by the index of the given local variable.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="parameter">A parameter definition. May be null.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.SByte)">
+      <summary>
+            Puts the specified instruction and signed 8 bit integer argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The signed 8 bit integer argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.Int16)">
+      <summary>
+            Puts the specified instruction and signed 16 bit integer argument onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="arg">The signed 8 bit integer argument pushed onto the stream immediately after the instruction.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.ISignature)">
+      <summary>
+            Puts the specified instruction and a token for the given signature onto the Microsoft intermediate language (MSIL) stream of instructions.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="signature">The signature of the method or function pointer to call. Can include information about extra arguments.</param>
+      <requires csharp="signature != null" vb="signature &lt;&gt; Nothing">signature != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,System.String)">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream followed by the a token for the given string.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="str">The String to be emitted.</param>
+      <requires csharp="str != null" vb="str &lt;&gt; Nothing">str != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.Emit(Microsoft.Cci.OperationCode,Microsoft.Cci.ITypeReference)">
+      <summary>
+            Puts the specified instruction onto the Microsoft intermediate language (MSIL) stream followed by the a token for the referenced type.
+            </summary>
+      <param name="opcode">The Microsoft intermediate language (MSIL) instruction to be put onto the stream.</param>
+      <param name="cls">The referenced type.</param>
+      <requires csharp="cls != null" vb="cls &lt;&gt; Nothing">cls != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.EndTryBody">
+      <summary>
+            Ends a try body.
+            </summary>
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.EndScope">
+      <summary>
+            Ends a lexical scope.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.MarkExpressionLocation(Microsoft.Cci.ILocation)">
+      <summary>
+            Marks the next IL operation as the final instruction of an expression, whose location is known and is provided as the argument.
+            </summary>
+      <param name="expressionLocation">The location of the expression whose value will be computed by the next IL instruction.</param>
+      <requires csharp="expressionLocation != null" vb="expressionLocation &lt;&gt; Nothing">expressionLocation != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.MarkLabel(Microsoft.Cci.ILGeneratorLabel)">
+      <summary>
+             Marks the Microsoft intermediate language (MSIL) stream's current position with the given label.
+            </summary>
+      <requires csharp="label != null" vb="label &lt;&gt; Nothing">label != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.MarkSequencePoint(Microsoft.Cci.ILocation)">
+      <summary>
+            Marks a sequence point in the Microsoft intermediate language (MSIL) stream.
+            </summary>
+      <param name="location">The location of the sequence point.</param>
+      <requires csharp="location != null" vb="location &lt;&gt; Nothing">location != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.MarkSynchronizationPoint(Microsoft.Cci.IMethodDefinition,Microsoft.Cci.ILGeneratorLabel)">
+      <summary>
+            Marks the offset of the next IL operation as the first of a sequence of instructions that will cause the thread executing the "MoveNext" method
+            of the state class of an async method to await the completion of a call to another async method.
+            </summary>
+      <param name="continuationMethod">The helper method that will execute once the execution of the current async method resumes.
+            Usually this will be the same method as the one for which this generator is generating a body, but this is not required.</param>
+      <param name="continuationLabel">The label inside the continuation method where execution will resume. It should be marked by the
+            time this generator is being used to construct a method body.</param>
+      <requires csharp="continuationMethod != null" vb="continuationMethod &lt;&gt; Nothing">continuationMethod != null</requires>
+      <requires csharp="continuationLabel != null" vb="continuationLabel &lt;&gt; Nothing">continuationLabel != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LongVersionOf(Microsoft.Cci.OperationCode)">
+      <summary>
+            If the given operation code is a short branch, return the corresponding long branch. Otherwise return the given operation code.
+            </summary>
+      <param name="operationCode">An operation code.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.ShortVersionOf(Microsoft.Cci.OperationCode)">
+      <summary>
+            If the given operation code is a long branch, return the corresponding short branch. Otherwise return the given operation code.
+            </summary>
+      <param name="operationCode">An operation code.</param>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.UseNamespace(System.String)">
+      <summary>
+            Specifies a namespace to be search when evaluating expressions while stopped in the debugger at a sequence point in the current lexical scope.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetIteratorScopes">
+      <summary>
+            Returns a block scope associated with each local variable in the iterator for which this is the generator for its MoveNext method.
+            May return null.
+            </summary>
+      <remarks>The PDB file model seems to be that scopes are duplicated if necessary so that there is a separate scope for each
+            local variable in the original iterator and the mapping from local to scope is done by position.</remarks>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetLocalScopes">
+      <summary>
+            Returns a sequence of all of the block scopes that have been defined for this method body. Includes nested block scopes.
+            </summary>
+      <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetNamespaceScopes">
+      <summary>
+            Returns zero or more namespace scopes into which the namespace type containing the given method body has been nested.
+            These scopes determine how simple names are looked up inside the method body. There is a separate scope for each dotted
+            component in the namespace type name. For istance namespace type x.y.z will have two namespace scopes, the first is for the x and the second
+            is for the y.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetOperations">
+      <summary>
+            Returns a sequence of all of the IL operations that make up this method body.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetOperationExceptionInformation">
+      <summary>
+            Returns a sequence of descriptors that define where try blocks and their associated handlers can be found in the instruction sequence.
+            </summary>
+      <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetSynchronizationInformation">
+      <summary>
+            Returns an object that describes where synchronization points occur in the IL operations of the "MoveNext" method of the state class of
+            an asynchronous method. This returns null unless the generator has been supplied with an non null value for asyncMethodDefinition parameter
+            during construction.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGenerator.CurrentOffset">
+      <summary>
+            The offset in the IL stream where the next instruction will be emitted.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGenerator.InTryBody">
+      <summary>
+            True if the ILGenerator is currently inside the body of a try statement.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGenerator.Method">
+      <summary>
+            The method for which this generator helps to produce a method body.
+            </summary>
+      <getter>
+        <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="T:Microsoft.Cci.ILGenerator.LocalScopeProvider">
+      <summary>
+            An object that can provide information about the local scopes of a method.
+            </summary>
+      <invariant>this.originalLocalScopeProvider != null</invariant>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.#ctor(Microsoft.Cci.ILocalScopeProvider)">
+      <summary>
+            An object that can provide information about the local scopes of a method.
+            </summary>
+      <param name="originalLocalScopeProvider">The local scope provider to use for methods that have not been decompiled.</param>
+      <requires csharp="originalLocalScopeProvider != null" vb="originalLocalScopeProvider &lt;&gt; Nothing">originalLocalScopeProvider != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns zero or more local (block) scopes, each defining an IL range in which an iterator local is defined.
+            The scopes are returned by the MoveNext method of the object returned by the iterator method.
+            The index of the scope corresponds to the index of the local. Specifically local scope i corresponds
+            to the local stored in field &lt;localName&gt;x_i of the class used to store the local values in between
+            calls to MoveNext.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns zero or more local (block) scopes into which the CLR IL operations in the given method body is organized.
+            </summary>
+      <param name="methodBody" />
+      <returns />
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns zero or more namespace scopes into which the namespace type containing the given method body has been nested.
+            These scopes determine how simple names are looked up inside the method body. There is a separate scope for each dotted
+            component in the namespace type name. For istance namespace type x.y.z will have two namespace scopes, the first is for the x and the second
+            is for the y.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)">
+      <summary>
+            Returns zero or more local constant definitions that are local to the given scope.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="scope != null" vb="scope &lt;&gt; Nothing">scope != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)">
+      <summary>
+            Returns zero or more local variable definitions that are local to the given scope.
+            </summary>
+      <param name="scope" />
+      <returns />
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="scope != null" vb="scope &lt;&gt; Nothing">scope != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.IsIterator(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns true if the method body is an iterator.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.IsIterator(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.LocalScopeProvider.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)">
+      <summary>
+            If the given method body is the "MoveNext" method of the state class of an asynchronous method, the returned
+            object describes where synchronization points occur in the IL operations of the "MoveNext" method. Otherwise
+            the result is null.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+    </member>
+    <member name="T:Microsoft.Cci.ILGeneratorLabel">
+      <summary>
+            An object that is used to mark a location in an IL stream and that is used to indicate where branches go to.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorLabel.#ctor">
+      <summary>
+            Initializes an object that is used to mark a location in an IL stream and that is used to indicate where branches go to.
+            </summary>
+    </member>
+    <member name="F:Microsoft.Cci.ILGeneratorLabel.locationOfReturnInstruction">
+      <summary>
+            Non-null only when labelsReturnInstruction is true.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorLabel.Offset">
+      <summary />
+    </member>
+    <member name="T:Microsoft.Cci.GeneratorLocal">
+      <summary>
+            A mutable object that represents a local variable or constant.
+            </summary>
+      <invariant>this.compileTimeValue != null</invariant>
+      <invariant>this.customModifiers != null</invariant>
+      <invariant>this.locations != null</invariant>
+      <invariant>this.name != null</invariant>
+      <invariant>this.methodDefinition != null</invariant>
+      <invariant>this.type != null</invariant>
+    </member>
+    <member name="M:Microsoft.Cci.GeneratorLocal.#ctor">
+      <summary>
+            Allocates a mutable object that represents a local variable or constant.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.CompileTimeValue">
+      <summary>
+            The compile time value of the definition, if it is a local constant.
+            </summary>
+      <value />
+      <getter>
+        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="this.IsConstant" vb="Me.IsConstant">this.IsConstant</requires>
+        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+      <setter>
+        <requires csharp="value != null" vb="value &lt;&gt; Nothing">value != null</requires>
+      </setter>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.CustomModifiers">
+      <summary>
+            Custom modifiers associated with local variable definition.
+            </summary>
+      <value />
+      <setter>
+        <requires csharp="value != null" vb="value &lt;&gt; Nothing">value != null</requires>
+      </setter>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.IsCompilerGenerated">
+      <summary>
+            True if the local is a temporary variable generated by the compiler and thus does not have a corresponding source declaration.
+            </summary>
+      <remarks>The Visual Studio debugger will hide the existance of compiler generated locals.</remarks>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.IsConstant">
+      <summary>
+            True if this local definition is readonly and initialized with a compile time constant value.
+            </summary>
+      <value />
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.IsModified">
+      <summary>
+            The local variable has custom modifiers.
+            </summary>
+      <value />
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.IsPinned">
+      <summary>
+            True if the value referenced by the local must not be moved by the actions of the garbage collector.
+            </summary>
+      <value />
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.IsReference">
+      <summary>
+            True if the local contains a managed pointer (for example a reference to a local variable or a reference to a field of an object).
+            </summary>
+      <value />
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.Name">
+      <summary>
+            The name of the entity.
+            </summary>
+      <value />
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.INamedEntity.get_Name" inheritedFromTypeName="INamedEntity" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+      <setter>
+        <requires csharp="value != null" vb="value &lt;&gt; Nothing">value != null</requires>
+      </setter>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.Locations">
+      <summary>
+            A potentially empty collection of locations that correspond to this instance.
+            </summary>
+      <value />
+      <setter>
+        <requires csharp="value != null" vb="value &lt;&gt; Nothing">value != null</requires>
+      </setter>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.MethodDefinition">
+      <summary>
+            The definition of the method in which this local is defined.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_MethodDefinition" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+      <setter>
+        <requires csharp="value != null" vb="value &lt;&gt; Nothing">value != null</requires>
+      </setter>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.Type">
+      <summary>
+            The type of the local.
+            </summary>
+      <value />
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_Type" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+      <setter>
+        <requires csharp="value != null" vb="value &lt;&gt; Nothing">value != null</requires>
+      </setter>
+    </member>
+    <member name="T:Microsoft.Cci.ILGeneratorScope">
+      <summary>
+            An object that keeps track of a set of local definitions (variables) and used (imported) namespaces that appear in the
+            source code corresponding to the IL operations from Offset to Offset+Length.
+            </summary>
+      <invariant>this.startLabel != null</invariant>
+      <invariant>this.constants != null</invariant>
+      <invariant>this.locals != null</invariant>
+      <invariant>this.usedNamespaces != null</invariant>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.Constants">
+      <summary>
+            The local definitions (constants) defined in the source code corresponding to this scope.(A debugger can use this when evaluating expressions in a program
+            point that falls inside this scope.)
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.Length">
+      <summary>
+            The length of the scope. Offset+Length equals the offset of the first operation outside the scope, or equals the method body length.
+            </summary>
+      <value />
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.Locals">
+      <summary>
+            The local definitions (variables) defined in the source code corresponding to this scope.(A debugger can use this when evaluating expressions in a program
+            point that falls inside this scope.)
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.MethodDefinition">
+      <summary>
+            The method definition.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.ILocalScope.get_MethodDefinition" inheritedFromTypeName="ILocalScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.Offset">
+      <summary>
+            The offset of the first operation in the scope.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.UsedNamespaceNames">
+      <summary>
+            The namespaces that are used (imported) into this scope. (A debugger can use this when evaluating expressions in a program
+            point that falls inside this scope.)
+            </summary>
+      <value>The used namespace names.</value>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorScope.UsedNamespaces">
+      <summary>
+            Zero or more used namespaces. These correspond to using clauses in C#.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.INamespaceScope.get_UsedNamespaces" inheritedFromTypeName="INamespaceScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="T:Microsoft.Cci.ILGeneratorImplementation.UsedNamespace">
+      <summary>
+             A namespace that is used (imported) inside a namespace scope.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorImplementation.UsedNamespace.#ctor(Microsoft.Cci.IName)">
+      <summary>
+            Allocates a namespace that is used (imported) inside a namespace scope.
+            </summary>
+      <param name="namespaceName">The name of a namepace that has been aliased.  For example the "y.z" of "using x = y.z;" or "using y.z" in C#.</param>
+      <requires csharp="namespaceName != null" vb="namespaceName &lt;&gt; Nothing">namespaceName != null</requires>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.UsedNamespace.Alias">
+      <summary>
+            An alias for a namespace. For example the "x" of "using x = y.z;" in C#. Empty if no alias is present.
+            </summary>
+      <value />
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IUsedNamespace.get_Alias" inheritedFromTypeName="IUsedNamespace" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.UsedNamespace.NamespaceName">
+      <summary>
+            The name of a namepace that has been aliased.  For example the "y.z" of "using x = y.z;" or "using y.z" in C#.
+            </summary>
+      <value />
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IUsedNamespace.get_NamespaceName" inheritedFromTypeName="IUsedNamespace" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="T:Microsoft.Cci.ILGeneratorMethodBody">
+      <summary>
+            A metadata (IL) level represetation of the body of a method or of a property/event accessor.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorMethodBody.#ctor(Microsoft.Cci.ILGenerator,System.Boolean,System.UInt16,Microsoft.Cci.IMethodDefinition,System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocalDefinition},System.Collections.Generic.IEnumerable{Microsoft.Cci.ITypeDefinition})">
+      <summary>
+            Allocates an object that is the metadata (IL) level represetation of the body of a method or of a property/event accessor.
+            </summary>
+      <param name="generator">An object that provides a way to construct the information needed by a method body. Construction should
+            be completed by the time the generator is passed to this constructor. The generator is not referenced by the resulting method body.</param>
+      <param name="localsAreZeroed">True if the locals are initialized by zeroeing the stack upon method entry.</param>
+      <param name="maxStack">The maximum number of elements on the evaluation stack during the execution of the method.</param>
+      <param name="methodDefinition">The definition of the method whose body this is.
+            If this is the body of an event or property accessor, this will hold the corresponding adder/remover/setter or getter method.</param>
+      <param name="localVariables" />
+      <param name="privateHelperTypes">Any types that are implicitly defined in order to implement the body semantics.
+            In case of AST to instructions conversion this lists the types produced.
+            In case of instructions to AST decompilation this should ideally be list of all types
+            which are local to method.</param>
+      <requires csharp="generator != null" vb="generator &lt;&gt; Nothing">generator != null</requires>
+      <requires csharp="methodDefinition != null" vb="methodDefinition &lt;&gt; Nothing">methodDefinition != null</requires>
+      <requires csharp="localVariables != null" vb="localVariables &lt;&gt; Nothing">localVariables != null</requires>
+      <requires csharp="privateHelperTypes != null" vb="privateHelperTypes &lt;&gt; Nothing">privateHelperTypes != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorMethodBody.Dispatch(Microsoft.Cci.IMetadataVisitor)">
+      <summary>
+            Calls visitor.Visit(IMethodBody).
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.IMethodBody.Dispatch(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IMethodBody" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorMethodBody.GetIteratorScopes">
+      <summary>
+            Returns a block scope associated with each local variable in the iterator for which this is the generator for its MoveNext method.
+            May return null.
+            </summary>
+      <remarks>The PDB file model seems to be that scopes are duplicated if necessary so that there is a separate scope for each
+            local variable in the original iterator and the mapping from local to scope is done by position.</remarks>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorMethodBody.GetLocalScopes">
+      <summary>
+            Returns zero or more local (block) scopes into which the CLR IL operations of this method body is organized.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorMethodBody.GetNamespaceScopes">
+      <summary>
+            Returns zero or more namespace scopes into which the namespace type containing the given method body has been nested.
+            These scopes determine how simple names are looked up inside the method body. There is a separate scope for each dotted
+            component in the namespace type name. For istance namespace type x.y.z will have two namespace scopes, the first is for the x and the second
+            is for the y.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorMethodBody.GetSynchronizationInformation">
+      <summary>
+            Returns an object that describes where synchronization points occur in the IL operations of the "MoveNext" method of
+            the state class of an async method. Returns null otherwise.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.OperationExceptionInformation">
+      <summary>
+            A list exception data within the method body IL.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_OperationExceptionInformation" inheritedFromTypeName="IMethodBody" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_OperationExceptionInformation" inheritedFromTypeName="IMethodBody" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.LocalsAreZeroed">
+      <summary>
+            True if the locals are initialized by zeroeing the stack upon method entry.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.LocalVariables">
+      <summary>
+            The local variables of the method.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_LocalVariables" inheritedFromTypeName="IMethodBody" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_LocalVariables" inheritedFromTypeName="IMethodBody" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.MethodDefinition">
+      <summary>
+            The definition of the method whose body this is.
+            If this is the body of an event or property accessor, this will hold the corresponding adder/remover/setter or getter method.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_MethodDefinition" inheritedFromTypeName="IMethodBody" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.Operations">
+      <summary>
+            A list CLR IL operations that implement this method body.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_Operations" inheritedFromTypeName="IMethodBody" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_Operations" inheritedFromTypeName="IMethodBody" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.MaxStack">
+      <summary>
+            The maximum number of elements on the evaluation stack during the execution of the method.
+            </summary>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.PrivateHelperTypes">
+      <summary>
+            Any types that are implicitly defined in order to implement the body semantics.
+            In case of AST to instructions conversion this lists the types produced.
+            In case of instructions to AST decompilation this should ideally be list of all types
+            which are local to method.
+            </summary>
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_PrivateHelperTypes" inheritedFromTypeName="IMethodBody" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+        <ensures inheritedFrom="M:Microsoft.Cci.IMethodBody.get_PrivateHelperTypes" inheritedFromTypeName="IMethodBody" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorMethodBody.Size">
+      <summary>
+            The size in bytes of the method body when serialized.
+            </summary>
+    </member>
+    <member name="T:Microsoft.Cci.ILGeneratorSourceInformationProvider">
+      <summary>
+            An object that can provide information about the local scopes of a method and that can map ILocation objects
+            to IPrimarySourceLocation objects.
+            </summary>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns zero or more local (block) scopes, each defining an IL range in which an iterator local is defined.
+            The scopes are returned by the MoveNext method of the object returned by the iterator method.
+            The index of the scope corresponds to the index of the local. Specifically local scope i corresponds
+            to the local stored in field &lt;localName&gt;x_i of the class used to store the local values in between
+            calls to MoveNext.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns zero or more local (block) scopes into which the CLR IL operations in the given method body is organized.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns zero or more namespace scopes into which the namespace type containing the given method body has been nested.
+            These scopes determine how simple names are looked up inside the method body. There is a separate scope for each dotted
+            component in the namespace type name. For istance namespace type x.y.z will have two namespace scopes, the first is for the x and the second
+            is for the y.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)">
+      <summary>
+            Returns zero or more local constant definitions that are local to the given scope.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="scope != null" vb="scope &lt;&gt; Nothing">scope != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)">
+      <summary>
+            Returns zero or more local variable definitions that are local to the given scope.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="scope != null" vb="scope &lt;&gt; Nothing">scope != null</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.IsIterator(Microsoft.Cci.IMethodBody)">
+      <summary>
+            Returns true if the method body is an iterator.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.IsIterator(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)">
+      <summary>
+            If the given method body is the "MoveNext" method of the state class of an asynchronous method, the returned
+            object describes where synchronization points occur in the IL operations of the "MoveNext" method. Otherwise
+            the result is null.
+            </summary>
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})">
+      <summary>
+            Return zero or more locations in primary source documents that correspond to one or more of the given derived (non primary) document locations.
+            </summary>
+      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetPrimarySourceLocationsFor(Microsoft.Cci.ILocation)">
+      <summary>
+            Return zero or more locations in primary source documents that correspond to the given derived (non primary) document location.
+            </summary>
+      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetPrimarySourceLocationsFor(Microsoft.Cci.ILocation)" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetPrimarySourceLocationsForDefinitionOf(Microsoft.Cci.ILocalDefinition)">
+      <summary>
+            Return zero or more locations in primary source documents that correspond to the definition of the given local.
+            </summary>
+      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetPrimarySourceLocationsForDefinitionOf(Microsoft.Cci.ILocalDefinition)" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorSourceInformationProvider.GetSourceNameFor(Microsoft.Cci.ILocalDefinition,System.Boolean@)">
+      <summary>
+            Returns the source name of the given local definition, if this is available.
+            Otherwise returns the value of the Name property and sets isCompilerGenerated to true.
+            </summary>
+      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetSourceNameFor(Microsoft.Cci.ILocalDefinition,System.Boolean@)" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="T:Microsoft.Cci.ILRewriter">
+      <summary>
+            Rewrites the IL of method bodies.
+            </summary>
+      <invariant>this.host != null</invariant>
+      <invariant>this.generator != null</invariant>
+      <invariant>this.labelFor != null</invariant>
+      <invariant>this.localIndex != null</invariant>
+      <invariant>this.localVariables != null</invariant>
+      <invariant>this.scopeStack != null</invariant>
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.#ctor(Microsoft.Cci.IMetadataHost,Microsoft.Cci.ILocalScopeProvider,Microsoft.Cci.ISourceLocationProvider)">
+      <summary />
+      <param name="host" />
+      <param name="localScopeProvider" />
+      <param name="sourceLocationProvider" />
+      <requires csharp="host != null" vb="host &lt;&gt; Nothing">host != null</requires>
+    </member>
+    <member name="F:Microsoft.Cci.ILRewriter.host">
+      <summary />
+    </member>
+    <member name="F:Microsoft.Cci.ILRewriter.localScopeProvider">
+      <summary />
+    </member>
+    <member name="F:Microsoft.Cci.ILRewriter.sourceLocationProvider">
+      <summary />
+    </member>
+    <member name="F:Microsoft.Cci.ILRewriter.maxStack">
+      <summary />
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.Rewrite(Microsoft.Cci.IMethodBody)">
+      <summary />
+      <param name="methodBody" />
+      <returns />
+      <requires csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.EmitMethodBody(Microsoft.Cci.IMethodBody)">
+      <summary />
+      <param name="methodBody" />
+      <requires csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.EmitDebugInformationFor(Microsoft.Cci.IOperation)">
+      <summary />
+      <param name="operation" />
+      <requires csharp="operation != null" vb="operation &lt;&gt; Nothing">operation != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.EmitOperation(Microsoft.Cci.IOperation)">
+      <summary>
+            Emits the given operation at the current position of the new IL stream. Also tracks any referenced local definitions,
+            so that this.localVariables will contain the exact list of locals used in the new method body.
+            </summary>
+      <param name="operation" />
+      <requires csharp="operation != null" vb="operation &lt;&gt; Nothing">operation != null</requires>
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.TrackLocal(System.Object)">
+      <summary />
+      <param name="operationValue" />
+    </member>
+    <member name="M:Microsoft.Cci.ILRewriter.GetLabelFor(System.UInt32)">
+      <summary>
+            Returns a label that represents the given offset in the original IL. This label must be marked
+            at the corresponding location in the rewritten IL.
+            </summary>
+      <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="P:Microsoft.Cci.ILRewriter.Generator">
+      <summary />
+      <getter>
+        <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILRewriter.Host">
+      <summary />
+      <getter>
+        <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="M:Microsoft.Cci.GeneratorLocal.Microsoft#Cci#ILocalDefinition#get_CustomModifiers">
+      <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="this.IsModified" vb="Me.IsModified">this.IsModified</requires>
+      <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.GeneratorLocal.Microsoft#Cci#IObjectWithLocations#get_Locations">
+      <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.Microsoft#Cci#ILocalDefinition#CustomModifiers">
+      <getter>
+        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="this.IsModified" vb="Me.IsModified">this.IsModified</requires>
+        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.GeneratorLocal.Microsoft#Cci#IObjectWithLocations#Locations">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
+      </getter>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#get_ExceptionType">
+      <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_ExceptionType" inheritedFromTypeName="IOperationExceptionInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#get_TryEndOffset">
+      <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_TryEndOffset" inheritedFromTypeName="IOperationExceptionInformation" csharp="result &gt;= this.TryStartOffset" vb="result &gt;= Me.TryStartOffset">result &gt;= this.TryStartOffset</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#get_HandlerStartOffset">
+      <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_HandlerStartOffset" inheritedFromTypeName="IOperationExceptionInformation" csharp="result &gt; this.FilterDecisionStartOffset" vb="result &gt; Me.FilterDecisionStartOffset">result &gt; this.FilterDecisionStartOffset</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#get_HandlerEndOffset">
+      <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_HandlerEndOffset" inheritedFromTypeName="IOperationExceptionInformation" csharp="result &gt;= this.HandlerStartOffset" vb="result &gt;= Me.HandlerStartOffset">result &gt;= this.HandlerStartOffset</ensures>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#ExceptionType">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_ExceptionType" inheritedFromTypeName="IOperationExceptionInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#TryEndOffset">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_TryEndOffset" inheritedFromTypeName="IOperationExceptionInformation" csharp="result &gt;= this.TryStartOffset" vb="result &gt;= Me.TryStartOffset">result &gt;= this.TryStartOffset</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#HandlerStartOffset">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_HandlerStartOffset" inheritedFromTypeName="IOperationExceptionInformation" csharp="result &gt; this.FilterDecisionStartOffset" vb="result &gt; Me.FilterDecisionStartOffset">result &gt; this.FilterDecisionStartOffset</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.ExceptionHandler.Microsoft#Cci#IOperationExceptionInformation#HandlerEndOffset">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IOperationExceptionInformation.get_HandlerEndOffset" inheritedFromTypeName="IOperationExceptionInformation" csharp="result &gt;= this.HandlerStartOffset" vb="result &gt;= Me.HandlerStartOffset">result &gt;= this.HandlerStartOffset</ensures>
+      </getter>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorImplementation.Operation.#ctor(Microsoft.Cci.OperationCode,System.UInt32,Microsoft.Cci.ILocation,System.Object)">
+      <requires csharp="location != null" vb="location &lt;&gt; Nothing">location != null</requires>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.Operation.Location">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.IOperation.get_Location" inheritedFromTypeName="IOperation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.SynchronizationInformation.AsyncMethod">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.ISynchronizationInformation.get_AsyncMethod" inheritedFromTypeName="ISynchronizationInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.SynchronizationInformation.MoveNextMethod">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.ISynchronizationInformation.get_MoveNextMethod" inheritedFromTypeName="ISynchronizationInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="P:Microsoft.Cci.ILGeneratorImplementation.SynchronizationInformation.SynchronizationPoints">
+      <getter>
+        <ensures inheritedFrom="M:Microsoft.Cci.ISynchronizationInformation.get_SynchronizationPoints" inheritedFromTypeName="ISynchronizationInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+      </getter>
+    </member>
+    <member name="T:Microsoft.Cci.ILGeneratorImplementation.Stack`1">
+      <invariant>this.elements != null</invariant>
+      <invariant>this.elements.Length &gt; 0</invariant>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.BeginHandler(Microsoft.Cci.HandlerKind)">
+      <requires csharp="this.InTryBody" vb="Me.InTryBody">this.InTryBody</requires>
+      <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGenerator.GetCurrentSequencePoint">
+      <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
+    </member>
+    <member name="M:Microsoft.Cci.ILGeneratorScope.#ctor(Microsoft.Cci.ILGeneratorLabel,Microsoft.Cci.INameTable,Microsoft.Cci.IMethodDefinition)">
+      <requires csharp="startLabel != null" vb="startLabel &lt;&gt; Nothing">startLabel != null</requires>
+      <requires csharp="nameTable != null" vb="nameTable &lt;&gt; Nothing">nameTable != null</requires>
+      <requires csharp="containingMethod != null" vb="containingMethod &lt;&gt; Nothing">containingMethod != null</requires>
+    </member>
+  </members>
+</doc>

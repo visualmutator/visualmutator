@@ -19,7 +19,7 @@ namespace VisualMutator.OperatorsStandard
     {
         public class ShiftOperatorReplacementVisitor : OperatorCodeVisitor
         {
-            private void ProcessOperation(IBinaryOperation operation)
+            private void ProcessOperation<T>(T operation) where T : IBinaryOperation
             {
                 var passes = new List<string>
                     {

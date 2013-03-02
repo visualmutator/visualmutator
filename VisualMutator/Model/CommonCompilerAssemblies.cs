@@ -27,6 +27,7 @@
         void WriteToFile(IModule module, string filePath);
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
+        SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
     }
 
     public class CommonCompilerAssemblies : IDisposable, ICommonCompilerAssemblies
@@ -140,7 +141,7 @@
         }
         public Module Copy(IModule module)
         {
-            _log.Info("CommonCompilerAssemblies.Module:" + module.Name);
+           // _log.Info("CommonCompilerAssemblies.Module:" + module.Name);
             var info = FindModuleInfo(module);
             var copier = new CodeDeepCopier(_host, info.SourceLocationProvider, info.LocalScopeProvider);
             return copier.Copy(module);

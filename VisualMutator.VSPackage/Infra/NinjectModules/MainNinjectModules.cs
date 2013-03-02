@@ -18,8 +18,10 @@
 
 
     using VisualMutator.Controllers;
+    using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
+    using VisualMutator.Model.Decompilation;
     using VisualMutator.Model.Decompilation.CodeDifference;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
@@ -156,6 +158,7 @@
             Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().AndFromFactory();//.InSingletonScope();
             Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>();//.InSingletonScope();
             Kernel.Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InSingletonScope();
+            Kernel.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
         }
 
         public void Tests()
@@ -182,6 +185,7 @@
         public void Results()
         {
             Kernel.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
+            Kernel.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
 
             Kernel.Bind<XmlResultsGenerator>().ToSelf();
         }

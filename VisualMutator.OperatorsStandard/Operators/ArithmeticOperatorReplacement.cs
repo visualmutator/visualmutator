@@ -7,20 +7,26 @@ namespace VisualMutator.OperatorsStandard
 {
     using System.Collections;
     using System.ComponentModel.Composition;
+    using System.Reflection;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
   
 
     using VisualMutator.Extensibility;
+    using log4net;
 
 
     public class ArithmeticOperatorReplacement : IMutationOperator
     {
+        protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public class ArithmeticOperatorReplacementVisitor : OperatorCodeVisitor
         {
-            private void ProcessOperation(IBinaryOperation operation)
+
+            private void ProcessOperation<T>(T operation) where T : IBinaryOperation
             {
+                _log.Info("Visiting: " + operation);
                 var passes = new List<string>
                 {
                     "Addition",
@@ -67,7 +73,7 @@ namespace VisualMutator.OperatorsStandard
            
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
             {
-               
+                _log.Info("Rewriting: " + operation);
                 IExpression result;
                 if(MutationTarget.CurrentPass <= 3)
                 {

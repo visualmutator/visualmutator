@@ -136,8 +136,6 @@
     <Compile Include="Infra\VisualStudioSettingsProvider.cs" />
     <Compile Include="Infra\NinjectFactory.cs" />
     <Compile Include="Infra\NinjectModules\MainNinjectModules.cs" />
-    <Compile Include="Infra\NinjectModules\MutantsModule.cs" />
-    <Compile Include="Infra\NinjectModules\UnitTestsModule.cs" />
     <Compile Include="Infra\InApplicationSettingsManager.cs" />
     <Compile Include="Infra\VisualStudioConnection.cs" />
     <Compile Include="Infra\VisualStudioOwnerWindowProvider.cs" />
@@ -205,6 +203,10 @@
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.OperatorsObject\VisualMutator.OperatorsObject.csproj">
+      <Project>{0aefe663-70c8-4466-98b7-e506215d1b58}</Project>
+      <Name>VisualMutator.OperatorsObject</Name>
     </ProjectReference>
     <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
       <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
