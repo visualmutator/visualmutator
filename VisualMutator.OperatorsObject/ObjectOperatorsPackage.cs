@@ -17,9 +17,12 @@
         {
  
 
-            Operators = new[]
+            Operators = new IMutationOperator[]
             {
                 new EqualityOperatorChange(), 
+                new ModiferMethodChange(), 
+                new AccessorMethodChange(), 
+                new NullInsertion(), 
             };
 
         }

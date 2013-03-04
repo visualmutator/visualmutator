@@ -13,9 +13,16 @@
         public MetadataReaderHost Host { get; set; }
 
         public IModule Module { get; set; }
-
-        public IOperatorCodeVisitor OperatorCodeVisitor { get; set; }
-
+        IOperatorUtils OperatorUtils
+        {
+            get;
+            set;
+        }
+   
+        public virtual void Initialize()
+        {
+          
+        }
         /// <summary>
         /// Rewrites the given addition.
         /// </summary>

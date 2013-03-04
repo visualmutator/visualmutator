@@ -10,7 +10,8 @@ namespace VisualMutator.Extensibility
         INameTable NameTable { get; set; }
         MetadataReaderHost Host { get; set; }
         IModule Module { get; set; }
-        IOperatorCodeVisitor OperatorCodeVisitor { get; set; }
+        IOperatorUtils OperatorUtils { get; set; }
+
 
         /// <summary>
         /// Rewrites the given addition.
@@ -1128,5 +1129,7 @@ namespace VisualMutator.Extensibility
         /// Rewrites the specified type references.
         /// </summary>
         List<IWin32Resource> /*?*/ Rewrite(List<IWin32Resource> /*?*/ win32Resources);
+
+        void Initialize();
     }
 }

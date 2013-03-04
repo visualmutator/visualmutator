@@ -59,7 +59,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         public long FindTargetsTimeMiliseconds { get; set; }
 
-        public IOperatorCodeVisitor OperatorCodeVisitor { get; set; }
+  
 
         public void UpdateDisplayedText()
         {
