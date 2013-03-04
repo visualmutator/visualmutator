@@ -125,7 +125,7 @@
     <Compile Include="Mutations\MutantsContainerTests.cs" />
     <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="Operators\Common.cs" />
-    <Compile Include="Operators\TestModiﬁerMethodChange.cs" />
+    <Compile Include="Operators\TestModiferMethodChange.cs" />
     <Compile Include="Operators\TestUnaryOperatorInsertion.cs" />
     <Compile Include="Operators\TestExceptionHandlerRemoval.cs" />
     <Compile Include="Operators\TestAbsoluteValueInsertion.cs" />

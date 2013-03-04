@@ -17,7 +17,7 @@
     using VisualMutator.Tests.Util;
 
     [TestFixture]
-    public class TestModerMethodChange
+    public class TestModiferMethodChange
     {
         [SetUp]
         public void Setup()
@@ -31,7 +31,45 @@
 
 
         [Test]
-        public void MutationSuccess()
+        public void MutationModifierSuccess()
+        {
+
+            const string code =
+@"using System;
+namespace Ns
+{
+    public class Test
+    {
+        public int Method1(int a, int b)
+        {
+            TestProp = b;
+            return TestProp;
+        }
+
+        public int TestProp {  get;set; }
+        public int TestProp2 {  get;set; }
+
+    }
+}";
+
+            List<Mutant> mutants;
+            AssembliesProvider original;
+            CodeDifferenceCreator diff;
+            Common.RunMutations(code, new ModiferMethodChange(), out mutants, out original, out diff);
+
+            foreach (var mutant in mutants)
+            {
+                var codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant, original);
+                Console.WriteLine(codeWithDifference.Code);
+
+               // codeWithDifference.LineChanges.Count.ShouldEqual(2);
+            }
+
+            mutants.Count.ShouldEqual(1);
+        }
+
+        [Test]
+        public void MutationAccessorSuccess()
         {
 
             const string code =
@@ -46,6 +84,7 @@ namespace Ns
         }
 
         public int TestProp {  get;set; }
+        public int TestProp2 {  get;set; }
 
     }
 }";
@@ -53,49 +92,19 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ExceptionHandlerRemoval(), out mutants, out original, out diff);
+            Common.RunMutations(code, new AccessorMethodChange(), out mutants, out original, out diff);
 
             foreach (var mutant in mutants)
             {
-            
                 var codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant, original);
                 Console.WriteLine(codeWithDifference.Code);
 
-             //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
+                // codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
 
             mutants.Count.ShouldEqual(1);
         }
-        
-        [Test]
-        public void MutationFail()
-        {
-
-            const string code =
-@"using System;
-namespace Ns
-{
-    public class Test
-    {
-        public bool Method1(float a, float b)
-        {
-            bool result = true;
-            string s = ""dd"";
-            s = s + ""dd"";
-            return result;
-        }
-    }
-}";
-
-            List<Mutant> mutants;
-            AssembliesProvider original;
-            CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ArithmeticOperatorReplacement(), out mutants, out original, out diff);
-
-        
-
-            mutants.Count.ShouldEqual(0);
-        }
+       
         
     }
 }
