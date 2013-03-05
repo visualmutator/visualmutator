@@ -60,7 +60,7 @@ namespace Ns
                 codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
 
-            mutants.Count.ShouldEqual(3);
+            mutants.Count.ShouldEqual(12);
         }
         
         [Test]

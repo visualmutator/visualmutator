@@ -13,7 +13,7 @@
         public MetadataReaderHost Host { get; set; }
 
         public IModule Module { get; set; }
-        IOperatorUtils OperatorUtils
+        public IOperatorUtils OperatorUtils
         {
             get;
             set;

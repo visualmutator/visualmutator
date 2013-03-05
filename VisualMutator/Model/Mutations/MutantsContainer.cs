@@ -108,6 +108,7 @@
 
 
             percentCompleted.Initialize(session.Choices.SelectedOperators.Count);
+            var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
@@ -115,67 +116,40 @@
             var operatorsWithTargets = new List<OperatorWithTargets>();
             foreach (var oper in session.Choices.SelectedOperators)
             {
-                percentCompleted.Progress();
-                sw.Restart();
-                OperatorWithTargets targets = FindTargets(oper, session.StoredSourceAssemblies.Modules, session.SelectedTypes.ToList());
-                targets.FindTargetsTimeMiliseconds =  sw.ElapsedMilliseconds;
-                operatorsWithTargets.Add(targets);
-            }
-                
-            int allMutantsCount = operatorsWithTargets.Sum(op => op.MutationTargets.Count);
-            
-            percentCompleted.Initialize(allMutantsCount);
+                var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
 
-            foreach (var op in operatorsWithTargets)
-            {
-                var executedOperator = new ExecutedOperator(op.Operator.Info.Id, op.Operator.Info.Name, op.Operator);
-             
                 sw.Restart();
-                
-                foreach (MutationTarget mutationTarget in op.MutationTargets.Values.SelectMany(v => v))
-                {//TODO:progress
-                    //percentCompleted.Progress();
-                    var mutant = new Mutant(genId(), executedOperator, mutationTarget, op.CommonTargets);
+
+                OperatorWithTargets targets = FindTargets(oper, session.StoredSourceAssemblies.Modules, session.SelectedTypes.ToList());
+
+                executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
+
+                operatorsWithTargets.Add(targets);
+
+                //subProgress.Initialize(targets.MutationTargets.Count);
+                foreach (MutationTarget mutationTarget in targets.MutationTargets.Values.SelectMany(v => v))
+                {
+                    var mutant = new Mutant(genId(), executedOperator, mutationTarget, targets.CommonTargets);
                     executedOperator.Children.Add(mutant);
 
+                    //subProgress.Progress();
                 }
 
-                sw.Stop();
-                //executedOperator.MutationTimeMiliseconds = sw.ElapsedMilliseconds;
-
                 executedOperator.UpdateDisplayedText();
-
                 session.MutantsGroupedByOperators.Add(executedOperator);
                 executedOperator.Parent = root;
                 root.Children.Add(executedOperator);
-                
-        
+
+                percentCompleted.Progress();
             }
+                
+       
             root.State = MutantResultState.Untested;
 
    
         }
 
-        public class OperatorWithTargets
-        {
-            public IDictionary<string, List<MutationTarget>> MutationTargets
-            {
-                get;
-                set;
-            }
-
-            public IMutationOperator Operator { get; set; }
-
-        
-
-            public List<MutationTarget> CommonTargets { get; set; }
-
-            public long FindTargetsTimeMiliseconds
-
-            {
-                get; set; }
-        }
-
+       
 
         public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, 
             IList<TypeIdentifier> allowedTypes)
@@ -278,6 +252,29 @@
                 }
                 
             }
+        }
+        public class OperatorWithTargets
+        {
+            public IDictionary<string, List<MutationTarget>> MutationTargets
+            {
+                get;
+                set;
+            }
+
+            public IMutationOperator Operator
+            {
+                get;
+                set;
+            }
+
+
+
+            public List<MutationTarget> CommonTargets
+            {
+                get;
+                set;
+            }
+
         }
 
 

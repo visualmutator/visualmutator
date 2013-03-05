@@ -323,7 +323,7 @@
                 raiseTestingProgress();
 
                 Mutant mutant = _mutantsToTest.Dequeue();
-
+                mutant.State = MutantResultState.Creating;
                 _mutantsContainer.ExecuteMutation(mutant, 
                     _currentSession.StoredSourceAssemblies.Modules,
                     _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());

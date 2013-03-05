@@ -62,7 +62,7 @@
                 
             if (updateParent && Parent != null)
             {
-                if (!value.IsIn(MutantResultState.Tested, MutantResultState.Live,
+                if (!value.IsIn(MutantResultState.Creating, MutantResultState.Tested, MutantResultState.Live,
                     MutantResultState.Killed, MutantResultState.Error))
                 {
                     throw new InvalidOperationException("Tried to set invalid state: " + value);
@@ -84,6 +84,7 @@
             MutantResultState state = Switch.Into<MutantResultState>().AsCascadingCollectiveOf(children.Select(n => n.State))
                 .CaseAny(MutantResultState.Error, MutantResultState.Error)
                 .CaseAny(MutantResultState.Tested, MutantResultState.Tested)
+                .CaseAny(MutantResultState.Creating, MutantResultState.Creating)
                 .CaseAny(MutantResultState.Live, MutantResultState.Live)
                 .CaseAny(MutantResultState.Killed, MutantResultState.Killed)
                 .CaseAll(MutantResultState.Untested, MutantResultState.Untested);

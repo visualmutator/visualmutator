@@ -141,6 +141,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProgressCounterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests.cs" />
   </ItemGroup>
@@ -155,22 +156,6 @@
     <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
       <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
       <Name>CommonUtilityInfrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
-      <Project>{ed2443ea-aeff-4eaf-8bed-4cfa8f721598}</Project>
-      <Name>VisualMutator.Extensibility</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.OperatorsObject\VisualMutator.OperatorsObject.csproj">
-      <Project>{0AEFE663-70C8-4466-98B7-E506215D1B58}</Project>
-      <Name>VisualMutator.OperatorsObject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
-      <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
-      <Name>VisualMutator.OperatorsStandard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
-      <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
-      <Name>VisualMutator</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

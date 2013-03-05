@@ -83,13 +83,15 @@
 
             
 
-            var operatorWithTargets = container.FindTargets(operatorr, copiedModules, new List<TypeIdentifier>());
+            MutantsContainer.OperatorWithTargets operatorWithTargets = container.FindTargets(operatorr, 
+                copiedModules, new List<TypeIdentifier>());
+
             var mutants = new List<Mutant>();
             foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Values.SelectMany(v => v))
             {
-
-                var mutant = new Mutant(0, operatorWithTargets.ExecutedOperator, mutationTarget, operatorWithTargets.CommonTargets);
-                operatorWithTargets.ExecutedOperator.Children.Add(mutant);
+                var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
+                var mutant = new Mutant(0, exec, mutationTarget, operatorWithTargets.CommonTargets);
+  
                 container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
                 mutants.Add(mutant);
             }

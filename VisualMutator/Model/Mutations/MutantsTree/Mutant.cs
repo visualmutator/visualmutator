@@ -62,6 +62,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             string stateText =
                 Switch.Into<string>().From(value)
                 .Case(MutantResultState.Untested, "Untested")
+                .Case(MutantResultState.Creating, "Creating mutant...")
                 .Case(MutantResultState.Tested, "Executing tests...")
                 .Case(MutantResultState.Killed, () =>
                 {

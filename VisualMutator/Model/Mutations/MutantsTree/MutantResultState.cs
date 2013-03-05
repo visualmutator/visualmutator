@@ -6,16 +6,22 @@
         //Not yet tested
         Untested,
 
+        Creating,
+
+        //During testing
+        Tested,
+
+
         //Any test failed or was inconclusive
         Killed,
 
         //All tests passed
         Live,
 
-        //During testing
-        Tested,
+       
 
         //Error occurred while testing
         Error,
+        
     }
 }
