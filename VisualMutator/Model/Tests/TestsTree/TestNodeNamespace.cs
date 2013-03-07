@@ -1,5 +1,8 @@
 ﻿namespace VisualMutator.Model.Tests.TestsTree
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     #region Usings
 
     
@@ -14,5 +17,12 @@
         {
         }
 
+        public IEnumerable<TestNodeClass> TestClasses
+        {
+            get
+            {
+                return Children.Cast<TestNodeClass>();
+            }
+        }
     }
 }

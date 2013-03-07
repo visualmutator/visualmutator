@@ -8,6 +8,7 @@
     using CommonUtilityInfrastructure.WpfUtils;
 
     using NUnit.Core;
+    using NUnit.Core.Filters;
     using NUnit.Util;
 
     using log4net;
@@ -67,23 +68,12 @@
             ServiceManager.Services.AddService(new AddinManager());
             ServiceManager.Services.AddService(new TestAgency());
 
-            _testLoader = new TestLoader(); //(TestLoader)ServiceManager.Services.GetService(typeof(TestLoader));
+            _testLoader = new TestLoader(); 
 
 
             _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")
                 .Where(e => e.EventArgs.Test != null).Select(e => e.EventArgs.Test);
-                   // {
-                  //      if(e.EventArgs.Test != null)
-                  //      {
-                  //          return e.EventArgs.Test;
-                            //throw new InvalidOperationException("test is null", e.EventArgs.Exception);
-                   //     }
-                       // else
-                       // {
-                        // /   return e.EventArgs.Test;
-                       // }
-                        
-                   // });
+             
          
 
             _testFinished = Observable.FromEvent<TestEventArgs>(
@@ -149,7 +139,10 @@
         }
         public void RunTests()
         {
-            
+            /*_testLoader.TestProject.
+            NameFilter nameFilter = new NameFilter();
+            foreach (ITest test in tests)
+                nameFilter.Add(test.TestName);*/
             _testLoader.RunTests();
         }
 

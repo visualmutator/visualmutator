@@ -21,11 +21,12 @@
 
         public SessionCreationViewModel(
             ISessionCreationView view,
-            TypesTreeViewModel typesTree, 
+            TypesTreeViewModel typesTreeToMutate, 
+            TypesTreeViewModel typesTreeToTest, 
             MutationsTreeViewModel mutationsTree, 
             MutantsCreationOptionsViewModel mutantsCreation,
              MutantsTestingOptionsViewModel mutantsTesting)
-            : base(view, typesTree, mutationsTree, mutantsCreation)
+            : base(view, typesTreeToMutate, typesTreeToTest, mutationsTree, mutantsCreation)
         {
             MutantsTesting = mutantsTesting;
             MutantsTesting.Initialize(View);

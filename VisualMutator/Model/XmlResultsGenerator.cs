@@ -148,7 +148,7 @@
                     new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
-                    from testClass in mutant.MutantTestSession.TestClassses
+                    from testClass in mutant.MutantTestSession.TestNamespaces.SelectMany(n => n.TestClasses)
                     select new XElement("TestClass",
                         new XAttribute("Name", testClass.Name),
                         new XAttribute("FullName", testClass.FullName),

@@ -58,11 +58,13 @@
 
 
             _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
-                () => _viewModel.TypesTree.Assemblies != null 
+                () => _viewModel.TypesTreeMutate.Assemblies != null 
                     && _viewModel.MutationsTree.MutationPackages != null
-                    && _viewModel.TypesTree.Assemblies.Count != 0
+                    && _viewModel.TypesTreeMutate.Assemblies.Count != 0
+                  //  && _viewModel.TypesTreeToTest.Assemblies.Count != 0
                     && _viewModel.MutationsTree.MutationPackages.Count != 0)
-                    .UpdateOnChanged(_viewModel.TypesTree, _ => _.Assemblies)
+                    .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
+                   // .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.Assemblies)
                     .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
 
    
@@ -78,7 +80,8 @@
             _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
                 assemblies =>
                 {
-                    _viewModel.TypesTree.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
+                    _viewModel.TypesTreeMutate.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
+                    _viewModel.TypesTreeToTest.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
                     
                     if (_typesManager.IsAssemblyLoadError)
                     {

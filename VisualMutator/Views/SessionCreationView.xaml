@@ -35,13 +35,15 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Text="Types in solution:"/>
-            <Views:TypesTree Grid.Column="0" Grid.Row="1" Content="{Binding TypesTree.View}"/>
-
-            <TextBlock Grid.Column="1" Grid.Row="0" Text="Available mutations:"/>
-            <Views:MutationsTree Grid.Column="1" Grid.Row="1" Content="{Binding MutationsTree.View}"/>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Select types to mutate:"/>
+            <Views:TypesTree Grid.Column="0" Grid.Row="1" Content="{Binding TypesTreeMutate.View}"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="Select types with tests to run:"/>
+            <Views:TypesTree Grid.Column="1" Grid.Row="1" Content="{Binding TypesTreeToTest.View}"/>
+            <TextBlock Grid.Column="2" Grid.Row="0" Text="Select mutation operators to use:"/>
+            <Views:MutationsTree Grid.Column="2" Grid.Row="1" Content="{Binding MutationsTree.View}"/>
 
         </Grid>
 

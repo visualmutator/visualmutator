@@ -87,7 +87,9 @@
             {
                 job.Subscribe(result =>
                 {
-
+                    _log.Debug("result.Test.TestName.UniqueName: "+result.Test.TestName.UniqueName);
+                    _log.Debug("result.Test.TestName.FullName: "+result.Test.TestName.FullName);
+                    _log.Debug("result.Test.TestName.Name: " + result.Test.TestName.Name);
                     TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.UniqueName];
                     node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
                     node.Message = result.Message;

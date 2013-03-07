@@ -27,6 +27,7 @@
 
             root.AddAppender(GetFileAppender(Path.GetDirectoryName(p), "Info.log", Level.Info));
             root.AddAppender(GetFileAppender(Path.GetDirectoryName(p), "Error.log", Level.Error));
+            root.AddAppender(GetConsoleAppender());
             root.Repository.Configured = true;
         }
 

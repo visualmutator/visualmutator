@@ -20,13 +20,15 @@
 
         public CreationViewModel(
             TView view,
-            TypesTreeViewModel typesTree,
+            TypesTreeViewModel typesTreeToMutate,
+            TypesTreeViewModel typesTreeToTest,
             MutationsTreeViewModel mutationsTree,
             MutantsCreationOptionsViewModel mutantsCreation)
             : base(view)
         {
             MutationsTree = mutationsTree;
-            TypesTree = typesTree;
+            TypesTreeMutate = typesTreeToMutate;
+            TypesTreeToTest = typesTreeToTest;
             MutantsCreation = mutantsCreation;
 
         }
@@ -59,21 +61,34 @@
             }
         }
 
-        private TypesTreeViewModel _typesTree;
+        private TypesTreeViewModel _typesTreeMutate;
 
-        public TypesTreeViewModel TypesTree
+        public TypesTreeViewModel TypesTreeMutate
         {
             get
             {
-                return _typesTree;
+                return _typesTreeMutate;
             }
             set
             {
-                SetAndRise(ref _typesTree, value, () => TypesTree);
+                SetAndRise(ref _typesTreeMutate, value, () => TypesTreeMutate);
+            }
+        }
+
+        private TypesTreeViewModel _typesTreeToTest;
+
+        public TypesTreeViewModel TypesTreeToTest
+        {
+            get
+            {
+                return _typesTreeToTest;
+            }
+            set
+            {
+                SetAndRise(ref _typesTreeToTest, value, () => TypesTreeToTest);
             }
         }
    
-
 
         private BasicCommand _commandCreateMutants;
 

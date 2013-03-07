@@ -61,7 +61,8 @@
 
         public void Initialize()
         {
-            _log.Info("Initializing package...");
+            _log.Info("Initializing package VisualMutator...");
+            _log.Debug("Debug Test...");
             _visualStudio.Initialize();
             _settingsManager.Initialize();
 

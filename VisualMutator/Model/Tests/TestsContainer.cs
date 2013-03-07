@@ -60,6 +60,7 @@
         private StoredMutantInfo _currentMutant;
 
         private bool _allTestingCancelled;
+        private bool _testsLoaded;
 
         private MutationTestingSession _currentSession;
 
@@ -129,6 +130,13 @@
         {
             return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath, mutant);
         }
+        public IEnumerable<TestNodeNamespace> LoadTests(List<string> paths)
+        {
+            var session = new MutantTestSession();
+            LoadTests(paths, session);
+            UnloadTests();
+            return session.TestNamespaces;
+        }
 
         public void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
@@ -146,7 +154,7 @@
             try
             {
                
-                LoadTests(storedMutantInfo, mutant.MutantTestSession);
+                LoadTests(storedMutantInfo.AssembliesPaths, mutant.MutantTestSession);
 
                 testsLoaded = true;
 
@@ -246,24 +254,21 @@
             }
         }
 
-        public void LoadTests(StoredMutantInfo mutant, MutantTestSession mutantTestSession)
+        public void LoadTests(List<string> assembliesPaths, MutantTestSession mutantTestSession)
         {
-            Throw.IfArgumentNull(mutant, "mutant");
+            Throw.IfArgumentNull(assembliesPaths, "assembliesPaths");
            
-            _currentMutant = mutant;
-      
 
             IEnumerable<TestNodeClass> testClassses = _testServices
-                .SelectMany(s => s.LoadTests(mutant.AssembliesPaths, mutantTestSession));
+                .SelectMany(s => s.LoadTests(assembliesPaths, mutantTestSession));
 
-            mutantTestSession.TestClassses.AddRange(testClassses);
-
-            List<TestNodeNamespace> testNamespaces = mutantTestSession.TestClassses
+          
+            List<TestNodeNamespace> testNamespaces = testClassses
                 .GroupBy(classNode => classNode.Namespace)
                 .Select(group =>
                 {
                     var ns = new TestNodeNamespace(mutantTestSession.TestsRootNode, group.Key);
-                    foreach (var nodeClass in group)
+                    foreach (TestNodeClass nodeClass in group)
                     {
                         nodeClass.Parent = ns;
                     }
@@ -277,7 +282,7 @@
             mutantTestSession.TestsRootNode.Children.AddRange(testNamespaces);
             mutantTestSession.TestsRootNode.State = TestNodeState.Inactive;
 
-          
+            _testsLoaded = true;
         }
 
 
@@ -295,13 +300,13 @@
 
         public void UnloadTests()
         {
-            if (_currentMutant != null)
+            if (_testsLoaded)
             {
                 foreach (ITestService testService in _testServices)
                 {
                     testService.UnloadTests();
                 }
-                _currentMutant = null;
+                _testsLoaded = false;
             }
             
         }

@@ -13,7 +13,7 @@ namespace VisualMutator.Model.Tests
     {
         private IDictionary<string, TestNodeMethod> _testMap;
 
-        private List<TestNodeClass> _testClassses;
+    
 
 
         private TestsRootNode _testsRootNode;
@@ -21,7 +21,7 @@ namespace VisualMutator.Model.Tests
         public MutantTestSession()
         {
             _testMap = new Dictionary<string, TestNodeMethod>();
-            _testClassses = new List<TestNodeClass>();
+            
         
             _testsRootNode = new TestsRootNode();
         }
@@ -45,13 +45,7 @@ namespace VisualMutator.Model.Tests
             get;
             set;
         }
-        public List<TestNodeClass> TestClassses
-        {
-            get
-            {
-                return _testClassses;
-            }
-        }
+   
 
         public long TestingTimeMiliseconds
         {

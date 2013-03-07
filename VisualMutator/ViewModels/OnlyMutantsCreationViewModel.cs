@@ -24,12 +24,13 @@
         public OnlyMutantsCreationViewModel(
             IOnlyMutantsCreationView view, 
             TypesTreeViewModel typesTree, 
+            TypesTreeViewModel typesTreeTest, 
             MutationsTreeViewModel mutationsTree, 
             MutantsCreationOptionsViewModel mutantsCreation)
-            : base(view, typesTree, mutationsTree, mutantsCreation)
+            : base(view, typesTree, typesTreeTest, mutationsTree, mutantsCreation)
         {
             MutationsTree = mutationsTree;
-            TypesTree = typesTree;
+            TypesTreeMutate = typesTree;
             MutantsCreation = mutantsCreation;
         }
 
