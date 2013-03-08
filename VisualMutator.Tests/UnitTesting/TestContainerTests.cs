@@ -66,7 +66,7 @@
             //Act:
             MutantTestSession session = new MutantTestSession();
 
-            container.LoadTests(mutant, session);
+            //container.LoadTests(mutant, session);
 
 
             //Assert:

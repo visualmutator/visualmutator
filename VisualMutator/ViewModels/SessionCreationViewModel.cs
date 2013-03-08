@@ -22,7 +22,7 @@
         public SessionCreationViewModel(
             ISessionCreationView view,
             TypesTreeViewModel typesTreeToMutate, 
-            TypesTreeViewModel typesTreeToTest, 
+            TestsSelectableTreeViewModel typesTreeToTest, 
             MutationsTreeViewModel mutationsTree, 
             MutantsCreationOptionsViewModel mutantsCreation,
              MutantsTestingOptionsViewModel mutantsTesting)

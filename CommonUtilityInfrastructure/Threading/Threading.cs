@@ -47,6 +47,15 @@ namespace CommonUtilityInfrastructure.Threading
  
     }
 
+    public static class ThreadingExt
+    {
+        public static Task<T> ToAwaitable<T>(this Func<T> func)
+        {
+            return Task.Run(func);
+           
+        }
+    }
+
     public class Threading : IThreading
     {
         private readonly IDispatcherExecute _execute;
@@ -93,6 +102,8 @@ namespace CommonUtilityInfrastructure.Threading
             }
             
         }
+
+       
 
         public Task ScheduleAsync(Action onBackground, Action onGui = null,
             Action onException = null, Action onFinally = null )

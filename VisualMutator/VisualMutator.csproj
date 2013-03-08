@@ -254,6 +254,7 @@
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
     <Compile Include="ViewModels\ChooseTestingExtensionViewModel.cs" />
+    <Compile Include="ViewModels\TestsSelectableTreeViewModel.cs" />
     <Compile Include="ViewModels\CreationViewModel.cs" />
     <Compile Include="ViewModels\OnlyMutantsCreationViewModel.cs" />
     <Compile Include="ViewModels\MutationsTreeViewModel.cs" />
@@ -324,6 +325,9 @@
     <Compile Include="Views\ChooseTestingExtensionView.xaml.cs">
       <DependentUpon>ChooseTestingExtensionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TestsSelectableTree.xaml.cs">
+      <DependentUpon>TestsSelectableTree.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MutantDetailsView.xaml.cs">
       <DependentUpon>MutantDetailsView.xaml</DependentUpon>
     </Compile>
@@ -360,6 +364,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ChooseTestingExtensionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TestsSelectableTree.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

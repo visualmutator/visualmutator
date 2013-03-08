@@ -30,6 +30,7 @@
         void UnloadProject();
 
         void Cancel();
+        void CreateFilter(ICollection<TestName> names);
     }
 
     public class NUnitWrapper : INUnitWrapper
@@ -55,6 +56,7 @@
         private IObservable<Exception> _testUnloadFailed;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private NameFilter _nameFilter;
 
         public NUnitWrapper(IMessageService messageService)
         {
@@ -137,12 +139,19 @@
         {
             _testLoader.CancelTestRun();
         }
+
+        public void CreateFilter(ICollection<TestName> names)
+        {
+            NameFilter nameFilter = new NameFilter();
+            foreach (TestName name in names)
+            {
+                nameFilter.Add(name);
+            }
+            _nameFilter = nameFilter;
+        }
+
         public void RunTests()
         {
-            /*_testLoader.TestProject.
-            NameFilter nameFilter = new NameFilter();
-            foreach (ITest test in tests)
-                nameFilter.Add(test.TestName);*/
             _testLoader.RunTests();
         }
 

@@ -21,7 +21,7 @@
         public CreationViewModel(
             TView view,
             TypesTreeViewModel typesTreeToMutate,
-            TypesTreeViewModel typesTreeToTest,
+            TestsSelectableTreeViewModel typesTreeToTest,
             MutationsTreeViewModel mutationsTree,
             MutantsCreationOptionsViewModel mutantsCreation)
             : base(view)
@@ -75,9 +75,9 @@
             }
         }
 
-        private TypesTreeViewModel _typesTreeToTest;
+        private TestsSelectableTreeViewModel _typesTreeToTest;
 
-        public TypesTreeViewModel TypesTreeToTest
+        public TestsSelectableTreeViewModel TypesTreeToTest
         {
             get
             {

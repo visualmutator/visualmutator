@@ -14,15 +14,6 @@
 
             <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeNamespace}" ItemsSource="{Binding Path=Children}">
                 <DockPanel>
-                    <Image Source="Resources/assembly.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}"/>
-                    <TextBlock Text="{Binding Name}"/>
-                </DockPanel>
-
-            </HierarchicalDataTemplate>
-
-            <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeNamespace}" ItemsSource="{Binding Path=Children}">
-                <DockPanel>
                     <Image Source="Resources/namespace.png"/>
                     <CheckBox IsChecked="{Binding IsIncluded}"/>
                     <TextBlock Text="{Binding Name}"/>
@@ -32,7 +23,7 @@
             
             <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeClass}" ItemsSource="{Binding Path=Children}">
                 <DockPanel>
-                    <Image Source="Resources/namespace.png"/>
+                    <Image Source="Resources/type.png"/>
                     <CheckBox IsChecked="{Binding IsIncluded}"/>
                     <TextBlock Text="{Binding Name}"/>
                 </DockPanel>

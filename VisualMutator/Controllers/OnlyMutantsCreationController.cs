@@ -14,6 +14,7 @@
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model;
+    using Model.Tests;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
@@ -27,17 +28,10 @@
 
     public class OnlyMutantsCreationController : CreationController<OnlyMutantsCreationViewModel, IOnlyMutantsCreationView>
     {
-        public OnlyMutantsCreationController(
-            OnlyMutantsCreationViewModel viewModel, 
-            ITypesManager typesManager, 
-            IOperatorsManager operatorsManager,
-            CommonServices svc)
-            : base(viewModel, typesManager, operatorsManager, svc)
+        public OnlyMutantsCreationController(OnlyMutantsCreationViewModel viewModel, ITypesManager typesManager, IOperatorsManager operatorsManager, IVisualStudioConnection visualStudio, ITestsContainer testsContainer, CommonServices svc) : base(viewModel, typesManager, operatorsManager, visualStudio, testsContainer, svc)
         {
-
             _viewModel.CommandBrowseForMutantFolder = new BasicCommand(BrowseForMutantsFolder);
         }
-
 
         public void BrowseForMutantsFolder()
         {

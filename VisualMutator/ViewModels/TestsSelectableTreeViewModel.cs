@@ -11,29 +11,27 @@
     using VisualMutator.Model.Mutations.Types;
     using VisualMutator.Views;
 
-    public class TypesTreeViewModel : ViewModel<ITypesTreeView>
+    public class TestsSelectableTreeViewModel : ViewModel<ITestsSelectableTree>
     {
-        public TypesTreeViewModel(ITypesTreeView view) :base(view)
+        public TestsSelectableTreeViewModel(ITestsSelectableTree view)
+            : base(view)
         {
            
         }
 
-        private ReadOnlyCollection<AssemblyNode> _assemblies;
+        private ReadOnlyCollection<TestNodeNamespace> _namespaces;
 
-        public ReadOnlyCollection<AssemblyNode> Assemblies
+        public ReadOnlyCollection<TestNodeNamespace> Namespaces
         {
             get
             {
-                return _assemblies;
+                return _namespaces;
             }
             set
             {
-                SetAndRise(ref _assemblies, value, () => Assemblies);
+                SetAndRise(ref _namespaces, value, () => Namespaces);
             }
         }
        
-
-        
-
     }
 }

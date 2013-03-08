@@ -234,7 +234,10 @@ PathTo   = """ + pathTo.Path + @"""");
         {
             return path.Path;
         }
-
+        public override string ToString()
+        {
+            return Path;
+        }
         public static bool operator ==(BasePath path1, object path2)
         {
             if (ReferenceEquals(path1, null))

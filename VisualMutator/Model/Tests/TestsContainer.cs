@@ -2,15 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure;
-
+    using CommonUtilityInfrastructure.Paths;
+    using Infrastructure.CheckboxedTree;
     using Mono.Cecil;
     using Mutations.MutantsTree;
+    using Mutations.Types;
+    using NUnit.Core;
     using StoringMutants;
     using Verification;
     using VisualMutator.Controllers;
@@ -43,6 +47,10 @@
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
         StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant);
+        IEnumerable<TestNodeNamespace> LoadTests(List<string> paths);
+
+        ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces);
+        void CreateTestFilter(ICollection<TestId> selectedTests);
     }
 
     public class TestsContainer : ITestsContainer
@@ -79,6 +87,21 @@
                 nunit,ms
             };
         }
+        public ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces)
+        {
+            return testNodeNamespaces
+                .SelectManyRecursive<NormalNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
+                .Cast<TestNodeMethod>().Select(m => m.TestId).ToList();
+        
+        }
+
+        public void CreateTestFilter(ICollection<TestId> selectedTests)
+        {
+            foreach (var testService in _testServices)
+            {
+                testService.CreateTestFilter(selectedTests);
+            }
+        }
 
         public void VerifyAssemblies(List<string> assembliesPaths)
         {
@@ -103,8 +126,6 @@
 
         public bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
-
-          //  StoredMutantInfo storedMutantInfo = _mutantsFileManager.StoreMutant(testEnvironmentInfo, mutant);
 
             try
             {

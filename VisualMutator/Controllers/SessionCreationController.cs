@@ -12,6 +12,7 @@
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model;
+    using Model.Tests;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
@@ -25,12 +26,7 @@
 
     public class SessionCreationController : CreationController<SessionCreationViewModel, ISessionCreationView>
     {
-        public SessionCreationController(
-            SessionCreationViewModel viewModel,
-            ITypesManager typesManager, 
-            IOperatorsManager operatorsManager, 
-            CommonServices svc)
-            : base(viewModel, typesManager, operatorsManager, svc)
+        public SessionCreationController(SessionCreationViewModel viewModel, ITypesManager typesManager, IOperatorsManager operatorsManager, IVisualStudioConnection visualStudio, ITestsContainer testsContainer, CommonServices svc) : base(viewModel, typesManager, operatorsManager, visualStudio, testsContainer, svc)
         {
         }
 
@@ -43,6 +39,7 @@
                 Assemblies = _viewModel.TypesTreeMutate.Assemblies,
                 ProjectPaths = _typesManager.ProjectPaths.ToList(),
                 SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),
+                SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.Namespaces),
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
             };

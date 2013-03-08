@@ -15,6 +15,7 @@ namespace VisualMutator.Model.Tests.Services
         void UnloadTests();
 
         void Cancel();
+        void CreateTestFilter(ICollection<TestId> selectedTests);
     }
 
   

@@ -15,6 +15,8 @@
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model;
+    using Model.Tests;
+    using Model.Tests.TestsTree;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
@@ -34,6 +36,8 @@
 
 
         protected readonly IOperatorsManager _operatorsManager;
+        private readonly IVisualStudioConnection _visualStudio;
+        protected readonly ITestsContainer _testsContainer;
 
         protected readonly CommonServices _svc;
 
@@ -41,19 +45,23 @@
 
         protected readonly TViewModel _viewModel;
 
-
+      
         public MutationSessionChoices Result { get; protected set; }
 
         protected CreationController(
             TViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
+             IVisualStudioConnection visualStudio,
+            ITestsContainer testsContainer,
             CommonServices svc)
         {
             _viewModel = viewModel;
 
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
+            _visualStudio = visualStudio;
+            _testsContainer = testsContainer;
             _svc = svc;
 
 
@@ -61,10 +69,10 @@
                 () => _viewModel.TypesTreeMutate.Assemblies != null 
                     && _viewModel.MutationsTree.MutationPackages != null
                     && _viewModel.TypesTreeMutate.Assemblies.Count != 0
-                  //  && _viewModel.TypesTreeToTest.Assemblies.Count != 0
+                    && _viewModel.TypesTreeToTest.Namespaces.Count != 0
                     && _viewModel.MutationsTree.MutationPackages.Count != 0)
                     .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
-                   // .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.Assemblies)
+                    .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.Namespaces)
                     .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
 
    
@@ -73,15 +81,40 @@
 
         public async void Run()
         {
-            
-            _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
-                packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
+            _svc.Threading.InvokeOnGui(_viewModel.ShowDialog);
+
+           
+            var assemblies = await Task.Run(() => _typesManager.GetTypesFromAssemblies());
+
+            _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
+
+            var packages = await Task.Run(() => _operatorsManager.LoadOperators());
+
+            _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages);
+
+         
+            if (_typesManager.IsAssemblyLoadError)
+            {
+
+                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
+            }
+
+            IEnumerable<TestNodeNamespace> testNodeNamespaces = await Task.Run(() => _testsContainer.LoadTests(_visualStudio.GetProjectAssemblyPaths().Select(p => (string)p).ToList()));
+            _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(testNodeNamespaces.ToList());
+      
+      
+            /*
+         //   _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
+         //       packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
 
             _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
                 assemblies =>
                 {
                     _viewModel.TypesTreeMutate.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
-                    _viewModel.TypesTreeToTest.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
+                  //  _viewModel.TypesTreeToTest.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
+
+
+                    var testNodeNamespaces = _testsContainer.LoadTests(_visualStudio.GetProjectAssemblyPaths().Select(p => (string)p).ToList());
                     
                     if (_typesManager.IsAssemblyLoadError)
                     {
@@ -89,8 +122,8 @@
                         _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
                     }
                 });
-
-            _viewModel.ShowDialog();
+            */
+            //_viewModel.ShowDialog();
     
         }
 

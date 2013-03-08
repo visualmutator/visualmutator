@@ -2,6 +2,8 @@ namespace VisualMutator.Model
 {
     using System.Collections.Generic;
     using CommonUtilityInfrastructure.Paths;
+    using NUnit.Core;
+    using Tests;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations.Types;
 
@@ -43,6 +45,12 @@ namespace VisualMutator.Model
             set;
         }
         public MutantsCreationOptions MutantsCreationOptions
+        {
+            get;
+            set;
+        }
+
+        public ICollection<TestId> SelectedTests
         {
             get;
             set;

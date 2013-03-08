@@ -137,6 +137,7 @@
                 foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
                 {
                     var m = new TestNodeMethod(c, testMethod.TestName.Name);
+                    m.TestId = new NUnitTestId(testMethod.TestName);
                     c.Children.Add(m);
                     mutantTestSession.TestMap.Add(testMethod.TestName.UniqueName, m);
                 }
@@ -177,6 +178,10 @@
             _nUnitWrapper.Cancel();
         }
 
+        public void CreateTestFilter(ICollection<TestId> selectedTests)
+        {
+            _nUnitWrapper.CreateFilter(selectedTests.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
+        }
 
 
         private class TestsLoadJob : IObservable<ITest>, IDisposable

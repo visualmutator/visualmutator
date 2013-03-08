@@ -51,6 +51,8 @@
             }
         }
 
+        public TestId TestId { get; set; }
+
         public void ShowMessage()
         {
             Debug.Assert(!string.IsNullOrEmpty(Message));

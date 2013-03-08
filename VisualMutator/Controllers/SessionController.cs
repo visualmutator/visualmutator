@@ -219,7 +219,7 @@
             
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
-
+                _testsContainer.CreateTestFilter(choices.SelectedTests);
 
                 _testingProcessExtensionOptions.TestingProcessExtension
                     .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);

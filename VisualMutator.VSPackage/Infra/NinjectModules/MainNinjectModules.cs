@@ -129,6 +129,10 @@
             Kernel.Bind<IMutationsTreeView>().To<MutationsTree>();
             Kernel.Bind<MutationsTreeViewModel>().ToSelf();
 
+            Kernel.Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
+            Kernel.Bind<TestsSelectableTreeViewModel>().ToSelf();
+
+            
         }
     }
 

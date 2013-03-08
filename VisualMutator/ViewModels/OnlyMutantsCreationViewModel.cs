@@ -23,8 +23,8 @@
 
         public OnlyMutantsCreationViewModel(
             IOnlyMutantsCreationView view, 
-            TypesTreeViewModel typesTree, 
-            TypesTreeViewModel typesTreeTest, 
+            TypesTreeViewModel typesTree,
+            TestsSelectableTreeViewModel typesTreeTest, 
             MutationsTreeViewModel mutationsTree, 
             MutantsCreationOptionsViewModel mutantsCreation)
             : base(view, typesTree, typesTreeTest, mutationsTree, mutantsCreation)
