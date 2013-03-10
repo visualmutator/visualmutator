@@ -32,14 +32,18 @@
                 
             var cci = new CommonCompilerAssemblies();
             var utils = new OperatorUtils(cci);
-            var manager = new AssembliesManager(cci, Create.TestServices(), new AssemblyReaderWriter());
-            var container = new MutantsContainer(cci, utils ,manager );
+          
+            var container = new MutantsContainer(cci, utils );
             var visualizer = new CodeVisualizer(cci);
-            diff = new CodeDifferenceCreator(manager, visualizer);
+            var cache = new MutantsCache(container);
+            
 
             container.DebugConfig = true;
-            mutants = Common.CreateMutants(code, oper,  container, cci, manager);
-            original = manager.Load(cci.Modules);
+            mutants = CreateMutants(code, oper,  container, cci);
+            original = new AssembliesProvider(cci.Modules);
+
+            cache.Initialize(original, new List<TypeIdentifier>());
+            diff = new CodeDifferenceCreator(cache, visualizer);
 
             Console.WriteLine("ORIGINAL:");
             var listing = diff.GetListing(CodeLanguage.CSharp, original);
@@ -74,7 +78,7 @@
             return outputFileName;
         }
         public static List<Mutant> CreateMutants(string code, IMutationOperator operatorr,
-            MutantsContainer container, CommonCompilerAssemblies cci, AssembliesManager manager)
+            MutantsContainer container, CommonCompilerAssemblies cci)
         {
             
             cci.AppendFromFile(CreateModule(code));

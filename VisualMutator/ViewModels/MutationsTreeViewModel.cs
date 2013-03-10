@@ -5,7 +5,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
-
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.Mutations.Operators;
@@ -17,7 +17,7 @@
         public MutationsTreeViewModel(IMutationsTreeView view)
             : base(view)
         {
-           
+            _mutationPackages = new List<PackageNode>().ToReadonly();
         }
 
 

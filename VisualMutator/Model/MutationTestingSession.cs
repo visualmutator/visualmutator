@@ -22,8 +22,7 @@
 
      //   public List<Mutant> TestedMutants { get; set; }
 
-        public StoredAssemblies StoredSourceAssemblies { get; set; }
-
+     
         public ICollection<TypeIdentifier> SelectedTypes { get; set; }
 
     //    public IList<IMutationOperator> SelectedOperators { get; set; }

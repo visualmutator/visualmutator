@@ -221,7 +221,6 @@
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\Exceptions\TestingCancelledException.cs" />
     <Compile Include="Model\LoadedTypes.cs" />
-    <Compile Include="Model\MonoCecilAssemblyManager.cs" />
     <Compile Include="Model\MutantsCache.cs" />
     <Compile Include="Model\MutantsCreationOptions.cs" />
     <Compile Include="Model\MutantsTestingOptions.cs" />
@@ -240,6 +239,7 @@
     <Compile Include="Infrastructure\VisualMutatorTitleProvider.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
+    <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\Tests\Custom\AspNetTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\DefaultTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\ITestingProcessExtension.cs" />
@@ -274,11 +274,9 @@
     <Compile Include="Model\Decompilation\CodeDifference\CodeWithDifference.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\LineChange.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\LineChangeType.cs" />
-    <Compile Include="Model\StoringMutants\AssembliesManager.cs" />
     <Compile Include="Model\Mutations\ClearableCacheAssemblyResolver.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutantResultState.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
-    <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\Exceptions\MutationException.cs" />
     <Compile Include="Model\StoringMutants\StoredAssemblies.cs" />
     <Compile Include="Model\StoringMutants\StoredMutantInfo.cs" />
@@ -287,7 +285,6 @@
     <Compile Include="Model\Mutations\Operators\OperatorNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorsManager.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutationNode.cs" />
-    <Compile Include="Model\Mutations\Types\AssemblyReaderWriter.cs" />
     <Compile Include="Model\Mutations\Types\SolutionTypesManager.cs" />
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
     <Compile Include="Model\MutationTestingSession.cs" />

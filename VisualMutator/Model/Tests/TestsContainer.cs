@@ -65,8 +65,6 @@
 
       
 
-        private StoredMutantInfo _currentMutant;
-
         private bool _allTestingCancelled;
         private bool _testsLoaded;
 

@@ -37,10 +37,11 @@
             kernel.Bind<IFactory<T>>().ToConstant(new FuncFactory<T>(func));
         }
 
-        public static void AndFromFactory<T>(this IBindingWhenInNamedWithOrOnSyntax<T> binding)
+        public static IBindingWhenInNamedWithOrOnSyntax<T> AndFromFactory<T>(this IBindingWhenInNamedWithOrOnSyntax<T> binding)
         {
 
             binding.Kernel.Bind<IFactory<T>>().ToConstant(new NinjectFactory<T>(binding.Kernel));
+            return binding;
         }
     }
 }

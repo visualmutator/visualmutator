@@ -38,7 +38,7 @@
     {
         private readonly ICommonCompilerAssemblies _assembliesManager;
         private readonly IOperatorUtils _operatorUtils;
-        private readonly IAssembliesManager _assembliesManagerOld;
+
         private bool _debugConfig ;
 
         public bool DebugConfig
@@ -50,13 +50,13 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public MutantsContainer(ICommonCompilerAssemblies assembliesManager, 
-            IOperatorUtils operatorUtils,
-            IAssembliesManager assembliesManagerOld
+            IOperatorUtils operatorUtils
+        
             )
         {
             _assembliesManager = assembliesManager;
             _operatorUtils = operatorUtils;
-            _assembliesManagerOld = assembliesManagerOld;
+
         }
 
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
@@ -69,8 +69,8 @@
      
             return new MutationTestingSession
             {
-                OriginalAssemblies = _assembliesManagerOld.Load(copiedModules.Modules),
-                StoredSourceAssemblies = copiedModules,
+                OriginalAssemblies = new AssembliesProvider(copiedModules.Modules),
+    
                 SelectedTypes = copiedTypes,
                 Choices = choices,
 
@@ -120,7 +120,7 @@
 
                 sw.Restart();
 
-                OperatorWithTargets targets = FindTargets(oper, session.StoredSourceAssemblies.Modules, session.SelectedTypes.ToList());
+                OperatorWithTargets targets = FindTargets(oper, session.OriginalAssemblies.Assemblies, session.SelectedTypes.ToList());
 
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 

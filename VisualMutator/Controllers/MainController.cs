@@ -41,11 +41,11 @@ namespace VisualMutator.Controllers
 
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
 
-        private readonly MutantDetailsController _mutantDetailsController;
+      
 
         private readonly CommonServices _svc;
 
-        private SessionController _sessionController;
+        private SessionController _currenSessionController;
 
         private List<IDisposable> _subscriptions; 
 
@@ -56,8 +56,7 @@ namespace VisualMutator.Controllers
             IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
             IFactory<SessionController> sessionControllerFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
-            
-            MutantDetailsController mutantDetailsController,
+           
             CommonServices svc)
         {
             _viewModel = viewModel;
@@ -65,7 +64,7 @@ namespace VisualMutator.Controllers
             _onlyMutantsCreationFactory = onlyMutantsCreationFactory;
             _sessionControllerFactory = sessionControllerFactory;
             _resultsSavingFactory = resultsSavingFactory;
-            _mutantDetailsController = mutantDetailsController;
+     
             _svc = svc;
 
 
@@ -98,11 +97,7 @@ namespace VisualMutator.Controllers
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.RegisterPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
-                .Subscribe(mutant => _mutantDetailsController.LoadDetails(mutant, 
-                    _sessionController.Session ));
-
-            _viewModel.MutantDetailsViewModel = _mutantDetailsController.ViewModel;
+       
 
         }
 
@@ -180,7 +175,9 @@ namespace VisualMutator.Controllers
 
                
             };
-          
+
+            _viewModel.RegisterPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
+                   .Subscribe(sessionController.LoadDetails);
         }
 
         public void RunMutationSession()
@@ -190,12 +187,19 @@ namespace VisualMutator.Controllers
             if (mutantsCreationController.HasResults)
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
-
                 Clean();
+             
+                
 
-                _sessionController = _sessionControllerFactory.Create();
-                Subscribe(_sessionController);
-                _sessionController.RunMutationSession(choices);
+                _currenSessionController = _sessionControllerFactory.Create();
+
+                _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
+
+                Subscribe(_currenSessionController);
+
+                
+
+                _currenSessionController.RunMutationSession(choices);
             }
         }
 
@@ -210,32 +214,40 @@ namespace VisualMutator.Controllers
 
                 Clean();
 
-                _sessionController = _sessionControllerFactory.Create();
-                Subscribe(_sessionController);
-                _sessionController.OnlyCreateMutants(choices);
+
+                _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
+                
+
+                _currenSessionController = _sessionControllerFactory.Create();
+                Subscribe(_currenSessionController);
+
+
+              
+
+                _currenSessionController.OnlyCreateMutants(choices);
             }
         }
 
         public void PauseOperations()
         {
             SetState(OperationsState.Pausing);
-            _sessionController.PauseOperations();
+            _currenSessionController.PauseOperations();
         }
         public void ResumeOperations()
         {
-           _sessionController.ResumeOperations();
+           _currenSessionController.ResumeOperations();
         }
 
         public void StopOperations()
         {
         
-            _sessionController.StopOperations();
+            _currenSessionController.StopOperations();
 
         }
         public void SaveResults()
         {
             var resultsSavingController = _resultsSavingFactory.Create();
-            resultsSavingController.Run(_sessionController.Session);
+            resultsSavingController.Run(_currenSessionController.Session);
         }
 
         public void Initialize()
@@ -245,9 +257,9 @@ namespace VisualMutator.Controllers
 
         public void Deactivate()
         {
-            if (_sessionController != null)
+            if (_currenSessionController != null)
             {
-                _sessionController.StopOperations();
+                _currenSessionController.StopOperations();
             }
             Clean();
             _viewModel.IsVisible = false;
@@ -257,7 +269,7 @@ namespace VisualMutator.Controllers
         {
             _viewModel.Clean();
 
-            _mutantDetailsController.Clean();
+          //  _mutantDetailsController.Clean();
             if (_subscriptions!=null)
             {
                 foreach (var subscription in _subscriptions)
@@ -265,7 +277,7 @@ namespace VisualMutator.Controllers
                     subscription.Dispose();
                 }
             }
-            _sessionController = null;
+            _currenSessionController = null;
             SetState(OperationsState.None);
         }
 

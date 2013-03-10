@@ -49,7 +49,7 @@
             msTestLoaderMock.Setup(_ => _.ScanAssemblies(It.IsAny<IEnumerable<string>>())).Returns(new AssemblyScanResult
             {
                 AssembliesWithTests = new[] { "Ass" },
-                TestMethods = td.Methods
+               //TODO: TestMethods = td.Methods
             });
 
 

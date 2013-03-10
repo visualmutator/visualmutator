@@ -33,9 +33,7 @@
 
         private readonly CommonServices _commonServices;
 
-        private readonly IMutantsContainer _mutantsContainer;
-
-      
+ 
 
         private Mutant _currentMutant;
         private MutationTestingSession _session;
@@ -43,12 +41,11 @@
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
             ICodeDifferenceCreator codeDifferenceCreator,
-            IMutantsContainer mutantsContainer,
             CommonServices commonServices)
         {
             _viewModel = viewModel;
             _codeDifferenceCreator = codeDifferenceCreator;
-            _mutantsContainer = mutantsContainer;
+       
 
             _commonServices = commonServices;
 

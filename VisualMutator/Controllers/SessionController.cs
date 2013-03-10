@@ -33,6 +33,7 @@
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly CommonServices _svc;
+        private readonly MutantDetailsController _mutantDetailsController;
 
         private readonly ITestsContainer _testsContainer;
 
@@ -64,12 +65,14 @@
 
         public SessionController(
             CommonServices svc,
+            MutantDetailsController mutantDetailsController,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             IMutantsFileManager mutantsFileManager,
             XmlResultsGenerator xmlResultsGenerator)
         {
             _svc = svc;
+            _mutantDetailsController = mutantDetailsController;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _mutantsFileManager = mutantsFileManager;
@@ -98,6 +101,15 @@
             }
             
         }
+
+        public MutantDetailsController MutantDetailsController
+        {
+            get
+            {
+                return _mutantDetailsController;
+            }
+        }
+
         private void RaiseMinorStatusUpdate(OperationsState type, int progress)
         {
             _sessionEventsSubject.OnNext(new MinorSessionUpdateEventArgs(type, progress));
@@ -340,7 +352,7 @@
                 Mutant mutant = _mutantsToTest.Dequeue();
                 mutant.State = MutantResultState.Creating;
                 _mutantsContainer.ExecuteMutation(mutant, 
-                    _currentSession.StoredSourceAssemblies.Modules,
+                    _currentSession.OriginalAssemblies.Assemblies,
                     _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
                 var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
           
@@ -460,7 +472,11 @@
             return true;
         }
 
-     
+
+        public void LoadDetails(Mutant mutant)
+        {
+            _mutantDetailsController.LoadDetails(mutant, Session);
+        }
     }
 
     public class MutationFinishedEventArgs : SessionEventArgs

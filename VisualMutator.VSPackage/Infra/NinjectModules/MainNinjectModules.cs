@@ -6,11 +6,15 @@
     using System.Text;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.DependencyInjection;
     using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using Ninject;
+    using Ninject.Activation.Strategies;
+    using Ninject.Extensions.ContextPreservation;
+    using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infra;
@@ -38,17 +42,22 @@
         
         public override void Load()
         {
-            Kernel.Bind<IMessageService>().To<MessageService>().InSingletonScope();
+            Bind<IOwnerWindowProvider>().To<VisualStudioOwnerWindowProvider>().InSingletonScope();
+            Bind<IApplicationTitleProvider>().To<VisualMutatorTitleProvider>().InSingletonScope();
+
+
+
+            Bind<IMessageService>().To<MessageService>().InSingletonScope();
           
-            Kernel.Bind<IEventService>().To<EventService>().InSingletonScope();
-            Kernel.Bind<IThreading>().To<Threading>().InSingletonScope();
-            Kernel.Bind<CommonServices>().ToSelf().InSingletonScope();
-            Kernel.Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
-            Kernel.Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
+            Bind<IEventService>().To<EventService>().InSingletonScope();
+            Bind<IThreading>().To<Threading>().InSingletonScope();
+            Bind<CommonServices>().ToSelf().InSingletonScope();
+            Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
+            Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
 
             var exe = new DispatcherExecute();
             exe.InitializeWithDispatcher();
-            Kernel.Bind<IDispatcherExecute>().ToConstant(exe);
+            Bind<IDispatcherExecute>().ToConstant(exe);
 
             Kernel.InjectFuncFactory(() => DateTime.Now);
 
@@ -59,87 +68,66 @@
         }
     }
 
-    public class ControllersAndViewsModule : NinjectModule
+    public class ViewsModule : NinjectModule
     {
-        private readonly VisualStudioConnection _visualStudioConnection;
-
-        public ControllersAndViewsModule(VisualStudioConnection visualStudioConnection)
-        {
-            _visualStudioConnection = visualStudioConnection;
-        }
+       
 
         public override void Load()
         {
-            Kernel.Bind<IVisualStudioConnection>().ToConstant(_visualStudioConnection);
-            Kernel.Bind<ISettingsManager>().ToConstant(new VisualStudioSettingsProvider(_visualStudioConnection));
+           
 
-            Kernel.Bind<IOwnerWindowProvider>().To<VisualStudioOwnerWindowProvider>().InSingletonScope();
-            Kernel.Bind<IApplicationTitleProvider>().To<VisualMutatorTitleProvider>().InSingletonScope();
+          
+
+            //VIEWS
+
+            Bind<IMutationResultsView>().To<MutationResultsView>();
+            Bind<MainViewModel>().ToSelf();
 
 
+            Bind<OnlyMutantsCreationViewModel>().ToSelf();
+            Bind<IOnlyMutantsCreationView>().To<OnlyMutantsCreationView>();
 
+            Bind<SessionCreationViewModel>().ToSelf();
+            Bind<ISessionCreationView>().To<SessionCreationView>();
 
-            Kernel.Bind<ApplicationController>().ToSelf().InSingletonScope();
             
-
-            Kernel.Bind<SessionCreationController>().ToSelf().AndFromFactory();
-            Kernel.Bind<SessionCreationViewModel>().ToSelf();
-            Kernel.Bind<ISessionCreationView>().To<SessionCreationView>();
-
-            Kernel.Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory();
-            Kernel.Bind<OnlyMutantsCreationViewModel>().ToSelf();
-            Kernel.Bind<IOnlyMutantsCreationView>().To<OnlyMutantsCreationView>();
+            Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
+            Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
 
 
- 
-            Kernel.Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
-            Kernel.Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
+            Bind<MutantDetailsViewModel>().ToSelf();
+            Bind<IMutantDetailsView>().To<MutantDetailsView>();
 
-            Kernel.Bind<MainController>().ToSelf().InSingletonScope();
-            Kernel.Bind<MainViewModel>().ToSelf();
-            Kernel.Bind<IMutationResultsView>().To<MutationResultsView>();
+            Bind<IResultsSavingView>().To<ResultsSavingView>();
+            Bind<ResultsSavingViewModel>().ToSelf();
 
+            Bind<IMutantsCreationOptionsView>().To<MutantsCreationOptionsView>();
+            Bind<MutantsCreationOptionsViewModel>().ToSelf();
 
-    
-            Kernel.Bind<MutantDetailsController>().ToSelf();
-            Kernel.Bind<MutantDetailsViewModel>().ToSelf();
-            Kernel.Bind<IMutantDetailsView>().To<MutantDetailsView>();
+            Bind<IMutantsTestingOptionsView>().To<MutantsTestingOptionsView>();
+            Bind<MutantsTestingOptionsViewModel>().ToSelf();
 
+            Bind<ITypesTreeView>().To<TypesTree>();
+            Bind<TypesTreeViewModel>().ToSelf();
 
+            Bind<IMutationsTreeView>().To<MutationsTree>();
+            Bind<MutationsTreeViewModel>().ToSelf();
 
-            Kernel.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
-            Kernel.Bind<ResultsSavingViewModel>().ToSelf();
-            Kernel.Bind<IResultsSavingView>().To<ResultsSavingView>();
-
-
-
-            Kernel.Bind<SessionController>().ToSelf().AndFromFactory();
-            Kernel.Bind<IMutantsCache>().To<MutantsCache>().AndFromFactory();
-
-
-
-            Kernel.Bind<IMutantsCreationOptionsView>().To<MutantsCreationOptionsView>();
-            Kernel.Bind<MutantsCreationOptionsViewModel>().ToSelf();
-
-            Kernel.Bind<IMutantsTestingOptionsView>().To<MutantsTestingOptionsView>();
-            Kernel.Bind<MutantsTestingOptionsViewModel>().ToSelf();
-
-            Kernel.Bind<ITypesTreeView>().To<TypesTree>();
-            Kernel.Bind<TypesTreeViewModel>().ToSelf();
-
-            Kernel.Bind<IMutationsTreeView>().To<MutationsTree>();
-            Kernel.Bind<MutationsTreeViewModel>().ToSelf();
-
-            Kernel.Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
-            Kernel.Bind<TestsSelectableTreeViewModel>().ToSelf();
+            Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
+            Bind<TestsSelectableTreeViewModel>().ToSelf();
 
             
         }
     }
 
-    public class ModelModule : NinjectModule
+    public class ControllerAndModelModule : NinjectModule
     {
+        private readonly VisualStudioConnection _visualStudioConnection;
 
+        public ControllerAndModelModule(VisualStudioConnection visualStudioConnection)
+        {
+            _visualStudioConnection = visualStudioConnection;
+        }
 
         public override void Load()
         {
@@ -152,55 +140,73 @@
         public void MutantsCreation()
         {
 
-            Kernel.Bind<IMutantsContainer>().To<MutantsContainer>();//.InSingletonScope();
-          
-            Kernel.Bind<IAssembliesManager>().To<AssembliesManager>().InSingletonScope();
+            Kernel.Load(new NamedScopeModule());
+            Kernel.Load(new ContextPreservationModule());
+            Bind<IVisualStudioConnection>().ToConstant(_visualStudioConnection);
+            Bind<ISettingsManager>().ToConstant(new VisualStudioSettingsProvider(_visualStudioConnection));
 
-            Kernel.Bind<IAssemblyReaderWriter>().To<AssemblyReaderWriter>().InSingletonScope();
 
 
-            Kernel.Bind<ITypesManager>().To<SolutionTypesManager>().AndFromFactory();//.InSingletonScope();
-            Kernel.Bind<IOperatorsManager>().To<OperatorsManager>().AndFromFactory();//.InSingletonScope();
-            Kernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>();//.InSingletonScope();
-            Kernel.Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InSingletonScope();
-            Kernel.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
+            Bind<ApplicationController>().ToSelf().InSingletonScope();
+            Bind<MainController>().ToSelf().InSingletonScope();
+            Bind<SessionController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
+            Bind<SessionCreationController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
+            Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
+            Bind<MutantDetailsController>().ToSelf().AndFromFactory().InNamedScope("Session");
+            Bind<ResultsSavingController>().ToSelf().AndFromFactory();
+            
+          //  Bind<IFactory<SessionController>>().ToConstant(new NinjectFactory<SessionController>(Kernel));
+            //.
+
+
+            Bind<IMutantsContainer>().To<MutantsContainer>().InNamedScope("Session");
+            Bind<IMutantsFileManager>().To<MutantsFileManager>().InNamedScope("Session");
+
+
+            Bind<ITypesManager>().To<SolutionTypesManager>().InNamedScope("Session");
+            Bind<IOperatorsManager>().To<OperatorsManager>().InNamedScope("Session");
+            Bind<IOperatorLoader>().To<MEFOperatorLoader>().InNamedScope("Session");
+            Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InNamedScope("Session");
+            Bind<IOperatorUtils>().To<OperatorUtils>().InNamedScope("Session");
+
+            Bind<IMutantsCache>().To<MutantsCache>().InNamedScope("Session");  
         }
 
         public void Tests()
         {
 
-            Kernel.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();//.InSingletonScope();
-            Kernel.Bind<IMutantsFileManager>().To<MutantsFileManager>();//.InSingletonScope();
+            Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory().InNamedScope("Session");//.InNamedScope("Session");  
 
-            Kernel.Bind<NUnitTestService>().ToSelf();//.InSingletonScope();
-            Kernel.Bind<MsTestService>().ToSelf();//.InSingletonScope();
+            Bind<NUnitTestService>().ToSelf();
 
-            Kernel.Bind<INUnitWrapper>().To<NUnitWrapper>();//;.InSingletonScope();
-            Kernel.Bind<IMsTestWrapper>().To<MsTestWrapper>();//.InSingletonScope();
-            Kernel.Bind<IMsTestLoader>().To<MsTestLoader>();//.InSingletonScope();
+            Bind<MsTestService>().ToSelf();
+
+            Bind<INUnitWrapper>().To<NUnitWrapper>();
+            Bind<IMsTestWrapper>().To<MsTestWrapper>();
+            Bind<IMsTestLoader>().To<MsTestLoader>();
 
 
-            Kernel.Bind<IAssemblyVerifier>().To<AssemblyVerifier>();//.InSingletonScope();
+            Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InNamedScope("Session");  
 
-            Kernel.Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));
+            Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));
 
 
         }
 
         public void Results()
         {
-            Kernel.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
-            Kernel.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
+            Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InNamedScope("Session");
+            Bind<ICodeVisualizer>().To<CodeVisualizer>().InNamedScope("Session");  
 
-            Kernel.Bind<XmlResultsGenerator>().ToSelf();
+            Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
         }
 
         private IEnumerable<ITestService> CreateTestService(IKernel kernel)
         {
             return new ITestService[]
             {
-                kernel.Get<NUnitTestService>(),
-                kernel.Get<MsTestService>()
+                Kernel.Get<NUnitTestService>(),
+                Kernel.Get<MsTestService>()
             };
 
         }

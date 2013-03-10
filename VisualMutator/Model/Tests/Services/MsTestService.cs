@@ -9,7 +9,8 @@
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
-
+    using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
     using Mono.Cecil;
 
     using VisualMutator.Model.Tests.TestsTree;
@@ -43,30 +44,31 @@
             return CreateTree(result.TestMethods, mutantTestSession);
         }
     
-        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<MethodDefinition> methods, MutantTestSession mutantTestSession)
+        public IEnumerable<TestNodeClass> CreateTree(IEnumerable<IMethodDefinition> methods, MutantTestSession mutantTestSession)
         {
-            var groupsByClass = methods.GroupBy(m => m.DeclaringType);
+            var groupsByClass = methods.GroupBy(m => m.ContainingTypeDefinition);
           
 
             var list = new List<TestNodeClass>();
-
+        
             foreach (var typeGroup in groupsByClass)
-            {
-                var type = typeGroup.Key;
-                var c = new TestNodeClass(type.Name)
+            {//TypeHelper.GetNamespaceName()
+                var type = typeGroup.Key.CastTo<INamedTypeDefinition>();
+                var c = new TestNodeClass(type.Name.Value)
                 {
-                    Namespace = type.Namespace,
-                    FullName = type.FullName,
+
+                    //TODO:Namespace = type.,
+                    //TODO: FullName = type.FullName,
                 };
 
-                foreach (MethodDefinition method in typeGroup)
+                foreach (IMethodDefinition method in typeGroup)
                 {
-                    var m = new TestNodeMethod(c, method.Name);
+                    //TODO:var m = new TestNodeMethod(c, method.Name);
 
-                    c.Children.Add(m);
+                    //TODO: c.Children.Add(m);
 
-                    string id = type.FullName + "," + method.Name;
-                    mutantTestSession.TestMap.Add(id, m);
+                    //TODO: string id = type.FullName + "," + method.Name;
+                    //TODO: mutantTestSession.TestMap.Add(id, m);
                 }
 
           

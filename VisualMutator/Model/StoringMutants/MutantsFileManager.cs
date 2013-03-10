@@ -34,9 +34,7 @@
     {
         private readonly IVisualStudioConnection _visualStudio;
 
-        private readonly IAssemblyReaderWriter _assemblyReaderWriter;
-
-        private readonly IAssembliesManager _assembliesManager;
+    
 
         private readonly IMutantsCache _mutantsCache;
 
@@ -52,15 +50,12 @@
 
         public MutantsFileManager(
             IVisualStudioConnection visualStudio,
-            IAssemblyReaderWriter assemblyReaderWriter,
-            IAssembliesManager assembliesManager,
             IMutantsCache mutantsCache,
             ICommonCompilerAssemblies commonCompilerAssemblies,
             IFileSystem fs)
         {
             _visualStudio = visualStudio;
-            _assemblyReaderWriter = assemblyReaderWriter;
-            _assembliesManager = assembliesManager;
+
             _mutantsCache = mutantsCache;
             _commonCompilerAssemblies = commonCompilerAssemblies;
             _fs = fs;

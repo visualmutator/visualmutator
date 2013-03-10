@@ -2,14 +2,14 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-
+    using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Model.Mutations.Types;
 
     public class AssemblyScanResult
     {
-        public IEnumerable<MethodDefinition> TestMethods
+        public IEnumerable<IMethodDefinition> TestMethods
         {
             get;
             set;
@@ -30,16 +30,17 @@
     }
     public class MsTestLoader : IMsTestLoader
     {
-        private readonly IAssemblyReaderWriter _assemblyReaderWriter;
+        private readonly CommonCompilerAssemblies _assemblies;
 
-        public MsTestLoader(IAssemblyReaderWriter assemblyReaderWriter)
+
+        public MsTestLoader(CommonCompilerAssemblies assemblies)
         {
-            _assemblyReaderWriter = assemblyReaderWriter;
+            _assemblies = assemblies;
         }
 
         public AssemblyScanResult ScanAssemblies(IEnumerable<string> assemblies)
         {
-            var list = new List<MethodDefinition>();
+            var list = new List<IMethodDefinition>();
             var withTests = new List<string>();
             foreach (string assembly in assemblies)
             {
@@ -59,32 +60,19 @@
                 AssembliesWithTests = withTests
             };
         }
-        public IEnumerable<MethodDefinition> ReadTestMethodsFromAssembly(string assembly)
+        public IEnumerable<IMethodDefinition> ReadTestMethodsFromAssembly(string assembly)
         {
-            AssemblyDefinition ad = _assemblyReaderWriter.ReadAssembly(assembly);
+            IModule module = _assemblies.ReadFromStream(assembly);
 
-            return from type in ad.MainModule.Types
-                   where type.CustomAttributes.Any(a => a.AttributeType.FullName
+            return from type in module.GetAllTypes()
+                   where type.Attributes.Select(a => a.Type).OfType<INamedTypeDefinition>().Any(a => a.Name.Value
                         == @"Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute")
                    from method in type.Methods
-                   where method.CustomAttributes.Any(a => a.AttributeType.FullName
+                   where method.Attributes.Select(a => a.Type).OfType<INamedTypeDefinition>().Any(a => a.Name.Value
                         == @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute")
                    select method;
 
-            /*
-            IEnumerable<TypeDefinition> types =
-                ad.MainModule.Types.Where(
-                    t =>
-                    t.CustomAttributes.Any(
-                        a =>
-                        a.AttributeType.FullName ==
-                        @"Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute")).ToList();
-
-            return types.SelectMany(t => t.Methods).Where(
-                m => m.CustomAttributes.Any(
-                    a =>
-                    a.AttributeType.FullName ==
-                    @"Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"));*/
+         
         }
 
    

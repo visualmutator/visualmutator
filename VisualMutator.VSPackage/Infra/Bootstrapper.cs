@@ -14,6 +14,9 @@
     using Microsoft.VisualStudio.Shell;
 
     using Ninject;
+    using Ninject.Activation.Strategies;
+    using Ninject.Extensions.ContextPreservation;
+    using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
@@ -35,25 +38,17 @@
 
         private IKernel _kernel;
 
-        private static log4net.ILog _log;
+        private static log4net.ILog _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
 
         static Bootstrapper()
         {
             Log4NetConfig.Execute();
-            _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
             EnsureApplication();
 
-           
         }
-        public static void EnsureApplication()
-        {
-            if (Application.Current == null)
-            {
-                new Application();
-            }
-        }
+ 
 
         public Bootstrapper(Package package)
         {
@@ -91,6 +86,14 @@
 
             
         }
+        public static void EnsureApplication()
+        {
+            if (Application.Current == null)
+            {
+                new Application();
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void SetupDependencyInjection()
         {
@@ -98,14 +101,19 @@
             var modules = new INinjectModule[]
             {
                 new InfrastructureModule(), 
-                new ControllersAndViewsModule(new VisualStudioConnection(_package)), 
-                new ModelModule(), 
+                new ViewsModule(), 
+                new ControllerAndModelModule(new VisualStudioConnection(_package)), 
             };
            
 
 
-            _kernel = new StandardKernel(modules);
+            _kernel = new StandardKernel();
+            _kernel.Components.Add<IActivationStrategy, MyMonitorActivationStrategy>();
 
+
+
+
+            _kernel.Load(modules);
 
         }
    
