@@ -7,6 +7,7 @@
     using CommonUtilityInfrastructure.DependencyInjection;
 
     using Ninject;
+    using Ninject.Parameters;
     using Ninject.Syntax;
 
     #endregion
@@ -23,6 +24,7 @@
 
         public TObject Create()
         {
+
             return _kernel.Get<TObject>();
         }
     }

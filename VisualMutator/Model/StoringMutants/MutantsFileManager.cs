@@ -37,6 +37,9 @@
         private readonly IAssemblyReaderWriter _assemblyReaderWriter;
 
         private readonly IAssembliesManager _assembliesManager;
+
+        private readonly IMutantsCache _mutantsCache;
+
         private readonly ICommonCompilerAssemblies _commonCompilerAssemblies;
 
         private readonly IFileSystem _fs;
@@ -51,12 +54,14 @@
             IVisualStudioConnection visualStudio,
             IAssemblyReaderWriter assemblyReaderWriter,
             IAssembliesManager assembliesManager,
+            IMutantsCache mutantsCache,
             ICommonCompilerAssemblies commonCompilerAssemblies,
             IFileSystem fs)
         {
             _visualStudio = visualStudio;
             _assemblyReaderWriter = assemblyReaderWriter;
             _assembliesManager = assembliesManager;
+            _mutantsCache = mutantsCache;
             _commonCompilerAssemblies = commonCompilerAssemblies;
             _fs = fs;
         }
@@ -125,9 +130,9 @@
 
             
             var result = new StoredMutantInfo();
-
+            var assembliesProvider = _mutantsCache.GetMutatedModules(mutant);
             //IList<AssemblyDefinition> assemblyDefinitions = _assembliesManager.Load(mutant.StoredAssemblies).Assemblies;
-            foreach (IModule module in mutant.MutatedModules)
+            foreach (IModule module in assembliesProvider.Assemblies)
             {
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name

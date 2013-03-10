@@ -4,10 +4,12 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Interop;
     using System.Xml.Linq;
@@ -42,6 +44,11 @@
         {
             return (T)obj;
         }
+        public static ReadOnlyCollection<T> ToReadonly<T>(this IEnumerable<T> collection)
+        {
+            return new ReadOnlyCollection<T>(collection.ToList());
+        }
+     
         public static void AddRange<T>(this ICollection<T> collection, params T[] toAdd)
         {
             collection.AddRange(toAdd.AsEnumerable());

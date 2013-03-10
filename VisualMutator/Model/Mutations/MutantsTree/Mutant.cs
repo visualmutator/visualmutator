@@ -8,7 +8,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
     public class Mutant : MutationNode
     {
-        private readonly int _id;
+        private readonly string _id;
 
         private readonly MutationTarget _mutationTarget;
         private readonly List<MutationTarget> _commonTargets;
@@ -18,12 +18,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             get { return _commonTargets; }
         }
 
-        public List<IModule> MutatedModules
-        {
-            get;
-            set;
-        }
-
+     
         public MutationTarget MutationTarget
         {
             get
@@ -38,7 +33,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 return Parent.CastTo<ExecutedOperator>();
             }
         }
-        public Mutant(int id, ExecutedOperator parent, MutationTarget mutationTarget, List<MutationTarget> commonTargets)
+        public Mutant(string id, ExecutedOperator parent, MutationTarget mutationTarget, List<MutationTarget> commonTargets)
             : base( "Mutant", false)
         {
             _id = id;
@@ -50,7 +45,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             Parent = parent;
         }
 
-        public int Id
+        public string Id
         {
             get
             {

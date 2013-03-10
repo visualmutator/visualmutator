@@ -113,7 +113,8 @@
 
 
 
-            Kernel.Bind<SessionController>().To<SessionController>().AndFromFactory();
+            Kernel.Bind<SessionController>().ToSelf().AndFromFactory();
+            Kernel.Bind<IMutantsCache>().To<MutantsCache>().AndFromFactory();
 
 
 

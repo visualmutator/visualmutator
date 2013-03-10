@@ -117,7 +117,8 @@
             _svc.Threading.ScheduleAsync(() =>
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
-                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
+                ExecutedOperator oper;
+                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out oper);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                 StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
@@ -208,14 +209,16 @@
             _svc.Threading.ScheduleAsync(() =>
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
-                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
-                var exe = new ExecutedOperator("No operator", "", new PreOperator());
+                ExecutedOperator execOperator;
+                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out execOperator);
+              //  var exe = new ExecutedOperator("No operator", "No modifications", new PreOperator());
+              //  exe.Children.Add(changelessMutant);
 
                 _svc.Threading.InvokeOnGui(() =>
                     {
                         _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
                         {
-                            MutantsGroupedByOperators = exe.InList(),
+                            MutantsGroupedByOperators = execOperator.InList(),
                         });
 
                     });
@@ -226,7 +229,7 @@
                     _testingProcessExtensionOptions.Parameter, choices.ProjectPaths.Select(p=>p.Path).ToList());
 
 
-                var storedMutantInfo =_testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+                var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
             
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 

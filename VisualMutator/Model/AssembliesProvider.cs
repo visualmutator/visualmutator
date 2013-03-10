@@ -6,6 +6,15 @@
 
     public class AssembliesProvider
     {
-        public List<IModule> Assemblies { get; set; }
+        public AssembliesProvider(IList<IModule> modules)
+        {
+            Assemblies = modules;
+        }
+
+        public IList<IModule> Assemblies
+        {
+            get;
+            set;
+        }
     }
 }

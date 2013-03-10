@@ -56,12 +56,8 @@ namespace VisualMutator.Model.StoringMutants
 
         public AssembliesProvider Load(IList<IModule> assemblies)
         {
-            var pro = new AssembliesProvider()
-                {
-                    Assemblies = new List<IModule>(assemblies)
-                };
-         
-            return pro;
+            return new AssembliesProvider(assemblies);
+              
         }
 
 

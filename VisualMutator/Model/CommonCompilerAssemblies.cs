@@ -14,9 +14,12 @@
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
 
+    using PeToText;
+
     using log4net;
 
     using Module = Microsoft.Cci.MutableCodeModel.Module;
+    using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
 
     public interface ICommonCompilerAssemblies
     {

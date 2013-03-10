@@ -25,15 +25,16 @@
     public class CodeDifferenceCreator : ICodeDifferenceCreator
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IAssembliesManager _assembliesManager;
+
+        private readonly IMutantsCache _mutantsCache;
+
         private readonly ICodeVisualizer _codeVisualizer;
 
-        public CodeDifferenceCreator(IAssembliesManager assembliesManager, ICodeVisualizer codeVisualizer)
+        public CodeDifferenceCreator(IMutantsCache mutantsCache, ICodeVisualizer codeVisualizer)
         {
-            _assembliesManager = assembliesManager;
+            _mutantsCache = mutantsCache;
             _codeVisualizer = codeVisualizer;
         }
-
 
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
         {
@@ -49,7 +50,7 @@
         public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, AssembliesProvider currentOriginalAssemblies)
         {
 
-            AssembliesProvider assemblyDefinitions = _assembliesManager.Load(mutant.MutatedModules);
+            AssembliesProvider assemblyDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {
                 CodePair pair = new CodePair

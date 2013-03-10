@@ -35,9 +35,7 @@
 
         private readonly IMutantsContainer _mutantsContainer;
 
-        private IDisposable _listenerForCurrentMutant;
-
-       
+      
 
         private Mutant _currentMutant;
         private MutationTestingSession _session;
@@ -101,11 +99,7 @@
 
         private async Task<CodeWithDifference> GetCodeWithDifference(CodeLanguage selectedLanguage, Mutant mutant, AssembliesProvider assemblies)
         {
-            if (mutant.MutatedModules == null)
-            {
-                _mutantsContainer.ExecuteMutation(mutant, _session.StoredSourceAssemblies.Modules,
-                    _session.SelectedTypes.ToList(), ProgressCounter.Inactive());
-            }
+
             return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
                 mutant, assemblies);
         }
@@ -114,11 +108,7 @@
         {
             _viewModel.TestNamespaces.Clear();
 
-            if (_listenerForCurrentMutant != null)
-            {
-                _listenerForCurrentMutant.Dispose();
-                _listenerForCurrentMutant = null;
-            }
+           
 
             if (mutant.MutantTestSession.IsComplete)
             {

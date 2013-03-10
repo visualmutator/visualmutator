@@ -116,6 +116,7 @@
     <Compile Include="Threading\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Threading\NonFatalWrappedException.cs" />
     <Compile Include="Threading\Threading.cs" />
+    <Compile Include="Units.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WpfUtils\BasicCommand.cs" />
     <Compile Include="WpfUtils\NotifyingCollection.cs" />

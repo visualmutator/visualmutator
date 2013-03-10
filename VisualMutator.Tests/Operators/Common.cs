@@ -90,7 +90,7 @@
             foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Values.SelectMany(v => v))
             {
                 var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
-                var mutant = new Mutant(0, exec, mutationTarget, operatorWithTargets.CommonTargets);
+                var mutant = new Mutant("0", exec, mutationTarget, operatorWithTargets.CommonTargets);
   
                 container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
                 mutants.Add(mutant);

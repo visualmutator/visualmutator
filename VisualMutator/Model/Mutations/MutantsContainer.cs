@@ -26,11 +26,11 @@
 
         void GenerateMutantsForOperators(MutationTestingSession session, ProgressCounter progress );
 
-        Mutant CreateChangelessMutant(MutationTestingSession session);
+        Mutant CreateChangelessMutant(out ExecutedOperator executedOperator);
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        void ExecuteMutation( Mutant mutant, IList<IModule> modules, IList<TypeIdentifier> allowedTypes,
+        AssembliesProvider ExecuteMutation( Mutant mutant, IList<IModule> modules, IList<TypeIdentifier> allowedTypes,
                         ProgressCounter percentCompleted);
     }
 
@@ -77,18 +77,18 @@
             };
         }
 
-        public Mutant CreateChangelessMutant(MutationTestingSession session)
+        public Mutant CreateChangelessMutant(out ExecutedOperator executedOperator)
         {
             var op = new PreOperator();
-            var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
-            var executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
+          //  var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
+            executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
              
-            var mutant = new Mutant(0, executedOperator, new MutationTarget("", -1, 0, "",""), new List<MutationTarget>());
+            var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, 0, "",""), new List<MutationTarget>());
             executedOperator.Children.Add(mutant);
         
-            var copiedModules = session.StoredSourceAssemblies.Modules
-                                                         .Select(_assembliesManager.Copy).Cast<IModule>().ToList();
-            mutant.MutatedModules = copiedModules;
+         //   var copiedModules = session.StoredSourceAssemblies.Modules
+         //                                                .Select(_assembliesManager.Copy).Cast<IModule>().ToList();
+         //   mutant.MutatedModules = copiedModules;
             return mutant;
         }
 
@@ -129,7 +129,7 @@
                 //subProgress.Initialize(targets.MutationTargets.Count);
                 foreach (MutationTarget mutationTarget in targets.MutationTargets.Values.SelectMany(v => v))
                 {
-                    var mutant = new Mutant(genId(), executedOperator, mutationTarget, targets.CommonTargets);
+                    var mutant = new Mutant(genId().ToString(), executedOperator, mutationTarget, targets.CommonTargets);
                     executedOperator.Children.Add(mutant);
 
                     //subProgress.Progress();
@@ -207,13 +207,13 @@
 
         }
 
-        public void ExecuteMutation(Mutant mutant, IList<IModule> sourceModules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
+        public AssembliesProvider ExecuteMutation(Mutant mutant, IList<IModule> sourceModules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
         {
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
                 var copiedModules = sourceModules.Select(_assembliesManager.Copy).Cast<IModule>().ToList();
-                mutant.MutatedModules = new List<IModule>();
+                var mutatedModules = new List<IModule>();
                 foreach (var module in copiedModules)
                 {
                     percentCompleted.Progress();
@@ -234,11 +234,11 @@
                         , visitor2.CommonTargetsElements, allowedTypes, operatorCodeRewriter);
                     IModule rewrittenModule = rewriter.Rewrite(module);
 
-                    
 
-                    mutant.MutatedModules.Add(rewrittenModule);
+
+                    mutatedModules.Add(rewrittenModule);
                 }
-                
+                return new AssembliesProvider( mutatedModules);
             }
             catch (Exception e)
             {

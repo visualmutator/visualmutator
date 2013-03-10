@@ -83,30 +83,36 @@
                 {
 
 
-                    var assemblies = await Task.Run(() => _typesManager.GetTypesFromAssemblies());
+                  //  var assemblies = await Task.Run(() => _typesManager.GetTypesFromAssemblies());
 
-                    
-                    _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
 
-                    var packages = await Task.Run(() => _operatorsManager.LoadOperators());
-
-                    _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages);
+                 //   _viewModel.TypesTreeMutate.Assemblies = assemblies.ToReadonly();
 
 
 
-                    var t = Task.WhenAll();
-                    t.
+                    var taskGetAssemblies = Task.Run<object>(() => _typesManager.GetTypesFromAssemblies());
+                    var taskLoadTests = Task.Run<object>(() => _testsContainer.LoadTests(
+                                _visualStudio.GetProjectAssemblyPaths().Select(p => (string) p).ToList()));
+                    var loadOperators = Task.Run<object>(() => _operatorsManager.LoadOperators());
+
+
+                    var tAll = await Task.WhenAll(taskGetAssemblies, taskLoadTests, loadOperators);
+
+                  //  t.
                     if (_typesManager.IsAssemblyLoadError)
                     {
 
                         _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
                     }
 
-                    IEnumerable<TestNodeNamespace> testNodeNamespaces =
-                        await Task.Run( () => _testsContainer.LoadTests(
-                                _visualStudio.GetProjectAssemblyPaths().Select(p => (string) p).ToList()));
-                    _viewModel.TypesTreeToTest.Namespaces =
-                        new ReadOnlyCollection<TestNodeNamespace>(testNodeNamespaces.ToList());
+                    _viewModel.TypesTreeMutate.Assemblies = tAll[0].CastTo<IList<AssemblyNode>>().ToReadonly();
+                    _viewModel.TypesTreeToTest.Namespaces = tAll[1].CastTo<IEnumerable<TestNodeNamespace>>().ToReadonly();
+                
+
+                   // var packages = await Task.Run(() => _operatorsManager.LoadOperators());
+
+                    _viewModel.MutationsTree.MutationPackages = tAll[2].CastTo<IList<PackageNode>>().ToReadonly();
+
 
                 });
             /*
