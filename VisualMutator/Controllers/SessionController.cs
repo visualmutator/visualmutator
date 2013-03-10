@@ -12,6 +12,7 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model.Mutations.MutantsTree;
+    using Model.Mutations.Operators;
     using Model.StoringMutants;
     using Model.Verification;
     using VisualMutator.Infrastructure;
@@ -208,7 +209,17 @@
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(_currentSession);
+                var exe = new ExecutedOperator("No operator", "", new PreOperator());
 
+                _svc.Threading.InvokeOnGui(() =>
+                    {
+                        _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
+                        {
+                            MutantsGroupedByOperators = exe.InList(),
+                        });
+
+                    });
+                
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
 
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionStarting(
@@ -223,6 +234,7 @@
 
                 _testingProcessExtensionOptions.TestingProcessExtension
                     .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
                 return changelessMutant;
 

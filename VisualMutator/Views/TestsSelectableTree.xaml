@@ -39,10 +39,16 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <TreeView ItemsSource="{Binding Assemblies}"/>
+        <TreeView ItemsSource="{Binding Namespaces}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="False" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
 
         <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="{Binding Assemblies, Converter={Converters:NullToVisibilityConverter}}"/>
+                           Visibility="{Binding Namespaces, Converter={Converters:EmptyToVisibleConverter}}"/>
 
     </Grid>
 </UserControl>

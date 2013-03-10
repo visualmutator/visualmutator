@@ -97,6 +97,11 @@
                 return SynchronizationContext.Current;
             }
         }
+
+        public void PostOnUIThread(Action action)
+        {
+            action();
+        }
     }
 
 

@@ -156,6 +156,11 @@
             var session = new MutantTestSession();
             LoadTests(paths, session);
             UnloadTests();
+
+            var root = new FakeNode();
+            root.Children.AddRange(session.TestNamespaces);
+            root.IsIncluded = true;
+
             return session.TestNamespaces;
         }
 

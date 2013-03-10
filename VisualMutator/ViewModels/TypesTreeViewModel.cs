@@ -15,7 +15,7 @@
     {
         public TypesTreeViewModel(ITypesTreeView view) :base(view)
         {
-           
+            _assemblies = new ReadOnlyCollection<AssemblyNode>(new List<AssemblyNode>());
         }
 
         private ReadOnlyCollection<AssemblyNode> _assemblies;

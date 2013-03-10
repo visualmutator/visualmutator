@@ -29,19 +29,26 @@
 
             </HierarchicalDataTemplate>
 
-            <DataTemplate DataType="{x:Type Types:TypeNode}">
+            <DataTemplate DataType="{x:Type Types:TypeNode}" >
                 <DockPanel>
                     <Image Source="Resources/type.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}"/>
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
                     <TextBlock Text="{Binding Name}"/>
                 </DockPanel>
+                
             </DataTemplate>
         </Grid.Resources>
 
-        <TreeView ItemsSource="{Binding Assemblies}"/>
+        <TreeView ItemsSource="{Binding Assemblies}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="False" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
 
         <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="{Binding Assemblies, Converter={Converters:NullToVisibilityConverter}}"/>
+                           Visibility="{Binding Assemblies, Converter={Converters:EmptyToVisibleConverter}}"/>
 
     </Grid>
 </UserControl>

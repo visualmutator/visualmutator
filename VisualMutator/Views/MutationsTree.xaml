@@ -35,6 +35,6 @@
 
         <TreeView ItemsSource="{Binding MutationPackages}"/>
         <Views:ProgressControl  HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="{Binding MutationPackages, Converter={Converters:NullToVisibilityConverter}}"/>
+                           Visibility="{Binding MutationPackages, Converter={Converters:EmptyToVisibleConverter}}"/>
     </Grid>
 </UserControl>

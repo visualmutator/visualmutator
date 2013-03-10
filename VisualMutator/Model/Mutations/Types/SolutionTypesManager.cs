@@ -75,16 +75,15 @@ namespace VisualMutator.Model.Mutations.Types
         public IList<AssemblyNode> GetTypesFromAssemblies()
         {
 
-            
-
+            var loadedAssemblies = LoadAssemblies(_visualStudio.GetProjectAssemblyPaths());
             var root = new FakeNode();
-            var loadedAssemblies = LoadAssemblies(root, _visualStudio.GetProjectAssemblyPaths());
+            root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;
 
             return loadedAssemblies;
         }
 
-        private IList<AssemblyNode> LoadAssemblies(FakeNode root, IEnumerable<FilePathAbsolute> assembliesPaths)
+        private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
         {
             var assemblyTreeNodes = new List<AssemblyNode>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
@@ -99,7 +98,7 @@ namespace VisualMutator.Model.Mutations.Types
 
                     GroupTypes(assemblyNode, "", ChooseTypes(module).ToList());
 
-                    root.Children.Add(assemblyNode);
+
                     assemblyTreeNodes.Add(assemblyNode);
 
                 }

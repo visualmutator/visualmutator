@@ -15,6 +15,7 @@ namespace CommonUtilityInfrastructure.Threading
         Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, Action onException = null, Action onFinally = null);
 
         void InvokeOnGui(Action onGui);
+        void PostOnGui(Action onGui);
 
         Action<T> CreateActionOnGui<T>(Action<T> onGui);
 
@@ -78,6 +79,11 @@ namespace CommonUtilityInfrastructure.Threading
         public void InvokeOnGui( Action onGui)
         {
             _execute.OnUIThread(onGui);
+        }
+
+        public void PostOnGui(Action onGui)
+        {
+            _execute.PostOnUIThread(onGui);
         }
 
         public SynchronizationContext GuiSyncContext 

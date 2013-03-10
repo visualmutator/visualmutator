@@ -242,6 +242,7 @@
     <Compile Include="Model\Tests\Custom\DefaultTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\ITestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\TestingProcessExtensionOptions.cs" />
+    <Compile Include="Model\Tests\TestId.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />
@@ -311,6 +312,7 @@
     <Compile Include="Views\AttachedBehaviors\BindableSelectedItemBehaviour.cs" />
     <Compile Include="Views\AttachedBehaviors\MouseDoubleClickBehavior.cs" />
     <Compile Include="Views\Controls\ImageButton.cs" />
+    <Compile Include="Views\Converters\EmptyToVisibleConverter.cs" />
     <Compile Include="Views\Converters\EqualsConverter.cs" />
     <Compile Include="Views\Converters\TrueToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\CloningConverter.cs" />

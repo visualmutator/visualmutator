@@ -16,7 +16,7 @@
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
 #if DEBUG
-            Debug.Assert(this.GetType().Equals(typeof(TConverter)));
+            Debug.Assert(GetType() == typeof(TConverter), "Type should be generic constrained to self. Actual: " + typeof(TConverter) +" should be: "+GetType());
           
 #endif
 

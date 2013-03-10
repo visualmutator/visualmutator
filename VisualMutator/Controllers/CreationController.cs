@@ -66,9 +66,7 @@
 
 
             _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
-                () => _viewModel.TypesTreeMutate.Assemblies != null 
-                    && _viewModel.MutationsTree.MutationPackages != null
-                    && _viewModel.TypesTreeMutate.Assemblies.Count != 0
+                () => _viewModel.TypesTreeMutate.Assemblies.Count != 0
                     && _viewModel.TypesTreeToTest.Namespaces.Count != 0
                     && _viewModel.MutationsTree.MutationPackages.Count != 0)
                     .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
@@ -81,28 +79,36 @@
 
         public async void Run()
         {
-            _svc.Threading.InvokeOnGui(_viewModel.ShowDialog);
+            _svc.Threading.PostOnGui(async () =>
+                {
 
-           
-            var assemblies = await Task.Run(() => _typesManager.GetTypesFromAssemblies());
 
-            _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
+                    var assemblies = await Task.Run(() => _typesManager.GetTypesFromAssemblies());
 
-            var packages = await Task.Run(() => _operatorsManager.LoadOperators());
+                    
+                    _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
 
-            _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages);
+                    var packages = await Task.Run(() => _operatorsManager.LoadOperators());
 
-         
-            if (_typesManager.IsAssemblyLoadError)
-            {
+                    _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages);
 
-                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
-            }
 
-            IEnumerable<TestNodeNamespace> testNodeNamespaces = await Task.Run(() => _testsContainer.LoadTests(_visualStudio.GetProjectAssemblyPaths().Select(p => (string)p).ToList()));
-            _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(testNodeNamespaces.ToList());
-      
-      
+
+                    var t = Task.WhenAll();
+                    t.
+                    if (_typesManager.IsAssemblyLoadError)
+                    {
+
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
+                    }
+
+                    IEnumerable<TestNodeNamespace> testNodeNamespaces =
+                        await Task.Run( () => _testsContainer.LoadTests(
+                                _visualStudio.GetProjectAssemblyPaths().Select(p => (string) p).ToList()));
+                    _viewModel.TypesTreeToTest.Namespaces =
+                        new ReadOnlyCollection<TestNodeNamespace>(testNodeNamespaces.ToList());
+
+                });
             /*
          //   _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
          //       packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
@@ -123,7 +129,7 @@
                     }
                 });
             */
-            //_viewModel.ShowDialog();
+            _viewModel.ShowDialog();
     
         }
 

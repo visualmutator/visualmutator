@@ -16,7 +16,7 @@
         public TestsSelectableTreeViewModel(ITestsSelectableTree view)
             : base(view)
         {
-           
+            _namespaces = new ReadOnlyCollection<TestNodeNamespace>(new List<TestNodeNamespace>());
         }
 
         private ReadOnlyCollection<TestNodeNamespace> _namespaces;

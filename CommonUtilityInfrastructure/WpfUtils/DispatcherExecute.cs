@@ -17,6 +17,7 @@
         TaskScheduler GuiScheduler { get; }
 
         SynchronizationContext GuiSyncContext { get; }
+        void PostOnUIThread(Action action);
     }
 
     public class DispatcherExecute : IDispatcherExecute
@@ -39,7 +40,12 @@
                 _dispatcher.BeginInvoke(action);
             }
         }
+        public void PostOnUIThread(Action action)
+        {
 
+            _dispatcher.BeginInvoke(action);
+            
+        }
         public TaskScheduler GuiScheduler
         {
             get

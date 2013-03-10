@@ -100,6 +100,11 @@
             _msTestWrapper.Cancel();
         }
 
+        public void CreateTestFilter(ICollection<TestId> selectedTests)
+        {
+            //TODO: throw new NotImplementedException();
+        }
+
         public IEnumerable<TestNodeMethod> ReadTestResults(XDocument doc, MutantTestSession mutantTestSession)
         {
        
