@@ -26,7 +26,7 @@
 
     public class SessionCreationController : CreationController<SessionCreationViewModel, ISessionCreationView>
     {
-        public SessionCreationController(SessionCreationViewModel viewModel, ITypesManager typesManager, IOperatorsManager operatorsManager, IVisualStudioConnection visualStudio, ITestsContainer testsContainer, CommonServices svc) : base(viewModel, typesManager, operatorsManager, visualStudio, testsContainer, svc)
+        public SessionCreationController(SessionCreationViewModel viewModel, ITypesManager typesManager, IOperatorsManager operatorsManager, IVisualStudioConnection visualStudio, ITestsContainer testsContainer, SessionController sessionController, CommonServices svc) : base(viewModel, typesManager, operatorsManager, visualStudio, testsContainer, sessionController, svc)
         {
         }
 

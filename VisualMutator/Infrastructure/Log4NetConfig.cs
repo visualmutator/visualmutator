@@ -25,6 +25,7 @@
         //    root.AddAppender(GetConsoleAppender());
             string p = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
 
+            root.AddAppender(GetFileAppender(Path.GetDirectoryName(p), "Debug.log", Level.Debug));
             root.AddAppender(GetFileAppender(Path.GetDirectoryName(p), "Info.log", Level.Info));
             root.AddAppender(GetFileAppender(Path.GetDirectoryName(p), "Error.log", Level.Error));
             root.AddAppender(GetConsoleAppender());
@@ -38,7 +39,7 @@
                 Name = "File",
                 AppendToFile = true,
                 File = Path.Combine(directory,fileName),
-                Layout = new PatternLayout("%-5level [%thread] - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline%newline%newline%newline"),
+                Layout = new PatternLayout("%-5level [%thread] - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
                 Threshold = threshold
             };
 

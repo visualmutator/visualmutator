@@ -28,7 +28,7 @@
 
     public class OnlyMutantsCreationController : CreationController<OnlyMutantsCreationViewModel, IOnlyMutantsCreationView>
     {
-        public OnlyMutantsCreationController(OnlyMutantsCreationViewModel viewModel, ITypesManager typesManager, IOperatorsManager operatorsManager, IVisualStudioConnection visualStudio, ITestsContainer testsContainer, CommonServices svc) : base(viewModel, typesManager, operatorsManager, visualStudio, testsContainer, svc)
+        public OnlyMutantsCreationController(OnlyMutantsCreationViewModel viewModel, ITypesManager typesManager, IOperatorsManager operatorsManager, IVisualStudioConnection visualStudio, ITestsContainer testsContainer, SessionController sessionController, CommonServices svc) : base(viewModel, typesManager, operatorsManager, visualStudio, testsContainer, sessionController, svc)
         {
             _viewModel.CommandBrowseForMutantFolder = new BasicCommand(BrowseForMutantsFolder);
         }

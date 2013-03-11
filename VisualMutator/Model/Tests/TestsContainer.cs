@@ -72,7 +72,7 @@
 
         public TestsContainer(
             NUnitTestService nunit, 
-            MsTestService ms,
+           // MsTestService ms,
             IMutantsFileManager mutantsFileManager, 
             CommonServices commonServices,
             IAssemblyVerifier assemblyVerifier)
@@ -82,7 +82,7 @@
             _assemblyVerifier = assemblyVerifier;
             _testServices = new List<ITestService>
             {
-                nunit,ms
+                nunit//,ms
             };
         }
         public ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces)

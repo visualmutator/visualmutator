@@ -17,7 +17,7 @@
 
     public interface IMutantsCache
     {
-        void Initialize(AssembliesProvider originalCode, IList<TypeIdentifier> allowedTypes);
+        void Initialize(AssembliesProvider originalCode, ICollection<TypeIdentifier> allowedTypes);
 
         AssembliesProvider GetMutatedModules(Mutant mutant);
     }
@@ -30,7 +30,7 @@
 
         private AssembliesProvider _originalCode;
 
-        private IList<TypeIdentifier> _allowedTypes;
+        private ICollection<TypeIdentifier> _allowedTypes;
 
         private const int MaxLoadedModules = 5;
 
@@ -50,7 +50,7 @@
             _cache = new MemoryCache("CustomCache", config);
         }
 
-        public void Initialize(AssembliesProvider originalCode, IList<TypeIdentifier> allowedTypes)
+        public void Initialize(AssembliesProvider originalCode, ICollection<TypeIdentifier> allowedTypes)
         {
             _originalCode = originalCode;
             _allowedTypes = allowedTypes;
@@ -62,7 +62,7 @@
             AssembliesProvider result;
             if(!_cache.Contains(mutant.Id))
             {
-                result = _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes, ProgressCounter.Inactive());
+                result = _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
                 _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
             }
             else

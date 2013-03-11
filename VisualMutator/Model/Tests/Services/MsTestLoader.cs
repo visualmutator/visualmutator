@@ -30,12 +30,12 @@
     }
     public class MsTestLoader : IMsTestLoader
     {
-        private readonly CommonCompilerAssemblies _assemblies;
+      
 
 
-        public MsTestLoader(CommonCompilerAssemblies assemblies)
+        public MsTestLoader()
         {
-            _assemblies = assemblies;
+            //_assemblies = assemblies;
         }
 
         public AssemblyScanResult ScanAssemblies(IEnumerable<string> assemblies)
@@ -62,7 +62,7 @@
         }
         public IEnumerable<IMethodDefinition> ReadTestMethodsFromAssembly(string assembly)
         {
-            IModule module = _assemblies.ReadFromStream(assembly);
+            IModule module = null;//TODO: jakis inny sposób niż _assemblies.ReadFromStream(assembly);
 
             return from type in module.GetAllTypes()
                    where type.Attributes.Select(a => a.Type).OfType<INamedTypeDefinition>().Any(a => a.Name.Value

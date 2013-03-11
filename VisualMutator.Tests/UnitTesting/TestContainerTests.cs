@@ -58,7 +58,7 @@
             var nUnitTestService = new NUnitTestService(nUnitWrapperMock.Object, new Mock<IMessageService>().Object);
             var msTestService = new MsTestService(null, msTestLoaderMock.Object);
        
-            var container = new TestsContainer(nUnitTestService, msTestService, null,Create.TestServices(),null);
+            //var container = new TestsContainer(nUnitTestService, msTestService, null,Create.TestServices(),null);
          
             var mutant = new StoredMutantInfo();
             mutant.AssembliesPaths.Add( "a");

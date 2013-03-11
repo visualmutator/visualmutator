@@ -45,7 +45,11 @@
 
         protected readonly TViewModel _viewModel;
 
-      
+        public SessionController SessionController
+        {
+            get;
+            set;
+        }
         public MutationSessionChoices Result { get; protected set; }
 
         protected CreationController(
@@ -54,6 +58,7 @@
             IOperatorsManager operatorsManager,
              IVisualStudioConnection visualStudio,
             ITestsContainer testsContainer,
+            SessionController sessionController,
             CommonServices svc)
         {
             _viewModel = viewModel;
@@ -63,7 +68,7 @@
             _visualStudio = visualStudio;
             _testsContainer = testsContainer;
             _svc = svc;
-
+            SessionController = sessionController;
 
             _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
                 () => _viewModel.TypesTreeMutate.Assemblies.Count != 0

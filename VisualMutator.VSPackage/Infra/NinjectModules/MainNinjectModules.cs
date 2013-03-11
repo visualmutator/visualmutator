@@ -149,9 +149,10 @@
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
-            Bind<SessionController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
+            
             Bind<SessionCreationController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
             Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
+            Bind<SessionController>().ToSelf().AndFromFactory().InNamedScope("Session").DefinesNamedScope("InSession");
             Bind<MutantDetailsController>().ToSelf().AndFromFactory().InNamedScope("Session");
             Bind<ResultsSavingController>().ToSelf().AndFromFactory();
             
@@ -188,9 +189,7 @@
 
             Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InNamedScope("Session");  
 
-            Bind<IEnumerable<ITestService>>().ToConstant(CreateTestService(Kernel));
-
-
+           
         }
 
         public void Results()
@@ -201,16 +200,7 @@
             Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
         }
 
-        private IEnumerable<ITestService> CreateTestService(IKernel kernel)
-        {
-            return new ITestService[]
-            {
-                Kernel.Get<NUnitTestService>(),
-                Kernel.Get<MsTestService>()
-            };
-
-        }
-
+     
 
     }
 }

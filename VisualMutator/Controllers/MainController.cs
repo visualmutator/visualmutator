@@ -37,7 +37,7 @@ namespace VisualMutator.Controllers
 
         private readonly IFactory<OnlyMutantsCreationController> _onlyMutantsCreationFactory;
 
-        private readonly IFactory<SessionController> _sessionControllerFactory;
+
 
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
 
@@ -54,7 +54,6 @@ namespace VisualMutator.Controllers
             MainViewModel viewModel,
             IFactory<SessionCreationController> mutantsCreationFactory,
             IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
-            IFactory<SessionController> sessionControllerFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
            
             CommonServices svc)
@@ -62,7 +61,7 @@ namespace VisualMutator.Controllers
             _viewModel = viewModel;
             _mutantsCreationFactory = mutantsCreationFactory;
             _onlyMutantsCreationFactory = onlyMutantsCreationFactory;
-            _sessionControllerFactory = sessionControllerFactory;
+         
             _resultsSavingFactory = resultsSavingFactory;
      
             _svc = svc;
@@ -188,10 +187,10 @@ namespace VisualMutator.Controllers
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
                 Clean();
-             
-                
 
-                _currenSessionController = _sessionControllerFactory.Create();
+
+
+                _currenSessionController = mutantsCreationController.SessionController;
 
                 _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
 
@@ -214,11 +213,11 @@ namespace VisualMutator.Controllers
 
                 Clean();
 
-
+                _currenSessionController = onlyMutantsController.SessionController;
                 _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
                 
 
-                _currenSessionController = _sessionControllerFactory.Create();
+                
                 Subscribe(_currenSessionController);
 
 

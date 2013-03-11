@@ -38,7 +38,8 @@
         private readonly ITestsContainer _testsContainer;
 
         private readonly IMutantsFileManager _mutantsFileManager;
-       
+        private readonly IMutantsCache _mutantsCache;
+
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
 
@@ -69,6 +70,7 @@
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             IMutantsFileManager mutantsFileManager,
+            IMutantsCache mutantsCache,
             XmlResultsGenerator xmlResultsGenerator)
         {
             _svc = svc;
@@ -76,7 +78,8 @@
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
             _mutantsFileManager = mutantsFileManager;
-   
+            _mutantsCache = mutantsCache;
+
 
             _xmlResultsGenerator = xmlResultsGenerator;
             _sessionState = SessionState.NotStarted;
@@ -221,6 +224,10 @@
             _svc.Threading.ScheduleAsync(() =>
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
+
+                _mutantsCache.Initialize(_currentSession.OriginalAssemblies, _currentSession.SelectedTypes);//TODO wynieść gdzie indziej
+
+
                 ExecutedOperator execOperator;
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out execOperator);
               //  var exe = new ExecutedOperator("No operator", "No modifications", new PreOperator());
