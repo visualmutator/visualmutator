@@ -12,7 +12,7 @@
         {
             CommandShowMessage = new BasicCommand(ShowMessage);
         }
-        public TestNodeClass ParentClass
+        public TestNodeClass ContainingClass
         {
             get
             {

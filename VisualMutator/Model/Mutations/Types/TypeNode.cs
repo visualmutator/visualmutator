@@ -2,12 +2,12 @@
 {
     #region Usings
 
+    using CommonUtilityInfrastructure.CheckboxedTree;
     using CommonUtilityInfrastructure.Paths;
     using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
-    using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
     public class AssemblyNode : NormalNode

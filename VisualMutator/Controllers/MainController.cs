@@ -13,6 +13,7 @@ namespace VisualMutator.Controllers
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.DependencyInjection;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model.Mutations.MutantsTree;
     using VisualMutator.Infrastructure;
@@ -25,7 +26,7 @@ namespace VisualMutator.Controllers
 
     using log4net;
 
-    using Switch = CommonUtilityInfrastructure.Switch;
+    using Switch = CommonUtilityInfrastructure.FunctionalUtils.Switch;
 
     public class MainController : Controller
     {
@@ -108,7 +109,7 @@ namespace VisualMutator.Controllers
                 if (_viewModel.OperationsState != state)
                 {
                     _viewModel.OperationsState = state;
-                    _viewModel.OperationsStateDescription = Functional.ValuedSwitch<OperationsState, string>(state)
+                    _viewModel.OperationsStateDescription = FunctionalExt.ValuedSwitch<OperationsState, string>(state)
                         .Case(OperationsState.None, "")
                         .Case(OperationsState.TestingPaused, "Paused")
                         .Case(OperationsState.Finished, "Finished")

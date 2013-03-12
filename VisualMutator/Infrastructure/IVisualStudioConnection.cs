@@ -10,8 +10,7 @@ namespace VisualMutator.Infrastructure
     using System.Windows.Forms;
 
     using CommonUtilityInfrastructure.Paths;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
+    using CommonUtilityInfrastructure.WpfUtils;
 
     public interface IVisualStudioConnection
     {

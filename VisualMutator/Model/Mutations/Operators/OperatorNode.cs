@@ -3,10 +3,9 @@
     #region Usings
 
     using System.Collections.Generic;
-
+    using CommonUtilityInfrastructure.CheckboxedTree;
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
-    using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
     public class FakeOperatorPackageRootNode : FakeRootNode<FakeOperatorPackageRootNode, PackageNode>

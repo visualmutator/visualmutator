@@ -5,7 +5,8 @@
     using System;
     using System.Linq;
     using CommonUtilityInfrastructure;
-    using VisualMutator.Infrastructure.CheckboxedTree;
+    using CommonUtilityInfrastructure.CheckboxedTree;
+    using CommonUtilityInfrastructure.FunctionalUtils;
 
     #endregion
     public class MutationRootNode : MutationNode

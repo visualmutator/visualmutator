@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;

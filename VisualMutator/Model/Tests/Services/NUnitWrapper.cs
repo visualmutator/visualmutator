@@ -152,7 +152,7 @@
 
         public void RunTests()
         {
-            _testLoader.RunTests();
+            _testLoader.RunTests(_nameFilter);
         }
 
         public void UnloadProject()

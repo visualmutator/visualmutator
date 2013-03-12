@@ -13,7 +13,7 @@
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.DependencyInjection;
-
+    using CommonUtilityInfrastructure.Paths;
     using VisualMutator.Extensibility;
 
     #endregion

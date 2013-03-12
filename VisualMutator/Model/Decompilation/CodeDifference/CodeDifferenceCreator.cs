@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Text;
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using DiffLib;
     using Mutations.MutantsTree;
     using StoringMutants;
@@ -87,7 +88,7 @@
 
         private List<LineChange> CreateDiff(CodeLanguage language, string input1, string input2, StringBuilder diff)
         {
-            IEqualityComparer<string> eq = Functional.ValuedSwitch<CodeLanguage, IEqualityComparer<string>>(language)
+            IEqualityComparer<string> eq = FunctionalExt.ValuedSwitch<CodeLanguage, IEqualityComparer<string>>(language)
                 .Case(CodeLanguage.CSharp, () => new CSharpCodeLineEqualityComparer())
                 .Case(CodeLanguage.IL, () => new ILCodeLineEqualityComparer())
                 .GetResult();

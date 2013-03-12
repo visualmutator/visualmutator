@@ -12,6 +12,7 @@
     using CommonUtilityInfrastructure.WpfUtils;
 
     using Ninject;
+    using Ninject.Activation;
     using Ninject.Activation.Strategies;
     using Ninject.Extensions.ContextPreservation;
     using Ninject.Extensions.NamedScope;

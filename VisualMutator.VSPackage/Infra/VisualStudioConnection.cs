@@ -11,7 +11,7 @@
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Paths;
-
+    using CommonUtilityInfrastructure.WpfUtils;
     using EnvDTE;
 
     using EnvDTE80;

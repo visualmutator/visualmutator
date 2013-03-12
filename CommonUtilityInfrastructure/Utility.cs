@@ -16,6 +16,7 @@
 
     using CommonUtilityInfrastructure.Paths;
     using CommonUtilityInfrastructure.WpfUtils;
+    using FunctionalUtils;
 
     #endregion
 

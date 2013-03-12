@@ -141,9 +141,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TreeTests.cs" />
+    <Compile Include="SelectManyRecursiveTests.cs" />
     <Compile Include="ProgressCounterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests.cs" />
+    <Compile Include="SwitchTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

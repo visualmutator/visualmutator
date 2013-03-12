@@ -10,6 +10,7 @@ namespace VisualMutator.OperatorsStandard
     using System.Reflection;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
   

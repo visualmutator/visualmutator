@@ -2,6 +2,6 @@ namespace CommonUtilityInfrastructure.DependencyInjection
 {
     public interface IFactory<out TObject>
     {
-        TObject Create();
+        TObject Create(params object[] parameters);
     }
 }

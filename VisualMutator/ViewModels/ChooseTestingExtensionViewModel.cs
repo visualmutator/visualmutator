@@ -10,6 +10,7 @@
     using System.Text;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Model.Tests.Custom;

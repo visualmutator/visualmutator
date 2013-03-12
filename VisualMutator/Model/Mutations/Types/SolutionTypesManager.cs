@@ -10,12 +10,13 @@ namespace VisualMutator.Model.Mutations.Types
     using System.Reflection;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.CheckboxedTree;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.Paths;
     using Microsoft.Cci;
     using Mono.Cecil;
 
     using VisualMutator.Infrastructure;
-    using VisualMutator.Infrastructure.CheckboxedTree;
     using VisualMutator.Model.Exceptions;
 
     using log4net;

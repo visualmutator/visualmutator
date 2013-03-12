@@ -10,6 +10,7 @@
 
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Comparers;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using ICSharpCode.Decompiler;
@@ -65,7 +66,7 @@
         }
         public void LoadData(string header)
         {
-            Functional.Switch(header)
+            FunctionalExt.Switch(header)
                 .Case("Tests", () => LoadTests(_currentMutant))
                 .Case("Code", () => LoadCode(_viewModel.SelectedLanguage))
                 .ThrowIfNoMatch();   

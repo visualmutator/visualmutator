@@ -7,10 +7,10 @@
     using System.Windows.Input;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.CheckboxedTree;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Infrastructure;
-    using VisualMutator.Infrastructure.CheckboxedTree;
 
     #endregion
 

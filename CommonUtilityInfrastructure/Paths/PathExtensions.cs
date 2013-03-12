@@ -1,12 +1,6 @@
-﻿namespace CommonUtilityInfrastructure
+﻿namespace CommonUtilityInfrastructure.Paths
 {
-    using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-
-    using CommonUtilityInfrastructure.Paths;
 
     public static class PathExtensions
     {

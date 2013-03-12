@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-
+    using FunctionalUtils;
     using Microsoft.VisualStudio.Settings;
 
     using PiotrTrzpil.VisualMutator_VSPackage.Model;

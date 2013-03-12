@@ -6,6 +6,7 @@
     using System.Linq;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
     using Model;
     using Mono.Cecil;
 

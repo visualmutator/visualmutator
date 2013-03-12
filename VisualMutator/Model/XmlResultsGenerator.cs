@@ -8,6 +8,7 @@
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using Decompilation;
     using Decompilation.CodeDifference;
     using Mono.Cecil;
@@ -159,7 +160,7 @@
                         where testMethod.State.IsIn(TestNodeState.Success, TestNodeState.Inconclusive)
                         select new XElement("TestMethod",
                             new XAttribute("Name", testMethod.Name),
-                            new XAttribute("Outcome", Functional.ValuedSwitch<TestNodeState, string>(testMethod.State)
+                            new XAttribute("Outcome", FunctionalExt.ValuedSwitch<TestNodeState, string>(testMethod.State)
                             .Case(TestNodeState.Success, "Passed")
                             .Case(TestNodeState.Inconclusive, "Inconclusive")
                             .GetResult())

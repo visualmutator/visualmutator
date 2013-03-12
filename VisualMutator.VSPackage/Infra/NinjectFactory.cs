@@ -3,7 +3,8 @@
     #region Usings
 
     using System;
-
+    using System.Linq;
+    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.DependencyInjection;
 
     using Ninject;
@@ -22,10 +23,23 @@
             //   _kernel.CanResolve(_kernel.CreateRequest())
         }
 
-        public TObject Create()
+       
+        public TObject Create(params object[] parameters)
         {
-
-            return _kernel.Get<TObject>();
+            if(parameters.Length == 0)
+            {
+                return _kernel.Get<TObject>();
+            }
+            else
+            {
+                var constr = typeof (TObject).GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
+                var pars = constr.GetParameters()
+                    .Skip(constr.GetParameters().Length - parameters.Length)
+                    .Select(param => param.Name);
+                var pa = pars.Zip(parameters, (name, obj) => new ConstructorArgument(name, obj));
+                return _kernel.Get<TObject>(pa.Cast<IParameter>().ToArray());
+            }
+            
         }
     }
 

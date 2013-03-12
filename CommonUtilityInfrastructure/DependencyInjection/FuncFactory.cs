@@ -15,7 +15,8 @@
             _func = func;
         }
 
-        public TObject Create()
+   
+        public TObject Create(params object[] parameters)
         {
             return _func();
         }

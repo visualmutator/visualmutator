@@ -2,6 +2,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 {
     using System.Collections.Generic;
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using Microsoft.Cci;
     using Tests;
     using VisualMutator.Extensibility;

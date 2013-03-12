@@ -9,8 +9,9 @@
     using System.Threading.Tasks;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.CheckboxedTree;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.Paths;
-    using Infrastructure.CheckboxedTree;
     using Mono.Cecil;
     using Mutations.MutantsTree;
     using Mutations.Types;
@@ -23,7 +24,7 @@
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Tests.TestsTree;
 
-    using Switch = CommonUtilityInfrastructure.Switch;
+    using Switch = CommonUtilityInfrastructure.FunctionalUtils.Switch;
 
     public interface ITestsContainer
     {

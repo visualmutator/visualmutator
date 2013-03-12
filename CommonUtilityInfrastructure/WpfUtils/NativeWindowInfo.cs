@@ -1,4 +1,4 @@
-namespace PiotrTrzpil.VisualMutator_VSPackage.Model
+namespace CommonUtilityInfrastructure.WpfUtils
 {
     using System;
 

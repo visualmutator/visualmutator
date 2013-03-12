@@ -10,6 +10,7 @@
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
@@ -137,9 +138,7 @@
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                 StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
-               // StoredMutantInfo storedMutantInfo = _mutantsFileManager
-              //      .StoreMutant(.DirectoryPath, changelessMutant);
-
+               
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
             },
@@ -198,12 +197,7 @@
                 }
 
             },
-           () =>
-           {
-
-             Finish();
-
-           },
+           onGui: Finish,
            onException: FinishWithError);
            
 
@@ -230,9 +224,7 @@
 
                 ExecutedOperator execOperator;
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out execOperator);
-              //  var exe = new ExecutedOperator("No operator", "No modifications", new PreOperator());
-              //  exe.Children.Add(changelessMutant);
-
+         
                 _svc.Threading.InvokeOnGui(() =>
                     {
                         _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
@@ -413,7 +405,7 @@
 
         public void ResumeOperations()
         {
-            _svc.Threading.ScheduleAsync(() => { RunTestsInternal(); }, onException: FinishWithError);
+            _svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }
 
         public void StopOperations()
@@ -513,28 +505,7 @@
 
         Finished
     }
-/*
-    public enum SessionEventType
-    {
-        PreCheckStarting,
 
-
-
-
-        MutationProgress,
-
-        TestingProgress,
-
-        MutationFinished,
-        SessionPaused,
-
-        SessionFinished,
-
-        SessionStopping,
-
-        SessionFinishedWithError,
-    }
-*/
     public class SessionEventArgs : EventArgs
     {
         private OperationsState _eventType;
@@ -595,17 +566,8 @@
             }
             
         }
-    }/*
-    public class MutationProgressEventArgs : SessionEventArgs
-    {
-        public MutationProgressEventArgs(OperationsState eventType)
-            : base(eventType)
-        {
-        }
-
-        
-    }*/
-
+    }
+    
     public class TestingProgressEventArgs : SessionEventArgs
     {
         public TestingProgressEventArgs(OperationsState eventType)

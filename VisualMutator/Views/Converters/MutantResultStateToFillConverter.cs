@@ -10,6 +10,7 @@
     using System.Windows.Media;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using Model.Mutations.MutantsTree;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Tests.TestsTree;
@@ -22,7 +23,7 @@
         public override Brush Convert(MutantResultState state)
         {
 
-            return Functional.ValuedSwitch<MutantResultState, Brush>(state)
+            return FunctionalExt.ValuedSwitch<MutantResultState, Brush>(state)
                 .Case(MutantResultState.Untested, Brushes.Gainsboro)
                 .Case(MutantResultState.Killed, Brushes.Gray)
                 .Case(MutantResultState.Live, Brushes.Orange)

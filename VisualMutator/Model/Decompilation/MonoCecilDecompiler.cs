@@ -1,6 +1,7 @@
 namespace VisualMutator.Model.Decompilation
 {
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using ICSharpCode.Decompiler;
     using ICSharpCode.ILSpy;
     using Mono.Cecil;
@@ -25,7 +26,7 @@ namespace VisualMutator.Model.Decompilation
         public MonoCecilDecompiler(CodeLanguage language)
         {
 
-            _decompiler = Functional.ValuedSwitch<CodeLanguage, Language>(language)
+            _decompiler = FunctionalExt.ValuedSwitch<CodeLanguage, Language>(language)
                 .Case(CodeLanguage.CSharp, () => new CSharpLanguage())
                 .Case(CodeLanguage.IL, () => new ILLanguage(true))
                 .GetResult();

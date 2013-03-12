@@ -151,7 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonTestInfrastructure\CommonTestInfrastructure.csproj">
-      <Project>{DBFC76B9-C110-4796-9D8A-33AC5BABC833}</Project>
+      <Project>{dbfc76b9-c110-4796-9d8a-33ac5babc833}</Project>
       <Name>CommonTestInfrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
