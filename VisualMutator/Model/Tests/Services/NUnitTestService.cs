@@ -65,19 +65,18 @@
                 },
                 ex => exc = ex);
             }
-
+            if (tests == null)
+            {
+                throw new Exception("tests == null");
+            }
             if (exc != null)
             {
                 throw new Exception("Exception occurred while loading tests. ",exc);
             }
 
-            return tests;
+            return tests.ToList();
         }
 
-        public void name()
-        {
-     
-        }
         public List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession)
         {
 
@@ -127,6 +126,7 @@
 
             foreach (ITest testClass in classes.Where(c => c.Tests != null && c.Tests.Count != 0))
             {
+                
                 var c = new TestNodeClass(testClass.TestName.Name)
                 {
                     Namespace = testClass.Parent.TestName.FullName,
@@ -136,12 +136,19 @@
 
                 foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
                 {
-                    var m = new TestNodeMethod(c, testMethod.TestName.Name);
-                    m.TestId = new NUnitTestId(testMethod.TestName);
-                    c.Children.Add(m);
-                    mutantTestSession.TestMap.Add(testMethod.TestName.UniqueName, m);
+                    if (_nUnitWrapper.NameFilter == null || _nUnitWrapper.NameFilter.Match(testMethod))
+                    {
+                        var m = new TestNodeMethod(c, testMethod.TestName.Name);
+                        m.TestId = new NUnitTestId(testMethod.TestName);
+                        c.Children.Add(m);
+                        mutantTestSession.TestMap.Add(testMethod.TestName.UniqueName, m);
+                    }
+                   
                 }
-                list.Add(c);
+                if(c.Children.Any())
+                {
+                    list.Add(c);
+                }
             }
             return list;
         }

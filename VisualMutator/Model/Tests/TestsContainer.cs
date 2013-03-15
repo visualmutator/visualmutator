@@ -287,7 +287,7 @@
             IEnumerable<TestNodeClass> testClassses = _testServices
                 .SelectMany(s => s.LoadTests(assembliesPaths, mutantTestSession));
 
-          
+            var r = testClassses.Where(t => t.Namespace == null);
             List<TestNodeNamespace> testNamespaces = testClassses
                 .GroupBy(classNode => classNode.Namespace)
                 .Select(group =>

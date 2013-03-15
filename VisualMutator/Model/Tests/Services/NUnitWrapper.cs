@@ -22,6 +22,7 @@
         IObservable<ITest> TestLoaded { get; }
 
         IObservable<TestEventArgs> TestLoadFailed { get; }
+        NameFilter NameFilter { get; }
 
         void LoadTests(IEnumerable<string> assemblies);
 
@@ -57,6 +58,11 @@
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private NameFilter _nameFilter;
+
+        public NameFilter NameFilter
+        {
+            get { return _nameFilter; }
+        }
 
         public NUnitWrapper(IMessageService messageService)
         {
@@ -133,6 +139,7 @@
                 _testLoader.TestProject.ActiveConfig.Assemblies.Add(project);
             }
             _testLoader.LoadTest();
+
         }
 
         public void Cancel()
