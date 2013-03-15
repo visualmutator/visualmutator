@@ -12,7 +12,7 @@
         }
 
         public MethodIdentifier(IMethodDefinition method)
-            : base(method.ContainingTypeDefinition as INamespaceTypeDefinition)
+            : base(method.ContainingTypeDefinition as INamedTypeDefinition)
         {
             _methodName = method.Name.Value;
         }

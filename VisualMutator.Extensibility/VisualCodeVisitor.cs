@@ -52,7 +52,7 @@
             for (int i = 0; i < passesInfo.Count; i++)
             {
                 var mutationTarget = new MutationTarget(obj.GetType().Name, elementCounter, i, passesInfo[i], typeof(T).Name);
-                if (_currentMethod != null)
+                if (_currentMethod != null && _currentMethod.ContainingTypeDefinition is INamedTypeDefinition)
                 {
                     mutationTarget.Method = new MethodIdentifier(_currentMethod);
                 }

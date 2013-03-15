@@ -21,9 +21,9 @@
             get { return _typeName; }
         }
 
-        public TypeIdentifier(INamespaceTypeDefinition type)
+        public TypeIdentifier(INamedTypeDefinition type)
         {
-            var module = type.ContainingUnitNamespace.Unit as IModule;
+            var module = TypeHelper.GetDefiningUnit(type) as IModule;
             if (module == null || module == Dummy.Module || module == Dummy.Assembly)
             {
                 throw new Exception(type.Name.Value + " has invalid container.");
@@ -32,10 +32,10 @@
             _typeName = type.Name.Value;
         }
 
-        public INamespaceTypeDefinition FindIn(IEnumerable<IModule> modules)
+        public INamedTypeDefinition FindIn(IEnumerable<IModule> modules)
         {
             return modules.Single(m => m.ModuleName.Value == _moduleName)
-                .GetAllTypes().OfType<INamespaceTypeDefinition>().Single(t => t.Name.Value == _typeName);
+                .GetAllTypes().Single(t => t.Name.Value == _typeName);
         }
 
         protected bool Equals(TypeIdentifier other)
