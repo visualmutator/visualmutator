@@ -12,7 +12,7 @@
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
-
+    using Microsoft.Win32;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model.Exceptions;
 
@@ -30,7 +30,7 @@
 
     public class MsTestWrapper : IMsTestWrapper
     {
-        private readonly IVisualStudioConnection _visualStudio;
+        private readonly IHostEnviromentConnection _hostEnviroment;
 
         private readonly CommonServices _svc;
 
@@ -41,11 +41,39 @@
         private bool _isCancelled;
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public MsTestWrapper(
-            IVisualStudioConnection visualStudio,
+            IHostEnviromentConnection hostEnviroment,
             CommonServices svc)
         {
-            _visualStudio = visualStudio;
+            _hostEnviroment = hostEnviroment;
             _svc = svc;
+        }
+
+
+        private string GetVisualStudioInstallationPath()
+        {
+            RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\12.0\Setup\VS")
+                ?? Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\11.0\Setup\VS")
+                ?? Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\10.0\Setup\VS");
+            string vsInstallationPath = regKey.GetValue("ProductDir").ToString();
+            regKey.Close();
+            return vsInstallationPath;
+          /*  string installationPath = null;
+            if (Environment.Is64BitOperatingSystem)
+            {
+                installationPath = (string)Registry.GetValue(
+                   @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\10.0\",
+                    "InstallDir",
+                    null);
+            }
+            else
+            {
+                installationPath = (string)Registry.GetValue(
+           @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\10.0\",
+                  "InstallDir",
+                  null);
+            }
+            return installationPath;
+            */
         }
 
         public XDocument RunMsTest(IEnumerable<string> assemblies)
@@ -66,8 +94,8 @@
 
             arguments.Append(@"-resultsfile:" + resultsFile.InQuotes());
 
-            
-            var startInfo = new ProcessStartInfo(Path.Combine(_visualStudio.InstallPath, @"Common7\IDE\MSTest.exe"))
+
+            var startInfo = new ProcessStartInfo(Path.Combine(GetVisualStudioInstallationPath(), @"Common7\IDE\MSTest.exe"))
             {   
                 Arguments = arguments.ToString(), 
                 WindowStyle = ProcessWindowStyle.Hidden, 

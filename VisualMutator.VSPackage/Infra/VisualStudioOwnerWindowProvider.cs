@@ -1,42 +1,35 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infra
+namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Windows;
     using System.Windows.Interop;
-    using System.Windows.Media;
-
     using CommonUtilityInfrastructure.WpfUtils;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-
     using VisualMutator.Infrastructure;
-
     using IWin32Window = System.Windows.Forms.IWin32Window;
 
     public class VisualStudioOwnerWindowProvider : IOwnerWindowProvider
     {
-        private readonly IVisualStudioConnection _visualStudio;
+        private readonly IHostEnviromentConnection _hostEnviroment;
 
-        public VisualStudioOwnerWindowProvider(IVisualStudioConnection visualStudio)
+        public VisualStudioOwnerWindowProvider(IHostEnviromentConnection hostEnviroment)
         {
-            _visualStudio = visualStudio;
+            _hostEnviroment = hostEnviroment;
         }
 
         public IWin32Window GetWindow()
         {
-            return _visualStudio.GetWindow();
+            return _hostEnviroment.GetWindow();
         }
 
         public void SetOwnerFor(Window window)
         {
-            NativeWindowInfo vsWindow = _visualStudio.WindowInfo;
+            NativeWindowInfo vsWindow = _hostEnviroment.WindowInfo;
             WindowInteropHelper helper = new WindowInteropHelper(window);
             helper.Owner = vsWindow.Handle;
         }
 
-       
+        public string GetWindowTitle()
+        {
+            return "VisualMutator";
+        }
     }
 }

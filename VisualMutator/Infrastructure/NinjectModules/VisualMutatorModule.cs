@@ -18,9 +18,8 @@
     using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
 
-    using PiotrTrzpil.VisualMutator_VSPackage.Infra;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-
+ 
+  
 
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
@@ -38,18 +37,28 @@
     using VisualMutator.ViewModels;
     using VisualMutator.Views;
 
-    public class InfrastructureModule : NinjectModule 
+   
+    public class VisualMutatorModule : NinjectModule
     {
-        
+
+
+        public VisualMutatorModule()
+        {
+          
+        }
+
         public override void Load()
         {
-            Bind<IOwnerWindowProvider>().To<VisualStudioOwnerWindowProvider>().InSingletonScope();
-            Bind<IApplicationTitleProvider>().To<VisualMutatorTitleProvider>().InSingletonScope();
-
-
-
+            Views();
+            Infrastructure();
+            MutantsCreation();
+            Tests();
+            Results();
+        }
+        private void Infrastructure()
+        {
             Bind<IMessageService>().To<MessageService>().InSingletonScope();
-          
+
             Bind<IEventService>().To<EventService>().InSingletonScope();
             Bind<IThreading>().To<Threading>().InSingletonScope();
             Bind<CommonServices>().ToSelf().InSingletonScope();
@@ -63,21 +72,9 @@
             Kernel.InjectFuncFactory(() => DateTime.Now);
 
 
-          
-           
-
         }
-    }
-
-    public class ViewsModule : NinjectModule
-    {
-       
-
-        public override void Load()
+        private void Views()
         {
-           
-
-          
 
             //VIEWS
 
@@ -91,7 +88,7 @@
             Bind<SessionCreationViewModel>().ToSelf();
             Bind<ISessionCreationView>().To<SessionCreationView>();
 
-            
+
             Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
             Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
 
@@ -117,36 +114,15 @@
             Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
             Bind<TestsSelectableTreeViewModel>().ToSelf();
 
-            
-        }
-    }
-
-    public class ControllerAndModelModule : NinjectModule
-    {
-        private readonly VisualStudioConnection _visualStudioConnection;
-
-        public ControllerAndModelModule(VisualStudioConnection visualStudioConnection)
-        {
-            _visualStudioConnection = visualStudioConnection;
         }
 
-        public override void Load()
-        {
-            MutantsCreation();
-            Tests();
-            Results();
-        }
 
- 
         public void MutantsCreation()
         {
 
             Kernel.Load(new NamedScopeModule());
             Kernel.Load(new ContextPreservationModule());
-            Bind<IVisualStudioConnection>().ToConstant(_visualStudioConnection);
-            Bind<ISettingsManager>().ToConstant(new VisualStudioSettingsProvider(_visualStudioConnection));
-
-
+       
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();

@@ -1,9 +1,8 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules
+﻿namespace VisualMutator.Infrastructure.NinjectModules
 {
     using System.Reflection;
     using Ninject.Activation.Strategies;
     using log4net;
-    using log4net.Core;
 
     public class MyMonitorActivationStrategy : ActivationStrategy
     {

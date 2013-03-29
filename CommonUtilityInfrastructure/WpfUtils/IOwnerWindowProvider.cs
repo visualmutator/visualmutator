@@ -9,6 +9,6 @@ namespace CommonUtilityInfrastructure.WpfUtils
 
         void SetOwnerFor(Window window);
 
-       
+        string GetWindowTitle();
     }
 }

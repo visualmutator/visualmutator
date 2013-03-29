@@ -31,15 +31,14 @@
     }
     public class MessageService : IMessageService
     {
-        private readonly IApplicationTitleProvider _titleProvider;
+
 
         private readonly IOwnerWindowProvider _provider;
 
         public MessageService(
-            IApplicationTitleProvider titleProvider,
             IOwnerWindowProvider provider)
         {
-            _titleProvider = titleProvider;
+    
             _provider = provider;
         }
         public static IWin32Window GetIWin32Window(Visual visual)
@@ -104,7 +103,7 @@
 
         private string TitlePart()
         {
-            return _titleProvider.GetTitle()+" - ";
+            return _provider.GetWindowTitle() + " - ";
         }
         public void ShowFatalError(IWindow owner, string message)
         {
@@ -170,10 +169,6 @@
         
     }
 
-    public interface IApplicationTitleProvider
-    {
-        string GetTitle();
-    }
 
     public static class MessageServiceExtensions
     {

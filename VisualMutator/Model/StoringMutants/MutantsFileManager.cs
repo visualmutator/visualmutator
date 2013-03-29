@@ -7,6 +7,7 @@
     using System.Reflection;
     using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
     using Microsoft.Cci;
     using Mutations.MutantsTree;
     using VisualMutator.Infrastructure;
@@ -32,7 +33,7 @@
  
     public class MutantsFileManager : IMutantsFileManager
     {
-        private readonly IVisualStudioConnection _visualStudio;
+        private readonly IHostEnviromentConnection _hostEnviroment;
 
     
 
@@ -49,12 +50,12 @@
 
 
         public MutantsFileManager(
-            IVisualStudioConnection visualStudio,
+            IHostEnviromentConnection hostEnviroment,
             IMutantsCache mutantsCache,
             ICommonCompilerAssemblies commonCompilerAssemblies,
             IFileSystem fs)
         {
-            _visualStudio = visualStudio;
+            _hostEnviroment = hostEnviroment;
 
             _mutantsCache = mutantsCache;
             _commonCompilerAssemblies = commonCompilerAssemblies;
@@ -97,15 +98,26 @@
         {
          //   prep.OnTestingCancelled();
         }
-
+        public IEnumerable<string> GetReferencedAssemblies()
+        {
+            var projects = _hostEnviroment.GetProjectAssemblyPaths().ToList();
+    
+            var list = new List<string>();
+            foreach (var binDir in projects.Select(p => p.ParentDirectoryPath))
+            {
+                var files = Directory.GetFiles(binDir.Path, "*.dll", SearchOption.AllDirectories)
+                    .Where(p => !projects.Contains(p.ToFilePathAbsolute()));
+                list.AddRange(files);
+            }
+            return list;
+        }
         public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
-         //   prep.Initialize(@"D:\PLIKI\Programowanie\C#\Source Code'y\ASP.NET MVC\MvcMusicStore 3\MvcMusicStore|2789");
-
+       
             string mutantDirectoryPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             _fs.Directory.CreateDirectory(mutantDirectoryPath);
 
-            var refer = _visualStudio.GetReferencedAssemblies();//TODO: Use mono.cecil
+            var refer = GetReferencedAssemblies();//TODO: Use better way
             foreach (var referenced in refer)
             {
                 string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(referenced));

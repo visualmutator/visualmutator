@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Security.Policy;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Model.Decompilation;
@@ -54,6 +55,7 @@
       
         public static string CreateModule(string code)
         {
+            
             _log.Info("Parsing test code...");
             var tree = SyntaxTree.ParseText(code);
             _log.Info("Creating compilation...");
@@ -77,6 +79,12 @@
             }
             return outputFileName;
         }
+        public static string CreateModule2(string code)
+        {
+            var e = new Evidence();
+            return null;
+        }
+
         public static List<Mutant> CreateMutants(string code, IMutationOperator operatorr,
             MutantsContainer container, CommonCompilerAssemblies cci)
         {

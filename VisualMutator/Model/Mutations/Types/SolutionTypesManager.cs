@@ -40,7 +40,7 @@ namespace VisualMutator.Model.Mutations.Types
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly ICommonCompilerAssemblies _assemblyReaderWriter;
 
-        private readonly IVisualStudioConnection _visualStudio;
+        private readonly IHostEnviromentConnection _hostEnviroment;
 
         private readonly IEnumerable<DirectoryPathAbsolute> _projectPaths;
 
@@ -56,12 +56,12 @@ namespace VisualMutator.Model.Mutations.Types
    
         public SolutionTypesManager(
             ICommonCompilerAssemblies assemblyReaderWriter,
-            IVisualStudioConnection visualStudio)
+            IHostEnviromentConnection hostEnviroment)
         {
             _assemblyReaderWriter = assemblyReaderWriter;
-            _visualStudio = visualStudio;
+            _hostEnviroment = hostEnviroment;
 
-            _projectPaths = _visualStudio.GetProjectPaths();
+            _projectPaths = _hostEnviroment.GetProjectPaths();
         }
 
 
@@ -76,7 +76,7 @@ namespace VisualMutator.Model.Mutations.Types
         public IList<AssemblyNode> GetTypesFromAssemblies()
         {
 
-            var loadedAssemblies = LoadAssemblies(_visualStudio.GetProjectAssemblyPaths());
+            var loadedAssemblies = LoadAssemblies(_hostEnviroment.GetProjectAssemblyPaths());
             var root = new FakeNode();
             root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;

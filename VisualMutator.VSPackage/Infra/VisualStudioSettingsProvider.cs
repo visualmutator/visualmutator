@@ -14,7 +14,7 @@
 
     public class VisualStudioSettingsProvider : ISettingsManager
     {
-        private readonly VisualStudioConnection _visualStudioConnection;
+        private readonly VisualStudioConnection _hostEnviromentConnection;
 
   //      private readonly Settings _settings;
 
@@ -23,9 +23,9 @@
 
         private const string CollectionName = "VisualMutator Settings";
 
-        public VisualStudioSettingsProvider(VisualStudioConnection visualStudioConnection)
+        public VisualStudioSettingsProvider(VisualStudioConnection hostEnviromentConnection)
         {
-            _visualStudioConnection = visualStudioConnection;
+            _hostEnviromentConnection = hostEnviromentConnection;
            
 
 
@@ -36,7 +36,7 @@
 
         public void Initialize()
         {
-            userSettingsStore = _visualStudioConnection.SettingsManager
+            userSettingsStore = _hostEnviromentConnection.SettingsManager
                 .GetWritableSettingsStore(SettingsScope.UserSettings);
 
             if (!userSettingsStore.CollectionExists(CollectionName))

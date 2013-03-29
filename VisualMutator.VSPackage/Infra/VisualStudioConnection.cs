@@ -7,15 +7,12 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Windows.Forms;
-
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Paths;
     using CommonUtilityInfrastructure.WpfUtils;
     using EnvDTE;
 
     using EnvDTE80;
-
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
@@ -25,12 +22,11 @@
     using VisualMutator.Infrastructure;
 
     using log4net;
-
-    using Window = System.Windows.Window;
+    using IWin32Window = System.Windows.Forms.IWin32Window;
 
     #endregion
 
-    public class VisualStudioConnection : IVisualStudioConnection
+    public class VisualStudioConnection : IHostEnviromentConnection
     {
         private readonly Package _package;
 
@@ -44,13 +40,17 @@
 
         private SettingsManager _settingsManager;
 
+        private readonly Subject<EventType> _subject;
+
+
         public VisualStudioConnection(Package package)
         {
             _package = package;
             _dte = (DTE2)Package.GetGlobalService(typeof(DTE));
             _solutionEvents = ((Events2)_dte.Events).SolutionEvents;
             _buildEvents = ((Events2)_dte.Events).BuildEvents;
-
+            _subject = new Subject<EventType>();
+        
         }
 
         public SettingsManager SettingsManager
@@ -73,34 +73,6 @@
             }
         }
 
-        public bool IsSolutionOpen
-        {
-            get
-            {
-                return _dte.Solution.IsOpen;
-            }
-        }
-
-
-
-        public void Initialize()
-        {
-            _buildEvents.OnBuildBegin += _buildEvents_OnBuildBegin;
-            _buildEvents.OnBuildDone += _buildEvents_OnBuildDone;
-
-            _solutionEvents.Opened += _solutionEvents_Opened;
-            _solutionEvents.AfterClosing += _solutionEvents_AfterClosing;
-
-            _settingsManager = new ShellSettingsManager(_package);
-        }
-
-        public void OpenFile(string className)
-        {
-            IEnumerable<ProjectItem> projectItems = _dte.Solution.Cast<Project>()
-                .SelectMany(p => p.ProjectItems.Cast<ProjectItem>()).ToList();
-            ProjectItem projectItem = projectItems.First(i => i.Name == className);
-        }
-
         public IWin32Window GetWindow()
         {
             EnvDTE.Window vsWindow = _dte.MainWindow;
@@ -112,44 +84,45 @@
             return new WindowWrapper(ownerWindowHandle);
         }
 
-        public string InstallPath
+  
+     
+        public IObservable<EventType> Events
         {
-            get
+            get { return _subject; }
+        }
+
+    
+
+       
+        public void Initialize()
+        {
+         
+           // _buildEvents.OnBuildBegin += () => _subject.OnNext(EventType.HostClosed)
+          //  _buildEvents.OnBuildDone += _buildEvents_OnBuildDone;
+
+            _solutionEvents.Opened += () => _subject.OnNext(EventType.HostOpened);
+            _solutionEvents.AfterClosing += () => _subject.OnNext(EventType.HostClosed);
+
+            _settingsManager = new ShellSettingsManager(_package);
+
+
+            if (_dte.Solution.IsOpen)
             {
-                RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\VisualStudio\10.0\Setup\VS");
-                string vsInstallationPath = regKey.GetValue("ProductDir").ToString();
-                regKey.Close();
-                return vsInstallationPath;
+                _subject.OnNext(EventType.HostOpened);
             }
         }
 
-/*
-        public void GetSolutionPaths()
+        public void OpenFile(string className)
         {
-           var properties = _dte.Solution.Properties.Cast<Property>().ToList();
-            properties.Single(p=>p.)
+            IEnumerable<ProjectItem> projectItems = _dte.Solution.Cast<Project>()
+                .SelectMany(p => p.ProjectItems.Cast<ProjectItem>()).ToList();
+            ProjectItem projectItem = projectItems.First(i => i.Name == className);
         }
-*/
+
+  
+
         public IEnumerable<DirectoryPathAbsolute> GetProjectPaths()
         {
-/*
-            IEnumerable<Project> chosenProjects = _dte.Solution.Cast<Project>()
-                .Where(p => p.ConfigurationManager != null
-                         && p.ConfigurationManager.ActiveConfiguration != null
-                         && p.ConfigurationManager.ActiveConfiguration.IsBuildable).ToList();
-            var list = new List<DirectoryPathAbsolute>();
-            foreach (Project project in chosenProjects)
-            {
-                IEnumerable<Property> properties = project.Properties.Cast<Property>().ToList();
-
-                var localPath = (string)properties
-                                            .Single(prop => prop.Name == "LocalPath").Value;
-
-
-                list.Add(localPath.ToDirectoryPathAbsolute());
-            }*/
-           // return list;
-
 
             return from project in _dte.Solution.Cast<Project>()
                    let confManager = project.ConfigurationManager
@@ -173,27 +146,7 @@
                    select Path.Combine(localPath, outputDir, outputFileName).ToFilePathAbsolute();
         }
 
-        public IEnumerable<string> GetReferencedAssemblies()
-        {
-            var projects = GetProjectAssemblyPaths().ToList();
-            // string binDir = Path.GetDirectoryName(projects.First());
-            var list = new List<string>();
-            foreach (var binDir in projects.Select(p => p.ParentDirectoryPath))
-            {
-                var files = Directory.GetFiles(binDir.Path, "*.dll", SearchOption.AllDirectories)
-                    .Where(p => !projects.Contains(p.ToFilePathAbsolute()));
-                list.AddRange(files);
-            }
-            return list;
-        }
-
-        public event Action OnBuildBegin;
-
-        public event Action OnBuildDone;
-
-        public event Action SolutionOpened;
-
-        public event Action SolutionAfterClosing;
+      
 
         public string GetMutantsRootFolderPath()
         {
@@ -203,69 +156,7 @@
             return Directory.GetParent(slnPath).CreateSubdirectory("visal_mutator_mutants").FullName;
         }
 
-        public void ss(Window window)
-        {
-        }
-
-        private void _solutionEvents_AfterClosing()
-        {
-            _log.Info("Solution closed.");
-            OnSolutionAfterClosing();
-        }
-
-        private void _solutionEvents_Opened()
-        {
-            _log.Info("Solution opened.");
-            OnSolutionOpened();
-        }
-
-        private void _buildEvents_OnBuildDone(vsBuildScope Scope, vsBuildAction Action)
-        {
-            _log.Info("Build begin.");
-            OnOnBuildDone();
-        }
-
-        private void _buildEvents_OnBuildBegin(vsBuildScope Scope, vsBuildAction Action)
-        {
-            _log.Info("Build done.");
-            OnOnBuildBegin();
-        }
-
-        public void OnOnBuildBegin()
-        {
-            Action handler = OnBuildBegin;
-            if (handler != null)
-            {
-                handler();
-            }
-        }
-
-        public void OnOnBuildDone()
-        {
-            Action handler = OnBuildDone;
-            if (handler != null)
-            {
-                handler();
-            }
-        }
-
-        public void OnSolutionOpened()
-        {
-            Action handler = SolutionOpened;
-            if (handler != null)
-            {
-                handler();
-            }
-        }
-
-        public void OnSolutionAfterClosing()
-        {
-            Action handler = SolutionAfterClosing;
-            if (handler != null)
-            {
-                handler();
-            }
-        }
+     
 
         public class WindowWrapper : IWin32Window
         {

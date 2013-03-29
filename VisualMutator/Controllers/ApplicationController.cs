@@ -8,6 +8,7 @@
     using System.Windows.Threading;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
 
     using VisualMutator.Infrastructure;
@@ -21,7 +22,7 @@
     {
         private readonly MainController _mutationResultsController;
 
-        private readonly IVisualStudioConnection _visualStudio;
+        private readonly IHostEnviromentConnection _hostEnviroment;
 
         private readonly ISettingsManager _settingsManager;
 
@@ -30,16 +31,17 @@
         private readonly IEventService _eventService;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private IDisposable _disp;
 
         public ApplicationController(
             MainController mutationResultsController,
-            IVisualStudioConnection visualStudio,
+            IHostEnviromentConnection hostEnviroment,
             ISettingsManager settingsManager,
             IMessageService messageService,
             IEventService eventService)
         {
             _mutationResultsController = mutationResultsController;
-            _visualStudio = visualStudio;
+            _hostEnviroment = hostEnviroment;
             _settingsManager = settingsManager;
             _messageService = messageService;
             _eventService = eventService;
@@ -63,20 +65,16 @@
         {
             _log.Info("Initializing package VisualMutator...");
             _log.Debug("Debug Test...");
-            _visualStudio.Initialize();
+            _hostEnviroment.Initialize();
             _settingsManager.Initialize();
 
 
-            _visualStudio.SolutionOpened += ActivateOnSolutionOpened;
-            _visualStudio.SolutionAfterClosing += DeactivateOnSolutionClosed;
-            _visualStudio.OnBuildBegin += BuildEvents_OnBuildBegin;
-            _visualStudio.OnBuildDone += BuildEvents_OnBuildDone;
         
-
-            if (_visualStudio.IsSolutionOpen)
-            {
-                ActivateOnSolutionOpened();
-            }
+            _disp = _hostEnviroment.Events.Subscribe(type =>
+                Switch.On(type)
+                .Case(EventType.HostOpened, ActivateOnSolutionOpened)
+                .Case(EventType.HostClosed, DeactivateOnSolutionClosed)
+                .ThrowIfNoMatch());
 
         }
 

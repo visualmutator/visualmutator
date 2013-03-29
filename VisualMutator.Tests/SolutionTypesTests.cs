@@ -62,7 +62,7 @@
          //   mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);
 
 
-            var m = new Mock<IVisualStudioConnection>();
+            var m = new Mock<IHostEnviromentConnection>();
             m.Setup(_ => _.GetProjectAssemblyPaths()).Returns(new[] { path.ToFilePathAbsolute() });
 
             var manager = new SolutionTypesManager(mock.Object, m.Object);
@@ -95,7 +95,7 @@
        //     mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);
 
 
-            var m = new Mock<IVisualStudioConnection>();
+            var m = new Mock<IHostEnviromentConnection>();
             m.Setup(_ => _.GetProjectAssemblyPaths()).Returns(new[] { path.ToFilePathAbsolute() });
 
             var manager = new SolutionTypesManager(mock.Object, m.Object);

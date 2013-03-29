@@ -36,7 +36,7 @@
 
 
         protected readonly IOperatorsManager _operatorsManager;
-        private readonly IVisualStudioConnection _visualStudio;
+        private readonly IHostEnviromentConnection _hostEnviroment;
         protected readonly ITestsContainer _testsContainer;
 
         protected readonly CommonServices _svc;
@@ -56,7 +56,7 @@
             TViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
-             IVisualStudioConnection visualStudio,
+             IHostEnviromentConnection hostEnviroment,
             ITestsContainer testsContainer,
             SessionController sessionController,
             CommonServices svc)
@@ -65,7 +65,7 @@
 
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
-            _visualStudio = visualStudio;
+            _hostEnviroment = hostEnviroment;
             _testsContainer = testsContainer;
             _svc = svc;
             SessionController = sessionController;
@@ -97,7 +97,7 @@
 
                     var taskGetAssemblies = Task.Run<object>(() => _typesManager.GetTypesFromAssemblies());
                     var taskLoadTests = Task.Run<object>(() => _testsContainer.LoadTests(
-                                _visualStudio.GetProjectAssemblyPaths().Select(p => (string) p).ToList()));
+                                _hostEnviroment.GetProjectAssemblyPaths().Select(p => (string) p).ToList()));
                     var loadOperators = Task.Run<object>(() => _operatorsManager.LoadOperators());
 
 
@@ -131,7 +131,7 @@
                   //  _viewModel.TypesTreeToTest.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
 
 
-                    var testNodeNamespaces = _testsContainer.LoadTests(_visualStudio.GetProjectAssemblyPaths().Select(p => (string)p).ToList());
+                    var testNodeNamespaces = _testsContainer.LoadTests(_hostEnviroment.GetProjectAssemblyPaths().Select(p => (string)p).ToList());
                     
                     if (_typesManager.IsAssemblyLoadError)
                     {

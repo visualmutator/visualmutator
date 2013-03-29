@@ -229,7 +229,6 @@
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Infrastructure\ToDo.cs" />
     <Compile Include="Infrastructure\UserMessages.cs" />
-    <Compile Include="Infrastructure\VisualMutatorTitleProvider.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
@@ -259,7 +258,7 @@
     <Compile Include="ViewModels\MutantDetailsViewModel.cs" />
     <Compile Include="Controllers\SessionCreationController.cs" />
     <Compile Include="Controllers\MainController.cs" />
-    <Compile Include="Infrastructure\IVisualStudioConnection.cs" />
+    <Compile Include="Infrastructure\IHostEnviromentConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\CodeDifferenceCreator.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\CSharpCodeLineEqualityComparer.cs" />
