@@ -5,6 +5,7 @@
     using System;
     using System.Reflection;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Threading;
 
     using CommonUtilityInfrastructure;
@@ -53,11 +54,11 @@
          
         }
 
-        public object Shell
+        public UserControl MainView
         {
             get
             {
-                return _mutationResultsController.ViewModel.View;
+                return (UserControl) _mutationResultsController.ViewModel.View;
             }
         }
 
@@ -65,9 +66,7 @@
         {
             _log.Info("Initializing package VisualMutator...");
             _log.Debug("Debug Test...");
-            _hostEnviroment.Initialize();
-            _settingsManager.Initialize();
-
+            
 
         
             _disp = _hostEnviroment.Events.Subscribe(type =>
@@ -75,6 +74,9 @@
                 .Case(EventType.HostOpened, ActivateOnSolutionOpened)
                 .Case(EventType.HostClosed, DeactivateOnSolutionClosed)
                 .ThrowIfNoMatch());
+
+            _hostEnviroment.Initialize();
+            _settingsManager.Initialize();
 
         }
 

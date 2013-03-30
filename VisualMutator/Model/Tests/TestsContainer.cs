@@ -281,7 +281,7 @@
 
         public void LoadTests(List<string> assembliesPaths, MutantTestSession mutantTestSession)
         {
-            Throw.IfArgumentNull(assembliesPaths, "assembliesPaths");
+            Throw.IfNull(assembliesPaths, "assembliesPaths");
            
 
             IEnumerable<TestNodeClass> testClassses = _testServices

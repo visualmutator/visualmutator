@@ -68,13 +68,13 @@
         {
             get
             {
-                Throw.IfArgumentNull(key);
+                Throw.IfNull(key);
                 return userSettingsStore.GetString(CollectionName, key);
             }
             set
             {
-                Throw.IfArgumentNull(key);
-                Throw.IfArgumentNull(value);
+                Throw.IfNull(key);
+                Throw.IfNull(value);
                 userSettingsStore.SetString(CollectionName, key,value);
             }
         }

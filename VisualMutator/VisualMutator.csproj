@@ -121,6 +121,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.2-unstable-9\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.ContextPreservation">
+      <HintPath>..\packages\Ninject.Extensions.ContextPreservation.3.0.0.8\lib\net45-full\Ninject.Extensions.ContextPreservation.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.NamedScope">
+      <HintPath>..\packages\Ninject.Extensions.NamedScope.3.0.0.5\lib\net45-full\Ninject.Extensions.NamedScope.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.dll</HintPath>
     </Reference>
@@ -214,6 +223,9 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
+    <Compile Include="Infrastructure\NinjectFactory.cs" />
+    <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
+    <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
     <Compile Include="Model\AssembliesProvider.cs" />
     <Compile Include="Model\CommonCompilerAssemblies.cs" />
     <Compile Include="Model\CommonCompilerAssemblyManager.cs" />
@@ -451,6 +463,10 @@
     <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
       <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
       <Name>VisualMutator.OperatorsStandard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VisualMutator.TestGeneration\VisualMutator.TestGeneration.csproj">
+      <Project>{EF0F2C25-2102-435B-8D6D-0D6232879342}</Project>
+      <Name>VisualMutator.TestGeneration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

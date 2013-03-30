@@ -1,29 +1,16 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
+﻿namespace VisualMutator.GUI
 {
     #region Usings
 
     using System;
+    using System.Configuration;
     using System.Diagnostics;
-    using System.IO;
     using System.Reflection;
     using System.Windows;
-    using System.Windows.Threading;
-
-    using CommonUtilityInfrastructure;
-
-    using Microsoft.VisualStudio.Shell;
-
     using Ninject;
     using Ninject.Activation.Strategies;
-    using Ninject.Extensions.ContextPreservation;
-    using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
-
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-
-
-    using VisualMutator;
     using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;
@@ -33,8 +20,7 @@
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Bootstrapper
     {
-        private readonly Package _package;
-
+    
         private readonly ApplicationController _appController;
 
         private IKernel _kernel;
@@ -50,9 +36,9 @@
         }
  
 
-        public Bootstrapper(Package package)
+        public Bootstrapper()
         {
-            _package = package;
+         
             _log.Info("Starting bootstrapper.");
 
    
@@ -65,6 +51,9 @@
                 _log.Info("Executing dependency injection.");
                 _appController = _kernel.Get<ApplicationController>();
 
+              //  System.Configuration.Se
+
+ConfigurationManager.AppSettings.
                 VisualMutator_VSPackagePackage.MainControl = Shell;
 
 
@@ -101,7 +90,7 @@
             var modules = new INinjectModule[]
             {
                 new VisualMutatorModule(), 
-                new VSNinjectModule(new VisualStudioConnection(_package)), 
+                new GuiNinjectModule(new VisualStudioConnection(_package)), 
             };
            
 
@@ -121,11 +110,11 @@
         {
             get
             {
-                return _appController.Shell;
+                return _appController.MainView;
             }
         }
 
-        public void InitializePackage(VisualMutator_VSPackagePackage visualMutatorVsPackagePackage)
+        public void Initialize()
         {
            
             _appController.Initialize();

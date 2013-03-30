@@ -176,7 +176,7 @@
                 throw new InvalidOperationException(message);
             }
         }
-        public static void IfArgumentNull<T>(T parameter, string parameterName = null ) where T : class
+        public static void IfNull<T>(T parameter, string parameterName = null ) where T : class
         {
             if (parameterName == null)
             {

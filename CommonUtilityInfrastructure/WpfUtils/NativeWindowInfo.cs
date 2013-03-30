@@ -1,8 +1,9 @@
 namespace CommonUtilityInfrastructure.WpfUtils
 {
     using System;
+    using System.Windows.Forms;
 
-    public class NativeWindowInfo
+    public class NativeWindowInfo : IWin32Window
     {
         private readonly IntPtr _handle;
 
@@ -54,7 +55,7 @@ namespace CommonUtilityInfrastructure.WpfUtils
             }
         }
 
-        public NativeWindowInfo(IntPtr handle, int top, int left, int width, int height)
+        public NativeWindowInfo(IntPtr handle, int top = 0, int left = 0, int width = 0, int height = 0)
         {
             _handle = handle;
             _top = top;

@@ -13,5 +13,13 @@ namespace VisualMutator.GUI
     /// </summary>
     public partial class App : Application
     {
+        private Bootstrapper _bootstrapper;
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            _bootstrapper = new Bootstrapper();
+            _bootstrapper.Initialize();
+            base.OnStartup(e);
+        }
     }
 }

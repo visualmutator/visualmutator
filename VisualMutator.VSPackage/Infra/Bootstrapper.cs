@@ -121,7 +121,7 @@
         {
             get
             {
-                return _appController.Shell;
+                return _appController.MainView;
             }
         }
 

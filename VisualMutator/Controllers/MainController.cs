@@ -16,6 +16,7 @@ namespace VisualMutator.Controllers
     using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
     using Model.Mutations.MutantsTree;
+    using TestGeneration;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
@@ -182,6 +183,8 @@ namespace VisualMutator.Controllers
 
         public void RunMutationSession()
         {
+            var o = new AppDomainCreator();
+            o.Execute();
             var mutantsCreationController = _mutantsCreationFactory.Create();
              mutantsCreationController.Run();
             if (mutantsCreationController.HasResults)
