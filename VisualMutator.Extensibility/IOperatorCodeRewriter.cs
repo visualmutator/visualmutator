@@ -2,7 +2,7 @@ namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
     using Microsoft.Cci;
-    using Microsoft.Cci.MutableCodeModel;
+
 
     public interface IOperatorCodeRewriter
     {

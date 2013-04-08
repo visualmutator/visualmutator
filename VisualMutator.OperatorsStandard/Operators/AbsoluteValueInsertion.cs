@@ -66,6 +66,7 @@ namespace VisualMutatorGeneratedNamespace
                     host.NameTable.GetNameFor("FailOnZero"), host.PlatformType.SystemInt32).Body;
                 var generatedBody = (SourceMethodBody)methodBody;
                 GeneratedBlock = generatedBody.Block;
+                host.Dispose();
             }
 
             protected IBlockStatement GeneratedBlock { get; set; }

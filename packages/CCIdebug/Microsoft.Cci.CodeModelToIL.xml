@@ -1,937 +1,778 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <doc>
-  <assembly>
-    <name>Microsoft.Cci.CodeModelToIL</name>
-  </assembly>
-  <members>
-    <member name="T:Microsoft.Cci.CodeModelToILConverter">
-      <summary>
+    <assembly>
+        <name>Microsoft.Cci.CodeModelToIL</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Cci.CodeModelToILConverter">
+            <summary>
             An object with a method that converts a given block of statements to a list of IL operations, exception information and possibly some private helper types.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.#ctor(Microsoft.Cci.IMetadataHost,Microsoft.Cci.IMethodDefinition,Microsoft.Cci.ISourceLocationProvider)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.#ctor(Microsoft.Cci.IMetadataHost,Microsoft.Cci.IMethodDefinition,Microsoft.Cci.ISourceLocationProvider)">
+            <summary>
             Initializes an object with a method that converts a given block of statements to a list of IL operations, exception information and possibly some private helper types.
             </summary>
-      <param name="host">An object representing the application that is hosting the converter. It is used to obtain access to some global
+            <param name="host">An object representing the application that is hosting the converter. It is used to obtain access to some global
             objects and services such as the shared name table and the table for interning references.</param>
-      <param name="method">The method that contains the block of statements that will be converted.</param>
-      <param name="sourceLocationProvider">An object that can map the ILocation objects found in the block of statements to IPrimarySourceLocation objects.  May be null.</param>
-      <requires csharp="host != null" vb="host &lt;&gt; Nothing">host != null</requires>
-      <requires csharp="method != null" vb="method &lt;&gt; Nothing">method != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.#ctor(Microsoft.Cci.IMetadataHost,Microsoft.Cci.IMethodDefinition,Microsoft.Cci.ISourceLocationProvider,Microsoft.Cci.IMethodDefinition,System.Collections.Generic.IDictionary{Microsoft.Cci.IBlockStatement,System.UInt32})">
-      <summary>
+            <param name="method">The method that contains the block of statements that will be converted.</param>
+            <param name="sourceLocationProvider">An object that can map the ILocation objects found in the block of statements to IPrimarySourceLocation objects.  May be null.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.#ctor(Microsoft.Cci.IMetadataHost,Microsoft.Cci.IMethodDefinition,Microsoft.Cci.ISourceLocationProvider,Microsoft.Cci.IMethodDefinition,System.Collections.Generic.IDictionary{Microsoft.Cci.IBlockStatement,System.UInt32})">
+            <summary>
             Initializes an object with a method that converts a given block of statements to a list of IL operations, exception information and possibly some private helper types.
             </summary>
-      <param name="host">An object representing the application that is hosting the converter. It is used to obtain access to some global
+            <param name="host">An object representing the application that is hosting the converter. It is used to obtain access to some global
             objects and services such as the shared name table and the table for interning references.</param>
-      <param name="method">The method that contains the block of statements that will be converted.</param>
-      <param name="sourceLocationProvider">An object that can map the ILocation objects found in the block of statements to IPrimarySourceLocation objects.  May be null.</param>
-      <param name="asyncMethod">May be null.</param>
-      <param name="iteratorLocalCount">A map that indicates how many iterator locals are present in a given block. Only useful for generated MoveNext methods. May be null.</param>
-      <requires csharp="host != null" vb="host &lt;&gt; Nothing">host != null</requires>
-      <requires csharp="method != null" vb="method &lt;&gt; Nothing">method != null</requires>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.currentBreakTarget">
-      <summary>
+            <param name="method">The method that contains the block of statements that will be converted.</param>
+            <param name="sourceLocationProvider">An object that can map the ILocation objects found in the block of statements to IPrimarySourceLocation objects.  May be null.</param>
+            <param name="asyncMethod">May be null.</param>
+            <param name="iteratorLocalCount">A map that indicates how many iterator locals are present in a given block. Only useful for generated MoveNext methods. May be null.</param>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.currentBreakTarget">
+            <summary>
             A label for the instruction to where a break statement should currently branch to.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.currentContinueTarget">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.currentContinueTarget">
+            <summary>
             A label for the instruction to where a continue statement should currently branch to.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.currentExpressionIsStatement">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.currentExpressionIsStatement">
+            <summary>
             True when the binary expression currently being processed is the top level expression of an ExpressionStatement and it has
             a target expression as its left operand (i.e. it is an assignment statement of the form tgt op= src).
             Be sure to clear this flag before any sub expresions are processed.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.currentTryCatchFinallyEnd">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.currentTryCatchFinallyEnd">
+            <summary>
             A label for the first instruction that comes after the current TryCatchFinally statement.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.currentTryCatch">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.currentTryCatch">
+            <summary>
             The TryCatchFinally statement for which IL is currently being generated.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.endOfMethod">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.endOfMethod">
+            <summary>
             A label for the final (return) instruction in the current method, or the instruction that loads the argument of the final return instruction.
             If there is no final return intruction, this is location of the instruction following the final instruction (which of course does not exist).
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.generator">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.generator">
+            <summary>
             On object into which IL instructions are generated.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.host">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.host">
+            <summary>
             An object representing the application that is hosting the converter. It is used to obtain access to some global
             objects and services such as the shared name table and the table for interning references.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.labelFor">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.labelFor">
+            <summary>
             A map from source label name unique keys to ILGenerator labels.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.lastStatementWasUnconditionalTransfer">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.lastStatementWasUnconditionalTransfer">
+            <summary>
             True if the last generated statement tranferred control unconditionally, and hence an instruction at the current location can only
             be reached via a branch.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.localIndex">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.localIndex">
+            <summary>
             A map from ILocalDefinition instances to indices that can be used in IL instructions referring to locals.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.method">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.method">
+            <summary>
             The method whose CodeModel body is being converted to IL instructions.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.minizeCodeSize">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.minizeCodeSize">
+            <summary>
             If true, code generation emphasizes small code size over patterns that make debugging better.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.mostNestedTryCatchFor">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.mostNestedTryCatchFor">
+            <summary>
             A map from labels (and labeled statements) to the most nested try catch that contains them. If a branch is
             enountered to a label and the current try catch is not the one that contains the label, then the branch leaves
             the current try catch block (and thus must become a leave instruction).
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.returnLocal">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.returnLocal">
+            <summary>
             A local (temporary) that holds the return value until control reaches the end of the method body.
             Only used if minimizeCodeSize is false or if the return statement is inside a try catch.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.sourceLocationProvider">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.sourceLocationProvider">
+            <summary>
             An object that can map the ILocation objects found in the block of statements to IPrimarySourceLocation objects.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.trackExpressionSourceLocations">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.trackExpressionSourceLocations">
+            <summary>
             If true, the generated IL keeps track of the source locations of expressions, not just statements.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.localVariables">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.localVariables">
+            <summary>
             A list of all the local variable definitions that were encountered during the translation to IL.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.CodeModelToILConverter.iteratorLocalCount">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.CodeModelToILConverter.iteratorLocalCount">
+            <summary>
             A map that indicates how many iterator locals are present in a given block. Only useful for generated MoveNext methods. May be null.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.EmitSourceLocation(Microsoft.Cci.IExpression)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.EmitSourceLocation(Microsoft.Cci.IExpression)">
+            <summary>
             Report the current expression to the IL generator. The source locations of the current expression will be wrapped up
             as an IExpressionSourceLocation object and stored in the Location property of the next IL instruction that is created by the IL generator.
             </summary>
-      <requires csharp="expression != null" vb="expression &lt;&gt; Nothing">expression != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetParameterIndex(Microsoft.Cci.IParameterDefinition)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetParameterIndex(Microsoft.Cci.IParameterDefinition)">
+            <summary>
             Translates the parameter list position of the given parameter to an IL parameter index. In other words,
             it adds 1 to the parameterDefinition.Index value if the containing method has an implicit this parameter.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddition)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddition)">
+            <summary>
             Generates IL for the specified addition.
             </summary>
-      <param name="addition">The addition.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAddition)" inheritedFromTypeName="CodeTraverser" csharp="addition != null" vb="addition &lt;&gt; Nothing">addition != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddressableExpression)">
-      <summary>
+            <param name="addition">The addition.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddressableExpression)">
+            <summary>
             Generates IL for the specified addressable expression.
             </summary>
-      <param name="addressableExpression">The addressable expression.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAddressableExpression)" inheritedFromTypeName="CodeTraverser" csharp="addressableExpression != null" vb="addressableExpression &lt;&gt; Nothing">addressableExpression != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddressDereference)">
-      <summary>
+            <param name="addressableExpression">The addressable expression.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddressDereference)">
+            <summary>
             Generates IL for the specified address dereference.
             </summary>
-      <param name="addressDereference">The address dereference.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAddressDereference)" inheritedFromTypeName="CodeTraverser" csharp="addressDereference != null" vb="addressDereference &lt;&gt; Nothing">addressDereference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddressOf)">
-      <summary>
+            <param name="addressDereference">The address dereference.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAddressOf)">
+            <summary>
             Generates IL for the specified address of.
             </summary>
-      <param name="addressOf">The address of.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAddressOf)" inheritedFromTypeName="CodeTraverser" csharp="addressOf != null" vb="addressOf &lt;&gt; Nothing">addressOf != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAnonymousDelegate)">
-      <summary>
+            <param name="addressOf">The address of.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAnonymousDelegate)">
+            <summary>
             Generates IL for the specified anonymous delegate.
             </summary>
-      <param name="anonymousDelegate">The anonymous delegate.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAnonymousDelegate)" inheritedFromTypeName="CodeTraverser" csharp="anonymousDelegate != null" vb="anonymousDelegate &lt;&gt; Nothing">anonymousDelegate != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IArrayIndexer)">
-      <summary>
+            <param name="anonymousDelegate">The anonymous delegate.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IArrayIndexer)">
+            <summary>
             Generates IL for the specified array indexer.
             </summary>
-      <param name="arrayIndexer">The array indexer.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IArrayIndexer)" inheritedFromTypeName="CodeTraverser" csharp="arrayIndexer != null" vb="arrayIndexer &lt;&gt; Nothing">arrayIndexer != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAssertStatement)">
-      <summary>
+            <param name="arrayIndexer">The array indexer.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAssertStatement)">
+            <summary>
             Throws an exception when executed: IAssertStatement nodes
             must be replaced before converting the Code Model to IL.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAssertStatement)" inheritedFromTypeName="CodeTraverser" csharp="assertStatement != null" vb="assertStatement &lt;&gt; Nothing">assertStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAssignment)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAssignment)">
+            <summary>
             Generates IL for the specified assignment.
             </summary>
-      <param name="assignment">The assignment.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAssignment)" inheritedFromTypeName="CodeTraverser" csharp="assignment != null" vb="assignment &lt;&gt; Nothing">assignment != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.VisitAssignment(Microsoft.Cci.IAssignment,System.Boolean)">
-      <summary>
+            <param name="assignment">The assignment.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.VisitAssignment(Microsoft.Cci.IAssignment,System.Boolean)">
+            <summary>
             Generates IL for the assignment.
             </summary>
-      <param name="assignment">The assignment.</param>
-      <param name="treatAsStatement">if set to <c>true</c> [treat as statement].</param>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAssumeStatement)">
-      <summary>
+            <param name="assignment">The assignment.</param>
+            <param name="treatAsStatement">if set to <c>true</c> [treat as statement].</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IAssumeStatement)">
+            <summary>
             Throws an exception when executed: IAssumeStatement nodes
             must be replaced before converting the Code Model to IL.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IAssumeStatement)" inheritedFromTypeName="CodeTraverser" csharp="assumeStatement != null" vb="assumeStatement &lt;&gt; Nothing">assumeStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBitwiseAnd)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBitwiseAnd)">
+            <summary>
             Generates IL for the specified bitwise and.
             </summary>
-      <param name="bitwiseAnd">The bitwise and.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IBitwiseAnd)" inheritedFromTypeName="CodeTraverser" csharp="bitwiseAnd != null" vb="bitwiseAnd &lt;&gt; Nothing">bitwiseAnd != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBitwiseOr)">
-      <summary>
+            <param name="bitwiseAnd">The bitwise and.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBitwiseOr)">
+            <summary>
             Generates IL for the specified bitwise or.
             </summary>
-      <param name="bitwiseOr">The bitwise or.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IBitwiseOr)" inheritedFromTypeName="CodeTraverser" csharp="bitwiseOr != null" vb="bitwiseOr &lt;&gt; Nothing">bitwiseOr != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBlockExpression)">
-      <summary>
+            <param name="bitwiseOr">The bitwise or.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBlockExpression)">
+            <summary>
             Generates IL for the specified block expression.
             </summary>
-      <param name="blockExpression">The block expression.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IBlockExpression)" inheritedFromTypeName="CodeTraverser" csharp="blockExpression != null" vb="blockExpression &lt;&gt; Nothing">blockExpression != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBlockStatement)">
-      <summary>
+            <param name="blockExpression">The block expression.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBlockStatement)">
+            <summary>
             Generates IL for the specified block.
             </summary>
-      <param name="block">The block.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IBlockStatement)" inheritedFromTypeName="CodeTraverser" csharp="block != null" vb="block &lt;&gt; Nothing">block != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBoundExpression)">
-      <summary>
+            <param name="block">The block.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBoundExpression)">
+            <summary>
             Performs some computation with the given bound expression.
             </summary>
-      <param name="boundExpression" />
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IBoundExpression)" inheritedFromTypeName="CodeTraverser" csharp="boundExpression != null" vb="boundExpression &lt;&gt; Nothing">boundExpression != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBreakStatement)">
-      <summary>
+            <param name="boundExpression"></param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IBreakStatement)">
+            <summary>
             Generates IL for the specified break statement.
             </summary>
-      <param name="breakStatement">The break statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IBreakStatement)" inheritedFromTypeName="CodeTraverser" csharp="breakStatement != null" vb="breakStatement &lt;&gt; Nothing">breakStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICastIfPossible)">
-      <summary>
+            <param name="breakStatement">The break statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICastIfPossible)">
+            <summary>
             Generates IL for the specified cast if possible.
             </summary>
-      <param name="castIfPossible">The cast if possible.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICastIfPossible)" inheritedFromTypeName="CodeTraverser" csharp="castIfPossible != null" vb="castIfPossible &lt;&gt; Nothing">castIfPossible != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICatchClause)">
-      <summary>
+            <param name="castIfPossible">The cast if possible.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICatchClause)">
+            <summary>
             Generates IL for the specified catch clause.
             </summary>
-      <param name="catchClause">The catch clause.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICatchClause)" inheritedFromTypeName="CodeTraverser" csharp="catchClause != null" vb="catchClause &lt;&gt; Nothing">catchClause != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICheckIfInstance)">
-      <summary>
+            <param name="catchClause">The catch clause.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICheckIfInstance)">
+            <summary>
             Generates IL for the specified check if instance.
             </summary>
-      <param name="checkIfInstance">The check if instance.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICheckIfInstance)" inheritedFromTypeName="CodeTraverser" csharp="checkIfInstance != null" vb="checkIfInstance &lt;&gt; Nothing">checkIfInstance != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICompileTimeConstant)">
-      <summary>
+            <param name="checkIfInstance">The check if instance.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICompileTimeConstant)">
+            <summary>
             Generates IL for the specified constant.
             </summary>
-      <param name="constant">The constant.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICompileTimeConstant)" inheritedFromTypeName="CodeTraverser" csharp="constant != null" vb="constant &lt;&gt; Nothing">constant != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IConditional)">
-      <summary>
+            <param name="constant">The constant.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IConditional)">
+            <summary>
             Generates IL for the specified conditional.
             </summary>
-      <param name="conditional">The conditional.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IConditional)" inheritedFromTypeName="CodeTraverser" csharp="conditional != null" vb="conditional &lt;&gt; Nothing">conditional != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IConditionalStatement)">
-      <summary>
+            <param name="conditional">The conditional.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IConditionalStatement)">
+            <summary>
             Generates IL for the specified conditional statement.
             </summary>
-      <param name="conditionalStatement">The conditional statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IConditionalStatement)" inheritedFromTypeName="CodeTraverser" csharp="conditionalStatement != null" vb="conditionalStatement &lt;&gt; Nothing">conditionalStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IContinueStatement)">
-      <summary>
+            <param name="conditionalStatement">The conditional statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IContinueStatement)">
+            <summary>
             Generates IL for the specified continue statement.
             </summary>
-      <param name="continueStatement">The continue statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IContinueStatement)" inheritedFromTypeName="CodeTraverser" csharp="continueStatement != null" vb="continueStatement &lt;&gt; Nothing">continueStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICopyMemoryStatement)">
-      <summary>
+            <param name="continueStatement">The continue statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICopyMemoryStatement)">
+            <summary>
             Generates IL for the specified copy memory statement.
             </summary>
-      <param name="copyMemoryStatement">The copy memory statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICopyMemoryStatement)" inheritedFromTypeName="CodeTraverser" csharp="copyMemoryStatement != null" vb="copyMemoryStatement &lt;&gt; Nothing">copyMemoryStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IConversion)">
-      <summary>
+            <param name="copyMemoryStatement">The copy memory statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IConversion)">
+            <summary>
             Generates IL for the specified conversion.
             </summary>
-      <param name="conversion">The conversion.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IConversion)" inheritedFromTypeName="CodeTraverser" csharp="conversion != null" vb="conversion &lt;&gt; Nothing">conversion != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICreateArray)">
-      <summary>
+            <param name="conversion">The conversion.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICreateArray)">
+            <summary>
             Generates IL for the specified create array.
             </summary>
-      <param name="createArray">The create array instance to visit.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICreateArray)" inheritedFromTypeName="CodeTraverser" csharp="createArray != null" vb="createArray &lt;&gt; Nothing">createArray != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICreateDelegateInstance)">
-      <summary>
+            <param name="createArray">The create array instance to visit.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICreateDelegateInstance)">
+            <summary>
             Generates IL for the specified create delegate instance.
             </summary>
-      <param name="createDelegateInstance">The create delegate instance.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICreateDelegateInstance)" inheritedFromTypeName="CodeTraverser" csharp="createDelegateInstance != null" vb="createDelegateInstance &lt;&gt; Nothing">createDelegateInstance != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICreateObjectInstance)">
-      <summary>
+            <param name="createDelegateInstance">The create delegate instance.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ICreateObjectInstance)">
+            <summary>
             Generates IL for the specified create object instance.
             </summary>
-      <param name="createObjectInstance">The create object instance.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ICreateObjectInstance)" inheritedFromTypeName="CodeTraverser" csharp="createObjectInstance != null" vb="createObjectInstance &lt;&gt; Nothing">createObjectInstance != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDefaultValue)">
-      <summary>
+            <param name="createObjectInstance">The create object instance.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDefaultValue)">
+            <summary>
             Generates IL for the specified default value.
             </summary>
-      <param name="defaultValue">The default value.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IDefaultValue)" inheritedFromTypeName="CodeTraverser" csharp="defaultValue != null" vb="defaultValue &lt;&gt; Nothing">defaultValue != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDebuggerBreakStatement)">
-      <summary>
+            <param name="defaultValue">The default value.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDebuggerBreakStatement)">
+            <summary>
             Generates IL for the specified debugger break statement.
             </summary>
-      <param name="debuggerBreakStatement">The debugger break statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IDebuggerBreakStatement)" inheritedFromTypeName="CodeTraverser" csharp="debuggerBreakStatement != null" vb="debuggerBreakStatement &lt;&gt; Nothing">debuggerBreakStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDivision)">
-      <summary>
+            <param name="debuggerBreakStatement">The debugger break statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDivision)">
+            <summary>
             Generates IL for the specified division.
             </summary>
-      <param name="division">The division.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IDivision)" inheritedFromTypeName="CodeTraverser" csharp="division != null" vb="division &lt;&gt; Nothing">division != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDoUntilStatement)">
-      <summary>
+            <param name="division">The division.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDoUntilStatement)">
+            <summary>
             Generates IL for the specified do until statement.
             </summary>
-      <param name="doUntilStatement">The do until statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IDoUntilStatement)" inheritedFromTypeName="CodeTraverser" csharp="doUntilStatement != null" vb="doUntilStatement &lt;&gt; Nothing">doUntilStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDupValue)">
-      <summary>
+            <param name="doUntilStatement">The do until statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IDupValue)">
+            <summary>
             Performs some computation with the given dup value expression.
             </summary>
-      <param name="dupValue" />
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IDupValue)" inheritedFromTypeName="CodeTraverser" csharp="dupValue != null" vb="dupValue &lt;&gt; Nothing">dupValue != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IEmptyStatement)">
-      <summary>
+            <param name="dupValue"></param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IEmptyStatement)">
+            <summary>
             Generates IL for the specified empty statement.
             </summary>
-      <param name="emptyStatement">The empty statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IEmptyStatement)" inheritedFromTypeName="CodeTraverser" csharp="emptyStatement != null" vb="emptyStatement &lt;&gt; Nothing">emptyStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IEquality)">
-      <summary>
+            <param name="emptyStatement">The empty statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IEquality)">
+            <summary>
             Generates IL for the specified equality.
             </summary>
-      <param name="equality">The equality.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IEquality)" inheritedFromTypeName="CodeTraverser" csharp="equality != null" vb="equality &lt;&gt; Nothing">equality != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IExclusiveOr)">
-      <summary>
+            <param name="equality">The equality.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IExclusiveOr)">
+            <summary>
             Generates IL for the specified exclusive or.
             </summary>
-      <param name="exclusiveOr">The exclusive or.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IExclusiveOr)" inheritedFromTypeName="CodeTraverser" csharp="exclusiveOr != null" vb="exclusiveOr &lt;&gt; Nothing">exclusiveOr != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IExpressionStatement)">
-      <summary>
+            <param name="exclusiveOr">The exclusive or.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IExpressionStatement)">
+            <summary>
             Generates IL for the specified expression statement.
             </summary>
-      <param name="expressionStatement">The expression statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IExpressionStatement)" inheritedFromTypeName="CodeTraverser" csharp="expressionStatement != null" vb="expressionStatement &lt;&gt; Nothing">expressionStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IFillMemoryStatement)">
-      <summary>
+            <param name="expressionStatement">The expression statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IFillMemoryStatement)">
+            <summary>
             Generates IL for the specified fill memory statement.
             </summary>
-      <param name="fillMemoryStatement">The fill memory statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IFillMemoryStatement)" inheritedFromTypeName="CodeTraverser" csharp="fillMemoryStatement != null" vb="fillMemoryStatement &lt;&gt; Nothing">fillMemoryStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IForEachStatement)">
-      <summary>
+            <param name="fillMemoryStatement">The fill memory statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IForEachStatement)">
+            <summary>
             Generates IL for the specified for each statement.
             </summary>
-      <param name="forEachStatement">For each statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IForEachStatement)" inheritedFromTypeName="CodeTraverser" csharp="forEachStatement != null" vb="forEachStatement &lt;&gt; Nothing">forEachStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.VisitForeachArrayElement(Microsoft.Cci.IForEachStatement,Microsoft.Cci.IArrayTypeReference)">
-      <summary>
+            <param name="forEachStatement">For each statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.VisitForeachArrayElement(Microsoft.Cci.IForEachStatement,Microsoft.Cci.IArrayTypeReference)">
+            <summary>
             Generates IL code for the given for each statement for the special case where the collection is known
             to be vector type.
             </summary>
-      <param name="forEachStatement">The foreach statement to visit.</param>
-      <param name="arrayType">The vector type of the collection.</param>
-      <requires csharp="arrayType.IsVector" vb="arrayType.IsVector">arrayType.IsVector</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IForStatement)">
-      <summary>
+            <param name="forEachStatement">The foreach statement to visit.</param>
+            <param name="arrayType">The vector type of the collection.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IForStatement)">
+            <summary>
             Generates IL for the specified for statement.
             </summary>
-      <param name="forStatement">For statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IForStatement)" inheritedFromTypeName="CodeTraverser" csharp="forStatement != null" vb="forStatement &lt;&gt; Nothing">forStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGetTypeOfTypedReference)">
-      <summary>
+            <param name="forStatement">For statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGetTypeOfTypedReference)">
+            <summary>
             Generates IL for the specified get type of typed reference.
             </summary>
-      <param name="getTypeOfTypedReference">The get type of typed reference.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IGetTypeOfTypedReference)" inheritedFromTypeName="CodeTraverser" csharp="getTypeOfTypedReference != null" vb="getTypeOfTypedReference &lt;&gt; Nothing">getTypeOfTypedReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGetValueOfTypedReference)">
-      <summary>
+            <param name="getTypeOfTypedReference">The get type of typed reference.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGetValueOfTypedReference)">
+            <summary>
             Generates IL for the specified get value of typed reference.
             </summary>
-      <param name="getValueOfTypedReference">The get value of typed reference.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IGetValueOfTypedReference)" inheritedFromTypeName="CodeTraverser" csharp="getValueOfTypedReference != null" vb="getValueOfTypedReference &lt;&gt; Nothing">getValueOfTypedReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGotoStatement)">
-      <summary>
+            <param name="getValueOfTypedReference">The get value of typed reference.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGotoStatement)">
+            <summary>
             Generates IL for the specified goto statement.
             </summary>
-      <param name="gotoStatement">The goto statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IGotoStatement)" inheritedFromTypeName="CodeTraverser" csharp="gotoStatement != null" vb="gotoStatement &lt;&gt; Nothing">gotoStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGotoSwitchCaseStatement)">
-      <summary>
+            <param name="gotoStatement">The goto statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGotoSwitchCaseStatement)">
+            <summary>
             Generates IL for the specified goto switch case statement.
             </summary>
-      <param name="gotoSwitchCaseStatement">The goto switch case statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IGotoSwitchCaseStatement)" inheritedFromTypeName="CodeTraverser" csharp="gotoSwitchCaseStatement != null" vb="gotoSwitchCaseStatement &lt;&gt; Nothing">gotoSwitchCaseStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGreaterThan)">
-      <summary>
+            <param name="gotoSwitchCaseStatement">The goto switch case statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGreaterThan)">
+            <summary>
             Generates IL for the specified greater than.
             </summary>
-      <param name="greaterThan">The greater than.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IGreaterThan)" inheritedFromTypeName="CodeTraverser" csharp="greaterThan != null" vb="greaterThan &lt;&gt; Nothing">greaterThan != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGreaterThanOrEqual)">
-      <summary>
+            <param name="greaterThan">The greater than.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IGreaterThanOrEqual)">
+            <summary>
             Generates IL for the specified greater than or equal.
             </summary>
-      <param name="greaterThanOrEqual">The greater than or equal.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IGreaterThanOrEqual)" inheritedFromTypeName="CodeTraverser" csharp="greaterThanOrEqual != null" vb="greaterThanOrEqual &lt;&gt; Nothing">greaterThanOrEqual != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILabeledStatement)">
-      <summary>
+            <param name="greaterThanOrEqual">The greater than or equal.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILabeledStatement)">
+            <summary>
             Generates IL for the specified labeled statement.
             </summary>
-      <param name="labeledStatement">The labeled statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILabeledStatement)" inheritedFromTypeName="CodeTraverser" csharp="labeledStatement != null" vb="labeledStatement &lt;&gt; Nothing">labeledStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILeftShift)">
-      <summary>
+            <param name="labeledStatement">The labeled statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILeftShift)">
+            <summary>
             Generates IL for the specified left shift.
             </summary>
-      <param name="leftShift">The left shift.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILeftShift)" inheritedFromTypeName="CodeTraverser" csharp="leftShift != null" vb="leftShift &lt;&gt; Nothing">leftShift != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILessThan)">
-      <summary>
+            <param name="leftShift">The left shift.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILessThan)">
+            <summary>
             Generates IL for the specified less than.
             </summary>
-      <param name="lessThan">The less than.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILessThan)" inheritedFromTypeName="CodeTraverser" csharp="lessThan != null" vb="lessThan &lt;&gt; Nothing">lessThan != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILessThanOrEqual)">
-      <summary>
+            <param name="lessThan">The less than.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILessThanOrEqual)">
+            <summary>
             Generates IL for the specified less than or equal.
             </summary>
-      <param name="lessThanOrEqual">The less than or equal.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILessThanOrEqual)" inheritedFromTypeName="CodeTraverser" csharp="lessThanOrEqual != null" vb="lessThanOrEqual &lt;&gt; Nothing">lessThanOrEqual != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILocalDeclarationStatement)">
-      <summary>
+            <param name="lessThanOrEqual">The less than or equal.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILocalDeclarationStatement)">
+            <summary>
             Generates IL for the specified local declaration statement.
             </summary>
-      <param name="localDeclarationStatement">The local declaration statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILocalDeclarationStatement)" inheritedFromTypeName="CodeTraverser" csharp="localDeclarationStatement != null" vb="localDeclarationStatement &lt;&gt; Nothing">localDeclarationStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILockStatement)">
-      <summary>
+            <param name="localDeclarationStatement">The local declaration statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILockStatement)">
+            <summary>
             Generates IL for the specified lock statement.
             </summary>
-      <param name="lockStatement">The lock statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILockStatement)" inheritedFromTypeName="CodeTraverser" csharp="lockStatement != null" vb="lockStatement &lt;&gt; Nothing">lockStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILogicalNot)">
-      <summary>
+            <param name="lockStatement">The lock statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ILogicalNot)">
+            <summary>
             Generates IL for the specified logical not.
             </summary>
-      <param name="logicalNot">The logical not.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILogicalNot)" inheritedFromTypeName="CodeTraverser" csharp="logicalNot != null" vb="logicalNot &lt;&gt; Nothing">logicalNot != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IMakeTypedReference)">
-      <summary>
+            <param name="logicalNot">The logical not.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IMakeTypedReference)">
+            <summary>
             Generates IL for the specified make typed reference.
             </summary>
-      <param name="makeTypedReference">The make typed reference.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IMakeTypedReference)" inheritedFromTypeName="CodeTraverser" csharp="makeTypedReference != null" vb="makeTypedReference &lt;&gt; Nothing">makeTypedReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IMethodCall)">
-      <summary>
+            <param name="makeTypedReference">The make typed reference.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IMethodCall)">
+            <summary>
             Generates IL for the specified method call.
             </summary>
-      <param name="methodCall">The method call.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IMethodCall)" inheritedFromTypeName="CodeTraverser" csharp="methodCall != null" vb="methodCall &lt;&gt; Nothing">methodCall != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IModulus)">
-      <summary>
+            <param name="methodCall">The method call.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IModulus)">
+            <summary>
             Generates IL for the specified modulus.
             </summary>
-      <param name="modulus">The modulus.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IModulus)" inheritedFromTypeName="CodeTraverser" csharp="modulus != null" vb="modulus &lt;&gt; Nothing">modulus != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IMultiplication)">
-      <summary>
+            <param name="modulus">The modulus.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IMultiplication)">
+            <summary>
             Generates IL for the specified multiplication.
             </summary>
-      <param name="multiplication">The multiplication.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IMultiplication)" inheritedFromTypeName="CodeTraverser" csharp="multiplication != null" vb="multiplication &lt;&gt; Nothing">multiplication != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.INotEquality)">
-      <summary>
+            <param name="multiplication">The multiplication.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.INotEquality)">
+            <summary>
             Generates IL for the specified not equality.
             </summary>
-      <param name="notEquality">The not equality.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.INotEquality)" inheritedFromTypeName="CodeTraverser" csharp="notEquality != null" vb="notEquality &lt;&gt; Nothing">notEquality != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IOldValue)">
-      <summary>
+            <param name="notEquality">The not equality.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IOldValue)">
+            <summary>
             Throws an exception when executed: IOldValue nodes
             must be replaced before converting the Code Model to IL.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IOldValue)" inheritedFromTypeName="CodeTraverser" csharp="oldValue != null" vb="oldValue &lt;&gt; Nothing">oldValue != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IOnesComplement)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IOnesComplement)">
+            <summary>
             Generates IL for the specified ones complement.
             </summary>
-      <param name="onesComplement">The ones complement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IOnesComplement)" inheritedFromTypeName="CodeTraverser" csharp="onesComplement != null" vb="onesComplement &lt;&gt; Nothing">onesComplement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IOutArgument)">
-      <summary>
+            <param name="onesComplement">The ones complement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IOutArgument)">
+            <summary>
             Generates IL for the specified out argument.
             </summary>
-      <param name="outArgument">The out argument.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IOutArgument)" inheritedFromTypeName="CodeTraverser" csharp="outArgument != null" vb="outArgument &lt;&gt; Nothing">outArgument != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IPointerCall)">
-      <summary>
+            <param name="outArgument">The out argument.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IPointerCall)">
+            <summary>
             Generates IL for the specified pointer call.
             </summary>
-      <param name="pointerCall">The pointer call.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IPointerCall)" inheritedFromTypeName="CodeTraverser" csharp="pointerCall != null" vb="pointerCall &lt;&gt; Nothing">pointerCall != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IPopValue)">
-      <summary>
+            <param name="pointerCall">The pointer call.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IPopValue)">
+            <summary>
             Performs some computation with the given pop value expression.
             </summary>
-      <param name="popValue" />
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IPopValue)" inheritedFromTypeName="CodeTraverser" csharp="popValue != null" vb="popValue &lt;&gt; Nothing">popValue != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IPushStatement)">
-      <summary>
+            <param name="popValue"></param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IPushStatement)">
+            <summary>
             Performs some computation with the given push statement.
             </summary>
-      <param name="pushStatement" />
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IPushStatement)" inheritedFromTypeName="CodeTraverser" csharp="pushStatement != null" vb="pushStatement &lt;&gt; Nothing">pushStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRefArgument)">
-      <summary>
+            <param name="pushStatement"></param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRefArgument)">
+            <summary>
             Generates IL for the specified ref argument.
             </summary>
-      <param name="refArgument">The ref argument.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IRefArgument)" inheritedFromTypeName="CodeTraverser" csharp="refArgument != null" vb="refArgument &lt;&gt; Nothing">refArgument != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IResourceUseStatement)">
-      <summary>
+            <param name="refArgument">The ref argument.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IResourceUseStatement)">
+            <summary>
             Generates IL for the specified resource use statement.
             </summary>
-      <param name="resourceUseStatement">The resource use statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IResourceUseStatement)" inheritedFromTypeName="CodeTraverser" csharp="resourceUseStatement != null" vb="resourceUseStatement &lt;&gt; Nothing">resourceUseStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRethrowStatement)">
-      <summary>
+            <param name="resourceUseStatement">The resource use statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRethrowStatement)">
+            <summary>
             Generates IL for the specified rethrow statement.
             </summary>
-      <param name="rethrowStatement">The rethrow statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IRethrowStatement)" inheritedFromTypeName="CodeTraverser" csharp="rethrowStatement != null" vb="rethrowStatement &lt;&gt; Nothing">rethrowStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IReturnStatement)">
-      <summary>
+            <param name="rethrowStatement">The rethrow statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IReturnStatement)">
+            <summary>
             Generates IL for the specified return statement.
             </summary>
-      <param name="returnStatement">The return statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IReturnStatement)" inheritedFromTypeName="CodeTraverser" csharp="returnStatement != null" vb="returnStatement &lt;&gt; Nothing">returnStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IReturnValue)">
-      <summary>
+            <param name="returnStatement">The return statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IReturnValue)">
+            <summary>
             Throws an exception when executed: IReturnValue nodes
             must be replaced before converting the Code Model to IL.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IReturnValue)" inheritedFromTypeName="CodeTraverser" csharp="returnValue != null" vb="returnValue &lt;&gt; Nothing">returnValue != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRightShift)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRightShift)">
+            <summary>
             Generates IL for the specified right shift.
             </summary>
-      <param name="rightShift">The right shift.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IRightShift)" inheritedFromTypeName="CodeTraverser" csharp="rightShift != null" vb="rightShift &lt;&gt; Nothing">rightShift != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRuntimeArgumentHandleExpression)">
-      <summary>
+            <param name="rightShift">The right shift.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IRuntimeArgumentHandleExpression)">
+            <summary>
             Generates IL for the specified runtime argument handle expression.
             </summary>
-      <param name="runtimeArgumentHandleExpression">The runtime argument handle expression.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IRuntimeArgumentHandleExpression)" inheritedFromTypeName="CodeTraverser" csharp="runtimeArgumentHandleExpression != null" vb="runtimeArgumentHandleExpression &lt;&gt; Nothing">runtimeArgumentHandleExpression != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISizeOf)">
-      <summary>
+            <param name="runtimeArgumentHandleExpression">The runtime argument handle expression.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISizeOf)">
+            <summary>
             Generates IL for the specified size of.
             </summary>
-      <param name="sizeOf">The size of.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ISizeOf)" inheritedFromTypeName="CodeTraverser" csharp="sizeOf != null" vb="sizeOf &lt;&gt; Nothing">sizeOf != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISourceMethodBody)">
-      <summary>
+            <param name="sizeOf">The size of.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISourceMethodBody)">
+            <summary>
             Generates IL for the specified method body.
             </summary>
-      <param name="methodBody">The method body.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ISourceMethodBody)" inheritedFromTypeName="CodeTraverser" csharp="sourceMethodBody != null" vb="sourceMethodBody &lt;&gt; Nothing">sourceMethodBody != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IStackArrayCreate)">
-      <summary>
+            <param name="methodBody">The method body.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IStackArrayCreate)">
+            <summary>
             Generates IL for the specified stack array create.
             </summary>
-      <param name="stackArrayCreate">The stack array create.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IStackArrayCreate)" inheritedFromTypeName="CodeTraverser" csharp="stackArrayCreate != null" vb="stackArrayCreate &lt;&gt; Nothing">stackArrayCreate != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISubtraction)">
-      <summary>
+            <param name="stackArrayCreate">The stack array create.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISubtraction)">
+            <summary>
             Generates IL for the specified subtraction.
             </summary>
-      <param name="subtraction">The subtraction.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ISubtraction)" inheritedFromTypeName="CodeTraverser" csharp="subtraction != null" vb="subtraction &lt;&gt; Nothing">subtraction != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISwitchCase)">
-      <summary>
+            <param name="subtraction">The subtraction.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISwitchCase)">
+            <summary>
             Generates IL for the specified switch case.
             </summary>
-      <param name="switchCase">The switch case.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ISwitchCase)" inheritedFromTypeName="CodeTraverser" csharp="switchCase != null" vb="switchCase &lt;&gt; Nothing">switchCase != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISwitchStatement)">
-      <summary>
+            <param name="switchCase">The switch case.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ISwitchStatement)">
+            <summary>
             Generates IL for the specified switch statement.
             </summary>
-      <param name="switchStatement">The switch statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ISwitchStatement)" inheritedFromTypeName="CodeTraverser" csharp="switchStatement != null" vb="switchStatement &lt;&gt; Nothing">switchStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITargetExpression)">
-      <summary>
+            <param name="switchStatement">The switch statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITargetExpression)">
+            <summary>
             Performs some computation with the given target expression.
             </summary>
-      <param name="targetExpression" />
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ITargetExpression)" inheritedFromTypeName="CodeTraverser" csharp="targetExpression != null" vb="targetExpression &lt;&gt; Nothing">targetExpression != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IThisReference)">
-      <summary>
+            <param name="targetExpression"></param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IThisReference)">
+            <summary>
             Generates IL for the specified this reference.
             </summary>
-      <param name="thisReference">The this reference.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IThisReference)" inheritedFromTypeName="CodeTraverser" csharp="thisReference != null" vb="thisReference &lt;&gt; Nothing">thisReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IThrowStatement)">
-      <summary>
+            <param name="thisReference">The this reference.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IThrowStatement)">
+            <summary>
             Generates IL for the specified throw statement.
             </summary>
-      <param name="throwStatement">The throw statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IThrowStatement)" inheritedFromTypeName="CodeTraverser" csharp="throwStatement != null" vb="throwStatement &lt;&gt; Nothing">throwStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITryCatchFinallyStatement)">
-      <summary>
+            <param name="throwStatement">The throw statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITryCatchFinallyStatement)">
+            <summary>
             Generates IL for the specified try catch filter finally statement.
             </summary>
-      <param name="tryCatchFilterFinallyStatement">The try catch filter finally statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ITryCatchFinallyStatement)" inheritedFromTypeName="CodeTraverser" csharp="tryCatchFilterFinallyStatement != null" vb="tryCatchFilterFinallyStatement &lt;&gt; Nothing">tryCatchFilterFinallyStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITokenOf)">
-      <summary>
+            <param name="tryCatchFilterFinallyStatement">The try catch filter finally statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITokenOf)">
+            <summary>
             Generates IL for the specified token of.
             </summary>
-      <param name="tokenOf">The token of.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ITokenOf)" inheritedFromTypeName="CodeTraverser" csharp="tokenOf != null" vb="tokenOf &lt;&gt; Nothing">tokenOf != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITypeOf)">
-      <summary>
+            <param name="tokenOf">The token of.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.ITypeOf)">
+            <summary>
             Generates IL for the specified type of.
             </summary>
-      <param name="typeOf">The type of.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ITypeOf)" inheritedFromTypeName="CodeTraverser" csharp="typeOf != null" vb="typeOf &lt;&gt; Nothing">typeOf != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IUnaryNegation)">
-      <summary>
+            <param name="typeOf">The type of.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IUnaryNegation)">
+            <summary>
             Generates IL for the specified unary negation.
             </summary>
-      <param name="unaryNegation">The unary negation.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IUnaryNegation)" inheritedFromTypeName="CodeTraverser" csharp="unaryNegation != null" vb="unaryNegation &lt;&gt; Nothing">unaryNegation != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IUnaryPlus)">
-      <summary>
+            <param name="unaryNegation">The unary negation.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IUnaryPlus)">
+            <summary>
             Generates IL for the specified unary plus.
             </summary>
-      <param name="unaryPlus">The unary plus.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IUnaryPlus)" inheritedFromTypeName="CodeTraverser" csharp="unaryPlus != null" vb="unaryPlus &lt;&gt; Nothing">unaryPlus != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IVectorLength)">
-      <summary>
+            <param name="unaryPlus">The unary plus.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IVectorLength)">
+            <summary>
             Generates IL for the specified vector length.
             </summary>
-      <param name="vectorLength">Length of the vector.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IVectorLength)" inheritedFromTypeName="CodeTraverser" csharp="vectorLength != null" vb="vectorLength &lt;&gt; Nothing">vectorLength != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IWhileDoStatement)">
-      <summary>
+            <param name="vectorLength">Length of the vector.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IWhileDoStatement)">
+            <summary>
             Generates IL for the specified while do statement.
             </summary>
-      <param name="whileDoStatement">The while do statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IWhileDoStatement)" inheritedFromTypeName="CodeTraverser" csharp="whileDoStatement != null" vb="whileDoStatement &lt;&gt; Nothing">whileDoStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IYieldBreakStatement)">
-      <summary>
+            <param name="whileDoStatement">The while do statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IYieldBreakStatement)">
+            <summary>
             Generates IL for the specified yield break statement.
             </summary>
-      <param name="yieldBreakStatement">The yield break statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IYieldBreakStatement)" inheritedFromTypeName="CodeTraverser" csharp="yieldBreakStatement != null" vb="yieldBreakStatement &lt;&gt; Nothing">yieldBreakStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IYieldReturnStatement)">
-      <summary>
+            <param name="yieldBreakStatement">The yield break statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.TraverseChildren(Microsoft.Cci.IYieldReturnStatement)">
+            <summary>
             Generates IL for the specified yield return statement.
             </summary>
-      <param name="yieldReturnStatement">The yield return statement.</param>
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.IYieldReturnStatement)" inheritedFromTypeName="CodeTraverser" csharp="yieldReturnStatement != null" vb="yieldReturnStatement &lt;&gt; Nothing">yieldReturnStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetBodySize">
-      <summary>
+            <param name="yieldReturnStatement">The yield return statement.</param>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetBodySize">
+            <summary>
             Returns the size in bytes of the serialized method body generated by this converter.
             </summary>
-      <returns />
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetIteratorScopes">
-      <summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetIteratorScopes">
+            <summary>
             Returns a local scope for each local variable in the iterator that generated the MoveNext method body that was
             converted to IL by this converter. The scopes may be duplicated and occur in the same order as the local variable
             declarations occur in the iterator. If this converter did not convert a MoveNext method, the result is null.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetLocalScopes">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetLocalScopes">
+            <summary>
             Returns zero or more local (block) scopes into which the CLR IL operations of this converted Code Model block is organized.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetLocalVariables">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetLocalVariables">
+            <summary>
             Returns all of the local variables (including compiler generated temporary variables) that are local to the block
             of statements translated by this converter.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetNamespaceScopes">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetNamespaceScopes">
+            <summary>
             Returns zero or more namespace scopes into which the namespace type containing the given method body has been nested.
             These scopes determine how simple names are looked up inside the method body. There is a separate scope for each dotted
             component in the namespace type name. For istance namespace type x.y.z will have two namespace scopes, the first is for the x and the second
             is for the y.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetOperations">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetOperations">
+            <summary>
             Returns the IL operations that correspond to the statements that have been converted to IL by this converter.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetSynchronizationInformation">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetSynchronizationInformation">
+            <summary>
             Returns an object that describes where synchronization points occur in the IL operations of the "MoveNext" method of the state class of
             an asynchronous method. This returns null unless the generator has been supplied with an non null value for asyncMethodDefinition parameter
             during construction.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetOperationExceptionInformation">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetOperationExceptionInformation">
+            <summary>
             Returns zero or more exception exception information blocks (information about handlers, filters and finally blocks)
             that correspond to try-catch-finally constructs that appear in the statements that have been converted to IL by this converter.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.GetPrivateHelperTypes">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.GetPrivateHelperTypes">
+            <summary>
             Returns zero or more types that are used to keep track of information needed to implement
             the statements that have been converted to IL by this converter. For example, any closure classes
             needed to compile anonymous delegate expressions (lambdas) will be returned by this method.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.ConvertToIL(Microsoft.Cci.IBlockStatement)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.CodeModelToILConverter.ConvertToIL(Microsoft.Cci.IBlockStatement)">
+            <summary>
             Traverses the given block of statements in the context of the given method to produce a list of
             IL operations, exception information blocks (the locations of handlers, filters and finallies) and any private helper
             types (for example closure classes) that represent the semantics of the given block of statements.
             The results of the traversal can be retrieved via the GetOperations, GetOperationExceptionInformation
             and GetPrivateHelperTypes methods.
             </summary>
-      <param name="body">A block of statements that are to be converted to IL.</param>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToILConverter.MaximumStackSizeNeeded">
-      <summary>
+            <param name="body">A block of statements that are to be converted to IL.</param>
+        </member>
+        <member name="P:Microsoft.Cci.CodeModelToILConverter.MaximumStackSizeNeeded">
+            <summary>
             The maximum number of stack slots that will be needed by an interpreter of the IL produced by this converter.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToILConverter.MinimizeCodeSize">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.CodeModelToILConverter.MinimizeCodeSize">
+            <summary>
             If true, code generation emphasizes small code size over patterns that make debugging better.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToILConverter.TrackExpressionSourceLocations">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.CodeModelToILConverter.TrackExpressionSourceLocations">
+            <summary>
             If true, the generated IL keeps track of the source locations of expressions, not just statements.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToILConverter.GetTypeFromHandle">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.CodeModelToILConverter.GetTypeFromHandle">
+            <summary>
             A reference to System.Type.GetTypeFromHandle(System.Runtime.TypeHandle).
             </summary>
-    </member>
-    <member name="T:Microsoft.Cci.CodeModelToIL.ExpressionSourceLocation">
-      <invariant>this.primarySourceLocation != null</invariant>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToIL.ExpressionSourceLocation.#ctor(Microsoft.Cci.IPrimarySourceLocation)">
-      <requires csharp="primarySourceLocation != null" vb="primarySourceLocation &lt;&gt; Nothing">primarySourceLocation != null</requires>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.ExpressionSourceLocation.PrimarySourceLocation">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IExpressionSourceLocation.get_PrimarySourceLocation" inheritedFromTypeName="IExpressionSourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.ExpressionSourceLocation.Document">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocation.get_Document" inheritedFromTypeName="ILocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToIL.LabelAndTryBlockAssociater.TraverseChildren(Microsoft.Cci.ILabeledStatement)">
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ILabeledStatement)" inheritedFromTypeName="CodeTraverser" csharp="labeledStatement != null" vb="labeledStatement &lt;&gt; Nothing">labeledStatement != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToIL.LabelAndTryBlockAssociater.TraverseChildren(Microsoft.Cci.ITryCatchFinallyStatement)">
-      <requires inheritedFrom="M:Microsoft.Cci.CodeTraverser.TraverseChildren(Microsoft.Cci.ITryCatchFinallyStatement)" inheritedFromTypeName="CodeTraverser" csharp="tryCatchFilterFinallyStatement != null" vb="tryCatchFilterFinallyStatement &lt;&gt; Nothing">tryCatchFilterFinallyStatement != null</requires>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.TemporaryVariable.CompileTimeValue">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="this.IsConstant" vb="Me.IsConstant">this.IsConstant</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.TemporaryVariable.CustomModifiers">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="this.IsModified" vb="Me.IsModified">this.IsModified</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.TemporaryVariable.Name">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedEntity.get_Name" inheritedFromTypeName="INamedEntity" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.TemporaryVariable.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.TemporaryVariable.MethodDefinition">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_MethodDefinition" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.CodeModelToIL.TemporaryVariable.Type">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_Type" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.LoadIndirect(Microsoft.Cci.ITypeReference)">
-      <requires csharp="targetType != null" vb="targetType &lt;&gt; Nothing">targetType != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.CodeModelToILConverter.VisitAssignment(Microsoft.Cci.ITargetExpression,Microsoft.Cci.IExpression,Microsoft.Cci.CodeModelToILConverter.SourceTraverser,System.Boolean,System.Boolean,System.Boolean)">
-      <requires csharp="target != null" vb="target &lt;&gt; Nothing">target != null</requires>
-      <requires csharp="source != null" vb="source &lt;&gt; Nothing">source != null</requires>
-      <requires csharp="sourceTraverser != null" vb="sourceTraverser &lt;&gt; Nothing">sourceTraverser != null</requires>
-      <requires csharp="resultIsInitialTargetRValue ⇒ pushTargetRValue" vb="resultIsInitialTargetRValue Implies pushTargetRValue">!resultIsInitialTargetRValue || pushTargetRValue</requires>
-      <requires csharp="pushTargetRValue ⇒ source is Microsoft.Cci.IBinaryOperation" vb="pushTargetRValue Implies source Is Microsoft.Cci.IBinaryOperation">!pushTargetRValue || source is Microsoft.Cci.IBinaryOperation</requires>
-    </member>
-  </members>
+        </member>
+    </members>
 </doc>

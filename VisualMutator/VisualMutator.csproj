@@ -57,9 +57,6 @@
     <Reference Include="DiffLib">
       <HintPath>..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
     </Reference>
-    <Reference Include="DiffPlex">
-      <HintPath>..\packages\DiffPlex.1.2.0\lib\Net40\DiffPlex.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.Decompiler">
       <HintPath>..\packages\ICSharpCode.Decompiler.dll</HintPath>
     </Reference>
@@ -72,47 +69,63 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModel">
-      <HintPath>..\packages\CCI\Microsoft.Cci.CodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModelToIL">
-      <HintPath>..\packages\CCI\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CodeModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.CodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
-      <HintPath>..\packages\CCI\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CodeModelToIL, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.CodeModelToIL.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.ILGenerator">
-      <HintPath>..\packages\CCI\Microsoft.Cci.ILGenerator.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.ILToCodeModel">
-      <HintPath>..\packages\CCI\Microsoft.Cci.ILToCodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.ILGenerator, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.ILGenerator.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataHelper">
-      <HintPath>..\packages\CCI\Microsoft.Cci.MetadataHelper.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MetadataHelper, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.MetadataHelper.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataModel">
-      <HintPath>..\packages\CCI\Microsoft.Cci.MetadataModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MetadataModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.MetadataModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MutableCodeModel">
-      <HintPath>..\packages\CCI\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MutableCodeModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.MutableCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MutableMetadataModel">
-      <HintPath>..\packages\CCI\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MutableMetadataModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbReader">
-      <HintPath>..\packages\CCI\Microsoft.Cci.PdbReader.dll</HintPath>
+    <Reference Include="Microsoft.Cci.NewILToCodeModel">
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbWriter">
-      <HintPath>..\packages\CCI\Microsoft.Cci.PdbWriter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PdbReader, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PdbReader.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PeReader">
-      <HintPath>..\packages\CCI\Microsoft.Cci.PeReader.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PdbWriter, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PdbWriter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PeWriter">
-      <HintPath>..\packages\CCI\Microsoft.Cci.PeWriter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PeReader, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.SourceModel">
-      <HintPath>..\packages\CCI\Microsoft.Cci.SourceModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PeWriter, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PeWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CCIdebug\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -131,25 +144,13 @@
       <HintPath>..\packages\Ninject.Extensions.NamedScope.3.0.0.5\lib\net45-full\Ninject.Extensions.NamedScope.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
-      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.dll</HintPath>
+      <HintPath>..\packages\NUnit-core-2.6.2\nunit.core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.core.interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.mocks">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
+      <HintPath>..\packages\NUnit-core-2.6.2\nunit.core.interfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.util">
-      <HintPath>..\packages\NUnit.2.5.10.11092\tools\lib\nunit.util.dll</HintPath>
-    </Reference>
-    <Reference Include="PeToText">
-      <HintPath>..\packages\CCI\PeToText.exe</HintPath>
-    </Reference>
-    <Reference Include="pnunit.framework">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit-core-2.6.2\nunit.util.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -161,46 +162,18 @@
       <Private>True</Private>
       <HintPath>..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Roslyn.Compilers.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Roslyn.Compilers.VisualBasic.1.2.20906.2\lib\net45\Roslyn.Compilers.VisualBasic.dll</HintPath>
-    </Reference>
-    <Reference Include="Roslyn.Services, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Roslyn.Services.Common.1.2.20906.2\lib\net45\Roslyn.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Roslyn.Services.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Roslyn.Services.CSharp.1.2.20906.2\lib\net45\Roslyn.Services.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Roslyn.Services.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Roslyn.Services.VisualBasic.1.2.20906.2\lib\net45\Roslyn.Services.VisualBasic.dll</HintPath>
-    </Reference>
-    <Reference Include="Roslyn.Utilities, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Roslyn.Services.Common.1.2.20906.2\lib\net45\Roslyn.Utilities.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.CoreEx, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.CoreEx.dll</HintPath>
     </Reference>
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Linq.Async, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Async.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Reactive, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.ClientProfile, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.ClientProfile.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.ExtendedProfile, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.ExtendedProfile.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Testing, Version=1.0.2856.104, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.Testing.dll</HintPath>
@@ -210,9 +183,7 @@
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="WPFToolkit.Extended">

@@ -93,10 +93,6 @@
                 _testLoader.Events, "RunFinished")
                 .Select(e => e.EventArgs.Result);
 
-            _runFinished = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "RunFinished")
-                .Select(e => e.EventArgs.Result);
-
 
             _testLoadFailed = Observable.FromEvent<TestEventArgs>(
                 _testLoader.Events, "TestLoadFailed")

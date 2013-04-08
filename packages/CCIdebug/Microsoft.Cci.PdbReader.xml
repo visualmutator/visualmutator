@@ -1,494 +1,216 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <doc>
-  <assembly>
-    <name>Microsoft.Cci.PdbReader</name>
-  </assembly>
-  <members>
-    <member name="T:Microsoft.Cci.PdbReader">
-      <summary>
+    <assembly>
+        <name>Microsoft.Cci.PdbReader</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Cci.PdbReader">
+            <summary>
             An object that can map offsets in an IL stream to source locations and block scopes.
             </summary>
-      <invariant>this.pdbStream != null</invariant>
-      <invariant>this.host != null</invariant>
-      <invariant>this.pdbFunctionMap != null</invariant>
-      <invariant>this.sourceFilesOpenedByReader != null</invariant>
-      <invariant>this.sourceServerData != null</invariant>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.#ctor(System.IO.Stream,Microsoft.Cci.IMetadataHost)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.#ctor(System.IO.Stream,Microsoft.Cci.IMetadataHost)">
+            <summary>
             Allocates an object that can map some kinds of ILocation objects to IPrimarySourceLocation objects. 
             For example, a PDB reader that maps offsets in an IL stream to source locations.
             </summary>
-      <requires csharp="pdbStream != null" vb="pdbStream &lt;&gt; Nothing">pdbStream != null</requires>
-      <requires csharp="host != null" vb="host &lt;&gt; Nothing">host != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.Dispose">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.Dispose">
+            <summary>
             Closes all of the source files that have been opened to provide the contents source locations corresponding to IL offsets.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.Finalize">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.Finalize">
+            <summary>
             Closes all of the source files that have been opened to provide the contents source locations corresponding to IL offsets.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})">
+            <summary>
             Return zero or more locations in primary source documents that correspond to one or more of the given derived (non primary) document locations.
             </summary>
-      <param name="locations">Zero or more locations in documents that have been derived from one or more source documents.</param>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetClosestPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})">
-      <summary>
+            <param name="locations">Zero or more locations in documents that have been derived from one or more source documents.</param>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetClosestPrimarySourceLocationsFor(System.Collections.Generic.IEnumerable{Microsoft.Cci.ILocation})">
+            <summary>
             Return zero or more locations in primary source documents that are the closest to corresponding to one or more of the given derived (non primary) document locations.
             </summary>
-      <param name="locations">Zero or more locations in documents that have been derived from one or more source documents.</param>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsFor(Microsoft.Cci.ILocation)">
-      <summary>
+            <param name="locations">Zero or more locations in documents that have been derived from one or more source documents.</param>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsFor(Microsoft.Cci.ILocation)">
+            <summary>
             Return zero or more locations in primary source documents that correspond to the given derived (non primary) document location.
             </summary>
-      <param name="location">A location in a document that have been derived from one or more source documents.</param>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetPrimarySourceLocationsFor(Microsoft.Cci.ILocation)" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetClosestPrimarySourceLocationsFor(Microsoft.Cci.ILocation)">
-      <summary>
+            <param name="location">A location in a document that have been derived from one or more source documents.</param>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetClosestPrimarySourceLocationsFor(Microsoft.Cci.ILocation)">
+            <summary>
             Return zero or more locations in primary source documents that are the closest to corresponding to the given derived (non primary) document location.
             </summary>
-      <param name="location">A location in a document that have been derived from one or more source documents.</param>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsForToken(System.UInt32)">
-      <summary>
+            <param name="location">A location in a document that have been derived from one or more source documents.</param>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsForToken(System.UInt32)">
+            <summary>
             Returns zero or more locations in primary source documents that correspond to the definition with the given token.
             </summary>
-      <param name="token" />
-      <returns />
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsForDefinitionOf(Microsoft.Cci.ILocalDefinition)">
-      <summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetPrimarySourceLocationsForDefinitionOf(Microsoft.Cci.ILocalDefinition)">
+            <summary>
             Return zero or more locations in primary source documents that correspond to the definition of the given local.
             </summary>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetPrimarySourceLocationsForDefinitionOf(Microsoft.Cci.ILocalDefinition)" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetSourceNameFor(Microsoft.Cci.ILocalDefinition,System.Boolean@)">
-      <summary />
-      <param name="localDefinition" />
-      <param name="isCompilerGenerated" />
-      <returns />
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocationProvider.GetSourceNameFor(Microsoft.Cci.ILocalDefinition,System.Boolean@)" inheritedFromTypeName="ISourceLocationProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetIteratorScopes(Microsoft.Cci.IMethodBody)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetSourceNameFor(Microsoft.Cci.ILocalDefinition,System.Boolean@)">
+            <summary>
+            
+            </summary>
+            <param name="localDefinition"></param>
+            <param name="isCompilerGenerated"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetIteratorScopes(Microsoft.Cci.IMethodBody)">
+            <summary>
             Returns zero or more local (block) scopes, each defining an IL range in which an iterator local is defined.
             The scopes are returned by the MoveNext method of the object returned by the iterator method.
             The index of the scope corresponds to the index of the local. Specifically local scope i corresponds
             to the local stored in field &lt;localName&gt;x_i of the class used to store the local values in between
             calls to MoveNext.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetIteratorScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetLocalScopes(Microsoft.Cci.IMethodBody)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetLocalScopes(Microsoft.Cci.IMethodBody)">
+            <summary>
             Returns zero or more lexical scopes into which the CLR IL operations in the given method body is organized.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetLocalScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetConstantsInScope(Microsoft.Cci.ILocalScope)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetConstantsInScope(Microsoft.Cci.ILocalScope)">
+            <summary>
             Returns zero or more local constant definitions that are local to the given scope.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="scope != null" vb="scope &lt;&gt; Nothing">scope != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetConstantsInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetVariablesInScope(Microsoft.Cci.ILocalScope)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetVariablesInScope(Microsoft.Cci.ILocalScope)">
+            <summary>
             Returns zero or more local variable definitions that are local to the given scope.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="scope != null" vb="scope &lt;&gt; Nothing">scope != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetVariablesInScope(Microsoft.Cci.ILocalScope)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetNamespaceScopes(Microsoft.Cci.IMethodBody)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetNamespaceScopes(Microsoft.Cci.IMethodBody)">
+            <summary>
             Returns zero or more namespace scopes into which the namespace type containing the given method body has been nested.
             These scopes determine how simple names are looked up inside the method body. There is a separate scope for each dotted
             component in the namespace type name. For istance namespace type x.y.z will have two namespace scopes, the first is for the x and the second
             is for the y.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetNamespaceScopes(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.IsIterator(Microsoft.Cci.IMethodBody)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.IsIterator(Microsoft.Cci.IMethodBody)">
+            <summary>
             Returns true if the method body is an iterator, in which case the scope information should be retrieved from the object
             returned by the method.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.IsIterator(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)">
+            <summary>
             If the given method body is the "MoveNext" method of the state class of an asynchronous method, the returned
             object describes where synchronization points occur in the IL operations of the "MoveNext" method. Otherwise
             the result is null.
             </summary>
-      <requires inheritedFrom="M:Microsoft.Cci.ILocalScopeProvider.GetSynchronizationInformation(Microsoft.Cci.IMethodBody)" inheritedFromTypeName="ILocalScopeProvider" csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PdbReader.LocationWithSmallerOffset(Microsoft.Cci.ILocation,Microsoft.Cci.ILocation)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PdbReader.LocationWithSmallerOffset(Microsoft.Cci.ILocation,Microsoft.Cci.ILocation)">
+            <summary>
             Returns the location that has the smaller IL offset. If only one of the two locations
             is a PdbReader supplied location that one is returned. If neither is a PdbReader supplied location, the first
             location is returned.
             </summary>
-      <param name="location1">A document location. Typically one obtained from the PdbReader.</param>
-      <param name="location2">A document location. Typically one obtained from the PdbReader.</param>
-    </member>
-    <member name="P:Microsoft.Cci.PdbReader.SourceServerData">
-      <summary>
+            <param name="location1">A document location. Typically one obtained from the PdbReader.</param>
+            <param name="location2">A document location. Typically one obtained from the PdbReader.</param>
+        </member>
+        <member name="P:Microsoft.Cci.PdbReader.SourceServerData">
+            <summary>
              Retrieves the Source Server Data block, if present.
              Otherwise the empty string is returned.
             </summary>
-      <getter>
-        <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="T:Microsoft.Cci.Pdb.PdbSourceDocument">
-      <summary>
+        </member>
+        <member name="T:Microsoft.Cci.Pdb.PdbSourceDocument">
+            <summary>
             A primary source document that is referenced by a pdb file and that is used to provide source context to lines from compiled CLR modules with
             associated PDB files.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceDocument.#ctor(Microsoft.Cci.IName,Microsoft.Cci.Pdb.PdbSource,System.IO.StreamReader)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.Pdb.PdbSourceDocument.#ctor(Microsoft.Cci.IName,Microsoft.Cci.Pdb.PdbSource,System.IO.StreamReader)">
+            <summary>
             Allocates an object that represents a source document, such as file, which is parsed according to the rules of a particular langauge, 
             such as C#, to produce an object model.
             </summary>
-      <param name="name">The name of the document. Used to identify the document in user interaction.</param>
-      <param name="pdbSourceFile">Information about the document, such as its location.</param>
-      <param name="streamReader">A StreamReader instance whose BaseStream produces the contents of the document.</param>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceDocument.#ctor(Microsoft.Cci.IName,Microsoft.Cci.Pdb.PdbSource)">
-      <summary>
+            <param name="name">The name of the document. Used to identify the document in user interaction.</param>
+            <param name="pdbSourceFile">Information about the document, such as its location.</param>
+            <param name="streamReader">A StreamReader instance whose BaseStream produces the contents of the document.</param>
+        </member>
+        <member name="M:Microsoft.Cci.Pdb.PdbSourceDocument.#ctor(Microsoft.Cci.IName,Microsoft.Cci.Pdb.PdbSource)">
+            <summary>
             Allocates an object that represents a source document, such as file, which is parsed according to the rules of a particular langauge, 
             such as C#, to produce an object model.
             </summary>
-      <param name="name">The name of the document. Used to identify the document in user interaction.</param>
-      <param name="pdbSourceFile">Information about the document, such as its location.</param>
-    </member>
-    <member name="T:Microsoft.Cci.Pdb.PdbSourceLineLocation">
-      <summary>
+            <param name="name">The name of the document. Used to identify the document in user interaction.</param>
+            <param name="pdbSourceFile">Information about the document, such as its location.</param>
+        </member>
+        <member name="T:Microsoft.Cci.Pdb.PdbSourceLineLocation">
+            <summary>
             A range of source text that corresponds to a source line.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceLineLocation.#ctor(Microsoft.Cci.Pdb.PdbSourceDocument,System.Int32,System.Int32,System.Int32,System.Int32)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.Pdb.PdbSourceLineLocation.#ctor(Microsoft.Cci.Pdb.PdbSourceDocument,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
             Allocates a range of source text that corresponds to a source line.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.EndColumn">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.EndColumn">
+            <summary>
             The last column in the last line of the range.
             </summary>
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_EndColumn" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.EndLine">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.EndLine">
+            <summary>
             The last line of the range.
             </summary>
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_EndLine" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.PrimarySourceDocument">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.PrimarySourceDocument">
+            <summary>
             The document containing the source text of which this location is a subrange.
             </summary>
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_PrimarySourceDocument" inheritedFromTypeName="IPrimarySourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.StartColumn">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.StartColumn">
+            <summary>
             The first column in the first line of the range.
             </summary>
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_StartColumn" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.StartLine">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.StartLine">
+            <summary>
             The first line of the range.
             </summary>
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_StartLine" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="T:Microsoft.Cci.Pdb.PdbLocalScope">
-      <summary>
+        </member>
+        <member name="T:Microsoft.Cci.Pdb.PdbLocalScope">
+            <summary>
             A range of CLR IL operations that comprise a lexical scope, specified as an IL offset and a length.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbLocalScope.#ctor(Microsoft.Cci.IMethodBody,Microsoft.Cci.Pdb.PdbScope)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.Pdb.PdbLocalScope.#ctor(Microsoft.Cci.IMethodBody,Microsoft.Cci.Pdb.PdbScope)">
+            <summary>
             Allocates a range of CLR IL operations that comprise a lexical scope, specified as an IL offset and a length.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalScope.Offset">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbLocalScope.Offset">
+            <summary>
             The offset of the first operation in the scope.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalScope.Length">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbLocalScope.Length">
+            <summary>
             The length of the scope. Offset+Length equals the offset of the first operation outside the scope, or equals the method body length.
             </summary>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalScope.MethodDefinition">
-      <summary>
+        </member>
+        <member name="P:Microsoft.Cci.Pdb.PdbLocalScope.MethodDefinition">
+            <summary>
             The definition of the method in which this local scope is defined.
             </summary>
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalScope.get_MethodDefinition" inheritedFromTypeName="ILocalScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.LocalNameSourceLocation.Contains(Microsoft.Cci.ISourceLocation)">
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.Contains(Microsoft.Cci.ISourceLocation)" inheritedFromTypeName="ISourceLocation" csharp="location != null" vb="location &lt;&gt; Nothing">location != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.LocalNameSourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)">
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="destination != null" vb="destination &lt;&gt; Nothing">destination != null</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="0 &lt;= offset" vb="0 &lt;= offset">0 &lt;= offset</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="0 &lt;= destinationOffset" vb="0 &lt;= destinationOffset">0 &lt;= destinationOffset</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="0 &lt;= length" vb="0 &lt;= length">0 &lt;= length</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="offset &lt;= this.Length" vb="offset &lt;= Me.Length">offset &lt;= this.Length</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="destinationOffset + length &lt;= destination.Length" vb="destinationOffset + length &lt;= destination.Length">destinationOffset + length &lt;= destination.Length</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="(0 &lt;= result ? result &lt;= length : !true) &amp;&amp; !(offset + result &gt; this.Length)" vb="(0 &lt;= result ? result &lt;= length : Not True) AndAlso Not offset + result &gt; Me.Length">(0 &lt;= result ? result &lt;= length : !true) &amp;&amp; !(offset + result &gt; this.Length)</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= length || offset + result == this.Length" vb="result &gt;= length OrElse (offset + result = Me.Length)">result &gt;= length || offset + result == this.Length</ensures>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.EndColumn">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_EndColumn" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.EndLine">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_EndLine" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.PrimarySourceDocument">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_PrimarySourceDocument" inheritedFromTypeName="IPrimarySourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.StartColumn">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_StartColumn" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.StartLine">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IPrimarySourceLocation.get_StartLine" inheritedFromTypeName="IPrimarySourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.EndIndex">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_EndIndex" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= 0 &amp;&amp; !(result &gt; this.SourceDocument.Length)" vb="result &gt;= 0 AndAlso Not result &gt; Me.SourceDocument.Length">result &gt;= 0 &amp;&amp; !(result &gt; this.SourceDocument.Length)</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_EndIndex" inheritedFromTypeName="ISourceLocation" csharp="result == this.StartIndex + this.Length" vb="result = Me.StartIndex + Me.Length">result == this.StartIndex + this.Length</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.Length">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_Length" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_Length" inheritedFromTypeName="ISourceLocation" csharp="this.StartIndex + result &lt;= this.SourceDocument.Length" vb="Me.StartIndex + result &lt;= Me.SourceDocument.Length">this.StartIndex + result &lt;= this.SourceDocument.Length</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.SourceDocument">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_SourceDocument" inheritedFromTypeName="ISourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.Source">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_Source" inheritedFromTypeName="ISourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.StartIndex">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_StartIndex" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.LocalNameSourceLocation.Document">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocation.get_Document" inheritedFromTypeName="ILocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbIteratorScope.MethodDefinition">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalScope.get_MethodDefinition" inheritedFromTypeName="ILocalScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.NamespaceScope.UsedNamespaces">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamespaceScope.get_UsedNamespaces" inheritedFromTypeName="INamespaceScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbMetadataConstant.Dispatch(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IMetadataExpression.Dispatch(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IMetadataExpression" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbMetadataConstant.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbMetadataConstant.Type">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IMetadataExpression.get_Type" inheritedFromTypeName="IMetadataExpression" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.UsedNamespace.Alias">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IUsedNamespace.get_Alias" inheritedFromTypeName="IUsedNamespace" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.UsedNamespace.NamespaceName">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IUsedNamespace.get_NamespaceName" inheritedFromTypeName="IUsedNamespace" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalConstant.CompileTimeValue">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="this.IsConstant" vb="Me.IsConstant">this.IsConstant</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalConstant.CustomModifiers">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="this.IsModified" vb="Me.IsModified">this.IsModified</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalConstant.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalConstant.MethodDefinition">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_MethodDefinition" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalConstant.Type">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_Type" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalConstant.Name">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedEntity.get_Name" inheritedFromTypeName="INamedEntity" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSynchronizationInformation.AsyncMethod">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISynchronizationInformation.get_AsyncMethod" inheritedFromTypeName="ISynchronizationInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSynchronizationInformation.MoveNextMethod">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISynchronizationInformation.get_MoveNextMethod" inheritedFromTypeName="ISynchronizationInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSynchronizationInformation.SynchronizationPoints">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISynchronizationInformation.get_SynchronizationPoints" inheritedFromTypeName="ISynchronizationInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalVariable.CompileTimeValue">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="this.IsConstant" vb="Me.IsConstant">this.IsConstant</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CompileTimeValue" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalVariable.CustomModifiers">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="this.IsModified" vb="Me.IsModified">this.IsModified</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_CustomModifiers" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalVariable.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalVariable.MethodDefinition">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_MethodDefinition" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalVariable.Type">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocalDefinition.get_Type" inheritedFromTypeName="ILocalDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbLocalVariable.Name">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedEntity.get_Name" inheritedFromTypeName="INamedEntity" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceLineLocation.Microsoft#Cci#ISourceLocation#Contains(Microsoft.Cci.ISourceLocation)">
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.Contains(Microsoft.Cci.ISourceLocation)" inheritedFromTypeName="ISourceLocation" csharp="location != null" vb="location &lt;&gt; Nothing">location != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceLineLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)">
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="destination != null" vb="destination &lt;&gt; Nothing">destination != null</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="0 &lt;= offset" vb="0 &lt;= offset">0 &lt;= offset</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="0 &lt;= destinationOffset" vb="0 &lt;= destinationOffset">0 &lt;= destinationOffset</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="0 &lt;= length" vb="0 &lt;= length">0 &lt;= length</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="offset &lt;= this.Length" vb="offset &lt;= Me.Length">offset &lt;= this.Length</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="destinationOffset + length &lt;= destination.Length" vb="destinationOffset + length &lt;= destination.Length">destinationOffset + length &lt;= destination.Length</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="(0 &lt;= result ? result &lt;= length : !true) &amp;&amp; !(offset + result &gt; this.Length)" vb="(0 &lt;= result ? result &lt;= length : Not True) AndAlso Not offset + result &gt; Me.Length">(0 &lt;= result ? result &lt;= length : !true) &amp;&amp; !(offset + result &gt; this.Length)</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.CopyTo(System.Int32,System.Char[],System.Int32,System.Int32)" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= length || offset + result == this.Length" vb="result &gt;= length OrElse (offset + result = Me.Length)">result &gt;= length || offset + result == this.Length</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceLineLocation.Microsoft#Cci#ISourceLocation#get_SourceDocument">
-      <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_SourceDocument" inheritedFromTypeName="ISourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.Pdb.PdbSourceLineLocation.Microsoft#Cci#ILocation#get_Document">
-      <ensures inheritedFrom="M:Microsoft.Cci.ILocation.get_Document" inheritedFromTypeName="ILocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.EndIndex">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_EndIndex" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= 0 &amp;&amp; !(result &gt; this.SourceDocument.Length)" vb="result &gt;= 0 AndAlso Not result &gt; Me.SourceDocument.Length">result &gt;= 0 &amp;&amp; !(result &gt; this.SourceDocument.Length)</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_EndIndex" inheritedFromTypeName="ISourceLocation" csharp="result == this.StartIndex + this.Length" vb="result = Me.StartIndex + Me.Length">result == this.StartIndex + this.Length</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.Length">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_Length" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_Length" inheritedFromTypeName="ISourceLocation" csharp="this.StartIndex + result &lt;= this.SourceDocument.Length" vb="Me.StartIndex + result &lt;= Me.SourceDocument.Length">this.StartIndex + result &lt;= this.SourceDocument.Length</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.Microsoft#Cci#ISourceLocation#SourceDocument">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_SourceDocument" inheritedFromTypeName="ISourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.Source">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_Source" inheritedFromTypeName="ISourceLocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.StartIndex">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ISourceLocation.get_StartIndex" inheritedFromTypeName="ISourceLocation" csharp="result &gt;= 0" vb="result &gt;= 0">result &gt;= 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.Pdb.PdbSourceLineLocation.Microsoft#Cci#ILocation#Document">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ILocation.get_Document" inheritedFromTypeName="ILocation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-  </members>
+        </member>
+    </members>
 </doc>

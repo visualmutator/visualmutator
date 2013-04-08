@@ -1,576 +1,168 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <doc>
-  <assembly>
-    <name>Microsoft.Cci.PeWriter</name>
-  </assembly>
-  <members>
-    <member name="T:Microsoft.Cci.ITokenProvider">
-      <summary>
+    <assembly>
+        <name>Microsoft.Cci.PeWriter</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Cci.ITokenProvider">
+            <summary>
             Provides methods that map metadata references onto PE file tokens.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(Microsoft.Cci.IFieldReference)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(Microsoft.Cci.IFieldReference)">
+            <summary>
             Returns the metadata token value that is used instead of the given field reference when serializing metadata using the PE file format.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(Microsoft.Cci.IMethodReference)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(Microsoft.Cci.IMethodReference)">
+            <summary>
             Returns the metadata token value that is used instead of the given method reference when serializing metadata using the PE file format.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(Microsoft.Cci.ITypeReference)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(Microsoft.Cci.ITypeReference)">
+            <summary>
             Returns the metadata token value that is used instead of the given type reference when serializing metadata using the PE file format.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(System.String)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.ITokenProvider.GetTokenFor(System.String)">
+            <summary>
             Returns the metadata token value that is used instead of the given string when serializing metadata using the PE file format.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.FoldStrings">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PeWriter.FoldStrings">
+            <summary>
             Fills in stringIndexMap with data from stringIndex and write to stringWriter.  
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.ComputeSizeOfVersionString(System.Byte[])">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PeWriter.ComputeSizeOfVersionString(System.Byte[])">
+            <summary>
             returns a multiple 4 that is at least 12 and at most 256 and that is just big enough to hold the version string.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.GetDefiningUnitReference(Microsoft.Cci.ITypeReference)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PeWriter.GetDefiningUnitReference(Microsoft.Cci.ITypeReference)">
+            <summary>
             Returns a reference to the unit that defines the given referenced type. If the referenced type is a structural type, such as a pointer or a generic type instance,
             then the result is null.
             </summary>
-      <requires csharp="typeReference != null" vb="typeReference &lt;&gt; Nothing">typeReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.GetCorrespondingMethodToken(Microsoft.Cci.IMethodDefinition)">
-      <summary>
+        </member>
+        <member name="M:Microsoft.Cci.PeWriter.GetCorrespondingMethodToken(Microsoft.Cci.IMethodDefinition)">
+            <summary>
             Deals with the case where the given method is from a module that is being rewritten or merged into this.module.
             The method comes from the synchronization information for the current method and this information could still
             be that obtained from the PDB of the module being rewritten or merged.
             </summary>
-    </member>
-    <member name="T:Microsoft.Cci.PeWriter.StringIdx">
-      <summary>
+        </member>
+        <member name="T:Microsoft.Cci.PeWriter.StringIdx">
+            <summary>
             Wraps a virtual string table index.
             An override to SerializeIndex does the resolving at the right time.
             </summary>
-    </member>
-    <member name="T:Microsoft.Cci.PeWriter.SuffixSort">
-      <summary>
+        </member>
+        <member name="T:Microsoft.Cci.PeWriter.SuffixSort">
+            <summary>
             Sorts strings such that a string is followed immediately by all strings
             that are a suffix of it.  
             </summary>
-    </member>
-    <member name="T:Microsoft.Cci.CustomSectionProvider">
-      <summary>
+        </member>
+        <member name="T:Microsoft.Cci.CustomSectionProvider">
+            <summary>
             Called by the PEWriter to allow a plug-in to provide a custom section that will be stored in the PE file along
             with the sections that contain serialized metadata.
             </summary>
-      <param name="peFileData">A somewhat random collection of values that can be useful to know about a PE file, but which cannot be obtained from a metadata model.</param>
-      <param name="tokenProvider">A mapper from metadata objects to the tokens that will be used in the PE file being writtern.</param>
-      <returns>An IPESection objet that is to be serialized into the PE file being written out by PEWriter (which is calling this delegate).</returns>
-    </member>
-    <member name="T:Microsoft.Cci.PEFileData">
-      <summary>
+            <param name="peFileData">A somewhat random collection of values that can be useful to know about a PE file, but which cannot be obtained from a metadata model.</param>
+            <param name="tokenProvider">A mapper from metadata objects to the tokens that will be used in the PE file being writtern.</param>
+            <returns>An IPESection objet that is to be serialized into the PE file being written out by PEWriter (which is calling this delegate).</returns>
+        </member>
+        <member name="T:Microsoft.Cci.PEFileData">
+            <summary>
             A somewhat random collection of values that can be useful to know about a PE file, but which cannot be obtained from a metadata model.
             These values can be persisted inside a custom section and help a reader of the custom section to quickly
             find values in the standard sections of the PE file. They can also be used to verify that the custom section matches to the PE file.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.timeStamp">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.timeStamp">
+            <summary>
             The time stamp that the PE writer will write into the PE file.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.wellKnownTypes">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.wellKnownTypes">
+            <summary>
             Type def tokens for the "well known" types. Only non null if the PE file contains the "core" .NET library which defines System.Object.
             The types are: System.Object, System.String, System.ValueType, System.Enum, System.Array, System.Boolean, System.Void, System.Char, System.SByte
             System.Byte, System.UInt16, System.Int32, System.UInt32, System.Int64, System.UInt64, System.Single, System.Double, System.IntPtr, System.UIntPtr,
             System.MarshalByRefObject, System.MultiCastDelegate, System.Nullable, System.__Canon, System.Runtime.Remoting.Proxies.__TransparentProxy
             System.__ComObject, System.ContextBoundObject.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.offsetToMethodDefTable">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.offsetToMethodDefTable">
+            <summary>
             The offset from the start of the metadata tables to the first row of the first MethodDef table.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.methodDefRecordSize">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.methodDefRecordSize">
+            <summary>
             The size of a row of the MethodDef table.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.methodDefCount">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.methodDefCount">
+            <summary>
             The number of rows in the MethodDef table.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.offsetToFieldRvaTable">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.offsetToFieldRvaTable">
+            <summary>
             The offset from the start of the metadata tables, to the first row of the FieldRVA table.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.fieldRvaRecordSize">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.fieldRvaRecordSize">
+            <summary>
             The size of a row of the FieldRVA table.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.fieldRvaCount">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.fieldRvaCount">
+            <summary>
             The number of rows in the FieldRVA table.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.ilImageSize">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.ilImageSize">
+            <summary>
             The number of bytes in the PE image (as reported in the NT header).
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PEFileData.targetProcessorArchitecture">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PEFileData.targetProcessorArchitecture">
+            <summary>
             The particular processor architecture required by the assembly in the PE file being written. Architecture independent assemblies will report X86 as their architecture.
             </summary>
-    </member>
-    <member name="T:Microsoft.Cci.TargetProcessorArchitecture">
-      <summary>
+        </member>
+        <member name="T:Microsoft.Cci.TargetProcessorArchitecture">
+            <summary>
             An enumeration of processor architectures.
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.TargetProcessorArchitecture.X86">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.TargetProcessorArchitecture.X86">
+            <summary>
             Intel x86
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.TargetProcessorArchitecture.X64">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.TargetProcessorArchitecture.X64">
+            <summary>
             AMD x64
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.TargetProcessorArchitecture.IA64">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.TargetProcessorArchitecture.IA64">
+            <summary>
             Intel IA64
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.TargetProcessorArchitecture.ARM">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.TargetProcessorArchitecture.ARM">
+            <summary>
             ARM
             </summary>
-    </member>
-    <member name="F:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.typeReferenceNeedsToken">
-      <summary>
+        </member>
+        <member name="F:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.typeReferenceNeedsToken">
+            <summary>
             True if the type reference is traversed from a location that needs a token for the type reference.
             </summary>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.SerializeSynchronizationInformation(Microsoft.Cci.IMethodBody)">
-      <requires csharp="methodBody != null" vb="methodBody &lt;&gt; Nothing">methodBody != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.InterfaceImplRow.Dispatch(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IReference.Dispatch(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IReference" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriter.InterfaceImplRow.DispatchAsReference(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IReference.DispatchAsReference(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IReference" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriter.InterfaceImplRow.Attributes">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IReference.get_Attributes" inheritedFromTypeName="IReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriter.InterfaceImplRow.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Dispatch(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IReference.Dispatch(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IReference" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.DispatchAsReference(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IReference.DispatchAsReference(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IReference" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{Microsoft.Cci.ITypeDefinitionMember,System.Boolean})">
-      <requires inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="name != null" vb="name &lt;&gt; Nothing">name != null</requires>
-      <requires inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="predicate != null" vb="predicate &lt;&gt; Nothing">predicate != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="for all x in result (decimal)x != null" vb="for all x in result ((Object)x) &lt;&gt; Nothing">for all x in result (decimal)x != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="for all x in result this.Contains(x)" vb="for all x in result Me.Contains(x)">for all x in result this.Contains(x)</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembersNamed(Microsoft.Cci.IName,System.Boolean,Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="for all x in result 
-{
-    if (!ignoreCase)
-    {
-        return x.Name == name;
-
-    }
-    return x.Name.UniqueKeyIgnoringCase == x.Name.UniqueKeyIgnoringCase;
-
-}
-" vb="for all x in result &lt;unprintable lambda&gt;">for all x in result 
-{
-    if (!ignoreCase)
-    {
-        return x.Name == name;
-
-    }
-    return x.Name.UniqueKeyIgnoringCase == x.Name.UniqueKeyIgnoringCase;
-
-}
-</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.GetMatchingMembers(Microsoft.Cci.Function{Microsoft.Cci.ITypeDefinitionMember,System.Boolean})">
-      <requires inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembers(Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="predicate != null" vb="predicate &lt;&gt; Nothing">predicate != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembers(Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembers(Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="for all x in result (decimal)x != null" vb="for all x in result ((Object)x) &lt;&gt; Nothing">for all x in result (decimal)x != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMatchingMembers(Microsoft.Cci.Function{`0,System.Boolean})" inheritedFromTypeName="IScope" csharp="for all x in result this.Contains(x)" vb="for all x in result Me.Contains(x)">for all x in result this.Contains(x)</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.GetMembersNamed(Microsoft.Cci.IName,System.Boolean)">
-      <requires inheritedFrom="M:Microsoft.Cci.IScope`1.GetMembersNamed(Microsoft.Cci.IName,System.Boolean)" inheritedFromTypeName="IScope" csharp="name != null" vb="name &lt;&gt; Nothing">name != null</requires>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMembersNamed(Microsoft.Cci.IName,System.Boolean)" inheritedFromTypeName="IScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMembersNamed(Microsoft.Cci.IName,System.Boolean)" inheritedFromTypeName="IScope" csharp="for all x in result (decimal)x != null" vb="for all x in result ((Object)x) &lt;&gt; Nothing">for all x in result (decimal)x != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMembersNamed(Microsoft.Cci.IName,System.Boolean)" inheritedFromTypeName="IScope" csharp="for all x in result this.Contains(x)" vb="for all x in result Me.Contains(x)">for all x in result this.Contains(x)</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.GetMembersNamed(Microsoft.Cci.IName,System.Boolean)" inheritedFromTypeName="IScope" csharp="for all x in result 
-{
-    if (!ignoreCase)
-    {
-        return x.Name == name;
-
-    }
-    return x.Name.UniqueKeyIgnoringCase == x.Name.UniqueKeyIgnoringCase;
-
-}
-" vb="for all x in result &lt;unprintable lambda&gt;">for all x in result 
-{
-    if (!ignoreCase)
-    {
-        return x.Name == name;
-
-    }
-    return x.Name.UniqueKeyIgnoringCase == x.Name.UniqueKeyIgnoringCase;
-
-}
-</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Microsoft#Cci#IGenericTypeParameterReference#get_DefiningType">
-      <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameterReference.get_DefiningType" inheritedFromTypeName="IGenericTypeParameterReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Microsoft#Cci#IGenericTypeParameterReference#get_ResolvedType">
-      <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameterReference.get_ResolvedType" inheritedFromTypeName="IGenericTypeParameterReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameterReference.get_ResolvedType" inheritedFromTypeName="IGenericTypeParameterReference" csharp="this is decimal ⇒ result == this" vb="Me Is Microsoft.Cci.IGenericTypeParameter Implies result = Me">!(this is decimal) || result == this</ensures>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Microsoft#Cci#INamedTypeReference#get_ResolvedType">
-      <ensures inheritedFrom="M:Microsoft.Cci.INamedTypeReference.get_ResolvedType" inheritedFromTypeName="INamedTypeReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.DefiningType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameter.get_DefiningType" inheritedFromTypeName="IGenericTypeParameter" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Constraints">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericParameter.get_Constraints" inheritedFromTypeName="IGenericParameter" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericParameter.get_Constraints" inheritedFromTypeName="IGenericParameter" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.MustBeReferenceType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericParameter.get_MustBeReferenceType" inheritedFromTypeName="IGenericParameter" csharp="result ⇒ !this.MustBeValueType" vb="result Implies Not Me.MustBeValueType">!result || !this.MustBeValueType</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.MustBeValueType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericParameter.get_MustBeValueType" inheritedFromTypeName="IGenericParameter" csharp="result ⇒ !this.MustBeReferenceType" vb="result Implies Not Me.MustBeReferenceType">!result || !this.MustBeReferenceType</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.BaseClasses">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_BaseClasses" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_BaseClasses" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Events">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Events" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Events" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.ExplicitImplementationOverrides">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_ExplicitImplementationOverrides" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_ExplicitImplementationOverrides" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Fields">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Fields" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Fields" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.GenericParameters">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_GenericParameters" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_GenericParameters" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.GenericParameterCount">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedTypeDefinition.get_GenericParameterCount" inheritedFromTypeName="INamedTypeDefinition" csharp="this.IsGeneric || result == 0" vb="Me.IsGeneric OrElse result = 0">this.IsGeneric || result == 0</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedTypeDefinition.get_GenericParameterCount" inheritedFromTypeName="INamedTypeDefinition" csharp="this.IsGeneric ⇒ result &gt; 0" vb="Me.IsGeneric Implies result &gt; 0">!this.IsGeneric || result &gt; 0</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_GenericParameterCount" inheritedFromTypeName="ITypeDefinition" csharp="this.IsGeneric || result == 0" vb="Me.IsGeneric OrElse result = 0">this.IsGeneric || result == 0</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_GenericParameterCount" inheritedFromTypeName="ITypeDefinition" csharp="this.IsGeneric ⇒ result &gt; 0" vb="Me.IsGeneric Implies result &gt; 0">!this.IsGeneric || result &gt; 0</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Interfaces">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Interfaces" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Interfaces" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.InstanceType">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_InstanceType" inheritedFromTypeName="ITypeDefinition" csharp="this.IsGeneric" vb="Me.IsGeneric">this.IsGeneric</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_InstanceType" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Members">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IContainer`1.get_Members" inheritedFromTypeName="IContainer" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IContainer`1.get_Members" inheritedFromTypeName="IContainer" csharp="for all x in result (decimal)x != null" vb="for all x in result ((Object)x) &lt;&gt; Nothing">for all x in result (decimal)x != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.get_Members" inheritedFromTypeName="IScope" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.get_Members" inheritedFromTypeName="IScope" csharp="for all x in result (decimal)x != null" vb="for all x in result ((Object)x) &lt;&gt; Nothing">for all x in result (decimal)x != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IScope`1.get_Members" inheritedFromTypeName="IScope" csharp="for all x in result this.Contains(x)" vb="for all x in result Me.Contains(x)">for all x in result this.Contains(x)</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Methods">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Methods" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Methods" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.NestedTypes">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_NestedTypes" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_NestedTypes" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.PrivateHelperMembers">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_PrivateHelperMembers" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_PrivateHelperMembers" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Properties">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Properties" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_Properties" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.SecurityAttributes">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_SecurityAttributes" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_SecurityAttributes" inheritedFromTypeName="ITypeDefinition" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_SecurityAttributes" inheritedFromTypeName="ITypeDefinition" csharp="this.HasDeclarativeSecurity || EnumerableIsEmpty&lt;decimal&gt;(result)" vb="Me.HasDeclarativeSecurity OrElse EnumerableIsEmpty(result)">this.HasDeclarativeSecurity || decimal.EnumerableIsEmpty&lt;decimal&gt;(result)</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.UnderlyingType">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_UnderlyingType" inheritedFromTypeName="ITypeDefinition" csharp="this.IsEnum" vb="Me.IsEnum">this.IsEnum</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeDefinition.get_UnderlyingType" inheritedFromTypeName="ITypeDefinition" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Attributes">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IReference.get_Attributes" inheritedFromTypeName="IReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.AliasForType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeReference.get_AliasForType" inheritedFromTypeName="ITypeReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.IsAlias">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeReference.get_IsAlias" inheritedFromTypeName="ITypeReference" csharp="result ⇒ !(this is decimal)" vb="result Implies Not Me Is Microsoft.Cci.ITypeDefinition">!result || !(this is decimal)</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.PlatformType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeReference.get_PlatformType" inheritedFromTypeName="ITypeReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.ResolvedType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeReference.get_ResolvedType" inheritedFromTypeName="ITypeReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.ITypeReference.get_ResolvedType" inheritedFromTypeName="ITypeReference" csharp="this is decimal ⇒ result == this" vb="Me Is Microsoft.Cci.ITypeDefinition Implies result = Me">!(this is decimal) || result == this</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Name">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedEntity.get_Name" inheritedFromTypeName="INamedEntity" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Microsoft#Cci#IGenericTypeParameterReference#DefiningType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameterReference.get_DefiningType" inheritedFromTypeName="IGenericTypeParameterReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Microsoft#Cci#IGenericTypeParameterReference#ResolvedType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameterReference.get_ResolvedType" inheritedFromTypeName="IGenericTypeParameterReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IGenericTypeParameterReference.get_ResolvedType" inheritedFromTypeName="IGenericTypeParameterReference" csharp="this is decimal ⇒ result == this" vb="Me Is Microsoft.Cci.IGenericTypeParameter Implies result = Me">!(this is decimal) || result == this</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.InheritedTypeParameter.Microsoft#Cci#INamedTypeReference#ResolvedType">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedTypeReference.get_ResolvedType" inheritedFromTypeName="INamedTypeReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IAssembly)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IAssembly)" inheritedFromTypeName="MetadataTraverser" csharp="assembly != null" vb="assembly &lt;&gt; Nothing">assembly != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IAssemblyReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IAssemblyReference)" inheritedFromTypeName="MetadataTraverser" csharp="assemblyReference != null" vb="assemblyReference &lt;&gt; Nothing">assemblyReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IAliasForType)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IAliasForType)" inheritedFromTypeName="MetadataTraverser" csharp="aliasForType != null" vb="aliasForType &lt;&gt; Nothing">aliasForType != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ICustomModifier)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ICustomModifier)" inheritedFromTypeName="MetadataTraverser" csharp="customModifier != null" vb="customModifier &lt;&gt; Nothing">customModifier != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ICustomAttribute)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ICustomAttribute)" inheritedFromTypeName="MetadataTraverser" csharp="customAttribute != null" vb="customAttribute &lt;&gt; Nothing">customAttribute != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IEventDefinition)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IEventDefinition)" inheritedFromTypeName="MetadataTraverser" csharp="eventDefinition != null" vb="eventDefinition &lt;&gt; Nothing">eventDefinition != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IFieldReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IFieldReference)" inheritedFromTypeName="MetadataTraverser" csharp="fieldReference != null" vb="fieldReference &lt;&gt; Nothing">fieldReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IFileReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IFileReference)" inheritedFromTypeName="MetadataTraverser" csharp="fileReference != null" vb="fileReference &lt;&gt; Nothing">fileReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IGenericMethodInstanceReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IGenericMethodInstanceReference)" inheritedFromTypeName="MetadataTraverser" csharp="genericMethodInstanceReference != null" vb="genericMethodInstanceReference &lt;&gt; Nothing">genericMethodInstanceReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IGenericMethodParameter)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IGenericMethodParameter)" inheritedFromTypeName="MetadataTraverser" csharp="genericMethodParameter != null" vb="genericMethodParameter &lt;&gt; Nothing">genericMethodParameter != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IGenericTypeInstanceReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IGenericTypeInstanceReference)" inheritedFromTypeName="MetadataTraverser" csharp="genericTypeInstanceReference != null" vb="genericTypeInstanceReference &lt;&gt; Nothing">genericTypeInstanceReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IGenericTypeParameter)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IGenericTypeParameter)" inheritedFromTypeName="MetadataTraverser" csharp="genericTypeParameter != null" vb="genericTypeParameter &lt;&gt; Nothing">genericTypeParameter != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IMarshallingInformation)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IMarshallingInformation)" inheritedFromTypeName="MetadataTraverser" csharp="marshallingInformation != null" vb="marshallingInformation &lt;&gt; Nothing">marshallingInformation != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IMethodDefinition)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IMethodDefinition)" inheritedFromTypeName="MetadataTraverser" csharp="method != null" vb="method &lt;&gt; Nothing">method != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IMethodReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IMethodReference)" inheritedFromTypeName="MetadataTraverser" csharp="methodReference != null" vb="methodReference &lt;&gt; Nothing">methodReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IModule)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IModule)" inheritedFromTypeName="MetadataTraverser" csharp="module != null" vb="module &lt;&gt; Nothing">module != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IModuleReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IModuleReference)" inheritedFromTypeName="MetadataTraverser" csharp="moduleReference != null" vb="moduleReference &lt;&gt; Nothing">moduleReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.INamespaceTypeDefinition)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.INamespaceTypeDefinition)" inheritedFromTypeName="MetadataTraverser" csharp="namespaceTypeDefinition != null" vb="namespaceTypeDefinition &lt;&gt; Nothing">namespaceTypeDefinition != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.INamespaceTypeReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.INamespaceTypeReference)" inheritedFromTypeName="MetadataTraverser" csharp="namespaceTypeReference != null" vb="namespaceTypeReference &lt;&gt; Nothing">namespaceTypeReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.INestedTypeReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.INestedTypeReference)" inheritedFromTypeName="MetadataTraverser" csharp="nestedTypeReference != null" vb="nestedTypeReference &lt;&gt; Nothing">nestedTypeReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IOperation)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IOperation)" inheritedFromTypeName="MetadataTraverser" csharp="operation != null" vb="operation &lt;&gt; Nothing">operation != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IOperationExceptionInformation)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IOperationExceptionInformation)" inheritedFromTypeName="MetadataTraverser" csharp="operationExceptionInformation != null" vb="operationExceptionInformation &lt;&gt; Nothing">operationExceptionInformation != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IPropertyDefinition)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IPropertyDefinition)" inheritedFromTypeName="MetadataTraverser" csharp="propertyDefinition != null" vb="propertyDefinition &lt;&gt; Nothing">propertyDefinition != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.IResourceReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.IResourceReference)" inheritedFromTypeName="MetadataTraverser" csharp="resourceReference != null" vb="resourceReference &lt;&gt; Nothing">resourceReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ISecurityAttribute)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ISecurityAttribute)" inheritedFromTypeName="MetadataTraverser" csharp="securityAttribute != null" vb="securityAttribute &lt;&gt; Nothing">securityAttribute != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ISpecializedMethodReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ISpecializedMethodReference)" inheritedFromTypeName="MetadataTraverser" csharp="specializedMethodReference != null" vb="specializedMethodReference &lt;&gt; Nothing">specializedMethodReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ISpecializedNestedTypeReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ISpecializedNestedTypeReference)" inheritedFromTypeName="MetadataTraverser" csharp="specializedNestedTypeReference != null" vb="specializedNestedTypeReference &lt;&gt; Nothing">specializedNestedTypeReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ITypeDefinition)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ITypeDefinition)" inheritedFromTypeName="MetadataTraverser" csharp="typeDefinition != null" vb="typeDefinition &lt;&gt; Nothing">typeDefinition != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.ReferenceIndexer.TraverseChildren(Microsoft.Cci.ITypeReference)">
-      <requires inheritedFrom="M:Microsoft.Cci.MetadataTraverser.TraverseChildren(Microsoft.Cci.ITypeReference)" inheritedFromTypeName="MetadataTraverser" csharp="typeReference != null" vb="typeReference &lt;&gt; Nothing">typeReference != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.Dispatch(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IReference.Dispatch(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IReference" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.DispatchAsReference(Microsoft.Cci.IMetadataVisitor)">
-      <requires inheritedFrom="M:Microsoft.Cci.IReference.DispatchAsReference(Microsoft.Cci.IMetadataVisitor)" inheritedFromTypeName="IReference" csharp="visitor != null" vb="visitor &lt;&gt; Nothing">visitor != null</requires>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.Attributes">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IReference.get_Attributes" inheritedFromTypeName="IReference" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.ContainingSignature">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IParameterTypeInformation.get_ContainingSignature" inheritedFromTypeName="IParameterTypeInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.CustomModifiers">
-      <getter>
-        <requires inheritedFrom="M:Microsoft.Cci.IParameterTypeInformation.get_CustomModifiers" inheritedFromTypeName="IParameterTypeInformation" csharp="this.IsModified" vb="Me.IsModified">this.IsModified</requires>
-        <ensures inheritedFrom="M:Microsoft.Cci.IParameterTypeInformation.get_CustomModifiers" inheritedFromTypeName="IParameterTypeInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IParameterTypeInformation.get_CustomModifiers" inheritedFromTypeName="IParameterTypeInformation" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.Locations">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-        <ensures inheritedFrom="M:Microsoft.Cci.IObjectWithLocations.get_Locations" inheritedFromTypeName="IObjectWithLocations" csharp="for all x in result x != null" vb="for all x in result x &lt;&gt; Nothing">for all x in result x != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.Name">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.INamedEntity.get_Name" inheritedFromTypeName="INamedEntity" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="P:Microsoft.Cci.PeWriterInternal.DummyReturnValueParameter.Type">
-      <getter>
-        <ensures inheritedFrom="M:Microsoft.Cci.IParameterTypeInformation.get_Type" inheritedFromTypeName="IParameterTypeInformation" csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-    <member name="T:Microsoft.Cci.WriterUtilities.BinaryWriter">
-      <invariant>this.baseStream != null</invariant>
-    </member>
-    <member name="M:Microsoft.Cci.WriterUtilities.BinaryWriter.#ctor(Microsoft.Cci.WriterUtilities.MemoryStream)">
-      <requires csharp="output != null" vb="output &lt;&gt; Nothing">output != null</requires>
-    </member>
-    <member name="M:Microsoft.Cci.WriterUtilities.BinaryWriter.#ctor(Microsoft.Cci.WriterUtilities.MemoryStream,System.Boolean)">
-      <requires csharp="output != null" vb="output &lt;&gt; Nothing">output != null</requires>
-    </member>
-    <member name="P:Microsoft.Cci.WriterUtilities.BinaryWriter.BaseStream">
-      <getter>
-        <ensures csharp="result != null" vb="result &lt;&gt; Nothing">result != null</ensures>
-      </getter>
-    </member>
-  </members>
+        </member>
+    </members>
 </doc>

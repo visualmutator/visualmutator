@@ -13,9 +13,6 @@
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
-
-    using PeToText;
-
     using log4net;
 
     using Module = Microsoft.Cci.MutableCodeModel.Module;
@@ -32,7 +29,18 @@
         MetadataReaderHost Host { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
     }
+    public class Sss : MetadataReaderHost
+    {
+        public Sss(INameTable nameTable, IInternFactory factory, byte pointerSize, IEnumerable<string> searchPaths, bool searchInGAC) : base(nameTable, factory, pointerSize, searchPaths, searchInGAC)
+        {
+        }
 
+        public override IUnit LoadUnitFrom(string location)
+        {
+            throw new NotImplementedException();
+        }
+        
+    }
     public class CommonCompilerAssemblies : IDisposable, ICommonCompilerAssemblies
     {
         private readonly MetadataReaderHost _host;
@@ -77,7 +85,7 @@
         {
              var reader = FindModuleInfo(module).PdbReader;
           //  SourceEmitterOutputString sourceEmitterOutput = new SourceEmitterOutputString();
-             return new VisualSourceEmitter(output, Host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
+             return new VisualSourceEmitter(output, _host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
         }
         public IModule AppendFromFile(string filePath)
         {
@@ -140,7 +148,7 @@
 
         public ModuleInfo FindModuleInfo(IModule module)
         {
-            return _moduleInfoList.First(m => m.Module.Name == module.Name);
+            return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
         public Module Copy(IModule module)
         {
