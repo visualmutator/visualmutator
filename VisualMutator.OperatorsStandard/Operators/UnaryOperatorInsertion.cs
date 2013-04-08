@@ -7,7 +7,7 @@
     using CommonUtilityInfrastructure;
     using Extensibility;
     using Microsoft.Cci;
-    using Microsoft.Cci.ILToCodeModel;
+
     using Microsoft.Cci.MutableCodeModel;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;

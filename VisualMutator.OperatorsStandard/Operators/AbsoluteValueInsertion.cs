@@ -8,7 +8,7 @@
     using CommonUtilityInfrastructure.FunctionalUtils;
     using Extensibility;
     using Microsoft.Cci;
-    using Microsoft.Cci.ILToCodeModel;
+
     using Microsoft.Cci.Immutable;
     using Microsoft.Cci.MutableCodeModel;
     using Roslyn.Compilers;

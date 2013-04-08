@@ -37,26 +37,25 @@
         }
         public IEnumerable<IOperatorsPackage> ReloadOperators()
         {
-            OperatorPacks = null;
-            var extensionDirectory = new Uri(Assembly.GetExecutingAssembly().CodeBase)
-                .LocalPath.ToFilePathAbsolute().ParentDirectoryPath;
-
-       //     string path = Path.GetDirectoryName(p);
-            var catalog = new DirectoryCatalog(extensionDirectory.Path);
-            var container = new CompositionContainer(catalog);
-
-/*
-            var compositionBatch = new CompositionBatch();
-
-            foreach (var composablePart in SelectParts(catalog))
+            try
             {
+                OperatorPacks = null;
+                var extensionDirectory = new Uri(Assembly.GetExecutingAssembly().CodeBase)
+                    .LocalPath.ToFilePathAbsolute().ParentDirectoryPath;
 
-                compositionBatch.AddPart(composablePart);
-            }*/
+                var catalog = new DirectoryCatalog(extensionDirectory.Path);
+                var container = new CompositionContainer(catalog);
 
-            container.ComposeParts(this);
+                container.ComposeParts(this);
 
-            return OperatorPacks;
+                return OperatorPacks;
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                
+                throw new Exception(e.LoaderExceptions.Select(ee=>ee.Message).Aggregate( (e1,e2)=>e1+", "+e2),e);
+            }
+           
         }
     }
 

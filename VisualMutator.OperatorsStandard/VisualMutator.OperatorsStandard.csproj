@@ -58,9 +58,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Cci.CodeModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CCIdebug\Microsoft.Cci.CodeModel.dll</HintPath>
@@ -71,10 +68,6 @@
     </Reference>
     <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
       <HintPath>..\packages\CCIdebug\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Cci.ILGenerator, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.ILGenerator.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.MetadataHelper, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,26 +85,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CCIdebug\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.NewILToCodeModel">
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Cci.PdbReader, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Cci.PeReader, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PdbReader.dll</HintPath>
+      <HintPath>..\VisualMutator.VSPackage\bin\x86\Debug\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbWriter">
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PdbWriter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Cci.PeReader, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PeReader.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Cci.PeWriter, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCIdebug\Microsoft.Cci.PeWriter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Cci.SourceModel, Version=1.0.12.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Cci.SourceModel">
       <HintPath>..\packages\CCIdebug\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
     <Reference Include="NList">
