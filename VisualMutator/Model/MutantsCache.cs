@@ -42,7 +42,7 @@
         {
             _mutantsContainer = mutantsContainer;
             var config = new NameValueCollection();
-         //   config.Add("pollingInterval", "00:05:00");
+ 
             config.Add("physicalMemoryLimitPercentage", "50");
             config.Add("cacheMemoryLimitMegabytes", "256");
 
@@ -54,13 +54,13 @@
         {
             _originalCode = originalCode;
             _allowedTypes = allowedTypes;
-          //  _cache.CacheMemoryLimit = (long) 256.MiB().ToBytes();
+         
         }
 
         public AssembliesProvider GetMutatedModules(Mutant mutant)
         {
-            return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
-            /*
+           // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
+            
             AssembliesProvider result;
             if(!_cache.Contains(mutant.Id))
             {
@@ -72,7 +72,7 @@
                 result = (AssembliesProvider)_cache.Get(mutant.Id);
             }
             return result;
-            */
+            
         }
 
 

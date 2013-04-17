@@ -10,6 +10,7 @@
     using System.Xml.Linq;
 
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.DependencyInjection;
     using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
     using Extensibility;
@@ -35,6 +36,8 @@
 
     public class SessionController
     {
+        public IFactory<SessionCreationController> MutantsCreationFactory { get; set; }
+        public IFactory<OnlyMutantsCreationController> OnlyMutantsCreationFactory { get; set; }
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly CommonServices _svc;
@@ -48,6 +51,7 @@
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
         private readonly ICodeVisualizer _codeVisualizer;
+        private readonly SessionCreationController _scc;
         private readonly ICommonCompilerAssemblies _commonCompiler;
 
         private int _allMutantsCount;
@@ -80,8 +84,13 @@
             IMutantsCache mutantsCache,
             XmlResultsGenerator xmlResultsGenerator,
             ICodeVisualizer codeVisualizer,
+            SessionCreationController scc,
+            IFactory<SessionCreationController> mutantsCreationFactory,
+            IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
             ICommonCompilerAssemblies commonCompiler)
         {
+            MutantsCreationFactory = mutantsCreationFactory;
+            OnlyMutantsCreationFactory = onlyMutantsCreationFactory;
             _svc = svc;
             _mutantDetailsController = mutantDetailsController;
             _mutantsContainer = mutantsContainer;
@@ -92,6 +101,7 @@
 
             _xmlResultsGenerator = xmlResultsGenerator;
             _codeVisualizer = codeVisualizer;
+            _scc = scc;
             _commonCompiler = commonCompiler;
             _sessionState = SessionState.NotStarted;
 
@@ -231,7 +241,7 @@
 
                 _mutantsCache.Initialize(_currentSession.OriginalAssemblies, _currentSession.SelectedTypes);//TODO wynieść gdzie indziej
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-
+                /*
                 var oper = new ArithmeticOperatorReplacement();
                 MutantsContainer.OperatorWithTargets targets = _mutantsContainer.FindTargets(oper, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList());
 //_mutantsContainer.GenerateMutantsForOperators(_currentSession, ProgressCounter.Inactive());
@@ -258,7 +268,7 @@
                     }
                    
                 }
-                
+                */
 
                 _log.Info("Creating pure mutant for initial checks...");
                 ExecutedOperator execOperator;

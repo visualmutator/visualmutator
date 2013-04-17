@@ -34,11 +34,7 @@ namespace VisualMutator.Controllers
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MainViewModel _viewModel;
-
-        private readonly IFactory<SessionCreationController> _mutantsCreationFactory;
-
-        private readonly IFactory<OnlyMutantsCreationController> _onlyMutantsCreationFactory;
-
+        private readonly IFactory<SessionController> _sessionControllerFactory;
 
 
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
@@ -54,15 +50,15 @@ namespace VisualMutator.Controllers
 
         public MainController(
             MainViewModel viewModel,
-            IFactory<SessionCreationController> mutantsCreationFactory,
-            IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
+            IFactory<SessionController> sessionControllerFactory,
+
             IFactory<ResultsSavingController> resultsSavingFactory,
            
             CommonServices svc)
         {
             _viewModel = viewModel;
-            _mutantsCreationFactory = mutantsCreationFactory;
-            _onlyMutantsCreationFactory = onlyMutantsCreationFactory;
+            _sessionControllerFactory = sessionControllerFactory;
+
          
             _resultsSavingFactory = resultsSavingFactory;
      
@@ -185,17 +181,15 @@ namespace VisualMutator.Controllers
         {
             _log.Info("Showing mutation session window.");
            // var o = new AppDomainCreator();
-           // o.Execute();
-            var mutantsCreationController = _mutantsCreationFactory.Create();
+            Clean();
+            _currenSessionController = _sessionControllerFactory.Create();
+            var mutantsCreationController = _currenSessionController.MutantsCreationFactory.Create();
              mutantsCreationController.Run();
             if (mutantsCreationController.HasResults)
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
-                Clean();
+               
 
-
-
-                _currenSessionController = mutantsCreationController.SessionController;
 
                 _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
 
@@ -209,16 +203,17 @@ namespace VisualMutator.Controllers
 
         public void OnlyCreateMutants()
         {
-            var onlyMutantsController = _onlyMutantsCreationFactory.Create();
+            Clean();
+            _currenSessionController = _sessionControllerFactory.Create();
+            var onlyMutantsController = _currenSessionController.OnlyMutantsCreationFactory.Create();
             onlyMutantsController.Run();
 
             if (onlyMutantsController.HasResults)
             {
                 MutationSessionChoices choices = onlyMutantsController.Result;
 
-                Clean();
+                
 
-                _currenSessionController = onlyMutantsController.SessionController;
                 _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
                 
 

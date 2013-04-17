@@ -14,6 +14,7 @@
     using Ninject;
     using Ninject.Activation;
     using Ninject.Activation.Strategies;
+    using Ninject.Extensions.ChildKernel;
     using Ninject.Extensions.ContextPreservation;
     using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
@@ -40,6 +41,7 @@
    
     public class VisualMutatorModule : NinjectModule
     {
+      //  private ChildKernel childKernel;
 
 
         public VisualMutatorModule()
@@ -49,6 +51,10 @@
 
         public override void Load()
         {
+
+        //    childKernel = new ChildKernel(Kernel);
+
+
             Views();
             Infrastructure();
             MutantsCreation();
@@ -126,34 +132,9 @@
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
-            
-            Bind<SessionCreationController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
-            Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory().DefinesNamedScope("Session");
-            Bind<SessionController>().ToSelf().AndFromFactory().InNamedScope("Session").DefinesNamedScope("InSession");
-            Bind<MutantDetailsController>().ToSelf().AndFromFactory().InNamedScope("Session");
             Bind<ResultsSavingController>().ToSelf().AndFromFactory();
-            
-          //  Bind<IFactory<SessionController>>().ToConstant(new NinjectFactory<SessionController>(Kernel));
-            //.
 
-
-            Bind<IMutantsContainer>().To<MutantsContainer>().InNamedScope("Session");
-            Bind<IMutantsFileManager>().To<MutantsFileManager>().InNamedScope("Session");
-
-
-            Bind<ITypesManager>().To<SolutionTypesManager>().InNamedScope("Session");
-            Bind<IOperatorsManager>().To<OperatorsManager>().InNamedScope("Session");
-            Bind<IOperatorLoader>().To<MEFOperatorLoader>().InNamedScope("Session");
-            Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InNamedScope("Session");
-            Bind<IOperatorUtils>().To<OperatorUtils>().InNamedScope("Session");
-
-            Bind<IMutantsCache>().To<MutantsCache>().InNamedScope("Session");  
-        }
-
-        public void Tests()
-        {
-
-            Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory().InNamedScope("Session");//.InNamedScope("Session");  
+           
 
             Bind<NUnitTestService>().ToSelf();
 
@@ -163,18 +144,54 @@
             Bind<IMsTestWrapper>().To<MsTestWrapper>();
             Bind<IMsTestLoader>().To<MsTestLoader>();
 
+            Kernel.InjectChildFactory<SessionController>(childKernel =>
+            {
+                childKernel.Bind<SessionController>().ToSelf().AndFromFactory();
 
-            Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InNamedScope("Session");  
+                childKernel.Bind<SessionCreationController>().ToSelf().AndFromFactory();
+                childKernel.Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory();
+                childKernel.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
+                childKernel.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
 
+                childKernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
+                childKernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
+
+
+                childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
+                childKernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
+                childKernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
+                childKernel.Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InSingletonScope();
+                childKernel.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
+
+                childKernel.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
+
+
+                childKernel.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
+
+
+
+                childKernel.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
+
+
+
+                childKernel.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
+                childKernel.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
+
+            });
+           
+       
+        }
+
+        public void Tests()
+        {
+
+         
            
         }
 
         public void Results()
         {
-            Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InNamedScope("Session");
-            Bind<ICodeVisualizer>().To<CodeVisualizer>().InNamedScope("Session");  
-
-            Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
+           
         }
 
      

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Ninject.Extensions.ChildKernel</id>
+    <version>3.0.0.5</version>
+    <title>Ninject.Extensions.ChildKernel</title>
+    <authors>Ninject Project Contributors</authors>
+    <owners>Ninject Project Contributors</owners>
+    <licenseUrl>https://github.com/ninject/ninject.extensions.childkernel/raw/master/LICENSE.txt</licenseUrl>
+    <projectUrl>http://www.ninject.org/</projectUrl>
+    <iconUrl>https://github.com/ninject/ninject/raw/master/logos/Ninject-Logo32.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Ninject extension that allows that child kernels can be defined.</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>Ninject ioc di</tags>
+    <dependencies>
+      <dependency id="Ninject" version="[3.0.0.0, 3.1.0.0)" />
+    </dependencies>
+    <references>
+      <reference file="Ninject.Extensions.ChildKernel.dll" />
+    </references>
+  </metadata>
+</package>
