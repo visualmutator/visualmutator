@@ -59,6 +59,8 @@
 
         public AssembliesProvider GetMutatedModules(Mutant mutant)
         {
+            return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
+            /*
             AssembliesProvider result;
             if(!_cache.Contains(mutant.Id))
             {
@@ -70,7 +72,7 @@
                 result = (AssembliesProvider)_cache.Get(mutant.Id);
             }
             return result;
-
+            */
         }
 
 

@@ -4,15 +4,9 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Mono.Cecil;
-
+    using Model.Tests.Services;
     using Moq;
-
     using NUnit.Core;
-    using NUnit.Util;
-
-    using VisualMutator.Model.Tests.Services;
 
     public static class TestWrapperMocking
     {
@@ -21,15 +15,15 @@
             var m = new Mock<ITest>();
 
             var tn = new TestName
-            {
-                FullName = name,
-                Name = name
-            };
+                {
+                    FullName = name,
+                    Name = name
+                };
             var ptn = new TestName
-            {
-                FullName = parentFixture.TestName.FullName,
-                Name = parentFixture.TestName.Name,
-            };
+                {
+                    FullName = parentFixture.TestName.FullName,
+                    Name = parentFixture.TestName.Name,
+                };
 
 
             m.Setup(_ => _.TestName).Returns(tn);
@@ -37,20 +31,21 @@
             m.Setup(_ => _.TestType).Returns("Test");
             return m.Object;
         }
+
         public static ITest MockTestFixture(string name, string namespaceName)
         {
             var m = new Mock<ITest>();
 
             var tn = new TestName
-            {
-                FullName = name,
-                Name = name
-            };
+                {
+                    FullName = name,
+                    Name = name
+                };
             var ptn = new TestName
-            {
-                FullName = namespaceName,
-                Name = namespaceName
-            };
+                {
+                    FullName = namespaceName,
+                    Name = namespaceName
+                };
 
 
             m.Setup(_ => _.TestName).Returns(tn);
@@ -66,10 +61,9 @@
 
             var list = new List<ITest>();
             wrapperMock.Setup(_ => _.TestLoaded).Returns(list.ToObservable());
-            wrapperMock.Setup(_ => _.TestLoadFailed).Returns(new List<TestEventArgs>().ToObservable());
+            wrapperMock.Setup(_ => _.TestLoadFailed).Returns(new List<Exception>().ToObservable());
             testClasses = list;
             return wrapperMock;
         }
     }
 }
-

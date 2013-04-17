@@ -21,7 +21,7 @@
 
         IObservable<ITest> TestLoaded { get; }
 
-        IObservable<TestEventArgs> TestLoadFailed { get; }
+        IObservable<Exception> TestLoadFailed { get; }
         NameFilter NameFilter { get; }
 
         void LoadTests(IEnumerable<string> assemblies);
@@ -42,7 +42,7 @@
 
         private IObservable<ITest> _testLoaded;
 
-        private IObservable<TestEventArgs> _testLoadFailed;
+        private IObservable<Exception> _testLoadFailed;
 
         private IObservable<TestResult> _runFinished;
 
@@ -68,6 +68,10 @@
         {
             _messageService = messageService;
 
+            InternalTrace.Initialize("nunit-visual-mutator.log", InternalTraceLevel.Verbose);
+            var package = new TestPackage("");
+            package.Settings["RuntimeFramework"] = new RuntimeFramework(RuntimeType.Net, Environment.Version);
+
             ServiceManager.Services.AddService(new SettingsService());
             ServiceManager.Services.AddService(new DomainManager());
             ServiceManager.Services.AddService(new RecentFilesService());
@@ -80,23 +84,13 @@
 
 
             _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")
-                .Where(e => e.EventArgs.Test != null).Select(e => e.EventArgs.Test);
+               // .Where(e => e.EventArgs.Test != null)
+                .Select(e => e.EventArgs.Test);
              
-         
-
-            _testFinished = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "TestFinished")
-                .Select(e => e.EventArgs.Result);
-
-           
-            _runFinished = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "RunFinished")
-                .Select(e => e.EventArgs.Result);
-
 
             _testLoadFailed = Observable.FromEvent<TestEventArgs>(
                 _testLoader.Events, "TestLoadFailed")
-                .Select(e => e.EventArgs);
+                .Select(e => e.EventArgs.Exception);
          
             _testReloadFailed = Observable.FromEvent<TestEventArgs>(
               _testLoader.Events, "TestReloadFailed")
@@ -115,6 +109,19 @@
                 .Select(e => e.EventArgs.Exception);
 
 
+
+            _testFinished = Observable.FromEvent<TestEventArgs>(
+                _testLoader.Events, "TestFinished")
+                .Select(e => e.EventArgs.Result);
+
+
+            _runFinished = Observable.FromEvent<TestEventArgs>(
+                _testLoader.Events, "RunFinished")
+                .Select(e => e.EventArgs.Result);
+
+
+
+            _testLoadFailed.Subscribe(HandleException);
             _testReloadFailed.Subscribe(HandleException);
             _testUnloadFailed.Subscribe(HandleException);
             _projectLoadFailed.Subscribe(HandleException);
@@ -129,6 +136,7 @@
         
         public void LoadTests(IEnumerable<string> assemblies)
         {
+         
             _testLoader.NewProject();
             foreach (string project in assemblies)
             {
@@ -187,7 +195,7 @@
             }
         }
 
-        public IObservable<TestEventArgs> TestLoadFailed
+        public IObservable<Exception> TestLoadFailed
         {
             get
             {

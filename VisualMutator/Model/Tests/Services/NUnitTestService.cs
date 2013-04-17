@@ -53,6 +53,7 @@
             _currentRunCancelled = false;
             Exception exc = null;
             IEnumerable<TestNodeClass> tests = null;
+            using (var eventObj = new ManualResetEventSlim())
             using (var job = new TestsLoadJob(this, assemblies))
             {
                 var sw = new Stopwatch();
@@ -63,7 +64,12 @@
                     mutantTestSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
                     tests = BuildTestTree(arg, mutantTestSession);
                 },
-                ex => exc = ex);
+                ex =>
+                    {
+                        throw new Exception("Exception occurred while loading tests. ", ex);
+                    },
+                onCompleted: eventObj.Set);
+                eventObj.Wait();
             }
             if (tests == null)
             {
@@ -84,11 +90,13 @@
             using (var eventObj = new ManualResetEventSlim())
             using (var job = new TestsRunJob(this))
             {
+                var sw = new Stopwatch();
+                sw.Start();
                 job.Subscribe(result =>
                 {
-                    _log.Debug("result.Test.TestName.UniqueName: "+result.Test.TestName.UniqueName);
-                    _log.Debug("result.Test.TestName.FullName: "+result.Test.TestName.FullName);
-                    _log.Debug("result.Test.TestName.Name: " + result.Test.TestName.Name);
+                  //  _log.Debug("result.Test.TestName.UniqueName: "+result.Test.TestName.UniqueName);
+                   // _log.Debug("result.Test.TestName.FullName: "+result.Test.TestName.FullName);
+                 //   _log.Debug("result.Test.TestName.Name: " + result.Test.TestName.Name);
                     TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.UniqueName];
                     node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
                     node.Message = result.Message;
@@ -96,9 +104,6 @@
                 },
                 onError: ex => _messageService.ShowFatalError(ex, _log),
                 onCompleted: eventObj.Set);
-
-                var sw = new Stopwatch();
-                sw.Start();
                 eventObj.Wait();
                 sw.Stop();
 
@@ -229,6 +234,7 @@
                 try
                 {
                     _observer.OnNext(test);
+                    _observer.OnCompleted();
                 }
                 catch (Exception e)
                 {
@@ -236,9 +242,9 @@
                 }
             }
 
-            private void TestLoadFailedHandler(TestEventArgs sArgs)
+            private void TestLoadFailedHandler(Exception sArgs)
             {
-                _observer.OnError(sArgs.Exception);
+                _observer.OnError(sArgs);
             }
 
 

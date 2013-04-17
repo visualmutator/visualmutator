@@ -1,42 +1,31 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Mono.Collections.Generic;
-
     using Moq;
-
     using NUnit.Core;
     using NUnit.Framework;
-
-    using VisualMutator.Model.Tests.Services;
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.Tests.Util;
 
     [TestFixture]
     public class NUnitServiceTests
     {
-
         private TestResult MockTestResult(string name, bool success)
         {
             var m = new Mock<ITest>();
 
             var tn = new TestName
-            {
-                FullName = name,
-                Name = name
-            };
+                {
+                    FullName = name,
+                    Name = name
+                };
 
             m.Setup(_ => _.TestName).Returns(tn);
-         //   m.Object.
+            //   m.Object.
 
             var result = new TestResult(m.Object);
 
             if (success)
             {
-            result.Success();
+                result.Success();
             }
             else
             {
@@ -117,7 +106,5 @@
         }
 
         */
-
     }
 }
-

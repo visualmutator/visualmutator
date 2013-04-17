@@ -159,7 +159,7 @@
 
             Bind<MsTestService>().ToSelf();
 
-            Bind<INUnitWrapper>().To<NUnitWrapper>();
+            Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
             Bind<IMsTestWrapper>().To<MsTestWrapper>();
             Bind<IMsTestLoader>().To<MsTestLoader>();
 

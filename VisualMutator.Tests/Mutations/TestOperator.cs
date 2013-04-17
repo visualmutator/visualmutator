@@ -1,17 +1,16 @@
 ﻿namespace VisualMutator.Tests.Mutations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    using Mono.Cecil;
-
-    using VisualMutator.Extensibility;
+    using Extensibility;
 
     public class TestOperator : IMutationOperator
     {
-        public OperatorInfo Info { get{return new OperatorInfo("Test", "", "");} }
+        #region IMutationOperator Members
+
+        public OperatorInfo Info
+        {
+            get { return new OperatorInfo("Test", "", ""); }
+        }
+
         public IOperatorCodeVisitor FindTargets()
         {
             return new OperatorCodeVisitor();
@@ -21,5 +20,7 @@
         {
             return new OperatorCodeRewriter();
         }
+
+        #endregion
     }
 }

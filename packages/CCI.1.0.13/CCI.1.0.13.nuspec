@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>CCI</id>
+    <version>1.0.13</version>
+    <title>Microsoft Research Common Compiler Infrastructure</title>
+    <authors>hermanv@microsoft.com</authors>
+    <owners>hermanv@microsoft.com</owners>
+    <licenseUrl>http://cciast.codeplex.com/license</licenseUrl>
+    <projectUrl>http://cciast.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Microsoft Research Common Compiler Infrastructure (CCI) is a set of libraries and an application programming interface (API) that supports some of the functionality that is common to compilers and related programming tools. CCI is used primarily by applications that create, modify or analyze .NET portable executable (PE) and debug (PDB) files.</description>
+    <summary>A set of libraries and an application programming interface (API) that supports some of the functionality that is common to compilers and related programming tools.</summary>
+    <copyright>Copyright (c) Microsoft. All rights reserved.</copyright>
+    <tags>compiler analysis IL metadata</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="" />
+    </frameworkAssemblies>
+    <references>
+      <reference file="Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll" />
+      <reference file="Microsoft.Cci.AstsProjectedAsCodeModel.dll" />
+      <reference file="Microsoft.Cci.CodeModel.dll" />
+      <reference file="Microsoft.Cci.CodeModelToIL.dll" />
+      <reference file="Microsoft.Cci.ContractExtractor.dll" />
+      <reference file="Microsoft.Cci.CSharpSourceEmitter.dll" />
+      <reference file="Microsoft.Cci.ILGenerator.dll" />
+      <reference file="Microsoft.Cci.MetadataHelper.dll" />
+      <reference file="Microsoft.Cci.MetadataModel.dll" />
+      <reference file="Microsoft.Cci.MutableCodeModel.dll" />
+      <reference file="Microsoft.Cci.MutableMetadataModel.dll" />
+      <reference file="Microsoft.Cci.NewILToCodeModel.dll" />
+      <reference file="Microsoft.Cci.PdbReader.dll" />
+      <reference file="Microsoft.Cci.PdbWriter.dll" />
+      <reference file="Microsoft.Cci.PeReader.dll" />
+      <reference file="Microsoft.Cci.PeWriter.dll" />
+      <reference file="Microsoft.Cci.ReflectionEmitter.dll" />
+      <reference file="Microsoft.Cci.SourceEmitter.dll" />
+      <reference file="Microsoft.Cci.SourceModel.dll" />
+    </references>
+  </metadata>
+</package>

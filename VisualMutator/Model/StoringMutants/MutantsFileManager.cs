@@ -106,7 +106,7 @@
             foreach (var binDir in projects.Select(p => p.ParentDirectoryPath))
             {
                 var files = Directory.GetFiles(binDir.Path, "*.dll", SearchOption.AllDirectories)
-                    .Where(p => !projects.Contains(p.ToFilePathAbsolute()));
+                    .Where(p => !projects.Contains(p.ToFilePathAbs()));
                 list.AddRange(files);
             }
             return list;

@@ -113,6 +113,13 @@
                     LocalScopeProvider = localScopeProvider,
                     SourceLocationProvider = sourceLocationProvider
                 });
+         /*   int i = 0;
+            while (i++ < 10)
+            {
+                var copy = Copy(decompiledModule);
+                WriteToFile(copy, @"D:\PLIKI\" + Path.GetFileName(filePath));
+            }
+           */ 
             return decompiledModule;
         }
 
@@ -154,7 +161,7 @@
         {
            // _log.Info("CommonCompilerAssemblies.Module:" + module.Name);
             var info = FindModuleInfo(module);
-            var copier = new CodeDeepCopier(_host, info.SourceLocationProvider, info.LocalScopeProvider);
+            var copier = new CodeDeepCopier(_host, info.SourceLocationProvider);
             return copier.Copy(module);
         }
 

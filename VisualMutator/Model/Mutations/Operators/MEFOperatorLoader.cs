@@ -41,7 +41,7 @@
             {
                 OperatorPacks = null;
                 var extensionDirectory = new Uri(Assembly.GetExecutingAssembly().CodeBase)
-                    .LocalPath.ToFilePathAbsolute().ParentDirectoryPath;
+                    .LocalPath.ToFilePathAbs().ParentDirectoryPath;
 
                 var catalog = new DirectoryCatalog(extensionDirectory.Path);
                 var container = new CompositionContainer(catalog);

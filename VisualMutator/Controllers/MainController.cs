@@ -183,8 +183,9 @@ namespace VisualMutator.Controllers
 
         public void RunMutationSession()
         {
-            var o = new AppDomainCreator();
-            o.Execute();
+            _log.Info("Showing mutation session window.");
+           // var o = new AppDomainCreator();
+           // o.Execute();
             var mutantsCreationController = _mutantsCreationFactory.Create();
              mutantsCreationController.Run();
             if (mutantsCreationController.HasResults)
@@ -200,8 +201,8 @@ namespace VisualMutator.Controllers
 
                 Subscribe(_currenSessionController);
 
-                
 
+                _log.Info("Starting mutation session...");
                 _currenSessionController.RunMutationSession(choices);
             }
         }

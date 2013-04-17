@@ -2,9 +2,5 @@
 {
     public class InfrastructureTests
     {
-        public InfrastructureTests()
-        {
-          
-        }
     }
 }

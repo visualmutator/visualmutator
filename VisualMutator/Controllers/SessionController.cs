@@ -12,10 +12,14 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
+    using Extensibility;
+    using Microsoft.Cci;
+    using Model.Decompilation;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
     using Model.StoringMutants;
     using Model.Verification;
+    using OperatorsStandard;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
     using VisualMutator.Model.Mutations;
@@ -43,6 +47,8 @@
 
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
+        private readonly ICodeVisualizer _codeVisualizer;
+        private readonly ICommonCompilerAssemblies _commonCompiler;
 
         private int _allMutantsCount;
 
@@ -72,7 +78,9 @@
             ITestsContainer testsContainer,
             IMutantsFileManager mutantsFileManager,
             IMutantsCache mutantsCache,
-            XmlResultsGenerator xmlResultsGenerator)
+            XmlResultsGenerator xmlResultsGenerator,
+            ICodeVisualizer codeVisualizer,
+            ICommonCompilerAssemblies commonCompiler)
         {
             _svc = svc;
             _mutantDetailsController = mutantDetailsController;
@@ -83,6 +91,8 @@
 
 
             _xmlResultsGenerator = xmlResultsGenerator;
+            _codeVisualizer = codeVisualizer;
+            _commonCompiler = commonCompiler;
             _sessionState = SessionState.NotStarted;
 
             _sessionEventsSubject = new Subject<SessionEventArgs>();
@@ -172,7 +182,7 @@
                 
                 var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.SavingMutants);
     
-                Action<Mutant, StoredMutantInfo> verify = (mutant, storageInfo) => {};
+                System.Action<Mutant, StoredMutantInfo> verify = (mutant, storageInfo) => {};
                 if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
                 {
                     verify = (mutant, storageInfo) => _testsContainer.VerifyMutant(storageInfo, mutant);
@@ -220,8 +230,37 @@
                 _currentSession = _mutantsContainer.PrepareSession(choices);
 
                 _mutantsCache.Initialize(_currentSession.OriginalAssemblies, _currentSession.SelectedTypes);//TODO wynieść gdzie indziej
+                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
 
+                var oper = new ArithmeticOperatorReplacement();
+                MutantsContainer.OperatorWithTargets targets = _mutantsContainer.FindTargets(oper, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList());
+//_mutantsContainer.GenerateMutantsForOperators(_currentSession, ProgressCounter.Inactive());
+                var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
+                _log.Debug("THERE ARE MUTTARGETS: " + targets.MutationTargets.Values.SelectMany(v => v).Count());
+                foreach (MutationTarget mutationTarget in targets.MutationTargets.Values.SelectMany(v => v))
+                {
+                    _log.Debug("MUTTARGET: ");
+                    //for (int i = 0; i < 2; i++)
+                    {
+                        var mutant = new Mutant("0", executedOperator, mutationTarget, targets.CommonTargets);
+                        var assembliesProvider = _mutantsContainer.ExecuteMutation(mutant, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList(), ProgressCounter.Inactive());
+                        var visualize = _codeVisualizer.Visualize(CodeLanguage.CSharp, mutationTarget, assembliesProvider);
+                        var visualize2 = _codeVisualizer.Visualize(CodeLanguage.IL, mutationTarget, assembliesProvider);
+                        _log.Debug(visualize);
+                        _log.Debug(visualize2);
+                        foreach (IModule module in assembliesProvider.Assemblies)
+                        {
+                            string file = Path.Combine(@"D:\PLIKI", module.Name.Value + ".dll");
+                            _commonCompiler.WriteToFile(module, file);
+                  
+                        }
+                     //   _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
+                    }
+                   
+                }
+                
 
+                _log.Info("Creating pure mutant for initial checks...");
                 ExecutedOperator execOperator;
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out execOperator);
          
@@ -233,15 +272,18 @@
                         });
 
                     });
+
+                _log.Info("Initializing test environment...");
                 
-                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
 
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionStarting(
                     _testingProcessExtensionOptions.Parameter, choices.ProjectPaths.Select(p=>p.Path).ToList());
 
-
+                _log.Info("Writing pure mutant to disk...");
                 var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
-            
+
+                _log.Info("Verifying IL code of pure mutant...");
+
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
                 _testsContainer.CreateTestFilter(choices.SelectedTests);
@@ -249,6 +291,7 @@
                 _testingProcessExtensionOptions.TestingProcessExtension
                     .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
+                _log.Info("Running tests for pure mutant...");
                 _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
                 return changelessMutant;
 

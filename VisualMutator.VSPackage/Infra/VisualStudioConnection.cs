@@ -130,7 +130,7 @@
                          && confManager.ActiveConfiguration != null
                          && confManager.ActiveConfiguration.IsBuildable
                    let values = project.Properties.Cast<Property>().ToDictionary(prop => prop.Name)
-                   select values["LocalPath"].Value.CastTo<string>().ToDirectoryPathAbsolute();
+                   select values["LocalPath"].Value.CastTo<string>().ToDirPathAbs();
         }
         public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
         {
@@ -143,7 +143,7 @@
                    let outputFileName = values["OutputFileName"].Value.CastTo<string>()
                    let outputDir = (string)config.Properties.Cast<Property>()
                         .Single(p => p.Name == "OutputPath").Value
-                   select Path.Combine(localPath, outputDir, outputFileName).ToFilePathAbsolute();
+                   select Path.Combine(localPath, outputDir, outputFileName).ToFilePathAbs();
         }
 
       

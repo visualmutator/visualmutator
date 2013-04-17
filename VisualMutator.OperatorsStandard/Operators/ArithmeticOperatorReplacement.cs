@@ -37,13 +37,18 @@ namespace VisualMutator.OperatorsStandard
                     "Modulus",
                 }.Where(elem => elem != operation.GetType().Name).ToList();
 
+                if (!operation.ResultIsUnmodifiedLeftOperand && !(operation.LeftOperand is ITargetExpression))
+                {
+                    passes.Add("LeftParam");
+                    passes.Add("RightParam");
+                }
                // if (operation.LeftOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
               //  {
-                    passes.Add("LeftParam");
+                    
               //  }
               //  if (operation.RightOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
            //     {
-                    passes.Add("RightParam");
+                    
           //      }
                 MarkMutationTarget(operation, passes);
             }
@@ -93,7 +98,7 @@ namespace VisualMutator.OperatorsStandard
                     replacement.Type = operation.Type;
                     result = replacement;
                 }
-                else
+                else 
                 {
                     if(MutationTarget.PassInfo == "LeftParam")
                     {

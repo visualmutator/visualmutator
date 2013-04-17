@@ -11,6 +11,7 @@
     using Microsoft.Cci;
     using MutantsTree;
     using Operators;
+    using OperatorsStandard;
     using StoringMutants;
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
@@ -32,6 +33,8 @@
 
         AssembliesProvider ExecuteMutation( Mutant mutant, IList<IModule> modules, IList<TypeIdentifier> allowedTypes,
                         ProgressCounter percentCompleted);
+
+        MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies, IList<TypeIdentifier> toList);
     }
 
     public class MutantsContainer : IMutantsContainer

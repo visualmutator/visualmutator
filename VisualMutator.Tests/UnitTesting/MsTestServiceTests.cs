@@ -1,29 +1,12 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Xml.Linq;
-
-    using Mono.Cecil;
-    using Mono.Collections.Generic;
-
-    using Moq;
-
     using NUnit.Framework;
-
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Model.Tests.Services;
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.Tests.Util;
 
     [TestFixture]
     public class MsTestServiceTests
     {
-      
-
         private void LoadTests()
         {
-            
         }
 
         /*
@@ -171,4 +154,3 @@
         */
     }
 }
-

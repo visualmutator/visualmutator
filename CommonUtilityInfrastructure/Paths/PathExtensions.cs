@@ -6,37 +6,37 @@
     {
  
  
-        public static FilePathRelative ToFilePathRelative(this string collection)
+        public static FilePathRelative ToFilePathRel(this string str)
         {
-            return new FilePathRelative(collection);
+            return new FilePathRelative(str);
         }
-        public static FilePathAbsolute ToFilePathAbsolute(this string collection)
+        public static FilePathAbsolute ToFilePathAbs(this string str)
         {
-            return new FilePathAbsolute(collection);
+            return new FilePathAbsolute(str);
         }
-        public static DirectoryPathRelative ToDirectoryPathRelative(this string collection)
+        public static DirectoryPathRelative ToDirPathRel(this string str)
         {
-            return new DirectoryPathRelative(collection);
+            return new DirectoryPathRelative(str);
         }
-        public static DirectoryPathAbsolute ToDirectoryPathAbsolute(this string collection)
+        public static DirectoryPathAbsolute ToDirPathAbs(this string str)
         {
-            return new DirectoryPathAbsolute(collection);
+            return new DirectoryPathAbsolute(str);
         }
-        public static FilePathRelative Concat(this FilePathRelative path, string str)
+        public static FilePathRelative Join(this FilePathRelative path, string str)
         {
             return new FilePathRelative(Path.Combine(path.Path, str));
         }
-        public static FilePathAbsolute Concat(this FilePathAbsolute path, string str)
+        public static FilePathAbsolute Join(this FilePathAbsolute path, string str)
         {
             return new FilePathAbsolute(Path.Combine(path.Path, str));
         }
 
-        public static DirectoryPathRelative Concat(this DirectoryPathRelative path, string str)
+        public static DirectoryPathRelative Join(this DirectoryPathRelative path, string str)
         {
             return new DirectoryPathRelative(Path.Combine(path.Path, str));
         }
 
-        public static DirectoryPathAbsolute Concat(this DirectoryPathAbsolute path, string str)
+        public static DirectoryPathAbsolute Join(this DirectoryPathAbsolute path, string str)
         {
             return new DirectoryPathAbsolute(Path.Combine(path.Path, str));
         }

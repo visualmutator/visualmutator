@@ -49,7 +49,7 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
 
         public void OnTestingOfMutantStarting(string mutantDestination, IList<string> mutantFilePaths)
         {
-            string src = _projectPath.Concat("chromedriver.exe").Path;
+            string src = _projectPath.Join("chromedriver.exe").Path;
 
             string dest = Path.Combine(mutantDestination, "chromedriver.exe");
             if (!File.Exists(dest))
@@ -59,13 +59,13 @@ START /D ""C:\Program Files (x86)\Common Files\microsoft shared\DevServer\10.0\"
 
             foreach (var p in mutantFilePaths.Select(path=>new FilePathAbsolute(path)))
             {
-                var mutdest = _projectPath.Concat("bin");//.Concat(p.FileName).Path;
-             /*   if(File.Exists(mutdest.Concat(p.FileName).Path))
+                var mutdest = _projectPath.Join("bin");//.Join(p.FileName).Path;
+             /*   if(File.Exists(mutdest.Join(p.FileName).Path))
                 {
-                    File.Move(mutdest.Concat(p.FileName).Path, mutdest.Concat(p.FileNameWithoutExtension).Concat(".dlltmp").Path);
+                    File.Move(mutdest.Join(p.FileName).Path, mutdest.Join(p.FileNameWithoutExtension).Join(".dlltmp").Path);
                 }*/
 
-                File.Copy(p.Path, mutdest.Concat(p.FileName).Path, true);
+                File.Copy(p.Path, mutdest.Join(p.FileName).Path, true);
             }
 
 

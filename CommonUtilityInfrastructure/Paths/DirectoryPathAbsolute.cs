@@ -234,5 +234,6 @@ namespace CommonUtilityInfrastructure.Paths
             string thisPathUpperCase = Path.ToUpper();
             return thisPathUpperCase.Contains(parentPathUpperCase);
         }
+        
     }
 }

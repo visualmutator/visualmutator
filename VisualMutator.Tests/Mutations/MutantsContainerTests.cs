@@ -1,29 +1,10 @@
 ﻿namespace VisualMutator.Tests.Mutations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    using Mono.Cecil;
-
-    using Moq;
-
     using NUnit.Framework;
-
-    using VisualMutator.Controllers;
-    using VisualMutator.Extensibility;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Operators;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Model.Tests;
-    using VisualMutator.Tests.Util;
 
     [TestFixture]
     public class MutantsContainerTests
     {
-
-        
         [Test]
         public void Test1()
         {
@@ -67,8 +48,6 @@
             assembliesManager.Load(executedOperator.Mutants.First().StoredAssemblies).Single()
                 .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
 */
-         
         }
     }
 }
-
