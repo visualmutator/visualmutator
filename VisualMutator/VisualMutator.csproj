@@ -236,6 +236,9 @@
     <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
+    <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />
+    <Compile Include="Model\TestGeneration\GenerationEngine.cs" />
+    <Compile Include="Model\TestGeneration\ValueSupplier.cs" />
     <Compile Include="Model\Tests\Custom\AspNetTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\DefaultTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\ITestingProcessExtension.cs" />
