@@ -238,6 +238,7 @@
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />
+    <Compile Include="Model\TestGeneration\GenerationInterface.cs" />
     <Compile Include="Model\TestGeneration\ValueSupplier.cs" />
     <Compile Include="Model\Tests\Custom\AspNetTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\DefaultTestingProcessExtension.cs" />
@@ -458,10 +459,6 @@
     <ProjectReference Include="..\VisualMutator.OperatorsStandard\VisualMutator.OperatorsStandard.csproj">
       <Project>{78D8E683-1282-4114-BEB8-A5784E885C02}</Project>
       <Name>VisualMutator.OperatorsStandard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VisualMutator.TestGeneration\VisualMutator.TestGeneration.csproj">
-      <Project>{EF0F2C25-2102-435B-8D6D-0D6232879342}</Project>
-      <Name>VisualMutator.TestGeneration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

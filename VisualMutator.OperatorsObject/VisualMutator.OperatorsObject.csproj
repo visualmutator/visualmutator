@@ -170,6 +170,8 @@
   <ItemGroup>
     <Compile Include="Operators\ArgumentOrderChange.cs" />
     <Compile Include="Operators\AccessorMethodChange.cs" />
+    <Compile Include="Operators\OverloadingMethodContentsChange.cs" />
+    <Compile Include="Operators\ReferenceAssignmentChange.cs" />
     <Compile Include="Operators\NullInsertion.cs" />
     <Compile Include="Operators\ModiferMethodChange.cs" />
     <Compile Include="Operators\ExceptionHandlerRemoval.cs" />

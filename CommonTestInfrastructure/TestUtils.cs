@@ -28,7 +28,11 @@
         {
             Assert.AreEqual(another, obj);
         }
-
+        [DebuggerStepThrough]
+        public static void ShouldCount<T>(this IEnumerable<T> obj, int count)
+        {
+            Assert.AreEqual(count, obj.Count());
+        }
         public static IEnumerable<T> Each<T>(this IEnumerable<T> collection, Action<T> action)
         {
             var coll = collection.ToList();

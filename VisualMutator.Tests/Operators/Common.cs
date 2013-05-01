@@ -105,6 +105,11 @@
             }
             return outputFileName;
         }
+        public static List<IModule> CreateModules(string code)
+        {
+            var path = CreateModule(code);
+            return CreateModules(path, new CommonCompilerAssemblies());
+        }
 
         public static string CreateModule2(string code)
         {
@@ -139,6 +144,15 @@
             
             }
             return mutants;
+        }
+        public static List<IModule> CreateModules(string filePath, CommonCompilerAssemblies cci)
+        {
+            cci.AppendFromFile(filePath);
+            _log.Info("Copying assemblies...");
+            List<IModule> copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
+
+
+            return copiedModules;
         }
         public static List<MutMod> CreateMutantsExt(string filePath, IMutationOperator operatorr, MutantsContainer container, CommonCompilerAssemblies cci, CodeVisualizer visualizer, AssembliesProvider original)
         {

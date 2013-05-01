@@ -8,15 +8,15 @@ namespace VisualMutator.TestGeneration
 {
     using System.IO;
     using System.Reflection;
-
+    using Model.TestGeneration;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
 
-    public class AppDomainCreator
+    public class AppDomainCreator : MarshalByRefObject
     {
-        public void Execute()
+        public void Execute(byte[] assemblyArray)
         {
-            Console.WriteLine("Press enter to load plugin");
+          /*  Console.WriteLine("Press enter to load plugin");
             Console.ReadLine();
 
           //  Assembly entryAsm = Assembly.GetEntryAssembly();
@@ -28,12 +28,13 @@ namespace VisualMutator.TestGeneration
             var m = obj.GetType().GetMethod("Method1");
 
             Console.WriteLine("Plugin Loaded.");
+            */
 
-
-
-            Compilation compilation = Compilation.Create("")
-                .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location))
-
+            var assembly = AppDomain.CurrentDomain.Load(assemblyArray);
+            var obj = (GenerationInterface)assembly.CreateInstance("VisualMutator_generated.Program");
+            assembly.GetTypes().ToList().ForEach(Console.WriteLine);
+            obj.TestRun(5);
+            //
         }
 
     }

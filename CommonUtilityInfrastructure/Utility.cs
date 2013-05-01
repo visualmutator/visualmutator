@@ -34,6 +34,9 @@
         }
         public static IList<Tuple<T1,T2>> Pairs<T1, T2>(params object[] elements)
         {
+            Throw.IfNull(elements);
+            Throw.If(elements.Any(x => x == null));
+            Throw.If(elements.Length%2 != 0);
             var result = new List<Tuple<T1, T2>>();
             for (int i = 0; i < elements.Length; i+=2)
             {

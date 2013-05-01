@@ -56,7 +56,7 @@
                 _log.Info("Visualize: " + target + " method: " + target.Method);
                 var method = assemblies.Assemblies.SelectMany(a => a.GetAllTypes())
               .Single(t => t.Name.Value == target.Method.TypeName).Methods
-              .Single(m => m.Name.Value == target.Method.MethodName);
+              .Single(m => m.ToString() == target.Method.MethodSignature);
 
                 var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
                 var sourceEmitterOutput = new SourceEmitterOutputString();

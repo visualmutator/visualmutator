@@ -173,6 +173,8 @@
     <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="Operators\Common.cs" />
     <Compile Include="Operators\BruteForceTests.cs" />
+    <Compile Include="Operators\TestOverloadingMethodContentsChange.cs" />
+    <Compile Include="Operators\TestReferenceAssignementChange.cs" />
     <Compile Include="Operators\TestNullInsertion.cs" />
     <Compile Include="Operators\TestModiferMethodChange.cs" />
     <Compile Include="Operators\TestUnaryOperatorInsertion.cs" />
@@ -183,6 +185,7 @@
     <Compile Include="Operators\TestLogicalOperatorReplacement.cs" />
     <Compile Include="Operators\TestRelationalOperatorReplacement.cs" />
     <Compile Include="Results\XmlResultsGeneratorTests.cs" />
+    <Compile Include="TestGeneration\TestRoslyn.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
     <Compile Include="Util\CecilUtils.cs" />
     <Compile Include="MonoCecilTests.cs" />

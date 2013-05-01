@@ -12,7 +12,10 @@
         private List<MutationTarget> commonTargets;
 
         private IMethodDefinition _currentMethod;
-
+		public IMethodDefinition CurrentMethod
+        {
+            get { return _currentMethod; }
+        }
         public List<MutationTarget> MutationTargets
         {
             get { return mutationTargets; }

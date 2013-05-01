@@ -51,25 +51,29 @@
 
         #endregion
 
-
+        const string code =
+    @"using System;
+namespace Ns
+{
+    public class Test
+    {
+    
+        public bool Method1(int x)
+        {
+            return x != 1;
+        }
+        public bool Method1(int x, int y)
+        {
+            return Method1(x);
+        }
+    }
+}";
 
         [Test]
         public void MutationSuccess()
         {
-            //[ValueSource("_operators")]IMutationOperator oper
-            var oper = new ArithmeticOperatorReplacement();
-
-            List<MutMod> mutants;
-            AssembliesProvider original;
-          //  CodeDifferenceCreator diff;
-            CommonCompilerAssemblies cci;
-            CodeVisualizer visualizer;
-            Common.RunMutationsReal(_assemblyPath, oper, out mutants, out original, out visualizer, out cci);
-            //string fileTarget = Path.Combine(@"D:\PLIKI", original.Assemblies.First().Name.Value + ".dll");
-            
-        
-
-            Assert.Pass();
+            var m = Common.CreateModules(code);
+                Assert.Pass();
         }
     }
 }
