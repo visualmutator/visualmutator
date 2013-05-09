@@ -25,8 +25,7 @@
     {
         MutationTestingSession PrepareSession(MutationSessionChoices choices);
 
-        void GenerateMutantsForOperators(MutationTestingSession session, ProgressCounter progress );
-
+       
         Mutant CreateChangelessMutant(out ExecutedOperator executedOperator);
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
@@ -35,6 +34,9 @@
                         ProgressCounter percentCompleted);
 
         MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies, IList<TypeIdentifier> toList);
+
+        List<ExecutedOperator> GenerateMutantsForOperators(ICollection<IMutationOperator> operators,
+                                                                           ICollection<TypeIdentifier> allowedTypes, AssembliesProvider originalAssemblies, ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -100,30 +102,31 @@
             
         }
 
-       
-        public void GenerateMutantsForOperators(MutationTestingSession session, ProgressCounter percentCompleted )
+
+        public List<ExecutedOperator> GenerateMutantsForOperators(ICollection<IMutationOperator> operators,
+            ICollection<TypeIdentifier> allowedTypes, AssembliesProvider originalAssemblies, ProgressCounter percentCompleted)
         {
-            session.MutantsGroupedByOperators = new List<ExecutedOperator>();
+            var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
 
             int[] id = { 1 };
             Func<int> genId = () => id[0]++;
 
 
-            percentCompleted.Initialize(session.Choices.SelectedOperators.Count);
+            percentCompleted.Initialize(operators.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
 
             var operatorsWithTargets = new List<OperatorWithTargets>();
-            foreach (var oper in session.Choices.SelectedOperators)
+            foreach (var oper in operators)
             {
                 var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
 
                 sw.Restart();
 
-                OperatorWithTargets targets = FindTargets(oper, session.OriginalAssemblies.Assemblies, session.SelectedTypes.ToList());
+                OperatorWithTargets targets = FindTargets(oper, originalAssemblies.Assemblies, allowedTypes.ToList());
 
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
@@ -139,7 +142,7 @@
                 }
 
                 executedOperator.UpdateDisplayedText();
-                session.MutantsGroupedByOperators.Add(executedOperator);
+                mutantsGroupedByOperators.Add(executedOperator);
                 executedOperator.Parent = root;
                 root.Children.Add(executedOperator);
 
@@ -149,7 +152,7 @@
        
             root.State = MutantResultState.Untested;
 
-   
+            return mutantsGroupedByOperators;
         }
 
        

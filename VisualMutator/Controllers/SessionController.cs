@@ -361,7 +361,9 @@
             _svc.Threading.ScheduleAsync(
             () =>
             {
-                _mutantsContainer.GenerateMutantsForOperators(_currentSession, counter);
+                var executedOperators = _mutantsContainer.GenerateMutantsForOperators(_currentSession.Choices.SelectedOperators,
+                    _currentSession.SelectedTypes, _currentSession.OriginalAssemblies, counter);
+                _currentSession.MutantsGroupedByOperators = executedOperators;
             },
             () =>
             {

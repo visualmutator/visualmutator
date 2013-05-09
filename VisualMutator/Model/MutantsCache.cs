@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.Caching;
     using System.Text;
 
@@ -14,6 +15,7 @@
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.MutantsTree;
+    using log4net;
 
     public interface IMutantsCache
     {
@@ -34,6 +36,7 @@
 
         private const int MaxLoadedModules = 5;
 
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         //private IDictionary<Mutant, IList<IModule>> 
 
@@ -59,6 +62,7 @@
 
         public AssembliesProvider GetMutatedModules(Mutant mutant)
         {
+            _log.Info("Request to cache for mutant: "+mutant.Id);
            // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
             
             AssembliesProvider result;

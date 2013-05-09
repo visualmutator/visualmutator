@@ -35,10 +35,7 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-
-            container.DebugConfig = true;
-            var mutmods = CreateMutants(CreateModule(code), oper, container, cci);
-            mutants = mutmods.Select(m => m.Mutant).ToList();
+            cci.AppendFromFile(CreateModule(code));
 
             original = new AssembliesProvider(cci.Modules);
 
@@ -48,6 +45,14 @@
             Console.WriteLine("ORIGINAL:");
             string listing = diff.GetListing(CodeLanguage.CSharp, original);
             Console.WriteLine(listing);
+
+            container.DebugConfig = true;
+            var mutmods = CreateMutants(oper, container, cci, cache);
+            mutants = mutmods.Select(m => m.Mutant).ToList();
+
+            
+
+            
         }
         public static void RunMutationsReal(string assemblyPath, IMutationOperator oper, out List<MutMod> mutants,
                                         out AssembliesProvider original, out CodeVisualizer visualizer, 
@@ -117,14 +122,19 @@
             return null;
         }
 
-        public static List<MutMod> CreateMutants(string filePath, IMutationOperator operatorr,
-                                                 MutantsContainer container, CommonCompilerAssemblies cci)
+        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container, 
+            CommonCompilerAssemblies cci, MutantsCache cache)
         {
-            cci.AppendFromFile(filePath);
+            
             _log.Info("Copying assemblies...");
-            List<IModule> copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
+            AssembliesProvider copiedModules = new AssembliesProvider(cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
+            var executedOperators = container.GenerateMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
+                                                                          copiedModules, ProgressCounter.Inactive());
 
+            return executedOperators.Single().Mutants.Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
+
+            /*
             MutantsContainer.OperatorWithTargets operatorWithTargets = container.FindTargets(operatorr,
                                                                                              copiedModules,
                                                                                              new List<TypeIdentifier>());
@@ -143,7 +153,7 @@
             
             
             }
-            return mutants;
+            return mutants;*/
         }
         public static List<IModule> CreateModules(string filePath, CommonCompilerAssemblies cci)
         {

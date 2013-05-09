@@ -8,11 +8,11 @@ Uninstall-Package CCI -ProjectName VisualMutator.Tests
 Uninstall-Package CCI -ProjectName TestGround
 
 
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator.Extensibility
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator.OperatorsObject
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator.OperatorsStandard
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator.TestGeneration
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator.MvcMutations
-Install-Package CCI -Version 1.0.12.1 -ProjectName VisualMutator.Tests
-Install-Package CCI -Version 1.0.12.1 -ProjectName TestGround
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator.Extensibility
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator.OperatorsObject
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator.OperatorsStandard
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator.TestGeneration
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator.MvcMutations
+Install-Package CCI -Version 1.0.13 -ProjectName VisualMutator.Tests
+Install-Package CCI -Version 1.0.13 -ProjectName TestGround
