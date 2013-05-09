@@ -102,6 +102,7 @@
     <Compile Include="FunctionalUtils\ValuedSwitch.cs" />
     <Compile Include="AppSettingsManager.cs" />
     <Compile Include="ISettingsManager.cs" />
+    <Compile Include="MultiDictionary.cs" />
     <Compile Include="Paths\BasePath.cs" />
     <Compile Include="Paths\DirectoryPath.cs" />
     <Compile Include="Paths\DirectoryPathAbsolute.cs" />

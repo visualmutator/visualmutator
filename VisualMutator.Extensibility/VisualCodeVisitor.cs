@@ -2,13 +2,14 @@
 {
     using System.Collections.Generic;
     using Microsoft.Cci;
+    using System;
 
     public class VisualCodeVisitor : CodeVisitor
     {
         private IOperatorCodeVisitor visitor;
         protected int elementCounter;
 
-        private List<MutationTarget> mutationTargets;
+        private List<Tuple<string/*GroupName*/, List<MutationTarget>>> mutationTargets;
         private List<MutationTarget> commonTargets;
 
         private IMethodDefinition _currentMethod;
@@ -16,7 +17,7 @@
         {
             get { return _currentMethod; }
         }
-        public List<MutationTarget> MutationTargets
+        public List<Tuple<string/*GroupName*/, List<MutationTarget>>> MutationTargets
         {
             get { return mutationTargets; }
         }
@@ -31,7 +32,7 @@
         {
             this.visitor = visitor;
 
-            mutationTargets = new List<MutationTarget>();
+            mutationTargets = new List<Tuple<string/*GroupName*/, List<MutationTarget>>>();
             commonTargets = new List<MutationTarget>();
             visitor.Parent = this;
         }
@@ -47,11 +48,9 @@
         {
             if (passesInfo == null)
             {
-                passesInfo = new List<string>
-                {
-                    ""
-                };
+                passesInfo = new[]{""}.ToList();
             }
+            var targets = new List<MutationTarget>();
             for (int i = 0; i < passesInfo.Count; i++)
             {
                 var mutationTarget = new MutationTarget(obj.GetType().Name, elementCounter, i, passesInfo[i], typeof(T).Name);
@@ -59,9 +58,10 @@
                 {
                     mutationTarget.Method = new MethodIdentifier(_currentMethod);
                 }
-                mutationTargets.Add(mutationTarget);
+
+                targets.Add( mutationTarget);
             }
-           
+            mutationTargets.Add(Tuple.Create(obj.GetType().Name, targets));
         }
 
         public void MarkCommon<T>(T o)

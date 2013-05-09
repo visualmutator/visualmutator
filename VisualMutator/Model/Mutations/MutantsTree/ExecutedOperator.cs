@@ -30,11 +30,11 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             _mutOperator = mutOperator;
         }
 
-        public IEnumerable<Mutant> Mutants
+        public IEnumerable<MutantGroup> MutantGroups
         {
             get
             {
-                return Children.Cast<Mutant>();
+                return Children.Cast<MutantGroup>();
             }
         }
 

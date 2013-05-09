@@ -378,7 +378,8 @@
 
         public void RunTests()
         {
-            _mutantsToTest = new Queue<Mutant>(_currentSession.MutantsGroupedByOperators.SelectMany(op => op.Mutants));
+            _mutantsToTest = new Queue<Mutant>(_currentSession.MutantsGroupedByOperators
+                .SelectMany(op => op.MutantGroups).SelectMany(g => g.Mutants));
             _allMutantsCount = _mutantsToTest.Count;
             _testedMutants = new List<Mutant>();
          

@@ -234,6 +234,7 @@
     <Compile Include="Infrastructure\ToDo.cs" />
     <Compile Include="Infrastructure\UserMessages.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
+    <Compile Include="Model\Mutations\MutantsTree\MutantGroup.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />

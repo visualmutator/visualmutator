@@ -89,7 +89,9 @@
             executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
              
             var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, 0, "",""), new List<MutationTarget>());
-            executedOperator.Children.Add(mutant);
+            var group = new MutantGroup("No name");
+            group.Children.Add(mutant);
+            executedOperator.Children.Add(group);
         
          //   var copiedModules = session.StoredSourceAssemblies.Modules
          //                                                .Select(_assembliesManager.Copy).Cast<IModule>().ToList();
@@ -133,11 +135,16 @@
                 operatorsWithTargets.Add(targets);
 
                 //subProgress.Initialize(targets.MutationTargets.Count);
-                foreach (MutationTarget mutationTarget in targets.MutationTargets.Values.SelectMany(v => v))
+                foreach (var pair in targets.MutationTargets)
                 {
-                    var mutant = new Mutant(genId().ToString(), executedOperator, mutationTarget, targets.CommonTargets);
-                    executedOperator.Children.Add(mutant);
+                    var group = new MutantGroup(pair.Item1);
+                    foreach (var mutationTarget in pair.Item2)
+                    {
+                        var mutant = new Mutant(genId().ToString(), executedOperator, mutationTarget, targets.CommonTargets);
+                        group.Children.Add(mutant);
 
+                    }
+                    executedOperator.Children.Add(group);
                     //subProgress.Progress();
                 }
 
@@ -167,12 +174,13 @@
             try
             {
                 var commonTargets = new List<MutationTarget>();
-                var map = new Dictionary<string, List<MutationTarget>>();
+                //var map = new Dictionary<string, List<MutationTarget>>();
                 var ded = mutOperator.FindTargets();
                 IOperatorCodeVisitor operatorVisitor = ded;
                 operatorVisitor.Host = _assembliesManager.Host;
                 operatorVisitor.OperatorUtils = _operatorUtils;
                 operatorVisitor.Initialize();
+                var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
                 foreach (var module in modules)
                 {
                     var visitor = new VisualCodeVisitor(operatorVisitor);
@@ -180,18 +188,19 @@
                     var traverser = new VisualCodeTraverser(allowedTypes, visitor);
                   
                     traverser.Traverse(module);
-
-                    map.Add(module.ModuleName.Value, visitor.MutationTargets);
+                    IEnumerable<Tuple<string, List<MutationTarget>>> s = (IEnumerable<Tuple<string, List<MutationTarget>>>) visitor.MutationTargets.AsEnumerable();
+                    mergedTargets.AddRange(s);
+                    //map.Add(module.ModuleName.Value, visitor.MutationTargets);
                     commonTargets.AddRange(visitor.CommonTargets);
                 }
 
-       
-                _log.Info("Got: " + map.Values.Flatten().Count()+" mutation targets.");
+
+                _log.Info("Got: " + mergedTargets.Select(i => i.Item2).Flatten().Count() + " mutation targets.");
          
                 return new OperatorWithTargets
                 {
                     CommonTargets = commonTargets,
-                    MutationTargets = map,
+                    MutationTargets = mergedTargets,
                     Operator = mutOperator,
               
                 };
@@ -261,7 +270,7 @@
         }
         public class OperatorWithTargets
         {
-            public IDictionary<string, List<MutationTarget>> MutationTargets
+            public List<Tuple<string, List<MutationTarget>>> MutationTargets
             {
                 get;
                 set;

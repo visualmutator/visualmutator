@@ -79,7 +79,8 @@
                 string subFolder = Path.Combine(rootFolder, oper.Identificator.RemoveInvalidPathCharacters());
                 
                 _fs.Directory.CreateDirectory(subFolder);
-                foreach (Mutant mutant in oper.Mutants)
+                //TODO: to subfolders by group
+                foreach (Mutant mutant in oper.MutantGroups.SelectMany(g=>g.Mutants))
                 {
                     onSavingProgress.Progress();
 
