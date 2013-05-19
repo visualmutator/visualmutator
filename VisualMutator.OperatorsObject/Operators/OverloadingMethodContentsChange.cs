@@ -53,17 +53,13 @@
 
                 if(compatibileMethods.Count != 0)
                 {
-                    ReplacementMethod = compatibileMethods.First();
+              
                     MarkMutationTarget(body, compatibileMethods.First().ToString().InList());
                 }
   
             }
 
-            public IMethodDefinition ReplacementMethod
-            {
-                get;
-                set;
-            }
+          
         }
 
         #endregion
@@ -137,13 +133,13 @@
         }
 
         OverloadingMethodContentsChangeVisitor visitor = new OverloadingMethodContentsChangeVisitor();
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return visitor;
 
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new OverloadingMethodContentsChangeRewriter();
         }

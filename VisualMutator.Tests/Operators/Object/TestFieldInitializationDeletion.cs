@@ -9,12 +9,13 @@
     using Model.Mutations.MutantsTree;
     using NUnit.Framework;
     using OperatorsObject.Operators;
+    using Util;
     using log4net.Appender;
     using log4net.Config;
     using log4net.Layout;
 
     [TestFixture]
-    public class TestReferenceAssignementChange
+    public class TestFieldInitializationDeletion
     {
         #region Setup/Teardown
 
@@ -30,8 +31,9 @@
 
         #endregion
 
+
         [Test]
-        public void Equality_Is_Not_Mutated_When_Equals_Not_Overriten()
+        public void T1()
         {
             const string code =
                 @"using System;
@@ -39,31 +41,42 @@ namespace Ns
 {
     public class Test
     {
+        int y;
         int x = 3;
+        static int z = 1;
         public bool Method1(Test test)
         {
-            int i=0;
-            int a=0;
-
-            a = x;
-            //a = x;
-return true;
+            return true;
         }
 
     }
 }";
-            var debug = new PrintingOperator();
+
+
+            Common.DebugTraverse(code);
+
+
+
+
+            var oper = new FieldInitializationDeletion();
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, debug, out mutants, out original, out diff);
+            Common.RunMutations(code, oper, out mutants, out original, out diff);
 
-            Console.WriteLine(debug.GetInfo());
+            foreach (Mutant mutant in mutants)
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                                     original);
+                Console.WriteLine(codeWithDifference.Code);
+               
+            }
 
-
-            Assert.AreEqual(mutants.Count, 0);
+            mutants.Count.ShouldEqual(1);
+        
         }
 
+        
 
     }
 }

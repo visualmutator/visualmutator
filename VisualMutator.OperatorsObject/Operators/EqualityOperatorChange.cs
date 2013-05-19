@@ -28,13 +28,13 @@
         }
       
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new ExceptionHandlerRemovalVisitor();
 
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new ExceptionHandlerRemovalRewriter();
         }

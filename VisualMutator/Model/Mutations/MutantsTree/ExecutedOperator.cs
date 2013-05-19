@@ -63,8 +63,8 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         public void UpdateDisplayedText()
         {
-           DisplayedText = "{0} - {1} - Mutants: {2}"
-                    .Formatted(_identificator, Name, Children.Count);
+           DisplayedText = "{0} - {1} - Groups: {2}, Mutants: {3}"
+                    .Formatted(_identificator, Name, Children.Count, Children.Sum(c => c.Children.Count));
         }
     }
 }

@@ -110,12 +110,12 @@ namespace VisualMutator.OperatorsStandard
         }
       
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new LogicalOperatorReplacementVisitor();
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new LogicalOperatorReplacementRewriter();
         }

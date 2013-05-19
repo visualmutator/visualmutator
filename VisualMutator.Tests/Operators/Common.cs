@@ -54,6 +54,48 @@
 
             
         }
+
+
+        public static  void DebugTraverse(string code)
+        {
+        
+
+            var cci = new CommonCompilerAssemblies();
+            var utils = new OperatorUtils(cci);
+
+            var container = new MutantsContainer(cci, utils);
+            var visualizer = new CodeVisualizer(cci);
+            var cache = new MutantsCache(container);
+
+            cci.AppendFromFile(CreateModule(code));
+
+            var original = new AssembliesProvider(cci.Modules);
+
+            cache.Initialize(original, new List<TypeIdentifier>());
+            var diff = new CodeDifferenceCreator(cache, visualizer);
+
+            var visitor = new DebugOperatorCodeVisitor();
+            var traverser = new DebugCodeTraverser(visitor);
+
+            traverser.Traverse(cci.Modules);
+            
+            Console.WriteLine("ORIGINAL ObjectStructure:");
+            string listing0 = visitor.ToString();
+            Console.WriteLine(listing0);
+
+            Console.WriteLine("ORIGINAL C#:");
+            string listing = diff.GetListing(CodeLanguage.CSharp, original);
+            Console.WriteLine(listing);
+
+            Console.WriteLine("ORIGINAL IL:");
+            string listing2 = diff.GetListing(CodeLanguage.IL, original);
+            Console.WriteLine(listing2);
+
+
+
+
+        }
+
         public static void RunMutationsReal(string assemblyPath, IMutationOperator oper, out List<MutMod> mutants,
                                         out AssembliesProvider original, out CodeVisualizer visualizer, 
                                         out CommonCompilerAssemblies cci)
@@ -132,10 +174,10 @@
             var executedOperators = container.GenerateMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());
 
-            return executedOperators.Single().Mutants.Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
+            return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants).Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
 
             /*
-            MutantsContainer.OperatorWithTargets operatorWithTargets = container.FindTargets(operatorr,
+            MutantsContainer.OperatorWithTargets operatorWithTargets = container.CreateVisitor(operatorr,
                                                                                              copiedModules,
                                                                                              new List<TypeIdentifier>());
 
@@ -176,7 +218,7 @@
                                                                                              new List<TypeIdentifier>());
 
             var mutants = new List<MutMod>();
-            foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Values.SelectMany(v => v))
+            foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Select(x => x.Item2).Flatten())
             {
                 var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
                 var mutant = new Mutant("0", exec, mutationTarget, operatorWithTargets.CommonTargets);

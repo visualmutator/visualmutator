@@ -131,6 +131,21 @@
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
 
+                <HierarchicalDataTemplate DataType="{x:Type MutantsTree:MutantGroup}"
+                                    ItemsSource="{Binding Children}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
+
+                        <TextBlock Text="{Binding DisplayedText}"/>
+                    </DockPanel>
+                    <HierarchicalDataTemplate.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True"/>
+                      
+                        </Style>
+                    </HierarchicalDataTemplate.ItemContainerStyle>
+                </HierarchicalDataTemplate>
+                
                 <DataTemplate DataType="{x:Type MutantsTree:Mutant}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>

@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.Cci;
     using System;
 

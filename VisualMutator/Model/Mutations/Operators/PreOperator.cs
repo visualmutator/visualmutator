@@ -12,12 +12,12 @@ namespace VisualMutator.Model.Mutations.Operators
             }
         }
       
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new OperatorCodeVisitor();
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new OperatorCodeRewriter();
         }

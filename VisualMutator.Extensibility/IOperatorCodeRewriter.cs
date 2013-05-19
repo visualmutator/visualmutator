@@ -2,6 +2,7 @@ namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
     using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
 
 
     public interface IOperatorCodeRewriter
@@ -12,7 +13,8 @@ namespace VisualMutator.Extensibility
         IModule Module { get; set; }
         IOperatorUtils OperatorUtils { get; set; }
 
-
+        void MethodEnter(MethodDefinition method);
+        void MethodExit(MethodDefinition method);
         /// <summary>
         /// Rewrites the given addition.
         /// </summary>

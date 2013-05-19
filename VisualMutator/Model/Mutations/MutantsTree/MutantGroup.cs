@@ -44,7 +44,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         public void UpdateDisplayedText()
         {
-            DisplayedText = "Mutation group: {1} - Mutants: {2}"
+            DisplayedText = "Mutation group: {0} - Mutants: {1}"
                     .Formatted(Name, Children.Count);
         }
     }

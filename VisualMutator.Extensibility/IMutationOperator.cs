@@ -15,8 +15,8 @@ namespace VisualMutator.Extensibility
      
         OperatorInfo Info { get; }
        
-        IOperatorCodeVisitor FindTargets();
+        IOperatorCodeVisitor CreateVisitor();
 
-        IOperatorCodeRewriter Mutate();
+        IOperatorCodeRewriter CreateRewriter();
     }
 }

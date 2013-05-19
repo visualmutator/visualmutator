@@ -243,7 +243,7 @@
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                 /*
                 var oper = new ArithmeticOperatorReplacement();
-                MutantsContainer.OperatorWithTargets targets = _mutantsContainer.FindTargets(oper, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList());
+                MutantsContainer.OperatorWithTargets targets = _mutantsContainer.CreateVisitor(oper, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList());
 //_mutantsContainer.GenerateMutantsForOperators(_currentSession, ProgressCounter.Inactive());
                 var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
                 _log.Debug("THERE ARE MUTTARGETS: " + targets.MutationTargets.Values.SelectMany(v => v).Count());

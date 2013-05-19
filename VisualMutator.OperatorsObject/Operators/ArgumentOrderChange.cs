@@ -17,12 +17,12 @@
             }
         }
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new AbsoluteValueInsertionVisitor();
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new AbsoluteValueInsertionRewriter();
         }

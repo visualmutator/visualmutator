@@ -45,6 +45,14 @@
                 base.RewriteChildren(namespaceTypeDefinition);
             }
         }
+        public override void RewriteChildren(MethodDefinition method)
+        {
+            rewriter.MethodEnter(method);
+            
+            base.RewriteChildren(method);
+            
+            rewriter.MethodExit(method);
+        }
 
         public override IExpression Rewrite(IAddition addition)
         {if(Process(addition)){var additionNew = rewriter.Rewrite(addition); return  (additionNew is IAddition) ? base.Rewrite(additionNew as IAddition) :base.Rewrite(additionNew);}

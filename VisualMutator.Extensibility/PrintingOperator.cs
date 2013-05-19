@@ -6,12 +6,12 @@
 
         private readonly DebugOperatorCodeVisitor visitor = new DebugOperatorCodeVisitor();
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return visitor;
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new OperatorCodeRewriter();
         }

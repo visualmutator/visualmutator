@@ -26,12 +26,12 @@
         }
 
      
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new UnaryOperatorInsertionVisitor();
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new UnaryOperatorInsertionRewriter();
         }

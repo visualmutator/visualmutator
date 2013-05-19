@@ -28,13 +28,13 @@
         }
       
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new ModiﬁerMethodChangeVisitor();
 
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new ModiﬁerMethodChangeRewriter();
         }

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
 
 
     public class OperatorCodeRewriter : IOperatorCodeRewriter
@@ -18,10 +19,22 @@
             get;
             set;
         }
-   
+        public MethodDefinition CurrentMethod
+        {
+            get;
+            set;
+        }
         public virtual void Initialize()
         {
           
+        }
+        public void MethodEnter(MethodDefinition method)
+        {
+            CurrentMethod = method;
+        }
+        public void MethodExit(MethodDefinition method)
+        {
+            CurrentMethod = null;
         }
         /// <summary>
         /// Rewrites the given addition.

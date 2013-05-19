@@ -85,7 +85,7 @@
         public Mutant CreateChangelessMutant(out ExecutedOperator executedOperator)
         {
             var op = new PreOperator();
-          //  var targets = FindTargets(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
+          //  var targets = CreateVisitor(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
             executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
              
             var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, 0, "",""), new List<MutationTarget>());
@@ -145,6 +145,7 @@
 
                     }
                     executedOperator.Children.Add(group);
+                    group.UpdateDisplayedText();
                     //subProgress.Progress();
                 }
 
@@ -175,7 +176,7 @@
             {
                 var commonTargets = new List<MutationTarget>();
                 //var map = new Dictionary<string, List<MutationTarget>>();
-                var ded = mutOperator.FindTargets();
+                var ded = mutOperator.CreateVisitor();
                 IOperatorCodeVisitor operatorVisitor = ded;
                 operatorVisitor.Host = _assembliesManager.Host;
                 operatorVisitor.OperatorUtils = _operatorUtils;
@@ -211,7 +212,7 @@
             {
                 if (!DebugConfig)
                 {
-                    throw new MutationException("FindTargets failed on operator: {0}.".Formatted(mutOperator.Info.Name), e);
+                    throw new MutationException("CreateVisitor failed on operator: {0}.".Formatted(mutOperator.Info.Name), e);
                 }
                 else
                 {
@@ -236,7 +237,7 @@
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitor2);
                     traverser2.Traverse(module);
 
-                    var operatorCodeRewriter = mutant.ExecutedOperator.Operator.Mutate();
+                    var operatorCodeRewriter = mutant.ExecutedOperator.Operator.CreateRewriter();
                     operatorCodeRewriter.MutationTarget = mutant.MutationTarget;
                     operatorCodeRewriter.NameTable = _assembliesManager.Host.NameTable;
                     operatorCodeRewriter.Host = _assembliesManager.Host;

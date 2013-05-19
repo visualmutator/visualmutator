@@ -7,7 +7,7 @@
 
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
-    using Microsoft.Cci.Ast;
+    using Microsoft.Cci.MutableCodeModel;
     using VisualMutator.Extensibility;
 
     using log4net;
@@ -22,14 +22,15 @@
 
 
         #region Nested type: ExceptionHandlerRemovalVisitor
+        private static bool isCompatibile(ITypeReference target, ITypeDefinition source)
+        {
+            return TypeHelper.Type1DerivesFromOrIsTheSameAsType2(source, target)
+                || TypeHelper.Type1ImplementsType2(source, target);
+        }
 
         public class ReferenceAssignmentChangeVisitor : OperatorCodeVisitor
         {
-            private bool isCompatibile(ITypeReference target, ITypeDefinition source)
-            {
-                return TypeHelper.Type1DerivesFromOrIsTheSameAsType2(source, target)
-                    || TypeHelper.Type1ImplementsType2(source, target);
-            }
+           
             public override void Visit(IAssignment assignment)
             {
                 _log.Info("Visiting IAssignment: " + assignment);
@@ -43,9 +44,15 @@
 
                 var field = currentMethod.ContainingTypeDefinition.Fields
                     .Where(f => f.IsStatic == currentMethod.IsStatic)
-                    .FirstOrDefault(f => isCompatibile(targetType, f.Type.ResolvedType));
+                    .FirstOrDefault(f => isCompatibile(targetType, f.Type.ResolvedType)
+                        && FieldIsNotSource(f, assignment.Source));
 
-            //    assignment.Source = new BoundExpression();
+                if (field != null)
+                {
+
+                    MarkMutationTarget(assignment);
+                }
+               //.. assignment.Source = new BoundExpression();
                 /*
                 
 
@@ -71,7 +78,14 @@
 
 
             }
-          
+
+            private bool FieldIsNotSource(IFieldDefinition fieldDefinition, IExpression source)
+            {
+                var bound = source as BoundExpression;
+                var field = bound == null? null : bound.Definition as IFieldReference;
+                bool ret = bound == null || field == null || field.ResolvedField != fieldDefinition;
+                return ret;
+            }
         }
 
         #endregion
@@ -81,39 +95,35 @@
         public class ReferenceAssignmentChangeRewriter : OperatorCodeRewriter
         {
 
-            public override IExpression Rewrite(IMethodCall methodCall)
+            public override IExpression Rewrite(IAssignment assignment)
             {
-                _log.Info("Rewriting IMethodCall: " + methodCall + " Pass: " + MutationTarget.PassInfo);
-                var equality = new Equality();
-                equality.LeftOperand = methodCall.ThisArgument;
-                equality.RightOperand = methodCall.Arguments.Single();
-                equality.Type = Host.PlatformType.SystemBoolean;
-                return equality;
-            }
-            public override IExpression Rewrite(IEquality operation)
-            {
-                _log.Info("Rewriting IEquality: " + operation + " Pass: " + MutationTarget.PassInfo);
-                var methodCall = new MethodCall();
-                IExpression thisArgument;
-                IExpression argument;
-                if (MutationTarget.PassInfo == "Left")
-                {
-                    thisArgument = operation.LeftOperand;
-                    argument = operation.RightOperand;
-                }
-                else
-                {
-                    thisArgument = operation.RightOperand;
-                    argument = operation.LeftOperand;
-                }
-                methodCall.ThisArgument = thisArgument;
-                methodCall.MethodToCall = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
-                                                                  Host.NameTable.GetNameFor("Equals"),
-                                                                  Host.PlatformType.SystemObject);
-                methodCall.Arguments = argument.InList();
+                _log.Info("Rewriting IAssignment: " + assignment + " Pass: " + MutationTarget.PassInfo);
 
-                return methodCall;
+                var targetType = assignment.Target.Type;
+                IMethodDefinition currentMethod = CurrentMethod;
+                var field = currentMethod.ContainingTypeDefinition.Fields
+                    .Where(f => f.IsStatic == currentMethod.IsStatic)
+                    .First(f => isCompatibile(targetType, f.Type.ResolvedType));
+
+                
+                
+                var assignmentNew = new Assignment(assignment);
+
+
+
+                assignmentNew.Source = new BoundExpression
+                {
+                    Instance = new ThisReference(){Type = CurrentMethod.ContainingTypeDefinition},
+                    Definition = field,
+                    Type = field.Type,
+                };
+
+
+            //    assignmentNew.Source = 
+                
+                return assignmentNew;
             }
+         
         }
 
         #endregion
@@ -127,13 +137,13 @@
         }
       
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new ReferenceAssignmentChangeVisitor();
 
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new ReferenceAssignmentChangeRewriter();
         }

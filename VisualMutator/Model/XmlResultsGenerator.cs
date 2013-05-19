@@ -35,7 +35,7 @@
             bool includeDetailedTestResults,
             bool includeCodeDifferenceListings)
         {
-            List<Mutant> mutants = session.MutantsGroupedByOperators.SelectMany(op => op.Mutants).ToList();
+            List<Mutant> mutants = session.MutantsGroupedByOperators.SelectMany(op => op.MutantGroups.SelectMany(m => m.Mutants)).ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
@@ -63,13 +63,13 @@
                     new XAttribute("Identificator", oper.Identificator),
                     new XAttribute("Name", oper.Name),
                     new XAttribute("NumberOfMutants", oper.Children.Count),
-                    new XAttribute("NumberOfKilledMutants", oper.Mutants.Count(m=>m.State == MutantResultState.Killed)),
-                    new XAttribute("NumberOfLiveMutants", oper.Mutants.Count(m => m.State == MutantResultState.Live)),
+                    new XAttribute("NumberOfKilledMutants", oper.MutantGroups.SelectMany(m=>m.Mutants).Count(m=>m.State == MutantResultState.Killed)),
+                    new XAttribute("NumberOfLiveMutants", oper.MutantGroups.SelectMany(m => m.Mutants).Count(m => m.State == MutantResultState.Live)),
                     new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),
                     new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
                     new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
                         oper.MutationTimeMiliseconds / oper.Children.Count),
-                    from mutant in oper.Mutants
+                    from mutant in oper.MutantGroups.SelectMany(m => m.Mutants)
                     select new XElement("Mutant",
                         new XAttribute("Id", mutant.Id),
                         //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),

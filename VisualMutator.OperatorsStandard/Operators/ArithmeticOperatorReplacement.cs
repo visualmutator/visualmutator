@@ -144,12 +144,12 @@ namespace VisualMutator.OperatorsStandard
         }
      
 
-        public IOperatorCodeVisitor FindTargets()
+        public IOperatorCodeVisitor CreateVisitor()
         {
             return new ArithmeticOperatorReplacementVisitor();
         }
 
-        public IOperatorCodeRewriter Mutate()
+        public IOperatorCodeRewriter CreateRewriter()
         {
             return new ArithmeticOperatorReplacementRewriter();
         }
