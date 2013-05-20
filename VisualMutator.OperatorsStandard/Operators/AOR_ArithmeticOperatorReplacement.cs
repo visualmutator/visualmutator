@@ -18,7 +18,7 @@ namespace VisualMutator.OperatorsStandard
     using log4net;
 
 
-    public class ArithmeticOperatorReplacement : IMutationOperator
+    public class AOR_ArithmeticOperatorReplacement : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 

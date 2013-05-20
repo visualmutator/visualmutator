@@ -13,27 +13,26 @@
 
 
     using log4net;
-    using BlockStatement = Microsoft.Cci.MutableCodeModel.BlockStatement;
-    using BoundExpression = Microsoft.Cci.MutableCodeModel.BoundExpression;
-    using ExpressionStatement = Microsoft.Cci.MutableCodeModel.ExpressionStatement;
-    using MethodCall = Microsoft.Cci.MutableCodeModel.MethodCall;
-    using ThisReference = Microsoft.Cci.MutableCodeModel.ThisReference;
+ 
 
-
-    public class OverloadingMethodContentsChange  : IMutationOperator
+    public class OMR_OverloadingMethodContentsChange  : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-
+        public OperatorInfo Info
+        {
+            get
+            {
+                return new OperatorInfo("OMR", "Overloading method contents change", "");
+            }
+        }
         public static string GetMethodSignatureString(IMethodDefinition method)
         {
             return null;
             //return method.Name +" "+method.Parameters.Select(p => p.ContainingSignature)Aggregate((p1, p2) => p1.Type.)
         }
 
-        #region Nested type: ExceptionHandlerRemovalVisitor
-
-        public class OverloadingMethodContentsChangeVisitor : OperatorCodeVisitor
+        public class OMRVisitor : OperatorCodeVisitor
         {
             private List<IMethodDefinition> FindCandidateMethods(IMethodDefinition method)
             {
@@ -62,11 +61,7 @@
           
         }
 
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalRewriter
-
-        public class OverloadingMethodContentsChangeRewriter : OperatorCodeRewriter
+        public class OMRRewriter : OperatorCodeRewriter
         {
 
             public override IMethodBody Rewrite(IMethodBody body)
@@ -122,17 +117,11 @@
             }
         }
 
-        #endregion
+     
 
-        public OperatorInfo Info
-        {
-            get
-            {
-                return new OperatorInfo("OMR", "Overloading method contents change", "");
-            }
-        }
+   
 
-        OverloadingMethodContentsChangeVisitor visitor = new OverloadingMethodContentsChangeVisitor();
+        OMRVisitor visitor = new OMRVisitor();
         public IOperatorCodeVisitor CreateVisitor()
         {
             return visitor;
@@ -141,7 +130,7 @@
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new OverloadingMethodContentsChangeRewriter();
+            return new OMRRewriter();
         }
 
 

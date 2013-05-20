@@ -48,7 +48,7 @@ namespace Ns
 
     }
 }";
-            var oper = new OverloadingMethodContentsChange();
+            var oper = new OMR_OverloadingMethodContentsChange();
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
@@ -85,7 +85,7 @@ namespace Ns
         }
     }
 }";
-            var oper = new OverloadingMethodContentsChange();
+            var oper = new OMR_OverloadingMethodContentsChange();
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;

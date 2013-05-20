@@ -34,8 +34,8 @@
 
             _operators = new IMutationOperator[]
             {
-                new ArithmeticOperatorReplacement(), 
-             //   new AbsoluteValueInsertion(), 
+                new AOR_ArithmeticOperatorReplacement(), 
+             //   new ABS_AbsoluteValueInsertion(), 
             };
 /*
             new TestCaseData(0, 0)

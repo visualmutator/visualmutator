@@ -169,17 +169,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Operators\ArgumentOrderChange.cs" />
-    <Compile Include="Operators\AccessorMethodChange.cs" />
+    <Compile Include="Operators\EAM_AccessorMethodChange.cs" />
     <Compile Include="Operators\BaseKeywordDeletion.cs" />
-    <Compile Include="Operators\ThisKeywordDeletion.cs" />
-    <Compile Include="Operators\FieldInitializationDeletion.cs" />
-    <Compile Include="Operators\OverloadingMethodContentsChange.cs" />
+    <Compile Include="Operators\JTD_ThisKeywordDeletion.cs" />
+    <Compile Include="Operators\JID_FieldInitializationDeletion.cs" />
+    <Compile Include="Operators\OMR_OverloadingMethodContentsChange.cs" />
     <Compile Include="Operators\ReferenceAssignmentChange.cs" />
     <Compile Include="Operators\NullInsertion.cs" />
-    <Compile Include="Operators\ModiferMethodChange.cs" />
+    <Compile Include="Operators\EMM_ModiferMethodChange.cs" />
     <Compile Include="Operators\ExceptionHandlerRemoval.cs" />
-    <Compile Include="Operators\EqualityOperatorChange.cs" />
-    <Compile Include="Operators\OverloadingMethodDeletion.cs" />
+    <Compile Include="Operators\EOC_EqualityOperatorChange.cs" />
+    <Compile Include="Operators\OMD_OverloadingMethodDeletion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ObjectOperatorsPackage.cs" />
   </ItemGroup>

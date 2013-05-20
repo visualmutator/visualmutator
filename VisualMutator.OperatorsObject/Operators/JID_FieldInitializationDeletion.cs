@@ -7,7 +7,7 @@
     using Microsoft.Cci;
 
 
-    public class FieldInitializationDeletion : IMutationOperator
+    public class JID_FieldInitializationDeletion : IMutationOperator
     {
        
         public OperatorInfo Info

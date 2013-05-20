@@ -11,17 +11,21 @@
     using VisualMutator.Extensibility;
 
     using log4net;
-    using Equality = Microsoft.Cci.MutableCodeModel.Equality;
-    using MethodCall = Microsoft.Cci.MutableCodeModel.MethodCall;
-
-    // using OpCodes = Mono.Cecil.Cil.OpCodes;
 
     public class ReferenceAssignmentChange : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        #region Nested type: ExceptionHandlerRemovalVisitor
+
+        public OperatorInfo Info
+        {
+            get
+            {
+                return new OperatorInfo("PRV", " Reference assignment with other compatible type", "");
+            }
+        }
+      
         private static bool isCompatibile(ITypeReference target, ITypeDefinition source)
         {
             return TypeHelper.Type1DerivesFromOrIsTheSameAsType2(source, target)
@@ -88,10 +92,6 @@
             }
         }
 
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalRewriter
-
         public class ReferenceAssignmentChangeRewriter : OperatorCodeRewriter
         {
 
@@ -105,11 +105,7 @@
                     .Where(f => f.IsStatic == currentMethod.IsStatic)
                     .First(f => isCompatibile(targetType, f.Type.ResolvedType));
 
-                
-                
                 var assignmentNew = new Assignment(assignment);
-
-
 
                 assignmentNew.Source = new BoundExpression
                 {
@@ -117,24 +113,11 @@
                     Definition = field,
                     Type = field.Type,
                 };
-
-
-            //    assignmentNew.Source = 
-                
                 return assignmentNew;
             }
          
         }
 
-        #endregion
-
-        public OperatorInfo Info
-        {
-            get
-            {
-                return new OperatorInfo("PRV", " Reference assignment with other compatible type", "");
-            }
-        }
       
 
         public IOperatorCodeVisitor CreateVisitor()

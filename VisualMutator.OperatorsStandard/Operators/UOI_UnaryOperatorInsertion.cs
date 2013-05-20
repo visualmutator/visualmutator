@@ -13,10 +13,9 @@
     using Roslyn.Compilers.CSharp;
     using SourceMethodBody = Microsoft.Cci.MutableCodeModel.SourceMethodBody;
 
-    public class UnaryOperatorInsertion : IMutationOperator
+    public class UOI_UnaryOperatorInsertion : IMutationOperator
     {
-        #region IMutationOperator Members
-
+     
         public OperatorInfo Info
         {
             get
@@ -26,21 +25,29 @@
         }
 
      
-        public IOperatorCodeVisitor CreateVisitor()
+        public class UOIVisitor : OperatorCodeVisitor
         {
-            return new UnaryOperatorInsertionVisitor();
+            private void ProcessOperation(IExpression operation)
+            {
+                //TODO:other types
+                if (operation.Type.TypeCode == PrimitiveTypeCode.Int32)
+                {
+                    MarkMutationTarget(operation, new List<string> { "Negation" });
+
+                }
+                else if (operation.Type.TypeCode == PrimitiveTypeCode.Boolean)
+                {
+                    MarkMutationTarget(operation, new List<string> { "Not" });
+                }
+            }
+            public override void Visit(IExpression operation)
+            {
+                ProcessOperation(operation);
+            }
+
         }
-
-        public IOperatorCodeRewriter CreateRewriter()
-        {
-            return new UnaryOperatorInsertionRewriter();
-        }
-
-        #endregion
-
-        #region Nested type: AbsoluteValueInsertionRewriter
-
-        public class UnaryOperatorInsertionRewriter : OperatorCodeRewriter
+       
+        public class UOIRewriter : OperatorCodeRewriter
         {
             private IExpression ReplaceOperation<T>(T operation) where T : IExpression
             {
@@ -79,35 +86,17 @@
           
         }
 
-        #endregion
 
-        #region Nested type: AbsoluteValueInsertionVisitor
-
-        public class UnaryOperatorInsertionVisitor : OperatorCodeVisitor
+        public IOperatorCodeVisitor CreateVisitor()
         {
-      
-
-            
-            private void ProcessOperation(IExpression operation)
-            {
-                //TODO:other types
-                if (operation.Type.TypeCode == PrimitiveTypeCode.Int32)
-                {
-                    MarkMutationTarget(operation, new List<string>{"Negation"});
-                    
-                }
-                else if (operation.Type.TypeCode == PrimitiveTypeCode.Boolean)
-                {
-                    MarkMutationTarget(operation, new List<string> { "Not" });
-                }
-            }
-            public override void Visit(IExpression operation)
-            {
-                ProcessOperation(operation);
-            }
-           
+            return new UOIVisitor();
         }
 
-        #endregion
+        public IOperatorCodeRewriter CreateRewriter()
+        {
+            return new UOIRewriter();
+        }
+
+
     }
 }

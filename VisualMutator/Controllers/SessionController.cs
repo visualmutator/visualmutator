@@ -241,34 +241,7 @@
 
                 _mutantsCache.Initialize(_currentSession.OriginalAssemblies, _currentSession.SelectedTypes);//TODO wynieść gdzie indziej
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-                /*
-                var oper = new ArithmeticOperatorReplacement();
-                MutantsContainer.OperatorWithTargets targets = _mutantsContainer.CreateVisitor(oper, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList());
-//_mutantsContainer.GenerateMutantsForOperators(_currentSession, ProgressCounter.Inactive());
-                var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
-                _log.Debug("THERE ARE MUTTARGETS: " + targets.MutationTargets.Values.SelectMany(v => v).Count());
-                foreach (MutationTarget mutationTarget in targets.MutationTargets.Values.SelectMany(v => v))
-                {
-                    _log.Debug("MUTTARGET: ");
-                    //for (int i = 0; i < 2; i++)
-                    {
-                        var mutant = new Mutant("0", executedOperator, mutationTarget, targets.CommonTargets);
-                        var assembliesProvider = _mutantsContainer.ExecuteMutation(mutant, _currentSession.OriginalAssemblies.Assemblies, _currentSession.SelectedTypes.ToList(), ProgressCounter.Inactive());
-                        var visualize = _codeVisualizer.Visualize(CodeLanguage.CSharp, mutationTarget, assembliesProvider);
-                        var visualize2 = _codeVisualizer.Visualize(CodeLanguage.IL, mutationTarget, assembliesProvider);
-                        _log.Debug(visualize);
-                        _log.Debug(visualize2);
-                        foreach (IModule module in assembliesProvider.Assemblies)
-                        {
-                            string file = Path.Combine(@"D:\PLIKI", module.Name.Value + ".dll");
-                            _commonCompiler.WriteToFile(module, file);
-                  
-                        }
-                     //   _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
-                    }
-                   
-                }
-                */
+              
 
                 _log.Info("Creating pure mutant for initial checks...");
                 ExecutedOperator execOperator;

@@ -16,9 +16,9 @@ namespace VisualMutator.OperatorsStandard
     using VisualMutator.Extensibility;
 
 
-    public class RelationalOperatorReplacement : IMutationOperator
+    public class ROR_RelationalOperatorReplacement : IMutationOperator
     {
-        public class RelationalOperatorReplacementVisitor : OperatorCodeVisitor
+        public class RORVisitor : OperatorCodeVisitor
         {
 
             private void ProcessOperation(IBinaryOperation operation)
@@ -79,7 +79,7 @@ namespace VisualMutator.OperatorsStandard
                 ProcessOperation(operation);
             }
         }
-        public class RelationalOperatorReplacementRewriter : OperatorCodeRewriter
+        public class RORRewriter : OperatorCodeRewriter
         {
            
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
@@ -144,12 +144,12 @@ namespace VisualMutator.OperatorsStandard
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new RelationalOperatorReplacementVisitor();
+            return new RORVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new RelationalOperatorReplacementRewriter();
+            return new RORRewriter();
         }
     }
 }

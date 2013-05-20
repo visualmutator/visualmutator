@@ -7,20 +7,18 @@
     using Microsoft.Cci;
 
 
-    public class ThisKeywordDeletion : IMutationOperator
+    public class JTD_ThisKeywordDeletion : IMutationOperator
     {
         public OperatorInfo Info
         {
             get
             {
-                return new OperatorInfo("JID", "Field Initialization Deletion", "");
+                return new OperatorInfo("JTD", "This keyword deletion", "");
             }
         }
       
-        public class JIDVisitor : OperatorCodeVisitor
+        public class JTDVisitor : OperatorCodeVisitor
         {
-           
-    
             public override void Visit(IExpressionStatement statement)
             {
                 var assignment = statement.Expression as IAssignment;
@@ -33,10 +31,9 @@
                     }
                 }
             }
-
         }
 
-        public class JIDRewriter : OperatorCodeRewriter
+        public class JTDRewriter : OperatorCodeRewriter
         {
 
             public override IStatement Rewrite(IExpressionStatement statement)
@@ -47,12 +44,12 @@
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new JIDVisitor();
+            return new JTDVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new JIDRewriter();
+            return new JTDRewriter();
         }
 
     }

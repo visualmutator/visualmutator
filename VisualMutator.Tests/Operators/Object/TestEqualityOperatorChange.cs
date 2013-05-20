@@ -49,7 +49,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EqualityOperatorChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -81,7 +81,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EqualityOperatorChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 1);
             Assert.AreEqual(mutants[0].MutationTarget.PassInfo, "Right");
@@ -114,7 +114,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EqualityOperatorChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -142,7 +142,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EqualityOperatorChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -170,7 +170,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EqualityOperatorChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -207,7 +207,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EqualityOperatorChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

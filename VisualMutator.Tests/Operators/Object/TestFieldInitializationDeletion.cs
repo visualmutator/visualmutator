@@ -58,7 +58,7 @@ namespace Ns
 
 
 
-            var oper = new FieldInitializationDeletion();
+            var oper = new JID_FieldInitializationDeletion();
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;

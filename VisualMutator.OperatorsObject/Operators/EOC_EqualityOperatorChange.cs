@@ -12,9 +12,8 @@
 
     using log4net;
 
-    // using OpCodes = Mono.Cecil.Cil.OpCodes;
 
-    public class EqualityOperatorChange : IMutationOperator
+    public class EOC_EqualityOperatorChange : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -30,20 +29,16 @@
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new ExceptionHandlerRemovalVisitor();
+            return new EOCVisitor();
 
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new ExceptionHandlerRemovalRewriter();
+            return new EOCRewriter();
         }
 
-
-
-        #region Nested type: ExceptionHandlerRemovalRewriter
-
-        public class ExceptionHandlerRemovalRewriter : OperatorCodeRewriter
+        public class EOCRewriter : OperatorCodeRewriter
         {
 
             public override IExpression Rewrite(IMethodCall methodCall)
@@ -81,11 +76,8 @@
             }
         }
 
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalVisitor
-
-        public class ExceptionHandlerRemovalVisitor : OperatorCodeVisitor
+     
+        public class EOCVisitor : OperatorCodeVisitor
         {
 
             public override void Visit(IMethodCall methodCall)
@@ -113,10 +105,6 @@
                     }
 
                 }
-
-                
-
-
             }
             public override void Visit(IEquality operation)
             {
@@ -137,10 +125,9 @@
                 {
                     MarkMutationTarget(operation, passes);
                 }
-
             }
         }
 
-        #endregion
+       
     }
 }

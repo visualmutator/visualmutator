@@ -169,14 +169,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Operators\AbsoluteValueInsertion.cs" />
-    <Compile Include="Operators\ArithmeticOperatorReplacement.cs" />
-    <Compile Include="Operators\LogicalOperatorReplacement.cs" />
-    <Compile Include="Operators\RelationalOperatorReplacement.cs" />
-    <Compile Include="Operators\ShiftOperatorReplacement.cs" />
+    <Compile Include="Operators\ABS_AbsoluteValueInsertion.cs" />
+    <Compile Include="Operators\AOR_ArithmeticOperatorReplacement.cs" />
+    <Compile Include="Operators\LCR_LogicalConnectorReplacement.cs" />
+    <Compile Include="Operators\LOR_LogicalOperatorReplacement.cs" />
+    <Compile Include="Operators\ROR_RelationalOperatorReplacement.cs" />
+    <Compile Include="Operators\SOR_ShiftOperatorReplacement.cs" />
     <Compile Include="StandardOperatorsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Operators\UnaryOperatorInsertion.cs" />
+    <Compile Include="Operators\UOI_UnaryOperatorInsertion.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">

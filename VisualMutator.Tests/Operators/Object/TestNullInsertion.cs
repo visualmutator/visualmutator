@@ -53,7 +53,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ArithmeticOperatorReplacement(), out mutants, out original, out diff);
+            Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
 
             mutants.Count.ShouldEqual(0);

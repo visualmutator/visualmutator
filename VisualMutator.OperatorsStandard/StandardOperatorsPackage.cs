@@ -18,12 +18,12 @@
             Operators = new IMutationOperator[]
             {
   
-                new ArithmeticOperatorReplacement(), 
-                new AbsoluteValueInsertion(),
-                new ShiftOperatorReplacement(), 
-                new UnaryOperatorInsertion(), 
-                new LogicalOperatorReplacement(), 
-                new RelationalOperatorReplacement(), 
+                new AOR_ArithmeticOperatorReplacement(), 
+                new ABS_AbsoluteValueInsertion(),
+                new SOR_ShiftOperatorReplacement(), 
+                new UOI_UnaryOperatorInsertion(), 
+                new LOR_LogicalOperatorReplacement(), 
+                new ROR_RelationalOperatorReplacement(), 
 
             };
         }

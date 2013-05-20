@@ -15,9 +15,8 @@
     using Roslyn.Compilers.CSharp;
     using SourceMethodBody = Microsoft.Cci.MutableCodeModel.SourceMethodBody;
 
-    public class AbsoluteValueInsertion : IMutationOperator
-    {
-        #region IMutationOperator Members
+    public class ABS_AbsoluteValueInsertion : IMutationOperator
+    { 
         public OperatorInfo Info
         {
             get
@@ -29,19 +28,16 @@
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new AbsoluteValueInsertionVisitor();
+            return new ABSVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new AbsoluteValueInsertionRewriter();
+            return new ABSRewriter();
         }
 
-        #endregion
-
-        #region Nested type: AbsoluteValueInsertionRewriter
-
-        public class AbsoluteValueInsertionRewriter : OperatorCodeRewriter
+    
+        public class ABSRewriter : OperatorCodeRewriter
         {
             public override void Initialize()
             {
@@ -183,11 +179,7 @@ namespace VisualMutatorGeneratedNamespace
       
         }
 
-        #endregion
-
-        #region Nested type: AbsoluteValueInsertionVisitor
-
-        public class AbsoluteValueInsertionVisitor : OperatorCodeVisitor
+        public class ABSVisitor : OperatorCodeVisitor
         {
       
     
@@ -218,6 +210,5 @@ namespace VisualMutatorGeneratedNamespace
 
         }
 
-        #endregion
     }
 }

@@ -4,9 +4,9 @@
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
 
-    public class OverloadingMethodDeletion : IMutationOperator
+    public class OMD_OverloadingMethodDeletion : IMutationOperator
     {
-        #region IMutationOperator Members
+    
         public OperatorInfo Info
         {
             get
@@ -14,46 +14,12 @@
                 return new OperatorInfo("OMD", "Overloading Method Deletion", "");
             }
         }
-      
-        
-
-        public IOperatorCodeVisitor CreateVisitor()
+        public class OMDVisitor : OperatorCodeVisitor
         {
-            return new AbsoluteValueInsertionVisitor();
-        }
-
-        public IOperatorCodeRewriter CreateRewriter()
-        {
-            return new AbsoluteValueInsertionRewriter();
-        }
-
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalRewriter
-
-        public class AbsoluteValueInsertionRewriter : OperatorCodeRewriter
-        {
-            
-            public override IMethodDefinition Rewrite(IMethodDefinition method)
-            {
-                return Dummy.MethodDefinition;
-            }
-          
-         
-        }
-
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalVisitor
-
-        public class AbsoluteValueInsertionVisitor : OperatorCodeVisitor
-        {
-           
-    
             public override void Visit(IMethodDefinition method)
             {
-                
-                if (method.IsVirtual && !method.IsAbstract 
+
+                if (method.IsVirtual && !method.IsAbstract
                     && method.ContainingTypeDefinition.BaseClasses.Any())
                 {
                     var notFound = true;
@@ -68,12 +34,30 @@
                             notFound = false;
                         }
                     }
-                    
+
                 }
             }
 
         }
+        
+        public class OMDRewriter : OperatorCodeRewriter
+        { 
+            public override IMethodDefinition Rewrite(IMethodDefinition method)
+            {
+                return Dummy.MethodDefinition;
+            }
+        }
 
-        #endregion
+        public IOperatorCodeVisitor CreateVisitor()
+        {
+            return new OMDVisitor();
+        }
+
+        public IOperatorCodeRewriter CreateRewriter()
+        {
+            return new OMDRewriter();
+        }
+
+     
     }
 }

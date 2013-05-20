@@ -19,9 +19,9 @@
 
             Operators = new IMutationOperator[]
             {
-                new EqualityOperatorChange(), 
-                new ModiferMethodChange(), 
-                new AccessorMethodChange(), 
+                new EOC_EqualityOperatorChange(), 
+                new EMM_ModiferMethodChange(), 
+                new EAM_AccessorMethodChange(), 
                 new NullInsertion(), 
             };
 

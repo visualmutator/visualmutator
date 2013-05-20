@@ -14,7 +14,7 @@
 
     // using OpCodes = Mono.Cecil.Cil.OpCodes;
 
-    public class ModiferMethodChange : IMutationOperator
+    public class EAM_AccessorMethodChange : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -23,36 +23,36 @@
         {
             get
             {
-                return new OperatorInfo("EMM", "Modiﬁer Method Change", "");
+                return new OperatorInfo("EAM", "Accessor Method Change", "");
             }
         }
       
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new ModiﬁerMethodChangeVisitor();
+            return new EAMVisitor();
 
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new ModiﬁerMethodChangeRewriter();
+            return new EAMRewriter();
         }
 
 
 
-        public static bool IsPropertyModifier(IMethodDefinition method)
+        public static bool IsPropertyAccessor(IMethodDefinition method)
         {
             return method.IsSpecialName && method.ContainingTypeDefinition
-                                               .Properties.Any(p => p.Setter.Name.UniqueKey == method.Name.UniqueKey);
+                                               .Properties.Any(p => p.Getter.Name.UniqueKey == method.Name.UniqueKey);
 
         }
 
-        private static bool TryGetCompatibileModifier(IMethodDefinition resolvedMethod, out IMethodDefinition accessor)
+        private static bool TryGetCompatibileAccessor(IMethodDefinition resolvedMethod, out IMethodDefinition accessor)
         {
             var result = resolvedMethod.ContainingTypeDefinition.Properties
-                .FirstOrDefault(p => p.Setter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
-                && TypeHelper.ParameterListsAreEquivalent(p.Setter.Parameters, resolvedMethod.Parameters));
+                .FirstOrDefault(p => p.Getter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
+                && TypeHelper.ParameterListsAreEquivalent(p.Getter.Parameters, resolvedMethod.Parameters));
             if (result == null)
             {
                 accessor = default(IMethodDefinition);
@@ -60,23 +60,23 @@
             }
             else
             {
-                accessor = result.Setter.ResolvedMethod;
+                accessor = result.Getter.ResolvedMethod;
                 return true;
             }
 
         }
       
     
-        public class ModiﬁerMethodChangeVisitor : OperatorCodeVisitor
+        public class EAMVisitor : OperatorCodeVisitor
         {
             public override void Visit(IMethodCall methodCall)
             {
                 _log.Info("Visiting IMethodCall: " + methodCall);
 
-                if(IsPropertyModifier(methodCall.MethodToCall.ResolvedMethod))
+                if(IsPropertyAccessor(methodCall.MethodToCall.ResolvedMethod))
                 {
                     IMethodDefinition accessor;
-                    if(TryGetCompatibileModifier(methodCall.MethodToCall.ResolvedMethod, out accessor))
+                    if(TryGetCompatibileAccessor(methodCall.MethodToCall.ResolvedMethod, out accessor))
                     {
                         MarkMutationTarget(methodCall, accessor.Name.Value.InList());
                     }
@@ -90,7 +90,7 @@
        
         }
 
-        public class ModiﬁerMethodChangeRewriter : OperatorCodeRewriter
+        public class EAMRewriter : OperatorCodeRewriter
         {
 
             public override IExpression Rewrite(IMethodCall methodCall)

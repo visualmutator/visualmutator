@@ -53,7 +53,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new AccessorMethodChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -91,7 +91,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ModiferMethodChange(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

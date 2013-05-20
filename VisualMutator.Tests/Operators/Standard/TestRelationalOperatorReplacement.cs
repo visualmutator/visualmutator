@@ -57,7 +57,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new RelationalOperatorReplacement(), out mutants, out original, out diff);
+            Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
@@ -92,7 +92,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new RelationalOperatorReplacement(), out mutants, out original, out diff);
+            Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
 
             foreach (Mutant mutant in mutants)
@@ -135,7 +135,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new RelationalOperatorReplacement(), out mutants, out original, out diff);
+            Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 

@@ -7,6 +7,8 @@ namespace VisualMutator.OperatorsStandard
 {
     using System.Collections;
     using System.ComponentModel.Composition;
+    using System.Reflection;
+
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.FunctionalUtils;
     using Microsoft.Cci;
@@ -15,41 +17,62 @@ namespace VisualMutator.OperatorsStandard
 
     using VisualMutator.Extensibility;
 
+    using log4net;
 
-    public class ShiftOperatorReplacement : IMutationOperator
+    public class LOR_LogicalOperatorReplacement : IMutationOperator
     {
-        public class ShiftOperatorReplacementVisitor : OperatorCodeVisitor
+
+        protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
+        public class LORVisitor : OperatorCodeVisitor
         {
-            private void ProcessOperation<T>(T operation) where T : IBinaryOperation
+            private void ProcessOperation(IBinaryOperation operation)
             {
+                _log.Info("Visiting: " + operation);
+                
                 var passes = new List<string>
                     {
-                        "RightShift",
-                        "LeftShift", 
+                        "BitwiseAnd",
+                        "BitwiseOr", 
+                        "ExclusiveOr",
+                        "OnesComplementLeft",
+                        "OnesComplementRight",
                     }.Where(elem => elem != operation.GetType().Name).ToList();
                 
                 MarkMutationTarget(operation, passes);
             }
-            public override void Visit(IRightShift operation)
+
+            public override void Visit(IBitwiseAnd operation)
             {
                 ProcessOperation(operation);
             }
-            public override void Visit(ILeftShift operation)
+            public override void Visit(IBitwiseOr operation)
+            {
+                ProcessOperation(operation);
+            }
+            public override void Visit(IExclusiveOr operation)
             {
                 ProcessOperation(operation);
             }
          
         }
-        public class ShiftOperatorReplacementRewriter : OperatorCodeRewriter
+        public class LORRewriter : OperatorCodeRewriter
         {
            
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
             {
+                _log.Info("Rewriting: " + operation + " Pass: " + MutationTarget.PassInfo);
+                
                 var replacement = Switch.Into<Expression>()
                     .From(MutationTarget.PassInfo)
-                    .Case("RightShift", new RightShift())
-                    .Case("LeftShift", new LeftShift())
+                    .Case("BitwiseAnd", new BitwiseAnd())
+                    .Case("BitwiseOr", new BitwiseOr())
+                    .Case("ExclusiveOr", new ExclusiveOr())
+                    .Case("OnesComplementLeft", new OnesComplement{Operand = operation.LeftOperand})
+                    .Case("OnesComplementRight", new OnesComplement{Operand = operation.RightOperand})
                     .GetResult();
+
 
                 replacement.Type = operation.Type;
                 var binary = replacement as BinaryOperation;
@@ -64,11 +87,15 @@ namespace VisualMutator.OperatorsStandard
 
                 return replacement;
             }
-            public override IExpression Rewrite(IRightShift operation)
+            public override IExpression Rewrite(IBitwiseAnd operation)
             {
                 return ReplaceOperation(operation);
             }
-            public override IExpression Rewrite(ILeftShift operation)
+            public override IExpression Rewrite(IBitwiseOr operation)
+            {
+                return ReplaceOperation(operation);
+            }
+            public override IExpression Rewrite(IExclusiveOr operation)
             {
                 return ReplaceOperation(operation);
             }
@@ -78,19 +105,19 @@ namespace VisualMutator.OperatorsStandard
         {
             get
             {
-                return new OperatorInfo("SOR", "Shift Operator Replacement", "");
+                return new OperatorInfo("LOR", "Logical Operator Replacement", "");
             }
         }
-
+      
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new ShiftOperatorReplacementVisitor();
+            return new LORVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new ShiftOperatorReplacementRewriter();
+            return new LORRewriter();
         }
     }
 }
