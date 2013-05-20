@@ -7,9 +7,8 @@
     using Microsoft.Cci;
 
 
-    public class FieldInitializationDeletion : IMutationOperator
+    public class ThisKeywordDeletion : IMutationOperator
     {
-       
         public OperatorInfo Info
         {
             get
@@ -33,7 +32,6 @@
                         MarkMutationTarget(statement);
                     }
                 }
-               
             }
 
         }

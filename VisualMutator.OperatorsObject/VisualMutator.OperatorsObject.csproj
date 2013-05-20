@@ -171,6 +171,7 @@
     <Compile Include="Operators\ArgumentOrderChange.cs" />
     <Compile Include="Operators\AccessorMethodChange.cs" />
     <Compile Include="Operators\BaseKeywordDeletion.cs" />
+    <Compile Include="Operators\ThisKeywordDeletion.cs" />
     <Compile Include="Operators\FieldInitializationDeletion.cs" />
     <Compile Include="Operators\OverloadingMethodContentsChange.cs" />
     <Compile Include="Operators\ReferenceAssignmentChange.cs" />
