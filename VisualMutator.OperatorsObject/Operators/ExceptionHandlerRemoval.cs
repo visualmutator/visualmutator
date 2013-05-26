@@ -12,8 +12,6 @@
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        #region IMutationOperator Members
-
         public OperatorInfo Info
         {
             get
@@ -21,21 +19,28 @@
                 return new OperatorInfo("EHR", "Exception Handler Removal", "");
             }
         }
-      
 
-        public IOperatorCodeVisitor CreateVisitor()
+        public class ExceptionHandlerRemovalVisitor : OperatorCodeVisitor
         {
-            return new ExceptionHandlerRemovalVisitor();
+
+            public override void Visit(ITryCatchFinallyStatement operation)
+            {
+                _log.Info("Visit ITryCatchFinallyStatement: " + operation);
+                if (operation.CatchClauses.Count() >= 2 )//||
+                   // (operation.CatchClauses.Count() == 1 && operation.FinallyBody != null))
+                {
+                    var passes = new List<string>();
+                    passes.AddRange(Enumerable.Range(0, operation.CatchClauses.Count()).Select(i => i.ToString()));
+                 /*   if (operation.FinallyBody != null)
+                    {
+                        passes.Add("Finally");
+                    }*/
+                    MarkMutationTarget(operation, passes);
+                }
+            }
+
         }
 
-        public IOperatorCodeRewriter CreateRewriter()
-        {
-            return new ExceptionHandlerRemovalRewriter();
-        }
-
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalRewriter
 
         public class ExceptionHandlerRemovalRewriter : OperatorCodeRewriter
         {
@@ -57,31 +62,16 @@
            
         }
 
-        #endregion
 
-        #region Nested type: ExceptionHandlerRemovalVisitor
-
-        public class ExceptionHandlerRemovalVisitor : OperatorCodeVisitor
+        public IOperatorCodeVisitor CreateVisitor()
         {
-        
-            public override void Visit(ITryCatchFinallyStatement operation)
-            {
-                _log.Info("Visit ITryCatchFinallyStatement: " + operation );
-                if(operation.CatchClauses.Count() >= 2 || 
-                    (operation.CatchClauses.Count() == 1 && operation.FinallyBody != null))
-                {
-                    var passes = new List<string>();
-                    passes.AddRange(Enumerable.Range(0, operation.CatchClauses.Count()).Select(i => i.ToString()));
-                    if (operation.FinallyBody != null)
-                    {
-                        passes.Add("Finally");
-                    }
-                    MarkMutationTarget(operation, passes);
-                }
-            }
-           
+            return new ExceptionHandlerRemovalVisitor();
         }
 
-        #endregion
+        public IOperatorCodeRewriter CreateRewriter()
+        {
+            return new ExceptionHandlerRemovalRewriter();
+        }
+
     }
 }

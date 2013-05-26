@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
 
     public class OperatorCodeVisitor : IOperatorCodeVisitor
@@ -23,6 +24,10 @@
         public void MarkMutationTarget<T>(T obj, List<string> passesInfo = null)
         {
             Parent.MarkMutationTarget(obj, passesInfo);
+        }
+        public void MarkMutationTarget<T>(T obj, string passInfo)
+        {
+            Parent.MarkMutationTarget(obj, passInfo.InList());
         }
         public void MarkCommon<T>(T obj)
         {

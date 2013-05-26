@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.Cci.MutableCodeModel;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
@@ -15,7 +16,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class TestExceptionHandlerRemoval
+    public class DEH_Test
     {
         #region Setup/Teardown
 
@@ -31,34 +32,7 @@
 
         #endregion
 
-        [Test]
-        public void MutationFail()
-        {
-            const string code =
-                @"using System;
-namespace Ns
-{
-    public class Test
-    {
-        public bool Method1(float a, float b)
-        {
-            bool result = true;
-            string s = ""dd"";
-            s = s + ""dd"";
-            return result;
-        }
-    }
-}";
-
-            List<Mutant> mutants;
-            AssembliesProvider original;
-            CodeDifferenceCreator diff;
-            Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
-
-
-            mutants.Count.ShouldEqual(0);
-        }
-
+     
         [Test]
         public void MutationSuccess()
         {
@@ -68,46 +42,42 @@ namespace Ns
 {
     public class Test
     {
-        public int Method1(int a, int b)
+        public delegate void Del(string s); 
+        public event Del Event1;
+        public void Method2(string s)
         {
-            int x = a;
-            try
-            {
-                x = a - b;
-            }
-            
-            catch(NullReferenceException e2)
-            {
-                x = 0;
-            }
-            catch(Exception e)
-            {
-                x = 0;
-            }
-            finally
-            {
-                x = a+b;
-            }
-            return x;
+        }
+        public void Method3(string s)
+        {
+            Event1 -= Method3;
+        }
+        public bool Method1(bool a, bool b)
+        {
+            Event1 += Method2;
+            return true;
         }
     }
 }";
+       //     new Conditional().;
             Common.DebugTraverse(code);
+           
+            
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ExceptionHandlerRemoval(), out mutants, out original, out diff);
+            Common.RunMutations(code, new DEH_MethodDelegatedForEventHandlingChange(), out mutants, out original, out diff);
+
+         
 
             foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
-
-                //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
+             //   Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
 
-            mutants.Count.ShouldEqual(1);
+            mutants.Count.ShouldEqual(2);
         }
     }
 }

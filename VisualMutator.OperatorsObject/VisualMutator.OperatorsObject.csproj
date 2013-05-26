@@ -169,6 +169,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Operators\ArgumentOrderChange.cs" />
+    <Compile Include="Operators\ISD_BaseKeywordDeletion.cs" />
+    <Compile Include="Operators\DEH_MethodDelegatedForEventHandlingChange.cs" />
+    <Compile Include="Operators\DMC_DelegatedMethodChange.cs" />
     <Compile Include="Operators\EAM_AccessorMethodChange.cs" />
     <Compile Include="Operators\BaseKeywordDeletion.cs" />
     <Compile Include="Operators\JTD_ThisKeywordDeletion.cs" />

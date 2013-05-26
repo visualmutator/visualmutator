@@ -14,7 +14,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class TestAbsoluteValueInsertion
+    public class ABS_Test
     {
         #region Setup/Teardown
 

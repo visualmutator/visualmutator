@@ -38,15 +38,21 @@
             visitor.Parent = this;
         }
 
+        private object _currentObj;
 
         protected virtual bool Process(object obj)
         {
             elementCounter++;
+            _currentObj = obj;
             return true;
         }
 
         public void MarkMutationTarget<T>(T obj, List<string> passesInfo)
         {
+            if (!ReferenceEquals(_currentObj, obj))
+            {
+                throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
+            }
             if (passesInfo == null)
             {
                 passesInfo = new[]{""}.ToList();

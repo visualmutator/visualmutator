@@ -7,7 +7,6 @@
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
     using NUnit.Framework;
-    using OperatorsObject.Operators;
     using OperatorsStandard;
     using Util;
     using log4net.Appender;
@@ -15,7 +14,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class TestExceptionHandlerRemoval
+    public class AOR_Test
     {
         #region Setup/Teardown
 
@@ -70,33 +69,21 @@ namespace Ns
     {
         public int Method1(int a, int b)
         {
-            int x = a;
-            try
-            {
-                x = a - b;
-            }
-            
-            catch(NullReferenceException e2)
-            {
-                x = 0;
-            }
-            catch(Exception e)
-            {
-                x = 0;
-            }
-            finally
-            {
-                x = a+b;
-            }
-            return x;
+            int result = 0;
+            result = a + b;
+            result = a - b;
+            result = a * b;
+            result = a / b;
+            result = a % b;
+            return result;
         }
     }
 }";
-            Common.DebugTraverse(code);
+
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ExceptionHandlerRemoval(), out mutants, out original, out diff);
+            Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -104,10 +91,10 @@ namespace Ns
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
 
-                //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
+                codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
 
-            mutants.Count.ShouldEqual(1);
+            mutants.Count.ShouldEqual(30);
         }
     }
 }

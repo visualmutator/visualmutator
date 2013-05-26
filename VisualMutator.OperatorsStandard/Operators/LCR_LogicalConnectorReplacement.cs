@@ -18,10 +18,20 @@ namespace VisualMutator.OperatorsStandard
 
     public class LCR_LogicalConnectorReplacement : IMutationOperator
     {
+
+        public OperatorInfo Info
+        {
+            get
+            {
+                return new OperatorInfo("LCR", "Logical Connector Replacement", "");
+            }
+        }
+
+
         public class LCRVisitor : OperatorCodeVisitor
         {
 
-            private void ProcessOperation(IConditional cond)
+            public override void Visit(IConditional cond)
             {
                 var passes = new List<string>();
                 var boundCondition = cond.Condition as BoundExpression;
@@ -36,82 +46,50 @@ namespace VisualMutator.OperatorsStandard
                     if (resultTrueBound != null && resultTrueBound.Type.TypeCode == PrimitiveTypeCode.Boolean
                         && resultFalseConstant != null) // is &&
                     {
-                        passes.Add("||");
+                        MarkMutationTarget(cond, "to||");
                     }
                     else if (resultTrueConstant != null && resultFalseBound != null 
                         && resultFalseBound.Type.TypeCode == PrimitiveTypeCode.Boolean) // is ||
                     {
-                        passes.Add("&&");
+                        MarkMutationTarget(cond, "to&&");
                     }
                 }
 
-                if (passes.Count != 0)
-                {
-                    MarkMutationTarget(passes);
-                }
+              
             }
         }
         public class LCRRewriter : OperatorCodeRewriter
         {
-           
-            private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
+
+
+            public override IExpression Rewrite(IConditional cond)
             {
-                var replacement = Switch.Into<Expression>()
-                    .From(MutationTarget.PassInfo)
-                    .Case("LessThan", new LessThan())
-                    .Case("GreaterThan", new GreaterThan())
-                    .Case("GreaterThanOrEqual", new GreaterThanOrEqual())
-                    .Case("LessThanOrEqual", new LessThanOrEqual())
-                    .Case("Equality", new Equality())
-                    .Case("NotEquality", new NotEquality())
-                    .Case("True", new CompileTimeConstant{Value = true})
-                    .Case("False", new CompileTimeConstant{Value = false})
-                    .GetResult();
-                replacement.Type = Host.PlatformType.SystemBoolean;
-                var binary = replacement as BinaryOperation;
-                if (binary != null)
+                var newCond = new Conditional(cond);
+                Switch.On(MutationTarget.PassInfo)
+                .Case("to&&", () =>
                 {
-                    binary.LeftOperand = operation.LeftOperand;
-                    binary.RightOperand = operation.RightOperand;
-                    binary.ResultIsUnmodifiedLeftOperand = operation.ResultIsUnmodifiedLeftOperand;
-                }
-
-                replacement.Locations = operation.Locations.ToList();
-
-                return replacement;
+                    newCond.ResultIfTrue = cond.ResultIfFalse;
+                    newCond.ResultIfFalse = new CompileTimeConstant
+                    {
+                        Type = cond.ResultIfTrue.Type,
+                        Value = false,
+                    };  
+                })
+                .Case("to||", () =>
+                {
+                    newCond.ResultIfFalse = cond.ResultIfTrue;
+                    newCond.ResultIfTrue = new CompileTimeConstant
+                    {
+                        Type = cond.ResultIfFalse.Type,
+                        Value = true,
+                    };          
+                }).ThrowIfNoMatch();
+              
+                return newCond;
             }
-            public override IExpression Rewrite(ILessThan operation)
-            {
-                return ReplaceOperation(operation);
-            }
-            public override IExpression Rewrite(IGreaterThan operation)
-            {
-                return ReplaceOperation(operation);
-            }
-            public override IExpression Rewrite(ILessThanOrEqual operation)
-            {
-                return ReplaceOperation(operation);
-            }
-            public override IExpression Rewrite(IGreaterThanOrEqual operation)
-            {
-                return ReplaceOperation(operation);
-            }
-            public override IExpression Rewrite(IEquality operation)
-            {
-                return ReplaceOperation(operation);
-            }
-            public override IExpression Rewrite(INotEquality operation)
-            {
-                return ReplaceOperation(operation);
-            }
+          
         }
-        public OperatorInfo Info
-        {
-            get
-            {
-                return new OperatorInfo("ROR", "Relational Operator Replacement", "");
-            }
-        }
+      
       
 
         public IOperatorCodeVisitor CreateVisitor()
