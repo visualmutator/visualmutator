@@ -167,9 +167,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeIdentifier.cs" />
     <Compile Include="VisualCodeRewriter.cs" />
+    <Compile Include="VisualCodeRewriterBase.cs" />
     <Compile Include="VisualCodeTraverser.cs" />
     <Compile Include="VisualCodeVisitor.cs" />
     <Compile Include="VisualCodeVisitorBack.cs" />
+    <Compile Include="VisualCodeVisitorBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
