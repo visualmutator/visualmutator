@@ -5,10 +5,8 @@
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
 
-    public class ArgumentOrderChange : IMutationOperator
+    public class OAO_ArgumentOrderChange : IMutationOperator
     {
-        #region IMutationOperator Members
-
         public OperatorInfo Info
         {
             get
@@ -17,36 +15,8 @@
             }
         }
 
-        public IOperatorCodeVisitor CreateVisitor()
-        {
-            return new AbsoluteValueInsertionVisitor();
-        }
-
-        public IOperatorCodeRewriter CreateRewriter()
-        {
-            return new AbsoluteValueInsertionRewriter();
-        }
-
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalRewriter
-
-        public class AbsoluteValueInsertionRewriter : OperatorCodeRewriter
-        {
-            
-            public override IMethodDefinition Rewrite(IMethodDefinition method)
-            {
-                return Dummy.MethodDefinition;
-            }
-          
-         
-        }
-
-        #endregion
-
-        #region Nested type: ExceptionHandlerRemovalVisitor
-
-        public class AbsoluteValueInsertionVisitor : OperatorCodeVisitor
+    
+        public class OAOVisitor : OperatorCodeVisitor
         {
 
 
@@ -60,19 +30,24 @@
                 currentDefinition.GetMatchingMembersNamed(thisMethod.Name,
                     false, member => member is IMethodDefinition).Cast<IMethodDefinition>().ToList();
 
+
+                var currentClass = currentDefinition;
                 //Add overloads from base classes
-                while (currentDefinition.BaseClasses.Any())
+                while (currentClass.BaseClasses.Any())
                 {
-                    allOverloadingMethods.AddRange(currentDefinition.BaseClasses.Single()
+                    allOverloadingMethods.AddRange(currentClass.BaseClasses.Single()
                         .ResolvedType.GetMatchingMembersNamed(thisMethod.Name,
                     false, member => member is IMethodDefinition).Cast<IMethodDefinition>());
+                    currentClass = currentClass.BaseClasses.Single().ResolvedType;
                 }
 
                 allOverloadingMethods = allOverloadingMethods.Where(m =>
                     !TypeHelper.ParameterListsAreEquivalent(m.Parameters, thisMethod.Parameters)).ToList();
 
-                allOverloadingMethods = allOverloadingMethods.Where(m =>
-                    m.Parameters.Count() == thisMethod.Parameters.Count()).ToList();
+               // MarkMutationTarget(methodCall, );
+
+               // allOverloadingMethods = allOverloadingMethods.Where(m =>
+              //      m.Parameters.Count() == thisMethod.Parameters.Count()).ToList();
 
               /*  foreach (var method in allOverloadingMethods)
                 {
@@ -103,6 +78,27 @@
 
         }
 
-        #endregion
+       
+
+        public class OAORewriter : OperatorCodeRewriter
+        {
+
+            public override IMethodDefinition Rewrite(IMethodDefinition method)
+            {
+                return Dummy.MethodDefinition;
+            }
+
+
+        }
+
+        public IOperatorCodeVisitor CreateVisitor()
+        {
+            return new OAOVisitor();
+        }
+
+        public IOperatorCodeRewriter CreateRewriter()
+        {
+            return new OAORewriter();
+        }
     }
 }

@@ -169,6 +169,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Operators\ArgumentOrderChange.cs" />
+    <Compile Include="Operators\MCI_MemberCallFromAnotherInheritedClass.cs" />
+    <Compile Include="Operators\RFI_ReferencingFaultInsertion.cs" />
+    <Compile Include="Operators\ENC_ExceptionNameChange.cs" />
+    <Compile Include="Operators\EXS_ExceptionSwallowing.cs" />
     <Compile Include="Operators\ISD_BaseKeywordDeletion.cs" />
     <Compile Include="Operators\DEH_MethodDelegatedForEventHandlingChange.cs" />
     <Compile Include="Operators\DMC_DelegatedMethodChange.cs" />
@@ -177,10 +181,10 @@
     <Compile Include="Operators\JTD_ThisKeywordDeletion.cs" />
     <Compile Include="Operators\JID_FieldInitializationDeletion.cs" />
     <Compile Include="Operators\OMR_OverloadingMethodContentsChange.cs" />
-    <Compile Include="Operators\ReferenceAssignmentChange.cs" />
+    <Compile Include="Operators\PRV_ReferenceAssignmentChange.cs" />
     <Compile Include="Operators\NullInsertion.cs" />
     <Compile Include="Operators\EMM_ModiferMethodChange.cs" />
-    <Compile Include="Operators\ExceptionHandlerRemoval.cs" />
+    <Compile Include="Operators\EHR_ExceptionHandlerRemoval.cs" />
     <Compile Include="Operators\EOC_EqualityOperatorChange.cs" />
     <Compile Include="Operators\OMD_OverloadingMethodDeletion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

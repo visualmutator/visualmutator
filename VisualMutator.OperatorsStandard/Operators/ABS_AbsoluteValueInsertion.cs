@@ -112,13 +112,12 @@ namespace VisualMutatorGeneratedNamespace
                 else
                 {
                     INamedTypeDefinition systemConsole = UnitHelper.FindType(NameTable, Module, "VisualMutatorGeneratedClass");
-                  //  IMethodDefinition abs = TypeHelper.GetMethod(systemConsole, NameTable.GetNameFor("FailOnZero"), operation.Type);
-                    IMethodDefinition abs = (IMethodDefinition) systemConsole.GetMembersNamed(NameTable.GetNameFor("FailOnZero"), false).Single();
+                    IMethodDefinition failOnZero = (IMethodDefinition) systemConsole.GetMembersNamed(NameTable.GetNameFor("FailOnZero"), false).Single();
                     var call = new MethodCall
                     {
                         IsStaticCall = true,
-                        MethodToCall = abs,
-                        Type = abs.Type
+                        MethodToCall = failOnZero,
+                        Type = failOnZero.Type
                     };
                     call.Arguments.Add(operation);
                     return call;

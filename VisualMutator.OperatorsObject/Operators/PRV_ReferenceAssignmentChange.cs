@@ -12,7 +12,7 @@
 
     using log4net;
 
-    public class ReferenceAssignmentChange : IMutationOperator
+    public class PRV_ReferenceAssignmentChange : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -32,7 +32,7 @@
                 || TypeHelper.Type1ImplementsType2(source, target);
         }
 
-        public class ReferenceAssignmentChangeVisitor : OperatorCodeVisitor
+        public class PRVVisitor : OperatorCodeVisitor
         {
            
             public override void Visit(IAssignment assignment)
@@ -92,7 +92,7 @@
             }
         }
 
-        public class ReferenceAssignmentChangeRewriter : OperatorCodeRewriter
+        public class PRVRewriter : OperatorCodeRewriter
         {
 
             public override IExpression Rewrite(IAssignment assignment)
@@ -122,13 +122,13 @@
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new ReferenceAssignmentChangeVisitor();
+            return new PRVVisitor();
 
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new ReferenceAssignmentChangeRewriter();
+            return new PRVRewriter();
         }
 
 

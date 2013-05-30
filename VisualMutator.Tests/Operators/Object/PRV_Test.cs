@@ -14,7 +14,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class TestReferenceAssignementChange
+    public class PRV_Test
     {
         #region Setup/Teardown
 
@@ -52,7 +52,7 @@ namespace Ns
 
     }
 }";
-            var oper = new ReferenceAssignmentChange();
+            var oper = new PRV_ReferenceAssignmentChange();
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
@@ -91,7 +91,7 @@ namespace Ns
 
     }
 }";
-            var oper = new ReferenceAssignmentChange();
+            var oper = new PRV_ReferenceAssignmentChange();
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;

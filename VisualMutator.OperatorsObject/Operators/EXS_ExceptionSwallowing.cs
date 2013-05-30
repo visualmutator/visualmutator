@@ -3,12 +3,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using CommonUtilityInfrastructure;
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using log4net;
 
-    public class ExceptionHandlerRemoval : IMutationOperator
+    public class EXS_ExceptionSwallowing : IMutationOperator
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -16,47 +17,41 @@
         {
             get
             {
-                return new OperatorInfo("EHR", "Exception Handler Removal", "");
+                return new OperatorInfo("EXS", "Exception swallowing", "");
             }
         }
 
-        public class ExceptionHandlerRemovalVisitor : OperatorCodeVisitor
+        public class EXSVisitor : OperatorCodeVisitor
         {
-
             public override void Visit(ITryCatchFinallyStatement operation)
             {
                 _log.Info("Visit ITryCatchFinallyStatement: " + operation);
-                if (operation.CatchClauses.Count() >= 2 )//||
-                   // (operation.CatchClauses.Count() == 1 && operation.FinallyBody != null))
+                var systemException = Parent.CurrentMethod.ContainingTypeDefinition.PlatformType.SystemException;
+                if (operation.CatchClauses.All(c => ((INamedTypeReference)c.ExceptionType) != systemException) )
                 {
-                    var passes = new List<string>();
-                    passes.AddRange(Enumerable.Range(0, operation.CatchClauses.Count()).Select(i => i.ToString()));
-                 /*   if (operation.FinallyBody != null)
-                    {
-                        passes.Add("Finally");
-                    }*/
-                    MarkMutationTarget(operation, passes);
+                    MarkMutationTarget(operation);
                 }
             }
-
         }
 
 
-        public class ExceptionHandlerRemovalRewriter : OperatorCodeRewriter
+        public class EXSRewriter : OperatorCodeRewriter
         {
      
             public override IStatement Rewrite(ITryCatchFinallyStatement operation)
             {
                 _log.Info("Rewriting ITryCatchFinallyStatement: " + operation + " Pass: " + MutationTarget.PassInfo);
+                var systemException = CurrentMethod.ContainingTypeDefinition.PlatformType.SystemException;
                 var tryCatch = new TryCatchFinallyStatement(operation);
-                if (MutationTarget.PassInfo == "Finally")
+
+                tryCatch.CatchClauses.Add(new CatchClause
                 {
-                    tryCatch.FinallyBody = null;
-                }
-                else
-                {
-                    tryCatch.CatchClauses.RemoveAt(int.Parse(MutationTarget.PassInfo));
-                }
+                    ExceptionType = systemException,
+                    Body = new BlockStatement()
+                    {
+                        Statements = new List<IStatement>{ new EmptyStatement()},
+                    }
+                });
                 return tryCatch;
             }
            
@@ -65,12 +60,12 @@
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new ExceptionHandlerRemovalVisitor();
+            return new EXSVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new ExceptionHandlerRemovalRewriter();
+            return new EXSRewriter();
         }
 
     }
