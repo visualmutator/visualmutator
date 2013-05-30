@@ -72,7 +72,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 .Case(MutantResultState.Error, () => MutantTestSession.ErrorDescription)
                 .GetResult();
 
-            DisplayedText = "#{0} - {1} - {2}".Formatted(Id, MutationTarget.PassInfo, stateText);
+            DisplayedText = "#{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
             base.SetState(value, updateChildren, updateParent);
         }
 

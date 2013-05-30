@@ -81,7 +81,7 @@ namespace VisualMutator.OperatorsStandard
             {
                 _log.Info("Rewriting: " + operation);
                 IExpression result;
-                if(MutationTarget.CurrentPass <= 3)
+                if (!MutationTarget.PassInfo.IsIn("LeftParam", "RightParam"))
                 {
                    var replacement = Switch.Into<BinaryOperation>()
                         .From(MutationTarget.PassInfo)
@@ -98,17 +98,14 @@ namespace VisualMutator.OperatorsStandard
                     replacement.Type = operation.Type;
                     result = replacement;
                 }
-                else 
+                else
                 {
-                    if(MutationTarget.PassInfo == "LeftParam")
-                    {
-                        result = operation.LeftOperand;
-                    }
-                    else// if (MutationTarget.PassInfo == "RightParam")
-                    {
- 
-                        result = operation.RightOperand;
-                    }
+                    result = Switch.Into<IExpression>()
+                        .From(MutationTarget.PassInfo)
+                        .Case("LeftParam", operation.LeftOperand)
+                        .Case("RightParam", operation.RightOperand)
+                        .GetResult();
+                   
                 }
                 //result.Locations = operation.Locations.ToList();
                 

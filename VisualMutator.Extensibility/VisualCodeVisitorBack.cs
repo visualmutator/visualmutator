@@ -7,41 +7,41 @@
     public class VisualCodeVisitorBack : VisualCodeVisitor
     {
         private readonly ICollection<MutationTarget> _mutationTargets;
-        private readonly List<MutationTarget> _commonTargets;
-        private readonly List<Tuple<object,string>> _mutationTargetsElements;
-        private readonly List<object> _commonTargetsElements;
+        private readonly List<MutationTarget> _sharedTargets;
+        private readonly List<Tuple<object,string>> _targetAstObjects;
+        private readonly List<object> _sharedAstObjects;
 
-        public List<object> CommonTargetsElements
+        public List<object> SharedAstObjects
         {
-            get { return _commonTargetsElements; }
+            get { return _sharedAstObjects; }
         }
 
-        public List<Tuple<object, string>> MutationTargetsElements
+        public List<Tuple<object, string>> TargetAstObjects
         {
-            get { return _mutationTargetsElements; }
+            get { return _targetAstObjects; }
         }
 
-        public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, List<MutationTarget> commonTargets)
+        public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, List<MutationTarget> sharedTargets)
             : base(new OperatorCodeVisitor())
         {
             _mutationTargets = mutationTargets;
-            _commonTargets = commonTargets;
-            _mutationTargetsElements = new List<Tuple<object, string>>();
-            _commonTargetsElements = new List<object>();
+            _sharedTargets = sharedTargets;
+            _targetAstObjects = new List<Tuple<object, string>>();
+            _sharedAstObjects = new List<object>();
         }
 
 
         protected override bool Process(object obj)
         {
             base.Process(obj);
-            var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == elementCounter);
+            var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == TreeObjectsCounter);
             if (target != null)
             {
-                _mutationTargetsElements.Add(Tuple.Create(obj, target.CallTypeName));
+                _targetAstObjects.Add(Tuple.Create(obj, target.CallTypeName));
             }
-            if (_commonTargets.Any(t => t.CounterValue == elementCounter))
+            if (_sharedTargets.Any(t => t.CounterValue == TreeObjectsCounter))
             {
-                _commonTargetsElements.Add(obj);
+                _sharedAstObjects.Add(obj);
             }
             return false;
         }

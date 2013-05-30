@@ -102,10 +102,10 @@ namespace Ns
                 Console.WriteLine(codeWithDifference.Code);
                 codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
-            mutants.Count(m => m.MutationTarget.PassInfo == "Equality").ShouldEqual(1);
-            mutants.Count(m => m.MutationTarget.PassInfo == "NotEquality").ShouldEqual(1);
-            mutants.Count(m => m.MutationTarget.PassInfo == "True").ShouldEqual(2);
-            mutants.Count(m => m.MutationTarget.PassInfo == "False").ShouldEqual(2);
+            mutants.Count(m => m.MutationTarget.Variant.Signature == "Equality").ShouldEqual(1);
+            mutants.Count(m => m.MutationTarget.Variant.Signature == "NotEquality").ShouldEqual(1);
+            mutants.Count(m => m.MutationTarget.Variant.Signature == "True").ShouldEqual(2);
+            mutants.Count(m => m.MutationTarget.Variant.Signature == "False").ShouldEqual(2);
             mutants.Count.ShouldEqual(6);
         }
 

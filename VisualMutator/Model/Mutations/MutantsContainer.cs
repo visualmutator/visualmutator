@@ -88,7 +88,7 @@
           //  var targets = CreateVisitor(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
             executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
              
-            var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, 0, "",""), new List<MutationTarget>());
+            var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, "", new MutationVariant()), new List<MutationTarget>());
             var group = new MutantGroup("No name");
             group.Children.Add(mutant);
             executedOperator.Children.Add(group);
@@ -192,7 +192,7 @@
                     IEnumerable<Tuple<string, List<MutationTarget>>> s = (IEnumerable<Tuple<string, List<MutationTarget>>>) visitor.MutationTargets.AsEnumerable();
                     mergedTargets.AddRange(s);
                     //map.Add(module.ModuleName.Value, visitor.MutationTargets);
-                    commonTargets.AddRange(visitor.CommonTargets);
+                    commonTargets.AddRange(visitor.SharedTargets);
                 }
 
 
@@ -233,12 +233,18 @@
                 foreach (var module in copiedModules)
                 {
                     percentCompleted.Progress();
-                    var visitor2 = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
-                    var traverser2 = new VisualCodeTraverser(allowedTypes, visitor2);
+                    var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
+                    var traverser2 = new VisualCodeTraverser(allowedTypes, visitorBack);
                     traverser2.Traverse(module);
 
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.CreateRewriter();
-                    operatorCodeRewriter.MutationTarget = mutant.MutationTarget;
+
+                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitorBack.TargetAstObjects, 
+                        visitorBack.SharedAstObjects, allowedTypes, operatorCodeRewriter);
+
+                    operatorCodeRewriter.MutationTarget =
+                        new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
+                        
                     operatorCodeRewriter.NameTable = _assembliesManager.Host.NameTable;
                     operatorCodeRewriter.Host = _assembliesManager.Host;
                     operatorCodeRewriter.Module = (Module)module;
@@ -246,8 +252,7 @@
 
                     operatorCodeRewriter.Initialize();
 
-                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitor2.MutationTargetsElements
-                        , visitor2.CommonTargetsElements, allowedTypes, operatorCodeRewriter);
+                    
                     IModule rewrittenModule = rewriter.Rewrite(module);
 
 

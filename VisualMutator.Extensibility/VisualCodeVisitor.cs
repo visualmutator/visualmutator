@@ -7,58 +7,62 @@
 
     public class VisualCodeVisitor : VisualCodeVisitorBase
     {
-        
-        protected int elementCounter;
 
-        private List<Tuple<string/*GroupName*/, List<MutationTarget>>> mutationTargets;
-        private List<MutationTarget> commonTargets;
+        protected int TreeObjectsCounter { get; set; }
+        private object _currentObj;
 
+
+        private readonly List<Tuple<string/*GroupName*/, List<MutationTarget>>> _mutationTargets;
+        private readonly List<MutationTarget> _sharedTargets;
         private IMethodDefinition _currentMethod;
-		public IMethodDefinition CurrentMethod
+
+
+        public IMethodDefinition CurrentMethod
         {
             get { return _currentMethod; }
         }
         public List<Tuple<string/*GroupName*/, List<MutationTarget>>> MutationTargets
         {
-            get { return mutationTargets; }
+            get { return _mutationTargets; }
         }
-        public List<MutationTarget> CommonTargets
+        public List<MutationTarget> SharedTargets
         {
             get
             {
-                return commonTargets;
+                return _sharedTargets;
             }
         }
+
+
         public VisualCodeVisitor(IOperatorCodeVisitor visitor):base(visitor)
         {
             visitor.Parent = this;
-               mutationTargets = new List<Tuple<string/*GroupName*/, List<MutationTarget>>>();
-            commonTargets = new List<MutationTarget>();
+               _mutationTargets = new List<Tuple<string/*GroupName*/, List<MutationTarget>>>();
+            _sharedTargets = new List<MutationTarget>();
         }
 
-        private object _currentObj;
+        
 
         protected override bool Process(object obj)
         {
-            elementCounter++;
+            TreeObjectsCounter++;
             _currentObj = obj;
             return true;
         }
 
-        public void MarkMutationTarget<T>(T obj, List<string> passesInfo)
+        public void MarkMutationTarget<T>(T obj, IList<MutationVariant> variants )
         {
             if (!ReferenceEquals(_currentObj, obj))
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
-            if (passesInfo == null)
-            {
-                passesInfo = new[]{""}.ToList();
-            }
+
             var targets = new List<MutationTarget>();
-            for (int i = 0; i < passesInfo.Count; i++)
+            foreach (var mutationVariant in variants)
             {
-                var mutationTarget = new MutationTarget(obj.GetType().Name, elementCounter, i, passesInfo[i], typeof(T).Name);
+                var mutationTarget = new MutationTarget(obj.GetType().Name, 
+                    TreeObjectsCounter,  typeof(T).Name, mutationVariant);
+
                 if (_currentMethod != null && _currentMethod.ContainingTypeDefinition is INamedTypeDefinition)
                 {
                     mutationTarget.Method = new MethodIdentifier(_currentMethod);
@@ -66,15 +70,16 @@
 
                 targets.Add( mutationTarget);
             }
-            mutationTargets.Add(Tuple.Create(obj.GetType().Name, targets));
+            _mutationTargets.Add(Tuple.Create(obj.GetType().Name, targets));
         }
 
-        public void MarkCommon<T>(T o)
+        public void MarkSharedTarget<T>(T o)
         {
 
-            var mutationTarget = new MutationTarget(o.GetType().Name, elementCounter, 0, "", "");
+            var mutationTarget = new MutationTarget(o.GetType().Name, TreeObjectsCounter, "", 
+                new MutationVariant("", new Dictionary<string, object>()));
 
-            commonTargets.Add(mutationTarget);
+            _sharedTargets.Add(mutationTarget);
 
 
         }

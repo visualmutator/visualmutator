@@ -7,7 +7,7 @@ namespace VisualMutator.Extensibility
 
     public interface IOperatorCodeRewriter
     {
-        MutationTarget MutationTarget { get; set; }
+        UserMutationTarget MutationTarget { get; set; }
         INameTable NameTable { get; set; }
         MetadataReaderHost Host { get; set; }
         IModule Module { get; set; }

@@ -84,7 +84,7 @@ namespace Ns
             Common.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 1);
-            Assert.AreEqual(mutants[0].MutationTarget.PassInfo, "Right");
+            Assert.AreEqual(mutants[0].MutationTarget.Variant.Signature, "Right");
             foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,

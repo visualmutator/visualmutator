@@ -150,6 +150,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OperatorCodeVisitorBase.cs" />
+    <Compile Include="OperatorCodeRewriterBase.cs" />
+    <Compile Include="UserMutationTarget.cs" />
     <Compile Include="DebugCodeTraverser.cs" />
     <Compile Include="DebugOperatorCodeVisitor.cs" />
     <Compile Include="IOperatorCodeRewriter.cs" />
