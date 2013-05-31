@@ -80,7 +80,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new NullInsertion(), out mutants, out original, out diff);
+            Common.RunMutations(code, new RFI_ReferencingFaultInsertion(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

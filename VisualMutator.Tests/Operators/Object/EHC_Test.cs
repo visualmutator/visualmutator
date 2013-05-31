@@ -15,7 +15,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class EXS_Test
+    public class EHC_Test
     {
         #region Setup/Teardown
 
@@ -31,7 +31,7 @@
 
         #endregion
 
-
+  
         [Test]
         public void MutationSuccess()
         {
@@ -48,9 +48,21 @@ namespace Ns
             {
                 x = a - b;
             }
+            catch(InvalidOperationException e1)
+            {
+                x = a + b*2;
+            }
+            catch(InvalidCastException)
+            {
+                x = a + b*3;
+            }
             catch(NullReferenceException e2)
             {
-                x = 0;
+                throw new NullReferenceException();
+            }
+            catch(Exception e3)
+            {
+                throw e3;
             }
             finally
             {
@@ -64,7 +76,7 @@ namespace Ns
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EXS_ExceptionSwallowing(), out mutants, out original, out diff);
+            Common.RunMutations(code, new EHC_ExceptionHandlingChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -75,7 +87,7 @@ namespace Ns
                 //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
 
-            mutants.Count.ShouldEqual(1);
+            mutants.Count.ShouldEqual(2);
         }
     }
 }

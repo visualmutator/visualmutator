@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using CommonUtilityInfrastructure;
 
     public class VisualCodeVisitorBack : VisualCodeVisitor
     {
@@ -34,6 +35,7 @@
         protected override bool Process(object obj)
         {
             base.Process(obj);
+
             var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == TreeObjectsCounter);
             if (target != null)
             {
@@ -47,6 +49,14 @@
         }
 
 
-
+        public override void PostProcess()
+        {
+            foreach (var mutationTarget in MutationTargets.Select(t => t.Item2).Flatten())
+            {
+                mutationTarget.Variant.AstObjects = mutationTarget.VariantObjectsIndices
+                    .MapValues((key, val) => AllAstObjects[val]);
+                
+            }
+        }
     }
 }

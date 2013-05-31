@@ -71,7 +71,7 @@ namespace Ns
              //   Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
 
-            mutants.Count.ShouldEqual(2);
+            mutants.Count.ShouldEqual(1);
         }
     }
 }

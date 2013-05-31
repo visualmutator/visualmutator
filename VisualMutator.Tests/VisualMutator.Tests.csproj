@@ -173,6 +173,8 @@
     <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="Operators\Common.cs" />
     <Compile Include="Operators\BruteForceTests.cs" />
+    <Compile Include="Operators\Object\EHC_Test.cs" />
+    <Compile Include="Operators\Object\OAN_Test.cs" />
     <Compile Include="Operators\Object\OAO_Test.cs" />
     <Compile Include="Operators\Object\MCI_Test.cs" />
     <Compile Include="Operators\Object\RFI_Test.cs" />

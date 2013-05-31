@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using System;
 
@@ -10,28 +11,11 @@
 
         protected int TreeObjectsCounter { get; set; }
         private object _currentObj;
-
-
+        protected readonly IDictionary<object, int> AllAstIndices;
+        protected readonly IDictionary<int, object> AllAstObjects; 
         private readonly List<Tuple<string/*GroupName*/, List<MutationTarget>>> _mutationTargets;
         private readonly List<MutationTarget> _sharedTargets;
         private IMethodDefinition _currentMethod;
-
-
-        public IMethodDefinition CurrentMethod
-        {
-            get { return _currentMethod; }
-        }
-        public List<Tuple<string/*GroupName*/, List<MutationTarget>>> MutationTargets
-        {
-            get { return _mutationTargets; }
-        }
-        public List<MutationTarget> SharedTargets
-        {
-            get
-            {
-                return _sharedTargets;
-            }
-        }
 
 
         public VisualCodeVisitor(IOperatorCodeVisitor visitor):base(visitor)
@@ -39,14 +23,20 @@
             visitor.Parent = this;
                _mutationTargets = new List<Tuple<string/*GroupName*/, List<MutationTarget>>>();
             _sharedTargets = new List<MutationTarget>();
+            AllAstIndices = new Dictionary<object, int>();
+            AllAstObjects = new Dictionary<int, object>();
         }
-
-        
 
         protected override bool Process(object obj)
         {
             TreeObjectsCounter++;
             _currentObj = obj;
+            if (!AllAstIndices.ContainsKey(obj))
+            {
+                AllAstIndices.Add(obj, TreeObjectsCounter);
+                AllAstObjects.Add(TreeObjectsCounter, obj);
+            }
+
             return true;
         }
 
@@ -68,11 +58,22 @@
                     mutationTarget.Method = new MethodIdentifier(_currentMethod);
                 }
 
+                
+              
+
+
                 targets.Add( mutationTarget);
             }
             _mutationTargets.Add(Tuple.Create(obj.GetType().Name, targets));
         }
+        public virtual void PostProcess()
+        {
+            foreach (var mutationTarget in _mutationTargets.Select(t => t.Item2).Flatten())
+            {
+                mutationTarget.VariantObjectsIndices = mutationTarget.Variant.AstObjects.MapValues((key, val) => AllAstIndices[val]);
 
+            }
+        }
         public void MarkSharedTarget<T>(T o)
         {
 
@@ -96,6 +97,27 @@
 
 
 
+        public IMethodDefinition CurrentMethod
+        {
+            get
+            {
+                return _currentMethod;
+            }
+        }
+        public List<Tuple<string/*GroupName*/, List<MutationTarget>>> MutationTargets
+        {
+            get
+            {
+                return _mutationTargets;
+            }
+        }
+        public List<MutationTarget> SharedTargets
+        {
+            get
+            {
+                return _sharedTargets;
+            }
+        }
 
 
        

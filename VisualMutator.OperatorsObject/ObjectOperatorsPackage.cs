@@ -22,7 +22,7 @@
                 new EOC_EqualityOperatorChange(), 
                 new EMM_ModiferMethodChange(), 
                 new EAM_AccessorMethodChange(), 
-                new NullInsertion(), 
+              //  new NullInsertion(), 
             };
 
         }

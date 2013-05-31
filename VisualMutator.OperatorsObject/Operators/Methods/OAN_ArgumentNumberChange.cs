@@ -2,10 +2,11 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Cci.MutableCodeModel;
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
 
-    public class ArgumentNumberChange : IMutationOperator
+    public class OAN_ArgumentNumberChange : IMutationOperator
     {
         public OperatorInfo Info
         {
@@ -14,9 +15,9 @@
                 return new OperatorInfo("OAN", "Argument number change", "");
             }
         }
-
+        //TODO:::::
     
-        public class OAOVisitor : OperatorCodeVisitor
+        public class OANVisitor : OperatorCodeVisitor
         {
 
 
@@ -44,8 +45,12 @@
                 allOverloadingMethods = allOverloadingMethods.Where(m =>
                     !TypeHelper.ParameterListsAreEquivalent(m.Parameters, thisMethod.Parameters)).ToList();
 
-               // MarkMutationTarget(methodCall, );
 
+                if(allOverloadingMethods.Count > 0)
+                {
+                    MarkMutationTarget(methodCall, new MutationVariant("", allOverloadingMethods.First()));
+                }
+            
                // allOverloadingMethods = allOverloadingMethods.Where(m =>
               //      m.Parameters.Count() == thisMethod.Parameters.Count()).ToList();
 
@@ -80,12 +85,17 @@
 
        
 
-        public class OAORewriter : OperatorCodeRewriter
+        public class OANRewriter : OperatorCodeRewriter
         {
 
-            public override IMethodDefinition Rewrite(IMethodDefinition method)
+            public override IExpression Rewrite(IMethodCall methodCall)
             {
-                return Dummy.MethodDefinition;
+
+                return new MethodCall(methodCall)
+                    {
+                        MethodToCall = (IMethodReference) MutationTarget.OperatorObjects.Values.Single(),
+                        Arguments = methodCall.Arguments.Take(methodCall.Arguments.Count()-1).ToList(),
+                    };
             }
 
 
@@ -93,12 +103,12 @@
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new OAOVisitor();
+            return new OANVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new OAORewriter();
+            return new OANRewriter();
         }
     }
 }

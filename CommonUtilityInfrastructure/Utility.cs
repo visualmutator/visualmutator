@@ -52,7 +52,11 @@
         {
             return new ReadOnlyCollection<T>(collection.ToList());
         }
-     
+        public static IDictionary<T1, T3> MapValues<T1, T2, T3>(this IDictionary<T1, T2> dict, Func<T1, T2, T3> selector)
+        {
+            return dict.Select(pair => new KeyValuePair<T1, T3>(pair.Key, selector(pair.Key, pair.Value)))
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
         public static void AddRange<T>(this ICollection<T> collection, params T[] toAdd)
         {
             collection.AddRange(toAdd.AsEnumerable());
@@ -93,7 +97,13 @@
         {
             return obj is T1 || obj is T2 || obj is T3 || obj is T4 || obj is T5 || obj is T6;
         }
-        public static List<T> InList<T>(this T obj)
+        public static List<T> InList<T>(this T obj) 
+        {
+            var arr = new List<T>();
+            arr.Add(obj);
+            return arr;
+        }
+        public static List<T> InList<T, T2>(this T2 obj) where T2 : T
         {
             var arr = new List<T>();
             arr.Add(obj);

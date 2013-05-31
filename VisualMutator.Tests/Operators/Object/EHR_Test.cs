@@ -80,7 +80,7 @@ namespace Ns
                 //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
 
-            mutants.Count.ShouldEqual(1);
+            mutants.Count.ShouldEqual(2);
         }
     }
 }

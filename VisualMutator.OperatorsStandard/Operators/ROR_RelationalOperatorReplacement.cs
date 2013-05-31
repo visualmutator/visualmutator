@@ -18,9 +18,17 @@ namespace VisualMutator.OperatorsStandard
 
     public class ROR_RelationalOperatorReplacement : IMutationOperator
     {
+        public OperatorInfo Info
+        {
+            get
+            {
+                return new OperatorInfo("ROR", "Relational operator replacement", "");
+            }
+        }
         public class RORVisitor : OperatorCodeVisitor
         {
-
+            
+      
             private void ProcessOperation(IBinaryOperation operation)
             {
                 var operandTypeCode = operation.LeftOperand.Type.TypeCode;
@@ -133,14 +141,7 @@ namespace VisualMutator.OperatorsStandard
                 return ReplaceOperation(operation);
             }
         }
-        public OperatorInfo Info
-        {
-            get
-            {
-                return new OperatorInfo("ROR", "Relational Operator Replacement", "");
-            }
-        }
-      
+        
 
         public IOperatorCodeVisitor CreateVisitor()
         {

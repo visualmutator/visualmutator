@@ -189,6 +189,7 @@
                     var traverser = new VisualCodeTraverser(allowedTypes, visitor);
                   
                     traverser.Traverse(module);
+                    visitor.PostProcess();
                     IEnumerable<Tuple<string, List<MutationTarget>>> s = (IEnumerable<Tuple<string, List<MutationTarget>>>) visitor.MutationTargets.AsEnumerable();
                     mergedTargets.AddRange(s);
                     //map.Add(module.ModuleName.Value, visitor.MutationTargets);
@@ -236,7 +237,7 @@
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitorBack);
                     traverser2.Traverse(module);
-
+                    visitorBack.PostProcess();
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.CreateRewriter();
 
                     var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitorBack.TargetAstObjects, 

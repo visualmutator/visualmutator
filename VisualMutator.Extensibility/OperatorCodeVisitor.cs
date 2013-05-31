@@ -23,6 +23,10 @@
         {
             MarkMutationTarget(obj, passInfo.InList());
         }
+        public void MarkMutationTarget<T>(T obj, MutationVariant variant)
+        {
+            Parent.MarkMutationTarget(obj, variant.InList());
+        }
         public void MarkMutationTarget<T>(T obj, List<MutationVariant> variants)
         {
             Parent.MarkMutationTarget(obj, variants);

@@ -51,6 +51,8 @@
             get { return _variant; }
         }
 
+        public IDictionary<string, int> VariantObjectsIndices { get; set; }
+
         public override string ToString()
         {
             return string.Format("MutationTarget: {0}", _name);

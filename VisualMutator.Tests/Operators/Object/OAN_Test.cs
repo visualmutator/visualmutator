@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.Cci.MutableCodeModel;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
@@ -15,7 +16,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class EXS_Test
+    public class OAN_Test
     {
         #region Setup/Teardown
 
@@ -31,7 +32,7 @@
 
         #endregion
 
-
+     
         [Test]
         public void MutationSuccess()
         {
@@ -41,38 +42,37 @@ namespace Ns
 {
     public class Test
     {
-        public int Method1(int a, int b)
+        public void Execute()
         {
-            int x = a;
-            try
-            {
-                x = a - b;
-            }
-            catch(NullReferenceException e2)
-            {
-                x = 0;
-            }
-            finally
-            {
-                x = a+b;
-            }
-            return x;
+            Method1(""string1"", ""string2"", 0, 5f, 1);
+        }
+        public bool Method1(string s, string s2, int a, float f, int b)
+        {
+            return true;
+        }
+        public bool Method1(string s, string s2, int a, float f)
+        {
+            return true;
         }
     }
 }";
+       //     new Conditional().;
             Common.DebugTraverse(code);
+           
+            
             List<Mutant> mutants;
             AssembliesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EXS_ExceptionSwallowing(), out mutants, out original, out diff);
+            Common.RunMutations(code, new OAN_ArgumentNumberChange(), out mutants, out original, out diff);
+
+         
 
             foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
-
-                //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
+             //   Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
 
             mutants.Count.ShouldEqual(1);

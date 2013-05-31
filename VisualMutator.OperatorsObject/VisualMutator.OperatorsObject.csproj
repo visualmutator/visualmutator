@@ -171,26 +171,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Operators\ArgumentNumberChange.cs" />
-    <Compile Include="Operators\OAO_ArgumentOrderChange.cs" />
-    <Compile Include="Operators\MCI_MemberCallFromAnotherInheritedClass.cs" />
-    <Compile Include="Operators\RFI_ReferencingFaultInsertion.cs" />
-    <Compile Include="Operators\ENC_ExceptionNameChange.cs" />
-    <Compile Include="Operators\EXS_ExceptionSwallowing.cs" />
-    <Compile Include="Operators\ISD_BaseKeywordDeletion.cs" />
-    <Compile Include="Operators\DEH_MethodDelegatedForEventHandlingChange.cs" />
-    <Compile Include="Operators\DMC_DelegatedMethodChange.cs" />
-    <Compile Include="Operators\EAM_AccessorMethodChange.cs" />
-    <Compile Include="Operators\BaseKeywordDeletion.cs" />
-    <Compile Include="Operators\JTD_ThisKeywordDeletion.cs" />
-    <Compile Include="Operators\JID_FieldInitializationDeletion.cs" />
-    <Compile Include="Operators\OMR_OverloadingMethodContentsChange.cs" />
-    <Compile Include="Operators\PRV_ReferenceAssignmentChange.cs" />
-    <Compile Include="Operators\NullInsertion.cs" />
-    <Compile Include="Operators\EMM_ModiferMethodChange.cs" />
-    <Compile Include="Operators\EHR_ExceptionHandlerRemoval.cs" />
-    <Compile Include="Operators\EOC_EqualityOperatorChange.cs" />
-    <Compile Include="Operators\OMD_OverloadingMethodDeletion.cs" />
+    <Compile Include="Operators\Exceptions\EHC_ExceptionHandlingChange.cs" />
+    <Compile Include="Operators\Methods\OAN_ArgumentNumberChange.cs" />
+    <Compile Include="Operators\Methods\OAO_ArgumentOrderChange.cs" />
+    <Compile Include="Operators\Variables\MCI_MemberCallFromAnotherInheritedClass.cs" />
+    <Compile Include="Operators\Variables\RFI_ReferencingFaultInsertion.cs" />
+    <Compile Include="Operators\Exceptions\___ENC_ExceptionNameChange.cs" />
+    <Compile Include="Operators\Exceptions\EXS_ExceptionSwallowing.cs" />
+    <Compile Include="Operators\Methods\ISD_BaseKeywordDeletion.cs" />
+    <Compile Include="Operators\Delegates\DEH_MethodDelegatedForEventHandlingChange.cs" />
+    <Compile Include="Operators\Delegates\DMC_DelegatedMethodChange.cs" />
+    <Compile Include="Operators\Methods\EAM_AccessorMethodChange.cs" />
+    <Compile Include="Operators\Variables\JTD_ThisKeywordDeletion.cs" />
+    <Compile Include="Operators\Variables\JID_FieldInitializationDeletion.cs" />
+    <Compile Include="Operators\Methods\OMR_OverloadingMethodContentsChange.cs" />
+    <Compile Include="Operators\Variables\PRV_ReferenceAssignmentChange.cs" />
+    <Compile Include="Operators\Methods\EMM_ModiferMethodChange.cs" />
+    <Compile Include="Operators\Exceptions\EHR_ExceptionHandlerRemoval.cs" />
+    <Compile Include="Operators\Other\EOC_EqualityOperatorChange.cs" />
+    <Compile Include="Operators\Methods\OMD_OverloadingMethodDeletion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ObjectOperatorsPackage.cs" />
   </ItemGroup>
