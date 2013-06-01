@@ -44,14 +44,15 @@
         public static bool IsPropertyModifier(IMethodDefinition method)
         {
             return method.IsSpecialName && method.ContainingTypeDefinition
-                                               .Properties.Any(p => p.Setter.Name.UniqueKey == method.Name.UniqueKey);
+                                               .Properties.Any(p => p.Setter != null 
+                                                   && p.Setter.Name.UniqueKey == method.Name.UniqueKey);
 
         }
 
         private static bool TryGetCompatibileModifier(IMethodDefinition resolvedMethod, out IMethodDefinition accessor)
         {
             var result = resolvedMethod.ContainingTypeDefinition.Properties
-                .FirstOrDefault(p => p.Setter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
+                .FirstOrDefault(p => p.Setter != null && p.Setter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
                 && TypeHelper.ParameterListsAreEquivalent(p.Setter.Parameters, resolvedMethod.Parameters));
             if (result == null)
             {

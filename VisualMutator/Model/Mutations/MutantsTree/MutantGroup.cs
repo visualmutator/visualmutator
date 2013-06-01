@@ -40,7 +40,11 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             }
         }
 
-        
+        protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
+        {
+            UpdateDisplayedText();
+            base.SetState(value, updateChildren, updateParent);
+        }
 
         public void UpdateDisplayedText()
         {

@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Reflection;
     using CommonUtilityInfrastructure;
+    using LinqLib.Sequence;
     using Microsoft.Cci;
     using MutantsTree;
     using Operators;
@@ -53,6 +54,7 @@
         }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private MutationSessionChoices _choices;
 
         public MutantsContainer(ICommonCompilerAssemblies assembliesManager, 
             IOperatorUtils operatorUtils
@@ -66,6 +68,7 @@
 
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
         {
+            _choices = choices;
             var copiedModules = new StoredAssemblies(choices.Assemblies.Select(a => a.AssemblyDefinition)
                                                          .Select(_assembliesManager.Copy).Cast<IModule>().ToList());
 
@@ -85,7 +88,7 @@
         public Mutant CreateChangelessMutant(out ExecutedOperator executedOperator)
         {
             var op = new PreOperator();
-          //  var targets = CreateVisitor(op, session.StoredSourceAssemblies.Modules, new List<TypeIdentifier>());
+          
             executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
              
             var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, "", new MutationVariant()), new List<MutationTarget>());
@@ -93,9 +96,6 @@
             group.Children.Add(mutant);
             executedOperator.Children.Add(group);
         
-         //   var copiedModules = session.StoredSourceAssemblies.Modules
-         //                                                .Select(_assembliesManager.Copy).Cast<IModule>().ToList();
-         //   mutant.MutatedModules = copiedModules;
             return mutant;
         }
 
@@ -133,7 +133,8 @@
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
                 operatorsWithTargets.Add(targets);
-
+                targets.MutationTargets = targets.MutationTargets.Shuffle()
+                    .Take(_choices.MutantsCreationOptions.MaxNumerOfMutantPerOperator).ToList();
                 //subProgress.Initialize(targets.MutationTargets.Count);
                 foreach (var pair in targets.MutationTargets)
                 {
@@ -175,7 +176,7 @@
             try
             {
                 var commonTargets = new List<MutationTarget>();
-                //var map = new Dictionary<string, List<MutationTarget>>();
+              
                 var ded = mutOperator.CreateVisitor();
                 IOperatorCodeVisitor operatorVisitor = ded;
                 operatorVisitor.Host = _assembliesManager.Host;
@@ -190,9 +191,9 @@
                   
                     traverser.Traverse(module);
                     visitor.PostProcess();
-                    IEnumerable<Tuple<string, List<MutationTarget>>> s = (IEnumerable<Tuple<string, List<MutationTarget>>>) visitor.MutationTargets.AsEnumerable();
+                    IEnumerable<Tuple<string, List<MutationTarget>>> s = visitor.MutationTargets.AsEnumerable();
                     mergedTargets.AddRange(s);
-                    //map.Add(module.ModuleName.Value, visitor.MutationTargets);
+                  
                     commonTargets.AddRange(visitor.SharedTargets);
                 }
 

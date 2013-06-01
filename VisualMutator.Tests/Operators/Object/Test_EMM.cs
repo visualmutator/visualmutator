@@ -14,7 +14,7 @@
     using log4net.Layout;
 
     [TestFixture]
-    public class TestModiferMethodChange
+    public class Test_EMM
     {
         #region Setup/Teardown
 
@@ -103,6 +103,43 @@ namespace Ns
             }
 
             mutants.Count.ShouldEqual(1);
+        }
+        [Test]
+        public void Fail()
+        {
+            const string code =
+                @"using System;
+namespace Ns
+{
+    public class Test
+    {
+        public int Method1(int a, int b)
+        {
+            TestProp = b;
+            return TestProp;
+        }
+
+        public int TestProp {  get;set; }
+        public int TestProp2 {  get{return 0;} }
+
+    }
+}";
+
+            List<Mutant> mutants;
+            AssembliesProvider original;
+            CodeDifferenceCreator diff;
+            Common.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+
+            foreach (Mutant mutant in mutants)
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                                     original);
+                Console.WriteLine(codeWithDifference.Code);
+
+                // codeWithDifference.LineChanges.Count.ShouldEqual(2);
+            }
+
+            mutants.Count.ShouldEqual(0);
         }
     }
 }

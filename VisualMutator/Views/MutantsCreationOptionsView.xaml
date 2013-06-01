@@ -15,17 +15,25 @@
   </UserControl.Resources>
 
   <Grid d:DataContext="{d:DesignInstance ViewModels:MutantsCreationOptionsViewModel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
 
-    <Grid.RowDefinitions>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+      <RowDefinition Height="25"/>
       <RowDefinition Height="25"/>
 
 
     </Grid.RowDefinitions>
-<!-- 
+        <TextBlock Grid.Row="0"  Grid.Column="0" Text="Max number of mutants per operator:"/>
+
+        <!-- 
     <CheckBox Grid.Row="0" Content="Create 20 times more mutants"
               IsChecked="{Binding Options.CreateMoreMutants, Mode=TwoWay}"/>-->
-      
-    <CheckBox Grid.Row="0" Content="Verify IL code of mutants"
+        <extToolkit:IntegerUpDown  Grid.Row="0"  Grid.Column="1"  Maximum="1000" Minimum="1"
+                                Value="{Binding Options.MaxNumerOfMutantPerOperator, Mode=TwoWay}"/>
+        <CheckBox Grid.Row="1" Grid.ColumnSpan="2" Content="Verify IL code of mutants"
               IsChecked="{Binding Options.IsMutantVerificationEnabled, Mode=TwoWay}"/>
     
 

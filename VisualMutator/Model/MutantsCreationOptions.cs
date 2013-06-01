@@ -33,6 +33,7 @@ namespace VisualMutator.Model
         }
 
         private bool _isMutantVerificationEnabled;
+        
 
         public bool IsMutantVerificationEnabled
         {
@@ -46,5 +47,14 @@ namespace VisualMutator.Model
             }
         }
 
+        private int _maxNumerOfMutantPerOperator;
+        public int MaxNumerOfMutantPerOperator
+        {
+            get { return _maxNumerOfMutantPerOperator; }
+            set
+            {
+                SetAndRise(ref _maxNumerOfMutantPerOperator, value, () => MaxNumerOfMutantPerOperator);
+            }
+        }
     }
 }

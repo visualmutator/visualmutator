@@ -19,7 +19,8 @@
         {
            Options = new MutantsCreationOptions();
            Options.AdditionalFilesToCopy = new NotifyingCollection<string>();
-           Options.IsMutantVerificationEnabled = true;
+           Options.IsMutantVerificationEnabled = false;
+           Options.MaxNumerOfMutantPerOperator = 100;
 
            CommandAdditionalFilesToCopy = new BasicCommand(ChooseFiles);
         }

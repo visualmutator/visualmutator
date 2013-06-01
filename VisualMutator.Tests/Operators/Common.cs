@@ -15,6 +15,7 @@
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
+    using Model.Mutations.Types;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
     using log4net;
@@ -170,6 +171,21 @@
             
             _log.Info("Copying assemblies...");
             AssembliesProvider copiedModules = new AssembliesProvider(cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
+
+
+            var choices = new MutationSessionChoices()
+                {
+                    MutantsCreationOptions = new MutantsCreationOptions()
+                        {
+                            MaxNumerOfMutantPerOperator = 100,
+                        },
+                        Assemblies = new List<AssemblyNode>(),
+                        SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>())
+                };
+
+            container.PrepareSession(choices);
+
+   
 
             var executedOperators = container.GenerateMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());
