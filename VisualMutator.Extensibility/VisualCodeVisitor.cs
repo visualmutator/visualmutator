@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
@@ -16,7 +17,12 @@
         private readonly List<Tuple<string/*GroupName*/, List<MutationTarget>>> _mutationTargets;
         private readonly List<MutationTarget> _sharedTargets;
         private IMethodDefinition _currentMethod;
+        private readonly AstFormatter _formatter;
 
+        public AstFormatter Formatter
+        {
+            get { return _formatter; }
+        }
 
         public VisualCodeVisitor(IOperatorCodeVisitor visitor):base(visitor)
         {
@@ -25,6 +31,7 @@
             _sharedTargets = new List<MutationTarget>();
             AllAstIndices = new Dictionary<object, int>();
             AllAstObjects = new Dictionary<int, object>();
+            _formatter = new AstFormatter();
         }
 
         protected override bool Process(object obj)
@@ -59,21 +66,52 @@
                 }
 
                 
-              
-
-
                 targets.Add( mutationTarget);
             }
-            _mutationTargets.Add(Tuple.Create(obj.GetType().Name, targets));
+            string groupname = _formatter.Format(obj);
+            _mutationTargets.Add(Tuple.Create(groupname, targets));
         }
         public virtual void PostProcess()
         {
             foreach (var mutationTarget in _mutationTargets.Select(t => t.Item2).Flatten())
             {
+                mutationTarget.Variant.AstObjects = mutationTarget.Variant.AstObjects
+                    .ToDictionary(pair => pair.Key, pair => Unspecialize(pair.Value));
+
+                if (mutationTarget.Variant.AstObjects.Values.Any(v => !AllAstIndices.ContainsKey(v)))
+                {
+                    Debugger.Break();
+                }
                 mutationTarget.VariantObjectsIndices = mutationTarget.Variant.AstObjects.MapValues((key, val) => AllAstIndices[val]);
 
             }
         }
+
+        private object Unspecialize(object value)
+        {
+            var methodDefinition = value as IMethodDefinition;
+            if(methodDefinition != null)
+            {
+                return MemberHelper.UninstantiateAndUnspecialize(methodDefinition);
+            }
+            var fieldDefinition = value as IFieldDefinition;
+            if (fieldDefinition != null)
+            {
+                return MemberHelper.Unspecialize(fieldDefinition);
+            }
+            var eventDefinition = value as IEventDefinition;
+            if (eventDefinition != null)
+            {
+                return MemberHelper.Unspecialize(eventDefinition);
+            }
+            var fieldReference = value as IFieldReference;
+            if (fieldReference != null)
+            {
+                return MemberHelper.Unspecialize(fieldReference);
+            }
+            return value;
+        }
+
         public void MarkSharedTarget<T>(T o)
         {
 

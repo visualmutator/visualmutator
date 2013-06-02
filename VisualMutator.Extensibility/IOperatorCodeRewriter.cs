@@ -12,6 +12,7 @@ namespace VisualMutator.Extensibility
         MetadataReaderHost Host { get; set; }
         IModule Module { get; set; }
         IOperatorUtils OperatorUtils { get; set; }
+        VisualCodeRewriter Parent { get; set; }
 
         void MethodEnter(MethodDefinition method);
         void MethodExit(MethodDefinition method);

@@ -41,7 +41,8 @@
 
             String str = Switch.Into<string>().AsCascadingCollectiveOf(strings)
                 .CaseAny("A", "A")
-                .CaseAll("C", "C");
+                .CaseAll("C", "C")
+                .GetValue();
 
             Assert.AreEqual("A", str);
         }
@@ -61,7 +62,7 @@
 
             String str = Switch.Into<string>().AsCascadingCollectiveOf(strings)
                 .CaseAny("B", "B")
-                .CaseAll("A", "A");
+                .CaseAll("A", "A").GetValue();
 
             Assert.AreEqual("A", str);
         }
@@ -82,9 +83,7 @@
             String str = Switch.Into<string>().AsCascadingCollectiveOf(strings)
                  .CaseAny("B", "B")
                 .CaseAny("C", "C")
-               
-                
-                .CaseAll("A", "A");
+                .CaseAll("A", "A").GetValue();
 
             Assert.AreEqual("B", str);
         }

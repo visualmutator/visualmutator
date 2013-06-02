@@ -9,9 +9,13 @@
 
     public class OperatorCodeVisitor : OperatorCodeVisitorBase, IOperatorCodeVisitor
     {
+        public void MarkMutationTarget<T>(T obj)
+        {
 
- 
-        public void MarkMutationTarget<T>(T obj, List<string> passesInfo = null)
+            Parent.MarkMutationTarget(obj, new List<MutationVariant>());
+        }
+
+        public void MarkMutationTarget<T>(T obj, List<string> passesInfo, string groupInfo = "")
         {
             if (passesInfo == null)
             {
@@ -19,7 +23,7 @@
             }
             Parent.MarkMutationTarget(obj, passesInfo.Select(s => new MutationVariant(s, new Dictionary<string, object>())).ToList());
         }
-        public void MarkMutationTarget<T>(T obj, string passInfo)
+        public void MarkMutationTarget<T>(T obj, string passInfo, string groupInfo = "")
         {
             MarkMutationTarget(obj, passInfo.InList());
         }
@@ -39,7 +43,7 @@
         
         public virtual void Initialize()
         {
-            
+          
         }
 
 

@@ -141,5 +141,42 @@ namespace Ns
 
             mutants.Count.ShouldEqual(0);
         }
+
+        [Test]
+        public void Fail2()
+        {
+            const string code =
+                @"using System;
+namespace Ns
+{
+    public class Test<T>
+    {
+        public void Method1(int a, int b)
+        {
+            TestProp = null;
+        }
+
+        public Test<T> TestProp {  get;set; }
+        public Test<T> Previous {  get;set; }
+
+    }
+}";
+
+            List<Mutant> mutants;
+            AssembliesProvider original;
+            CodeDifferenceCreator diff;
+            Common.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+
+            foreach (Mutant mutant in mutants)
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                                     original);
+                Console.WriteLine(codeWithDifference.Code);
+
+                // codeWithDifference.LineChanges.Count.ShouldEqual(2);
+            }
+
+            mutants.Count.ShouldEqual(1);
+        }
     }
 }

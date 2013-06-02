@@ -31,10 +31,10 @@ namespace VisualMutator.Model.Mutations.MutantsTree
         {
             get
             {
-                return Parent.CastTo<ExecutedOperator>();
+                return Parent.CastTo<MutantGroup>().Parent.CastTo<ExecutedOperator>();
             }
         }
-        public Mutant(string id, ExecutedOperator parent, MutationTarget mutationTarget, List<MutationTarget> commonTargets)
+        public Mutant(string id, MutantGroup parent, MutationTarget mutationTarget, List<MutationTarget> commonTargets)
             : base( "Mutant", false)
         {
             _id = id;

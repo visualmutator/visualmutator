@@ -56,9 +56,61 @@
        
         }
 
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void InvalidSelfChild()
+        {
+            var a = new NormalNode("a");
+            var ab = new NormalNode("ab");
 
-      
+            ab.Parent = a;
 
+            a.Children.Add(a);
+
+        }
+        [Test]
+        public void ValidParent()
+        {
+  
+            var a = new NormalNode("a");
+            var ab = new NormalNode("ab");
+
+            ab.Parent = a;
+
+            a.Children.Add(ab);
+
+        }
+        [Test,ExpectedException(typeof(InvalidOperationException))]
+        public void InvalidParent()
+        {
+            var o = new NormalNode("o");
+            var a = new NormalNode("a");
+            var ab = new NormalNode("ab");
+
+            ab.Parent = a;
+
+            o.Children.Add(a);
+           
+        }
+
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void TooLateParent()
+        {
+            var o = new NormalNode("o");
+            var a = new NormalNode("a");
+            var ab = new NormalNode("ab");
+
+            o.Children.Add(a);
+
+            ab.Parent = a;
+        }
+
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void InvalidSelfParent()
+        {
+            var ab = new NormalNode("ab");
+
+            ab.Parent = ab;
+        }
     }
 }
 

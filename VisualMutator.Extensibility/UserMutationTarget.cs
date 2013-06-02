@@ -9,7 +9,7 @@
     {
  
         private readonly string _passInfo;
-        private readonly IDictionary<string, object> _operatorObjects;
+        private readonly IDictionary<string, object> _storedObjects;
 
         /// <summary>
         /// Information about current mutation pass
@@ -25,16 +25,16 @@
         /// <summary>
         /// Object from AST needed by operator in rewriting phase
         /// </summary>
-        public IDictionary<string, object> OperatorObjects
+        public IDictionary<string, object> StoredObjects
         {
-            get { return _operatorObjects; }
+            get { return _storedObjects; }
         }
 
 
-        public UserMutationTarget(string passInfo, IDictionary<string, object> operatorObjects)
+        public UserMutationTarget(string passInfo, IDictionary<string, object> storedObjects)
         {
             _passInfo = passInfo;
-            _operatorObjects = operatorObjects;
+            _storedObjects = storedObjects;
         }
     }
 }

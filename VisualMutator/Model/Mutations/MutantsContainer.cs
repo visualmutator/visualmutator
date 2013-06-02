@@ -90,9 +90,9 @@
             var op = new PreOperator();
           
             executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
-             
-            var mutant = new Mutant("0", executedOperator, new MutationTarget("", -1, "", new MutationVariant()), new List<MutationTarget>());
-            var group = new MutantGroup("No name");
+            var group = new MutantGroup("Testing original program", executedOperator);
+            var mutant = new Mutant("0", group, new MutationTarget("Original program", -1, "", new MutationVariant()), new List<MutationTarget>());
+           
             group.Children.Add(mutant);
             executedOperator.Children.Add(group);
         
@@ -128,20 +128,19 @@
 
                 sw.Restart();
 
-                OperatorWithTargets targets = FindTargets(oper, originalAssemblies.Assemblies, allowedTypes.ToList());
+                OperatorWithTargets operatorResult = FindTargets(oper, originalAssemblies.Assemblies, allowedTypes.ToList());
 
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
-                operatorsWithTargets.Add(targets);
-                targets.MutationTargets = targets.MutationTargets.Shuffle()
-                    .Take(_choices.MutantsCreationOptions.MaxNumerOfMutantPerOperator).ToList();
+                operatorsWithTargets.Add(operatorResult);
+                var mutations = LimitMutationTargets(operatorResult);
                 //subProgress.Initialize(targets.MutationTargets.Count);
-                foreach (var pair in targets.MutationTargets)
+                foreach (var grouping in mutations)
                 {
-                    var group = new MutantGroup(pair.Item1);
-                    foreach (var mutationTarget in pair.Item2)
+                    var group = new MutantGroup(grouping.Key, executedOperator);
+                    foreach (var mutationTarget in grouping)
                     {
-                        var mutant = new Mutant(genId().ToString(), executedOperator, mutationTarget, targets.CommonTargets);
+                        var mutant = new Mutant(genId().ToString(), group, mutationTarget, operatorResult.CommonTargets);
                         group.Children.Add(mutant);
 
                     }
@@ -164,7 +163,14 @@
             return mutantsGroupedByOperators;
         }
 
-       
+        private ILookup<string, MutationTarget> LimitMutationTargets(OperatorWithTargets operatorResult)
+        {
+            var mapping = operatorResult.MutationTargets
+                .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
+                .Take(_choices.MutantsCreationOptions.MaxNumerOfMutantPerOperator).ToList();
+            return mapping.ToLookup(pair => pair.Item1, pair => pair.Item2);
+        }
+
 
         public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, 
             IList<TypeIdentifier> allowedTypes)
@@ -256,9 +262,6 @@
 
                     
                     IModule rewrittenModule = rewriter.Rewrite(module);
-
-
-
                     mutatedModules.Add(rewrittenModule);
                 }
                 return new AssembliesProvider( mutatedModules);

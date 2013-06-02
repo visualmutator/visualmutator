@@ -28,18 +28,6 @@
         }
       
 
-        public IOperatorCodeVisitor CreateVisitor()
-        {
-            return new EMMVisitor();
-
-        }
-
-        public IOperatorCodeRewriter CreateRewriter()
-        {
-            return new EMMRewriter();
-        }
-
-
 
         public static bool IsPropertyModifier(IMethodDefinition method)
         {
@@ -49,7 +37,7 @@
 
         }
 
-        private static bool TryGetCompatibileModifier(IMethodDefinition resolvedMethod, out IMethodDefinition accessor)
+        private static bool TryGetCompatibileModifier(IMethodDefinition resolvedMethod, out IMethodReference accessor)
         {
             var result = resolvedMethod.ContainingTypeDefinition.Properties
                 .FirstOrDefault(p => p.Setter != null && p.Setter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
@@ -61,7 +49,7 @@
             }
             else
             {
-                accessor = result.Setter.ResolvedMethod;
+                accessor = result.Setter;
                 return true;
             }
 
@@ -76,10 +64,10 @@
 
                 if(IsPropertyModifier(methodCall.MethodToCall.ResolvedMethod))
                 {
-                    IMethodDefinition accessor;
+                    IMethodReference accessor;
                     if(TryGetCompatibileModifier(methodCall.MethodToCall.ResolvedMethod, out accessor))
                     {
-                        MarkMutationTarget(methodCall, accessor.Name.Value.InList());
+                        MarkMutationTarget(methodCall, new MutationVariant(accessor.Name.Value, accessor));
                     }
 
                 }
@@ -96,15 +84,28 @@
 
             public override IExpression Rewrite(IMethodCall methodCall)
             {
-                _log.Info("Rewrite IMethodCall: " + methodCall);
-                var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
-                    NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
+                _log.Info("Rewrite IMethodCall: " + Parent.Formatter.Format(methodCall));
+               // var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
+               //     NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
                 var newCall = new MethodCall(methodCall);
-                newCall.MethodToCall = methodDefinition;
+                newCall.MethodToCall = (IMethodReference) MutationTarget.StoredObjects.Values.Single();
+                _log.Info("Returning MethodCall to: " + Parent.Formatter.Format(methodCall));
                 return newCall;
             }
            
         }
+
+        public IOperatorCodeVisitor CreateVisitor()
+        {
+            return new EMMVisitor();
+
+        }
+
+        public IOperatorCodeRewriter CreateRewriter()
+        {
+            return new EMMRewriter();
+        }
+
 
     }
 }

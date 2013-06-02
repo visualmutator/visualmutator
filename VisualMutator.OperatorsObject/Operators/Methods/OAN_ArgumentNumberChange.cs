@@ -93,7 +93,7 @@
 
                 return new MethodCall(methodCall)
                     {
-                        MethodToCall = (IMethodReference) MutationTarget.OperatorObjects.Values.Single(),
+                        MethodToCall = (IMethodReference) MutationTarget.StoredObjects.Values.Single(),
                         Arguments = methodCall.Arguments.Take(methodCall.Arguments.Count()-1).ToList(),
                     };
             }

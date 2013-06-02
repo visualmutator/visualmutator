@@ -9,10 +9,10 @@ namespace VisualMutator.Model.Mutations.MutantsTree
     {
        
 
-        public MutantGroup(string name)
+        public MutantGroup(string name, ExecutedOperator parent)
             : base( name, true)
         {
-           
+            Parent = parent;
         }
 
         public IEnumerable<Mutant> Mutants

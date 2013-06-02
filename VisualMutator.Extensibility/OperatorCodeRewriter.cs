@@ -19,6 +19,9 @@
             get;
             set;
         }
+
+        public VisualCodeRewriter Parent { get; set; }
+
         public MethodDefinition CurrentMethod
         {
             get;

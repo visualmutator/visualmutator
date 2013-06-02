@@ -5,30 +5,44 @@
     public class MutationVariant
     {
         private readonly string _signature;
+        private readonly string _additionalInfo;
+        private IDictionary<string, object> _astObjects;
 
         public string Signature
         {
             get { return _signature; }
         }
 
-        public IDictionary<string, object> AstObjects { get; set; }
-
-        public MutationVariant(string signature, object astObject)
+        public IDictionary<string, object> AstObjects
         {
-            _signature = signature;
-            AstObjects = new Dictionary<string, object>();
-            AstObjects.Add("", astObject);
+            get { return _astObjects; }
+
+            set { _astObjects = value; }
         }
 
-        public MutationVariant(string signature, IDictionary<string, object> astObjects)
+        public string AdditionalInfo
+        {
+            get { return _additionalInfo; }
+        }
+
+        public MutationVariant(string signature, object astObject, string additionalInfo = "")
         {
             _signature = signature;
-            AstObjects = astObjects;
+            _astObjects = new Dictionary<string, object>();
+            _astObjects.Add("", astObject);
+        }
+
+        public MutationVariant(string signature, IDictionary<string, object> astObjects, string additionalInfo = "")
+        {
+            _signature = signature;
+            _additionalInfo = additionalInfo;
+            _astObjects = astObjects;
         }
         public MutationVariant()
         {
             _signature = "";
-            AstObjects = new Dictionary<string, object>();
+            _additionalInfo = "";
+            _astObjects = new Dictionary<string, object>();
         }
     }
 }

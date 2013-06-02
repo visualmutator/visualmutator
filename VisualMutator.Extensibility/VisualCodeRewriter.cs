@@ -26,6 +26,12 @@
         private readonly IList<TypeIdentifier> _allowedTypes;
        
         private readonly IOperatorCodeRewriter _rewriter;
+        private AstFormatter _formatter;
+
+        public AstFormatter Formatter
+        {
+            get { return _formatter; }
+        }
 
         public VisualCodeRewriter(IMetadataHost host, 
                                 List<Tuple<object, string>> capturedAstObjects, 
@@ -37,7 +43,9 @@
             _capturedASTObjects = capturedAstObjects;
             _sharedASTObjects = sharedAstObjects;
             _allowedTypes = allowedTypes;
-            this._rewriter = rewriter;
+            _rewriter = rewriter;
+            _rewriter.Parent = this;
+            _formatter = new AstFormatter();
         }
 
         /// <summary>

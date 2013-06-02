@@ -80,6 +80,7 @@
     <Compile Include="CheckboxedTree\Node.cs" />
     <Compile Include="CheckboxedTree\NodeWithChildrenBase.cs" />
     <Compile Include="CheckboxedTree\NormalNode.cs" />
+    <Compile Include="CheckboxedTree\StateNode.cs" />
     <Compile Include="CheckboxedTree\TreeNode.cs" />
     <Compile Include="Comparers\CollectionComparer.cs" />
     <Compile Include="Comparers\Comparers.cs" />

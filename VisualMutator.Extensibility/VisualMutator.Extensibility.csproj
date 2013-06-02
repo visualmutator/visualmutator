@@ -150,6 +150,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AstFormatter.cs" />
     <Compile Include="MutationVariant.cs" />
     <Compile Include="OperatorCodeVisitorBase.cs" />
     <Compile Include="OperatorCodeRewriterBase.cs" />

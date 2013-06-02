@@ -984,7 +984,6 @@ namespace VisualMutator.Extensibility
             set;
         }
         void Initialize();
-        void MarkMutationTarget<T>(T obj, List<string> passesInfo = null);
-        void MarkCommon<T>(T obj);
+      
     }
 }

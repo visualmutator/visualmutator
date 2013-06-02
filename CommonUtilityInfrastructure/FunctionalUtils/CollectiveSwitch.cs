@@ -7,6 +7,8 @@ namespace CommonUtilityInfrastructure.FunctionalUtils
     {
         private readonly IEnumerable<T> _values;
         private List<Case> _cases;
+        private R _allResult;
+        private bool _hasAllResult;
 
         private class Case
         {
@@ -58,7 +60,7 @@ namespace CommonUtilityInfrastructure.FunctionalUtils
         {
             return CaseAny(caseValue, () => result);
         }
-        public R CaseAll(T caseAllValue, R allResult)
+        public CollectiveSwitch<T, R> CaseAll(T caseAllValue, R allResult)
         {
             bool hasAllResult = true;
         
@@ -77,24 +79,34 @@ namespace CommonUtilityInfrastructure.FunctionalUtils
                 }
             }
 
-             foreach (var @case in _cases)
+            _hasAllResult = hasAllResult;
+            if (hasAllResult)
+            {
+                _allResult = allResult;
+            }
+
+            return this;
+
+        }
+
+        public R GetValue()
+        {
+            foreach (var @case in _cases)
             {
                 if (@case.HasResult)
                 {
                     return @case.action();
                 }
             }
-            if (hasAllResult)
+            if (_hasAllResult)
             {
-                return allResult;
+                return _allResult;
             }
             else
             {
                 throw new InvalidOperationException("No match found.");
             }
         }
-
-
     }
    
 }

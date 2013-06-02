@@ -25,19 +25,64 @@
                 return new OperatorInfo("EOC", "Equality Operator Change", "");
             }
         }
-      
 
-        public IOperatorCodeVisitor CreateVisitor()
+        public class EOCVisitor : OperatorCodeVisitor
         {
-            return new EOCVisitor();
 
+            public override void Visit(IMethodCall methodCall)
+            {
+                _log.Info("Visiting IMethodCall: " + methodCall);
+                var defaultEqualsDefinition = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
+                                                                  Host.NameTable.GetNameFor("Equals"),
+                                                                  Host.PlatformType.SystemObject);
+
+
+                var methodDefinition = methodCall.MethodToCall.ResolvedMethod;
+                var containingType = methodCall.ThisArgument.Type.ResolvedType;
+                _log.Info("IMethodCall is of " + methodDefinition);
+                //Check if the type overrides the Equals method
+                if (containingType != Host.PlatformType.SystemString &&
+                        containingType != Host.PlatformType.SystemObject &&
+                        !containingType.IsValueType &&
+                    methodDefinition.Equals(defaultEqualsDefinition) && containingType.IsClass
+                    && containingType.BaseClasses.Any())
+                {
+                    var overridingMethod = TypeHelper.GetMethod(containingType.Members,
+                        Host.NameTable.GetNameFor("Equals"),
+                        Host.PlatformType.SystemObject);
+
+                    if (overridingMethod.IsVirtual)
+                    {
+                        MarkMutationTarget(methodCall);
+                    }
+
+                }
+            }
+            public override void Visit(IEquality operation)
+            {
+                _log.Info("Visiting IEquality: " + operation);
+                var passes = new List<string>();
+                foreach (Tuple<IExpression, string> pair in
+                    Utility.Pairs<IExpression, string>(operation.LeftOperand, "Left", operation.RightOperand, "Right"))
+                {
+                    ITypeDefinition operandType = pair.Item1.Type.ResolvedType;
+                    if (operandType != Host.PlatformType.SystemString &&
+                        operandType != Host.PlatformType.SystemObject &&
+                        !operandType.IsValueType &&
+                        operandType.BaseClasses.Any() && operandType.IsClass
+                        && TypeHelper.GetMethod(operandType.Members,
+                        Host.NameTable.GetNameFor("Equals"), Host.PlatformType.SystemObject) != Dummy.MethodDefinition)
+                    {
+                        passes.Add(pair.Item2);
+                    }
+                }
+                if (passes.Any())
+                {
+                    MarkMutationTarget(operation, passes);
+                }
+            }
         }
-
-        public IOperatorCodeRewriter CreateRewriter()
-        {
-            return new EOCRewriter();
-        }
-
+     
         public class EOCRewriter : OperatorCodeRewriter
         {
 
@@ -76,57 +121,18 @@
             }
         }
 
-     
-        public class EOCVisitor : OperatorCodeVisitor
+        public IOperatorCodeVisitor CreateVisitor()
         {
+            return new EOCVisitor();
 
-            public override void Visit(IMethodCall methodCall)
-            {
-                _log.Info("Visiting IMethodCall: " + methodCall);
-                var defaultEqualsDefinition = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
-                                                                  Host.NameTable.GetNameFor("Equals"),
-                                                                  Host.PlatformType.SystemObject);
-               
-                
-                var methodDefinition = methodCall.MethodToCall.ResolvedMethod;
-                var containingType = methodCall.ThisArgument.Type.ResolvedType;
-                _log.Info("IMethodCall is of " + methodDefinition);
-                //Check if the type overrides the Equals method
-                if (methodDefinition.Equals(defaultEqualsDefinition) && containingType.IsClass
-                    && containingType.BaseClasses.Any())
-                {
-                    var overridingMethod = TypeHelper.GetMethod(containingType.Members,
-                        Host.NameTable.GetNameFor("Equals"),
-                        Host.PlatformType.SystemObject);
-
-                    if(overridingMethod.IsVirtual)
-                    {
-                        MarkMutationTarget(methodCall);
-                    }
-
-                }
-            }
-            public override void Visit(IEquality operation)
-            {
-                _log.Info("Visiting IEquality: " + operation);
-                var passes = new List<string>();
-                foreach (Tuple<IExpression, string> pair in 
-                    Utility.Pairs<IExpression, string>(operation.LeftOperand, "Left", operation.RightOperand, "Right"))
-                {
-                    ITypeDefinition operandType = pair.Item1.Type.ResolvedType;
-                    if (operandType.BaseClasses.Any() && operandType.IsClass 
-                        && TypeHelper.GetMethod(operandType.Members, 
-                        Host.NameTable.GetNameFor("Equals"), Host.PlatformType.SystemObject) != Dummy.MethodDefinition)
-                    {
-                        passes.Add(pair.Item2);
-                    }
-                }
-                if(passes.Any())
-                {
-                    MarkMutationTarget(operation, passes);
-                }
-            }
         }
+
+        public IOperatorCodeRewriter CreateRewriter()
+        {
+            return new EOCRewriter();
+        }
+
+      
 
        
     }

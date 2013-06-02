@@ -23,7 +23,6 @@
     public static class Utility
     {
 
-
         public static string RemoveInvalidPathCharacters(this string str)
         {
             return Path.GetInvalidPathChars().Aggregate(str, (current, ch) => current.Replace(ch, '_'));

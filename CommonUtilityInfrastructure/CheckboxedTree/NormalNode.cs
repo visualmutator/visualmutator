@@ -1,5 +1,7 @@
 namespace CommonUtilityInfrastructure.CheckboxedTree
 {
+    using System;
+    using System.Collections.Specialized;
     using System.Linq;
     using WpfUtils;
 
@@ -42,7 +44,27 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
         {
        
             if (hasChildren)
+            {
                 _children = new NotifyingCollection<NormalNode>();
+                _children.CollectionChanged += (sender, args) =>
+                    {
+                        if (args.Action == NotifyCollectionChangedAction.Add)
+                        {
+                            if (args.NewItems.Cast<NormalNode>().Any(n => ReferenceEquals(this, n)))
+                            {
+                                throw new InvalidOperationException("Cannot add self as child.");
+                            }
+                            if (args.NewItems.Cast<NormalNode>().Any(n => n.Parent == null))
+                            {
+                                throw new InvalidOperationException("Parent is not set on one of the items.");
+                            }
+                            if (args.NewItems.Cast<NormalNode>().Any(n => !ReferenceEquals(n.Parent, this)))
+                            {
+                                throw new InvalidOperationException("One of the children has invalid parent.");
+                            }
+                        }
+                    };
+            }
 
         }
 
@@ -57,6 +79,18 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
             }
             set
             {
+                if (value != null)
+                {
+                    if (ReferenceEquals(this, value))
+                    {
+                        throw new InvalidOperationException("Cannot set self as parent.");
+                    }
+                    if (value.Children != null &&
+                        !value.Children.All(child => child.Parent == null || ReferenceEquals(value, child.Parent)))
+                    {
+                        throw new InvalidOperationException("One of the children has invalid parent.");
+                    }
+                }
                 _parent = value;
             }
         }
@@ -65,6 +99,7 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
         {
             get
             {
+             
                 return _children;
             }
         }

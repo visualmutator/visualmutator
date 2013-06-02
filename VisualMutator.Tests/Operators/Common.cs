@@ -237,7 +237,8 @@
             foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Select(x => x.Item2).Flatten())
             {
                 var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
-                var mutant = new Mutant("0", exec, mutationTarget, operatorWithTargets.CommonTargets);
+                var group = new MutantGroup("", exec);
+                var mutant = new Mutant("0", group, mutationTarget, operatorWithTargets.CommonTargets);
 
                 var assembliesProvider = container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
                 mutants.Add(new MutMod ( mutant, assembliesProvider ));

@@ -8,7 +8,7 @@ namespace VisualMutator.Model.Mutations.Operators
         {
             get
             {
-                return new OperatorInfo("PRE", "PreOperator", "");
+                return new OperatorInfo("I", "Identity operator", "Operator that does not create any changes.");
             }
         }
       
