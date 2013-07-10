@@ -3,13 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using CommonUtilityInfrastructure;
+    using log4net;
 
     public class VisualCodeVisitorBack : VisualCodeVisitor
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly ICollection<MutationTarget> _mutationTargets;
         private readonly List<MutationTarget> _sharedTargets;
-        private readonly List<Tuple<object,string>> _targetAstObjects;
+        private readonly List<Tuple<object, MutationTarget>> _targetAstObjects;
         private readonly List<object> _sharedAstObjects;
 
         public List<object> SharedAstObjects
@@ -17,7 +20,7 @@
             get { return _sharedAstObjects; }
         }
 
-        public List<Tuple<object, string>> TargetAstObjects
+        public List<Tuple<object, MutationTarget>> TargetAstObjects
         {
             get { return _targetAstObjects; }
         }
@@ -27,7 +30,7 @@
         {
             _mutationTargets = mutationTargets;
             _sharedTargets = sharedTargets;
-            _targetAstObjects = new List<Tuple<object, string>>();
+            _targetAstObjects = new List<Tuple<object, MutationTarget>>();
             _sharedAstObjects = new List<object>();
         }
 
@@ -35,11 +38,12 @@
         protected override bool Process(object obj)
         {
             base.Process(obj);
-
+            
             var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == TreeObjectsCounter);
             if (target != null)
             {
-                _targetAstObjects.Add(Tuple.Create(obj, target.CallTypeName));
+                _log.Warn("Creating pair: " + TreeObjectsCounter +" "+ Formatter.Format(obj) + " <===> " + target);
+                _targetAstObjects.Add(Tuple.Create(obj, target));
             }
             if (_sharedTargets.Any(t => t.CounterValue == TreeObjectsCounter))
             {

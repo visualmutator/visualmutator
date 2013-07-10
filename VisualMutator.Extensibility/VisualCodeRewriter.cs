@@ -17,7 +17,7 @@
         /// <summary>
         /// Collection of objects to be processed. Contains only objects that were not processed yet.
         /// </summary>
-        private List<Tuple<object, string/*Type Name*/>> _capturedASTObjects;
+        private List<Tuple<object, MutationTarget>> _capturedASTObjects;
 
         /// <summary>
         /// 
@@ -34,7 +34,7 @@
         }
 
         public VisualCodeRewriter(IMetadataHost host, 
-                                List<Tuple<object, string>> capturedAstObjects, 
+                                List<Tuple<object, MutationTarget>> capturedAstObjects, 
                                 List<object> sharedAstObjects, 
                                 IList<TypeIdentifier> allowedTypes, 
                                 IOperatorCodeRewriter rewriter)
@@ -51,15 +51,17 @@
         /// <summary>
         /// Filters elements so that every one is processed only once. 
         /// This is required to avoid rewriting some object multiple times 
-        /// by Rewrite methods taking classes from one hierarchy as parameters.
+        /// by Rewrite methods taking multiple classes from one hierarchy as parameters.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns>True if allowed to rewrite the current object</returns>
         protected override bool Process<T>(T obj)
         {
+
+
             string typeName = typeof (T).Name;
-            var newList = _capturedASTObjects.Where(t => t.Item1 != obj || t.Item2 != typeName).ToList();
+            var newList = _capturedASTObjects.Where(t => t.Item1 != obj || t.Item2.CallTypeName != typeName).ToList();
             if (newList.Count != _capturedASTObjects.Count)
             {
                 _capturedASTObjects = newList;

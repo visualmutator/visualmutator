@@ -694,7 +694,13 @@
         }
 
         public override IModuleReference Rewrite(IModuleReference moduleReference)
-        {if(Process(moduleReference)){var moduleReferenceNew = rewriter.Rewrite(moduleReference); return  (moduleReferenceNew is IModuleReference) ? base.Rewrite(moduleReferenceNew as IModuleReference) :base.Rewrite(moduleReferenceNew);}
+        {
+            if(Process(moduleReference))
+            {
+                var moduleReferenceNew = rewriter.Rewrite(moduleReference); 
+                return  (moduleReferenceNew is IModuleReference) ? 
+                    base.Rewrite(moduleReferenceNew as IModuleReference) :base.Rewrite(moduleReferenceNew);
+            }
             return base.Rewrite(moduleReference);
         }
 

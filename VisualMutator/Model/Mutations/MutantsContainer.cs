@@ -220,7 +220,7 @@
             {
                 if (!DebugConfig)
                 {
-                    throw new MutationException("CreateVisitor failed on operator: {0}.".Formatted(mutOperator.Info.Name), e);
+                    throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutOperator.Info.Name), e);
                 }
                 else
                 {
@@ -235,7 +235,7 @@
         {
             try
             {
-                _log.Info("Execute mutation of " + mutant.MutationTarget + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
+                _log.Info("Execute mutation of " + mutant.MutationTarget+ " contained in " +mutant.MutationTarget.Method + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
                 var copiedModules = sourceModules.Select(_assembliesManager.Copy).Cast<IModule>().ToList();
                 var mutatedModules = new List<IModule>();
                 foreach (var module in copiedModules)
@@ -260,7 +260,6 @@
 
                     operatorCodeRewriter.Initialize();
 
-                    
                     IModule rewrittenModule = rewriter.Rewrite(module);
                     mutatedModules.Add(rewrittenModule);
                 }

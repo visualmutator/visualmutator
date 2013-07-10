@@ -44,7 +44,7 @@
                 && TypeHelper.ParameterListsAreEquivalent(p.Setter.Parameters, resolvedMethod.Parameters));
             if (result == null)
             {
-                accessor = default(IMethodDefinition);
+                accessor = null;
                 return false;
             }
             else
@@ -61,13 +61,19 @@
             public override void Visit(IMethodCall methodCall)
             {
                 _log.Info("Visiting IMethodCall: " + methodCall);
-
+              /*  TypeHelper.GetDefiningUnitReference(methodCall.MethodToCall.ContainingType.ResolvedType);
+                Host.CoreAssemblySymbolicIdentity
+                var namedTypeReference = methodCall.MethodToCall.ContainingType.ResolvedType as INamedTypeReference;
+                if (namedTypeReference != null)
+                {
+                    namedTypeReference.
+                }*/
                 if(IsPropertyModifier(methodCall.MethodToCall.ResolvedMethod))
                 {
                     IMethodReference accessor;
                     if(TryGetCompatibileModifier(methodCall.MethodToCall.ResolvedMethod, out accessor))
                     {
-                        MarkMutationTarget(methodCall, new MutationVariant(accessor.Name.Value, accessor));
+                        MarkMutationTarget(methodCall, accessor.Name.Value);//w MutationVariant(accessor.Name.Value, accessor));
                     }
 
                 }
@@ -85,10 +91,11 @@
             public override IExpression Rewrite(IMethodCall methodCall)
             {
                 _log.Info("Rewrite IMethodCall: " + Parent.Formatter.Format(methodCall));
-               // var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
-               //     NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
+                var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
+                    NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
                 var newCall = new MethodCall(methodCall);
-                newCall.MethodToCall = (IMethodReference) MutationTarget.StoredObjects.Values.Single();
+                newCall.MethodToCall = methodDefinition;//
+             //   (IMethodReference)MutationTarget.StoredObjects.Values.Single();
                 _log.Info("Returning MethodCall to: " + Parent.Formatter.Format(methodCall));
                 return newCall;
             }

@@ -3,13 +3,15 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Reflection;
     using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using System;
+    using log4net;
 
     public class VisualCodeVisitor : VisualCodeVisitorBase
     {
-
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         protected int TreeObjectsCounter { get; set; }
         private object _currentObj;
         protected readonly IDictionary<object, int> AllAstIndices;
@@ -36,6 +38,7 @@
 
         protected override bool Process(object obj)
         {
+            
             TreeObjectsCounter++;
             _currentObj = obj;
             if (!AllAstIndices.ContainsKey(obj))
@@ -43,7 +46,7 @@
                 AllAstIndices.Add(obj, TreeObjectsCounter);
                 AllAstObjects.Add(TreeObjectsCounter, obj);
             }
-
+            this.visitor.VisitAny(obj);
             return true;
         }
 
@@ -53,11 +56,12 @@
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
-
+            _log.Warn("Process: " + TreeObjectsCounter + " - " + Formatter.Format(obj));
             var targets = new List<MutationTarget>();
             foreach (var mutationVariant in variants)
             {
-                var mutationTarget = new MutationTarget(obj.GetType().Name, 
+                
+                var mutationTarget = new MutationTarget(mutationVariant.Signature, 
                     TreeObjectsCounter,  typeof(T).Name, mutationVariant);
 
                 if (_currentMethod != null && _currentMethod.ContainingTypeDefinition is INamedTypeDefinition)
@@ -71,6 +75,8 @@
             string groupname = _formatter.Format(obj);
             _mutationTargets.Add(Tuple.Create(groupname, targets));
         }
+
+
         public virtual void PostProcess()
         {
             foreach (var mutationTarget in _mutationTargets.Select(t => t.Item2).Flatten())

@@ -984,6 +984,7 @@ namespace VisualMutator.Extensibility
             set;
         }
         void Initialize();
-      
+
+        void VisitAny(object o);
     }
 }

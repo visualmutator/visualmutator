@@ -71,13 +71,14 @@
         {
             public override void Visit(IMethodCall methodCall)
             {
-                _log.Info("Visiting IMethodCall: " + methodCall);
+                
 
                 if(IsPropertyAccessor(methodCall.MethodToCall.ResolvedMethod))
                 {
                     IMethodDefinition accessor;
                     if(TryGetCompatibileAccessor(methodCall.MethodToCall.ResolvedMethod, out accessor))
                     {
+                        _log.Info("Marking IMethodCall: " + methodCall.MethodToCall.ResolvedMethod + " - " + methodCall.MethodToCall.ResolvedMethod.GetType());
                         MarkMutationTarget(methodCall, accessor.Name.Value.InList());
                     }
 
@@ -95,11 +96,19 @@
 
             public override IExpression Rewrite(IMethodCall methodCall)
             {
-                _log.Info("Rewrite IMethodCall: " + methodCall);
-                var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
-                    NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
+                _log.Info("Rewrite IMethodCall: " + methodCall.MethodToCall.ResolvedMethod + methodCall.MethodToCall.ResolvedMethod.GetType());
+
+                IMethodDefinition accessor;
+                if (!TryGetCompatibileAccessor(methodCall.MethodToCall.ResolvedMethod, out accessor))
+                {
+                    throw new InvalidOperationException("The same accessor was not found.");
+                }
+                
+
+             //   var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
+             //       NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
                 var newCall = new MethodCall(methodCall);
-                newCall.MethodToCall = methodDefinition;
+                newCall.MethodToCall = accessor;
                 return newCall;
             }
            

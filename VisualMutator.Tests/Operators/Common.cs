@@ -27,6 +27,14 @@
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
                                         out AssembliesProvider original, out CodeDifferenceCreator diff)
         {
+            RunMutationsFromFile(CreateModule(code), oper, out mutants, out original, out diff);
+
+
+
+        }
+        public static void RunMutationsFromFile(string filePath, IMutationOperator oper, out List<Mutant> mutants,
+                                       out AssembliesProvider original, out CodeDifferenceCreator diff)
+        {
             _log.Info("Common.RunMutations configuring for " + oper + "...");
 
             var cci = new CommonCompilerAssemblies();
@@ -36,26 +44,23 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(CreateModule(code));
+            cci.AppendFromFile(filePath);
 
             original = new AssembliesProvider(cci.Modules);
 
-            cache.Initialize(original, new List<TypeIdentifier>());
+            cache.Initialize(original, new List<TypeIdentifier>(), true);
             diff = new CodeDifferenceCreator(cache, visualizer);
 
-            Console.WriteLine("ORIGINAL:");
-            string listing = diff.GetListing(CodeLanguage.CSharp, original);
-            Console.WriteLine(listing);
+           
 
             container.DebugConfig = true;
             var mutmods = CreateMutants(oper, container, cci, cache);
             mutants = mutmods.Select(m => m.Mutant).ToList();
 
-            
 
-            
+
+
         }
-
 
         public static  void DebugTraverse(string code)
         {
@@ -190,7 +195,8 @@
             var executedOperators = container.GenerateMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());
 
-            return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants).Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
+            return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants)
+                .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
 
             /*
             MutantsContainer.OperatorWithTargets operatorWithTargets = container.CreateVisitor(operatorr,

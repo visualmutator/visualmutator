@@ -46,6 +46,11 @@
           
         }
 
+        public virtual void VisitAny(object o)
+        {
+            
+        }
+
 
         public VisualCodeVisitor Parent
         {

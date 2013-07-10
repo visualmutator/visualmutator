@@ -51,5 +51,10 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             DisplayedText = "Mutation group: {0} - Mutants: {1}"
                     .Formatted(Name, Children.Count);
         }
+        public override string ToString()
+        {
+            return "Mutation group: {0} - Mutants: {1}"
+                    .Formatted(Name, Children.Count);
+        }
     }
 }
