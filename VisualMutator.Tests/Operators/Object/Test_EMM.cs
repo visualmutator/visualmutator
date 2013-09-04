@@ -92,18 +92,17 @@
         [SetUp]
         public void Setup()
         {
-           
-            
             BasicConfigurator.Configure(
-               /* new FileAppender(){Writer = File.CreateText(@"vmlog.txt"), 
-                    AppendToFile = false, Threshold = Level.Warn,
+                /*new FileAppender(){Writer = File.CreateText(@"vmlog.txt"), 
+                   AppendToFile = false, Threshold = Level.Warn,
+               Layout = new PatternLayout("%-5level - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
+                       }*/
+            new ConsoleAppender
+            {
                 Layout = new PatternLayout("%-5level - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
-                        }*/
-                new ConsoleAppender
-                    {
-                        Layout = new PatternLayout("%-5level - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
-                        Threshold = Level.Warn
-                    });
+                Threshold = Level.Warn
+            });
+         
         }
 
         #endregion
@@ -113,6 +112,7 @@
         public void Tee()
         {
 
+        
             var cci = new CommonCompilerAssemblies();
             var utils = new OperatorUtils(cci);
 
@@ -155,12 +155,12 @@
             var traverser2 = new VisualCodeTraverser(new List<TypeIdentifier>(), visitorBack);
             traverser2.Traverse(copiedModules.Assemblies.Single());
             visitorBack.PostProcess();
-
+            /*
             foreach (var pair in visitorBack.TargetAstObjects)
             {
                 Assert.IsTrue(oper.visitor.objects.Any(o => int.Parse(o.Item2) == pair.Item2.CounterValue && o.Item1 == pair.Item1));
             }
-
+            */
             /*
           var operatorCodeRewriter = oper.CreateRewriter();
           foreach (var mutationTarget in mutargets)

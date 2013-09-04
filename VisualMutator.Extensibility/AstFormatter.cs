@@ -22,11 +22,14 @@
             }
             private string Format(object obj)
             {
-                return _astFormatter.Format(obj);
+                string ret = _astFormatter.Format(obj);
+                return string.IsNullOrWhiteSpace(ret) ? obj.GetType().Name : ret;
+
             }
             private string Format<T>(IEnumerable<T> enumerable)
             {
-                return _astFormatter.Format(enumerable);
+                string ret = _astFormatter.Format(enumerable);
+                return string.IsNullOrWhiteSpace(ret) ? enumerable.GetType().Name : ret;
             }
             public string FormattedValue
             {
@@ -102,41 +105,52 @@
             }
            
             b.Append(")");
-            return b.ToString();
+            string ret = b.ToString();
+            return string.IsNullOrWhiteSpace(ret) ? enumerable.GetType().Name : ret;
+            
         }
 
         public string Format(object obj)
         {
+            string ret;
             if (obj == null)
             {
-                return null;
+                return "null";
             }
             var reference = obj as IReference;
             if (reference != null)
             {
                 reference.Dispatch(_visitor);
-                return _visitor.FormattedValue;
+                ret = _visitor.FormattedValue;
+                return Return(ret, obj);
             }
             var expression = obj as IExpression;
             if (expression != null)
             {
                 expression.Dispatch(_visitor);
-                
+                ret = _visitor.FormattedValue;
+                return Return(ret, obj);
             }
             var statement = obj as IStatement;
             if (statement != null)
             {
                 statement.Dispatch(_visitor);
-                return _visitor.FormattedValue;
+                ret = _visitor.FormattedValue;
+                return Return(ret, obj);
             }
+            
             string value = _visitor.FormattedValue;
+            ret = value;
             if (value.NullOrEmpty())
             {
-                return "["+obj.GetType().Name+"]";
+                ret = "[" + obj.GetType().Name + "]";
             }
-            return value;
+            return Return(ret, obj);
         }
 
-     
+        private string Return(string ret, object obj)
+        {
+            return string.IsNullOrWhiteSpace(ret) ? obj.GetType().Name : ret;
+        }
     }
 }

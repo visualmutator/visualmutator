@@ -56,7 +56,7 @@
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
-            _log.Warn("Process: " + TreeObjectsCounter + " - " + Formatter.Format(obj));
+            _log.Warn("MarkMutationTarget: " + TreeObjectsCounter + " - " + Formatter.Format(obj)+" : " + obj.GetHashCode());
             var targets = new List<MutationTarget>();
             foreach (var mutationVariant in variants)
             {

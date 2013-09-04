@@ -38,7 +38,7 @@
         protected override bool Process(object obj)
         {
             base.Process(obj);
-            
+            _log.Warn("Process back: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " : " + obj.GetHashCode());
             var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == TreeObjectsCounter);
             if (target != null)
             {
