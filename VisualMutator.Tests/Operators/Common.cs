@@ -62,7 +62,12 @@
 
         }
 
-        public static  void DebugTraverse(string code)
+        public static void DebugTraverse(string code)
+        {
+            DebugTraverseFile(CreateModule(code));
+        }
+
+        public static  void DebugTraverseFile(string filePath)
         {
         
 
@@ -73,7 +78,7 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(CreateModule(code));
+            cci.AppendFromFile(filePath);
 
             var original = new AssembliesProvider(cci.Modules);
 

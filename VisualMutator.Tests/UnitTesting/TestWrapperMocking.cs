@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reactive.Linq;
     using Model.Tests.Services;
     using Moq;
     using NUnit.Core;
@@ -55,15 +56,15 @@
             return m.Object;
         }
 
-        public static Mock<INUnitWrapper> MockNUnitWrapperForLoad(out List<ITest> testClasses)
+      /*  public static Mock<INUnitWrapper> MockNUnitWrapperForLoad(out List<ITest> testClasses)
         {
             var wrapperMock = new Mock<INUnitWrapper>();
 
             var list = new List<ITest>();
-            wrapperMock.Setup(_ => _.TestLoaded).Returns(list.ToObservable());
+            wrapperMock.Setup(_ => _.TestLoaded).Returns(list.ToObservable<ITest>());
             wrapperMock.Setup(_ => _.TestLoadFailed).Returns(new List<Exception>().ToObservable());
             testClasses = list;
             return wrapperMock;
-        }
+        }*/
     }
 }

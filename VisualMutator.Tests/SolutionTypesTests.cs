@@ -8,7 +8,7 @@
     using CommonUtilityInfrastructure.Paths;
     using Model;
     using Model.Mutations.Types;
-    using Mono.Cecil;
+  
     using Moq;
     using NUnit.Framework;
     using Util;
@@ -19,7 +19,7 @@
     [TestFixture]
     public class SolutionTypesTests
     {
-        private static List<TypeDefinition> CreateTypeDefinitions()
+     /*   private static List<TypeDefinition> CreateTypeDefinitions()
         {
             var a = TypeAttributes.Public;
             var list = new List<TypeDefinition>
@@ -114,6 +114,6 @@
             two.Children.Count.ShouldEqual(3);
             NormalNode merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
             merged.Children.Count.ShouldEqual(2);
-        }
+        }*/
     }
 }

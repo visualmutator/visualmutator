@@ -15,7 +15,7 @@
         public int LevelCount { get; set; }
         public DebugCodeTraverser(DebugOperatorCodeVisitor visitor)
         { 
-       
+      
             _visitor = visitor;
             _visitor.Traverser = this;
             PreorderVisitor = visitor;

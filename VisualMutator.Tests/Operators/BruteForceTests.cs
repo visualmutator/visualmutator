@@ -75,5 +75,12 @@ namespace Ns
             var m = Common.CreateModules(code);
                 Assert.Pass();
         }
+        [Test]
+        public void DebugTraverse()
+        {
+            Common.DebugTraverseFile(@"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll");
+            //var m = Common.CreateModules(code);
+           //     Assert.Pass();
+        }
     }
 }

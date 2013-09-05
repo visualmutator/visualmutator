@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using Mono.Cecil;
+  
 
     public static class CecilUtils
-    {
+    {/*
         public static MethodDefinition CreateMethodDefinition(string name, TypeDefinition type)
         {
             var s = new TypeReference("System", "Void", null, null);
@@ -36,6 +36,6 @@
         public static TypeDefinition CreateTypeDefinition(string nameSpace, string name)
         {
             return new TypeDefinition(nameSpace, name, TypeAttributes.Public);
-        }
+        }*/
     }
 }
