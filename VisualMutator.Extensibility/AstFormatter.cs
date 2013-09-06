@@ -67,16 +67,16 @@
                 }
                 else
                 {
-                    _formattedValue = "<anonymous>";
+                    _formattedValue = "{" + type.GetType().Name + "}";
                 }
             }
             public override void Visit(IBinaryOperation binary)
             {
-                _formattedValue = Format(binary.LeftOperand) + " # " + Format(binary.RightOperand);
+                _formattedValue = Format(binary.LeftOperand) + " ~#~ " + Format(binary.RightOperand);
             }
             public override void Visit(IBoundExpression expression)
             {
-                _formattedValue = expression.Definition.GetType().Name;
+                _formattedValue = "{" + expression.Definition.GetType().Name + "}";
             }
 
         }

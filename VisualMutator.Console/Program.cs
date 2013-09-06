@@ -15,11 +15,14 @@ using log4net.Layout;
 
 namespace VisualMutator.Console
 {
+    using System.Text;
     using Extensibility;
     using Model;
     using Model.Decompilation;
     using Model.Mutations;
     using Model.Mutations.Operators;
+    using Console = System.Console;
+
     public class TestOperator2 : IMutationOperator
     {
         public class OperatorCodeVisitor2 : OperatorCodeVisitor
@@ -84,8 +87,46 @@ namespace VisualMutator.Console
     class Program
     {
         static string _assemblyPath = @"D:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
-     
-        static void Main(string[] args)
+        private static String file =
+    @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
+
+        private static String file2 =
+          @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\MiscUtil\MiscUtil\bin\Debug\MiscUtil.dll";
+        
+        private static void Main(string[] args)
+        {
+
+            var cci = new CommonCompilerAssemblies();
+
+            cci.AppendFromFile(file);
+            cci.AppendFromFile(file2);
+            var codeVisitor = new CodeVisitor();
+            var visitor = new DebugOperatorCodeVisitor();
+            var traverser = new DebugCodeTraverser(visitor);
+            //
+            var codeTrav = new CodeTraverser();
+            codeTrav.PreorderVisitor = visitor;
+            traverser.Traverse(cci.Modules);
+
+            
+            Console.WriteLine("ORIGINAL ObjectStructure:");
+            string listing0 = visitor.ToString();
+             //Console.WriteLine(listing0);
+            File.WriteAllText("module11.txt", listing0, new UTF8Encoding());
+            
+            var cci2 = new CommonCompilerAssemblies();
+            cci2.AppendFromFile(file);
+            cci2.AppendFromFile(file2);
+
+            var visitor2 = new DebugOperatorCodeVisitor();
+            var traverser2 = new DebugCodeTraverser(visitor2);
+
+            // traverser2.Traverse(cci.Copy(cci.Modules.Single()));
+            traverser2.Traverse(cci2.Modules);
+            File.WriteAllText("module22.txt", visitor2.ToString(), new UTF8Encoding());
+        }
+
+        static void Main2(string[] args)
         {
 
 

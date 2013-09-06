@@ -236,7 +236,7 @@
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget+ " contained in " +mutant.MutationTarget.Method + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
-                var copiedModules = sourceModules.Select(_assembliesManager.Copy).Cast<IModule>().ToList();
+                List<IModule> copiedModules = sourceModules.Select(module => _assembliesManager.DecompileCopy(module)).Cast<IModule>().ToList();
                 var mutatedModules = new List<IModule>();
                 foreach (var module in copiedModules)
                 {

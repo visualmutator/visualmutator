@@ -6,18 +6,23 @@
     public class DebugCodeTraverser : CodeTraverser
     {
         Stack<object> objectsInTree = new Stack<object>();
-        private readonly DebugOperatorCodeVisitor _visitor;
+  
         public object CurrentObject
         {
             get;
             set;
         }
         public int LevelCount { get; set; }
-        public DebugCodeTraverser(DebugOperatorCodeVisitor visitor)
+        public DebugCodeTraverser(CodeVisitor visitor)
         { 
-      
-            _visitor = visitor;
-            _visitor.Traverser = this;
+  
+            var dVisitor = visitor as DebugOperatorCodeVisitor;
+            if (dVisitor != null)
+            {
+                dVisitor.Traverser = this;
+            }
+
+            
             PreorderVisitor = visitor;
         }
 
@@ -39,7 +44,7 @@
             }
             LevelCount--;
         }
-        
+      
         public override void TraverseChildren(IWin32Resource win32Resource)
 { MethodEnter(win32Resource);
             base.TraverseChildren(win32Resource);
@@ -859,5 +864,21 @@
 { MethodEnter(addition);
             base.TraverseChildren(addition);
      MethodExit();   }
+
+        public override void Traverse(IMethodBody methodBody)
+        {
+            MethodEnter(methodBody);
+            base.Traverse(methodBody);
+            MethodExit();
+        }
+
+        public override void TraverseInterfaceImplementationAttributes(INamespaceTypeDefinition namespaceTypeDefinition)
+        {
+            MethodEnter(namespaceTypeDefinition);
+            base.TraverseInterfaceImplementationAttributes(namespaceTypeDefinition);
+            MethodExit();
+        }
     }
+
+     
 }

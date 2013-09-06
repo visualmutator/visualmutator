@@ -106,8 +106,8 @@
         }
 
         #endregion
-        String _assemblyPath = @"D:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
-     
+        String _assemblyPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
+        
         [Test]
         public void Tee()
         {
@@ -215,7 +215,7 @@
             CodeDifferenceCreator diff;
             Common.RunMutationsFromFile(_assemblyPath, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
 
-            foreach (Mutant mutant in mutants)
+           /* foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                    original);
@@ -237,7 +237,7 @@
 
                 // codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
-
+            */
             mutants.Count.ShouldEqual(1);
         }
 

@@ -3,9 +3,8 @@ namespace VisualMutator.Extensibility
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
+    using System.Text;
     using Microsoft.Cci;
-    using Microsoft.Cci.MutableCodeModel;
 
     public class DebugOperatorCodeVisitor : CodeVisitor, IOperatorCodeVisitor
     {
@@ -891,14 +890,26 @@ namespace VisualMutator.Extensibility
             allElements.Add(new InvokInfo(Traverser, "IWin32Resource", win32Resource));
         }
 
+      
+
         public VisualCodeVisitor Parent { get; set; }
         public MetadataReaderHost Host { get; set; }
         public IOperatorUtils OperatorUtils { get; set; }
 
         public override string ToString()
         {
-            return AllElements.Select(i => i.ToString())
-                .Aggregate((s,s2)=>s+Environment.NewLine+s2);
+            StringBuilder b = new StringBuilder();
+            int c = 0;
+            foreach (var element in AllElements)
+            {//c + "/" + AllElements.Count + 
+                string text = element.ToString();
+                b.AppendLine(text);
+              //  Console.WriteLine(text);
+                c++;
+            }
+            return b.ToString();
+            //return AllElements.Select((i, c) => c+"/"+AllElements.Count + i.ToString())
+            //  .Aggregate((s,s2)=>s+Environment.NewLine+s2);
         }
         public void Initialize()
         {
@@ -908,100 +919,6 @@ namespace VisualMutator.Extensibility
         public void VisitAny(object o)
         {
             
-        }
-
-
-        public class InvokInfo
-        {
-            private readonly int _levelCount;
-            private readonly object _parentObject;
-            private readonly string _methodType;
-            private readonly object _obj;
-
-            public InvokInfo(DebugCodeTraverser traverser, string methodType, object obj)
-            {
-                _levelCount = traverser.LevelCount;
-                _parentObject = traverser.CurrentObject;
-                _methodType = methodType;
-                _obj = obj;
-            }
-
-            public object Obj
-            {
-                get { return _obj; }
-            }
-
-            public string MethodType
-            {
-                get { return _methodType; }
-            }
-
-            public int LevelCount
-            {
-                get { return _levelCount; }
-            }
-            public override string ToString()
-            {
-                string indent = new string(' ', LevelCount*3);
-                string methodParam = MethodType;
-
-
-                string prefix = "";
-                
-                if (_parentObject != null)
-                {
-                    var prop = _parentObject.GetType().GetProperties().FirstOrDefault(p =>
-                        {
-                            try
-                            {
-                                return _obj.Equals(p.GetValue(_parentObject, null));
-                            }
-                            catch (TargetInvocationException e)
-                            {
-                                prefix = "exc on: "+p.Name;
-                                return false;
-                            }
-                        });
-                    if (prop != null)
-                    {
-                        prefix = prop.Name;
-                    }
-                }
-                else
-                {
-                    prefix = "parentnull";
-                }
-                string body = ObjToString();
-
-                return indent+prefix + ": ("+methodParam+") - "+body;
-            }
-            public string ObjToString()
-            {
-                
-
-                var boundExpression = _obj as BoundExpression;
-                if(boundExpression != null)
-                {
-                    return "BoundExpression {Instance=" + boundExpression.Instance +
-                           ", Definition=" + boundExpression.Definition +
-                           ", Type=" + boundExpression.Type + "}";
-                }
-                else
-                {
-                    string objToString = _obj.ToString();
-                    if (objToString != _obj.GetType().FullName)
-                    {
-                        return objToString;
-                    }
-                    else
-                    {
-                        return _obj.GetType().Name;
-                    }
-
-                }
-				
-                
-            }
         }
     }
 }

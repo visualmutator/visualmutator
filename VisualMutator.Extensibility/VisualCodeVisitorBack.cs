@@ -38,11 +38,11 @@
         protected override bool Process(object obj)
         {
             base.Process(obj);
-            _log.Warn("Process back: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " : " + obj.GetHashCode());
+            _log.Debug("Process back: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " : " + obj.GetHashCode());
             var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == TreeObjectsCounter);
             if (target != null)
             {
-                _log.Warn("Creating pair: " + TreeObjectsCounter +" "+ Formatter.Format(obj) + " <===> " + target);
+                _log.Debug("Creating pair: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " <===> " + target);
                 _targetAstObjects.Add(Tuple.Create(obj, target));
             }
             if (_sharedTargets.Any(t => t.CounterValue == TreeObjectsCounter))

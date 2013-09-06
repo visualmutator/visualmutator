@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using CommonUtilityInfrastructure.Paths;
     using CSharpSourceEmitter;
     using Decompilation;
     using Decompilation.PeToText;
@@ -28,6 +29,8 @@
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
+        CommonCompilerAssemblies.ModuleInfo FindModuleInfo(IModule module);
+        CommonCompilerAssemblies.ModuleInfo DecompileCopy(IModule module);
     }
     public class Sss : MetadataReaderHost
     {
@@ -87,40 +90,58 @@
           //  SourceEmitterOutputString sourceEmitterOutput = new SourceEmitterOutputString();
              return new VisualSourceEmitter(output, _host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
         }
-        public IModule AppendFromFile(string filePath)
+
+        public ModuleInfo DecompileFile(string filePath)
         {
-            _log.Info("CommonCompilerAssemblies.AppendFromFile:" + filePath);
             IModule module = _host.LoadUnitFrom(filePath) as IModule;
             if (module == null || module == Dummy.Module || module == Dummy.Assembly)
             {
                 throw new AssemblyReadException(filePath + " is not a PE file containing a CLR module or assembly.");
             }
-          
+
             PdbReader /*?*/ pdbReader = null;
             string pdbFile = Path.ChangeExtension(module.Location, "pdb");
             if (File.Exists(pdbFile))
             {
                 Stream pdbStream = File.OpenRead(pdbFile);
-                pdbReader = new PdbReader(pdbStream, _host);  
+                pdbReader = new PdbReader(pdbStream, _host);
             }
             Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
             ISourceLocationProvider sourceLocationProvider = pdbReader;
             ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
-            _moduleInfoList.Add(new ModuleInfo
-                {
-                    Module = decompiledModule,
-                    PdbReader = pdbReader,
-                    LocalScopeProvider = localScopeProvider,
-                    SourceLocationProvider = sourceLocationProvider
-                });
+            return new ModuleInfo
+            {
+                Module = decompiledModule,
+                PdbReader = pdbReader,
+                LocalScopeProvider = localScopeProvider,
+                SourceLocationProvider = sourceLocationProvider,
+                FilePath = filePath
+            };
+        }
+
+        public ModuleInfo DecompileCopy(IModule module)
+        {
+            ModuleInfo info = FindModuleInfo(module);
+            var cci = new CommonCompilerAssemblies();
+            ModuleInfo moduleCopy = cci.DecompileFile(info.FilePath);
+            moduleCopy.SubCci = cci;
+            return moduleCopy;
+        }
+
+        public IModule AppendFromFile(string filePath)
+        {
+            _log.Info("CommonCompilerAssemblies.AppendFromFile:" + filePath);
+            ModuleInfo module = DecompileFile(filePath);
+            
+            _moduleInfoList.Add(module);
          /*   int i = 0;
             while (i++ < 10)
             {
                 var copy = Copy(decompiledModule);
                 WriteToFile(copy, @"D:\PLIKI\" + Path.GetFileName(filePath));
             }
-           */ 
-            return decompiledModule;
+           */
+            return module.Module;
         }
 
 
@@ -164,7 +185,12 @@
             var copier = new CodeDeepCopier(_host, info.SourceLocationProvider);
             return copier.Copy(module);
         }
+        public Module Copy(ModuleInfo module)
+        {
 
+            var copier = new CodeDeepCopier(_host, module.SourceLocationProvider);
+            return copier.Copy(module.Module);
+        }
         public void WriteToFile(IModule module, string filePath)
         {
             _log.Info("CommonCompilerAssemblies.WriteToFile:" + module.Name);
@@ -201,6 +227,7 @@
         public class ModuleInfo
         {
             public IModule Module { get; set; }
+            public string FilePath { get; set; }
 
             [CanBeNull]
             public PdbReader PdbReader { get; set; }
@@ -212,6 +239,8 @@
                 get;
                 set;
             }
+            [CanBeNull]
+            public CommonCompilerAssemblies SubCci { get; set; }
         }
 
         #endregion
