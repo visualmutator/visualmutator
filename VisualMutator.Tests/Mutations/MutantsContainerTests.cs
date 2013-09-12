@@ -38,7 +38,7 @@
             };
             // Act
             var mutationTestingSession = mutantsContainer.PrepareSession(choices);
-            mutantsContainer.GenerateMutantsForOperators(mutationTestingSession);
+            mutantsContainer.InitMutantsForOperators(mutationTestingSession);
             var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
 
             // Assert

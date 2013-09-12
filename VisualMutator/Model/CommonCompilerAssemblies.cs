@@ -128,6 +128,10 @@
             return moduleCopy;
         }
 
+        public void Append(ModuleInfo info)
+        {
+            _moduleInfoList.Add(info);
+        }
         public IModule AppendFromFile(string filePath)
         {
             _log.Info("CommonCompilerAssemblies.AppendFromFile:" + filePath);

@@ -60,7 +60,7 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new DMC_DelegatedMethodChange(), out mutants, out original, out diff);
 

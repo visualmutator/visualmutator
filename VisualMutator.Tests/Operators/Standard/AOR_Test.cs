@@ -50,7 +50,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
@@ -81,7 +81,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 

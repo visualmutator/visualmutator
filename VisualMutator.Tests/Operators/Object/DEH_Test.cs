@@ -63,7 +63,7 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new DEH_MethodDelegatedForEventHandlingChange(), out mutants, out original, out diff);
 

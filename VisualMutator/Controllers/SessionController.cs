@@ -334,8 +334,8 @@
             _svc.Threading.ScheduleAsync(
             () =>
             {
-                var executedOperators = _mutantsContainer.GenerateMutantsForOperators(_currentSession.Choices.SelectedOperators,
-                    _currentSession.SelectedTypes, _currentSession.OriginalAssemblies, counter);
+                var executedOperators = _mutantsContainer.InitMutantsForOperators(_currentSession.Choices.SelectedOperators,
+                    _currentSession.SelectedTypes, new ModulesProvider(_currentSession.OriginalAssemblies.Select(_ => _.AssemblyDefinition).ToList()), counter);
                 _currentSession.MutantsGroupedByOperators = executedOperators;
             },
             () =>
@@ -380,7 +380,7 @@
                 Mutant mutant = _mutantsToTest.Dequeue();
                 mutant.State = MutantResultState.Creating;
                 _mutantsContainer.ExecuteMutation(mutant, 
-                    _currentSession.OriginalAssemblies.Assemblies,
+                    _currentSession.OriginalAssemblies,
                     _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
                 var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
           

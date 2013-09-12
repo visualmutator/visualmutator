@@ -55,7 +55,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
@@ -90,7 +90,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
@@ -133,7 +133,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 

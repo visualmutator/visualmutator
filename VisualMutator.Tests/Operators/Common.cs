@@ -7,6 +7,7 @@
     using System.Reflection;
     using System.Security.Policy;
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
     using Extensibility;
     using Microsoft.Cci;
     using Model;
@@ -25,7 +26,7 @@
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
-                                        out AssembliesProvider original, out CodeDifferenceCreator diff)
+                                        out ModulesProvider original, out CodeDifferenceCreator diff)
         {
             RunMutationsFromFile(CreateModule(code), oper, out mutants, out original, out diff);
 
@@ -33,7 +34,7 @@
 
         }
         public static void RunMutationsFromFile(string filePath, IMutationOperator oper, out List<Mutant> mutants,
-                                       out AssembliesProvider original, out CodeDifferenceCreator diff)
+                                       out ModulesProvider original, out CodeDifferenceCreator diff)
         {
             _log.Info("Common.RunMutations configuring for " + oper + "...");
 
@@ -44,17 +45,17 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(filePath);
+            IModule module = cci.AppendFromFile(filePath);
 
-            original = new AssembliesProvider(cci.Modules);
-
-            cache.Initialize(original, new List<TypeIdentifier>(), true);
+            original = new ModulesProvider(cci.Modules);
+            List<AssemblyNode> assemblyNodes = new AssemblyNode("", module) {AssemblyPath = new FilePathAbsolute(filePath)}.InList();
+            cache.Initialize(assemblyNodes, new List<TypeIdentifier>(), disableCache: true);
             diff = new CodeDifferenceCreator(cache, visualizer);
 
            
 
             container.DebugConfig = true;
-            var mutmods = CreateMutants(oper, container, cci, cache);
+            var mutmods = CreateMutants(oper, container, assemblyNodes, cache);
             mutants = mutmods.Select(m => m.Mutant).ToList();
 
 
@@ -78,11 +79,16 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(filePath);
+            IModule module = cci.AppendFromFile(filePath);
 
-            var original = new AssembliesProvider(cci.Modules);
+            var original = new ModulesProvider(cci.Modules);
 
-            cache.Initialize(original, new List<TypeIdentifier>());
+            List<AssemblyNode> assemblyNodes = new AssemblyNode("", module)
+            {
+                AssemblyPath = new FilePathAbsolute(filePath)
+            }.InList();
+
+            cache.Initialize(assemblyNodes, new List<TypeIdentifier>());
             var diff = new CodeDifferenceCreator(cache, visualizer);
 
             var visitor = new DebugOperatorCodeVisitor();
@@ -107,37 +113,7 @@
 
         }
 
-        public static void RunMutationsReal(string assemblyPath, IMutationOperator oper, out List<MutMod> mutants,
-                                        out AssembliesProvider original, out CodeVisualizer visualizer, 
-                                        out CommonCompilerAssemblies cci)
-        {
-            _log.Info("Common.RunMutations configuring for " + oper + "...");
-
-            cci = new CommonCompilerAssemblies();
-            var utils = new OperatorUtils(cci);
-
-            var container = new MutantsContainer(cci, utils);
-            visualizer = new CodeVisualizer(cci);
-            var cache = new MutantsCache(container);
-
-
-            container.DebugConfig = true;
-            original = new AssembliesProvider(cci.Modules);
-
-            var diff = new CodeDifferenceCreator(cache, visualizer);
-            cache.Initialize(original, new List<TypeIdentifier>());
-
-            Console.WriteLine("ORIGINAL:");
-            string listing = diff.GetListing(CodeLanguage.CSharp, original);
-            //  string listing = visualizer.Visualize(CodeLanguage.CSharp,)
-            Console.WriteLine(listing);
-
-
-            mutants = CreateMutantsExt(assemblyPath, oper, container, cci, visualizer, original);
-       
-
-
-        }
+      
         public static string CreateModule(string code)
         {
             _log.Info("Parsing test code...");
@@ -175,19 +151,22 @@
             return null;
         }
 
-        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container, 
-            CommonCompilerAssemblies cci, MutantsCache cache)
+        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container, List<AssemblyNode> assemblyNodes,  MutantsCache cache)
         {
             
-            _log.Info("Copying assemblies...");
-            AssembliesProvider copiedModules = new AssembliesProvider(cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
-
-
+            _log.Info("Copying modules...");
+           // ModulesProvider copiedModules = new ModulesProvider(cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
+            var ccii = new CommonCompilerAssemblies();
+            foreach (var assemblyNode in assemblyNodes)
+            {
+                ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
+            }
+            ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
             var choices = new MutationSessionChoices()
                 {
                     MutantsCreationOptions = new MutantsCreationOptions()
                         {
-                            MaxNumerOfMutantPerOperator = 100,
+                            MaxNumerOfMutantPerOperator = 50,
                         },
                         Assemblies = new List<AssemblyNode>(),
                         SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>())
@@ -197,7 +176,7 @@
 
    
 
-            var executedOperators = container.GenerateMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
+            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());
 
             return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants)
@@ -214,8 +193,8 @@
                 var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
                 var mutant = new Mutant("0", exec, mutationTarget, operatorWithTargets._sharedTargets);
 
-                var assembliesProvider = container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
-                mutants.Add(new MutMod ( mutant, assembliesProvider ));
+                var ModulesProvider = container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
+                mutants.Add(new MutMod ( mutant, ModulesProvider ));
             
             
 
@@ -227,45 +206,13 @@
         public static List<IModule> CreateModules(string filePath, CommonCompilerAssemblies cci)
         {
             cci.AppendFromFile(filePath);
-            _log.Info("Copying assemblies...");
+            _log.Info("Copying modules...");
             List<IModule> copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
 
 
             return copiedModules;
         }
-        public static List<MutMod> CreateMutantsExt(string filePath, IMutationOperator operatorr, MutantsContainer container, CommonCompilerAssemblies cci, CodeVisualizer visualizer, AssembliesProvider original)
-        {
-            cci.AppendFromFile(filePath);
-            _log.Info("Copying assemblies...");
-            List<IModule> copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
-
-
-            MutantsContainer.OperatorWithTargets operatorWithTargets = container.FindTargets(operatorr,
-                                                                                             copiedModules,
-                                                                                             new List<TypeIdentifier>());
-
-            var mutants = new List<MutMod>();
-            foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Select(x => x.Item2).Flatten())
-            {
-                var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
-                var group = new MutantGroup("", exec);
-                var mutant = new Mutant("0", group, mutationTarget, operatorWithTargets.CommonTargets);
-
-                var assembliesProvider = container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
-                mutants.Add(new MutMod ( mutant, assembliesProvider ));
-
-
-                string code = visualizer.Visualize(CodeLanguage.CSharp, mutant.MutationTarget,
-                                                                                     assembliesProvider);
-                Console.WriteLine(code);
-
-
-                cci.WriteToFile(assembliesProvider.Assemblies.First(), @"D:\PLIKI\mutest.dll");
-            
-            
-            }
-            return mutants;
-        }
+        
 
 
        
@@ -273,12 +220,12 @@
      public class MutMod
      {
          public Mutant Mutant { get; set; }
-         public AssembliesProvider AssembliesProvider { get; set; }
+         public ModulesProvider ModulesProvider { get; set; }
 
-         public MutMod(Mutant mutant, AssembliesProvider assembliesProvider)
+         public MutMod(Mutant mutant, ModulesProvider modulesProvider)
          {
              Mutant = mutant;
-             AssembliesProvider = assembliesProvider;
+             ModulesProvider = modulesProvider;
          }
      }
 

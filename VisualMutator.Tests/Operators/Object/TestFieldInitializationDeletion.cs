@@ -60,7 +60,7 @@ namespace Ns
 
             var oper = new JID_FieldInitializationDeletion();
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, oper, out mutants, out original, out diff);
 

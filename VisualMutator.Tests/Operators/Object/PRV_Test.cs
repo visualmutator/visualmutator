@@ -54,7 +54,7 @@ namespace Ns
 }";
             var oper = new PRV_ReferenceAssignmentChange();
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, oper, out mutants, out original, out diff);
 

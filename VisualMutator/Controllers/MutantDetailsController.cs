@@ -84,7 +84,7 @@
 
             if(mutant != null)
             {
-                CodeWithDifference diff = await GetCodeWithDifference(selectedLanguage, mutant, assemblies);
+                CodeWithDifference diff = await GetCodeWithDifference(selectedLanguage, mutant, new ModulesProvider(assemblies.Select(_=>_.AssemblyDefinition).ToList()));
                 if (diff != null)
                 {
                     _viewModel.PresentCode(diff);
@@ -95,11 +95,11 @@
            
         }
 
-        private async Task<CodeWithDifference> GetCodeWithDifference(CodeLanguage selectedLanguage, Mutant mutant, AssembliesProvider assemblies)
+        private async Task<CodeWithDifference> GetCodeWithDifference(CodeLanguage selectedLanguage, Mutant mutant, ModulesProvider modules)
         {
 
             return _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
-                mutant, assemblies);
+                mutant, modules);
         }
 
         private void LoadTests(Mutant mutant)

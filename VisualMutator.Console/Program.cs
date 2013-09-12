@@ -150,17 +150,17 @@ namespace VisualMutator.Console
             cci.AppendFromFile(_assemblyPath);
 
 
-            var original = new AssembliesProvider(cci.Modules);
+            var original = new ModulesProvider(cci.Modules);
 
-            AssembliesProvider copiedModules = new AssembliesProvider(
+            ModulesProvider copiedModules = new ModulesProvider(
                 cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
 
-            AssembliesProvider copiedModules1 = new AssembliesProvider(
+            ModulesProvider copiedModules1 = new ModulesProvider(
                 cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
 
-            AssembliesProvider copiedModules2 = new AssembliesProvider(
+            ModulesProvider copiedModules2 = new ModulesProvider(
           cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
             var commonTargets = new List<MutationTarget>();

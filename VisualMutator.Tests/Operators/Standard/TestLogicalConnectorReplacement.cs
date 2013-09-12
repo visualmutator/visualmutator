@@ -53,7 +53,7 @@ namespace Ns
        //     new Conditional().;
             Common.DebugTraverse(code);
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
 

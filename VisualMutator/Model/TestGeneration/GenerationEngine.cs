@@ -28,7 +28,7 @@ namespace VisualMutator_generated
 }"; 
 
 
-        public void Process(AssembliesProvider original, Mutant mutant)
+        public void Process(ModulesProvider original, Mutant mutant)
         {
             var tree = SyntaxTree.ParseText(execTemplate);
 

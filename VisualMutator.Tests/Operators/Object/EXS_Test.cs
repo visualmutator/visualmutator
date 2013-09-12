@@ -62,7 +62,7 @@ namespace Ns
 }";
             Common.DebugTraverse(code);
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new EXS_ExceptionSwallowing(), out mutants, out original, out diff);
 

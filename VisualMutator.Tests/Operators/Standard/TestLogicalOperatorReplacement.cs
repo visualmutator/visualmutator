@@ -50,7 +50,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new LOR_LogicalOperatorReplacement(), out mutants, out original, out diff);
 

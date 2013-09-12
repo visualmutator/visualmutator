@@ -5,16 +5,7 @@
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Common.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\DebugOperatorCodeVisitor.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\MutationTarget.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\IOperatorUtils.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\PrintingOperator.cs</string>
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\CommonCompilerAssemblies.cs</string>
@@ -24,9 +15,6 @@
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\InvokInfo.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\DebugCodeTraverser.cs</string>
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\IMutationOperator.cs</string>
@@ -45,6 +33,21 @@
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Mutations\Types\SolutionTypesManager.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Console\Program.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\DebugCodeTraverser.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\DebugOperatorCodeVisitor.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Controllers\SessionController.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\AssembliesProvider.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

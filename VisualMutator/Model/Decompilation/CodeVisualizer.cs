@@ -12,8 +12,8 @@
     {
 
 
-        string Visualize(CodeLanguage language, MutationTarget target, AssembliesProvider assemblies);
-        string Visualize(CodeLanguage language, AssembliesProvider assemblies);
+        string Visualize(CodeLanguage language, MutationTarget target, ModulesProvider modules);
+        string Visualize(CodeLanguage language, ModulesProvider modules);
     }
 
     public class CodeVisualizer : ICodeVisualizer
@@ -29,12 +29,12 @@
             _cci = cci;
         }
 
-        public string Visualize(CodeLanguage language, AssembliesProvider assemblies)
+        public string Visualize(CodeLanguage language, ModulesProvider modules)
         {
             var sb = new StringBuilder();
      
             
-            foreach (var assembly in assemblies.Assemblies)
+            foreach (var assembly in modules.Assemblies)
             {
                 var sourceEmitterOutput = new SourceEmitterOutputString();
                 var sourceEmitter = _cci.GetSourceEmitter(language, assembly, sourceEmitterOutput);
@@ -45,7 +45,7 @@
             return sb.ToString();
         }
 
-        public string Visualize(CodeLanguage language, MutationTarget target, AssembliesProvider assemblies)
+        public string Visualize(CodeLanguage language, MutationTarget target, ModulesProvider modules)
         {
             
            //.// GetSourceEmitter
@@ -54,7 +54,7 @@
             if (target.Method != null)
             {//TODO: handle namespaces
                 _log.Info("Visualize: " + target + " method: " + target.Method);
-                var method = assemblies.Assemblies.SelectMany(a => a.GetAllTypes())
+                var method = modules.Assemblies.SelectMany(a => a.GetAllTypes())
               .Single(t => t.Name.Value == target.Method.TypeName).Methods
               .Single(m => m.ToString() == target.Method.MethodSignature);
 
@@ -74,10 +74,10 @@
 
 
                   var output = Switch.Into<string>().FromTypeOf(mutationElement)
-                      .Case<MutationElementMethod>(elem => _decompiler.DecompileMethod(elem.FindIn(assemblies)))
-                      .Case<MutationElementType>(elem => _decompiler.DecompileType(elem.FindIn(assemblies)))
-                      .Case<MutationElementProperty>(elem => _decompiler.DecompileProperty(elem.FindIn(assemblies)))
-                      .Case<MutationElementField>(elem => _decompiler.DecompileField(elem.FindIn(assemblies)))
+                      .Case<MutationElementMethod>(elem => _decompiler.DecompileMethod(elem.FindIn(modules)))
+                      .Case<MutationElementType>(elem => _decompiler.DecompileType(elem.FindIn(modules)))
+                      .Case<MutationElementProperty>(elem => _decompiler.DecompileProperty(elem.FindIn(modules)))
+                      .Case<MutationElementField>(elem => _decompiler.DecompileField(elem.FindIn(modules)))
                       .GetResult();
 
                   sb.Append(output);

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using Mutations.MutantsTree;
+    using Mutations.Types;
     using StoringMutants;
     using VisualMutator.Extensibility;
 
@@ -27,7 +28,7 @@
 
     //    public IList<IMutationOperator> SelectedOperators { get; set; }
 
-        public AssembliesProvider OriginalAssemblies { get; set; }
+        public IList<AssemblyNode> OriginalAssemblies { get; set; }
 
       
 

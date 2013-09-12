@@ -4,11 +4,12 @@
     using Microsoft.Cci;
     using Mono.Cecil;
 
-    public class AssembliesProvider
+    public class ModulesProvider
     {
-        public AssembliesProvider(IList<IModule> modules)
+        public ModulesProvider(IList<IModule> modules)
         {
             Assemblies = modules;
+       
         }
 
         public IList<IModule> Assemblies
@@ -16,5 +17,7 @@
             get;
             set;
         }
+
+     
     }
 }

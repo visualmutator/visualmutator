@@ -100,7 +100,7 @@
             new ConsoleAppender
             {
                 Layout = new PatternLayout("%-5level - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
-                Threshold = Level.Warn
+                Threshold = Level.Debug
             });
          
         }
@@ -122,8 +122,8 @@
 
             cci.AppendFromFile(_assemblyPath);
 
-            var original = new AssembliesProvider(cci.Modules);
-            AssembliesProvider copiedModules = new AssembliesProvider(
+            var original = new ModulesProvider(cci.Modules);
+            ModulesProvider copiedModules = new ModulesProvider(
                 cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
 
@@ -211,11 +211,11 @@
   
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutationsFromFile(_assemblyPath, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
 
-           /* foreach (Mutant mutant in mutants)
+            foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                    original);
@@ -237,7 +237,7 @@
 
                 // codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
-            */
+            
             mutants.Count.ShouldEqual(1);
         }
 
@@ -263,7 +263,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
@@ -300,7 +300,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
@@ -337,7 +337,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 

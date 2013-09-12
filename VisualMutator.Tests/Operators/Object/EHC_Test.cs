@@ -74,7 +74,7 @@ namespace Ns
 }";
             Common.DebugTraverse(code);
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new EHC_ExceptionHandlingChange(), out mutants, out original, out diff);
 

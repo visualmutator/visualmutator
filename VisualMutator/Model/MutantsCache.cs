@@ -11,7 +11,7 @@
     using CommonUtilityInfrastructure;
 
     using Microsoft.Cci;
-
+    using Mutations.Types;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.MutantsTree;
@@ -19,9 +19,9 @@
 
     public interface IMutantsCache
     {
-        void Initialize(AssembliesProvider originalCode, ICollection<TypeIdentifier> allowedTypes, bool disableCache = false);
+        void Initialize(IList<AssemblyNode> originalCode, ICollection<TypeIdentifier> allowedTypes, bool disableCache = false);
 
-        AssembliesProvider GetMutatedModules(Mutant mutant);
+        ModulesProvider GetMutatedModules(Mutant mutant);
     }
 
     public class MutantsCache : IMutantsCache
@@ -30,7 +30,7 @@
 
         private MemoryCache _cache;
 
-        private AssembliesProvider _originalCode;
+        private IList<AssemblyNode> _originalCode;
 
         private ICollection<TypeIdentifier> _allowedTypes;
 
@@ -54,27 +54,27 @@
             _cache = new MemoryCache("CustomCache", config);
         }
 
-        public void Initialize(AssembliesProvider originalCode, ICollection<TypeIdentifier> allowedTypes, bool disableCache = false)
+        public void Initialize(IList<AssemblyNode> originalCode, ICollection<TypeIdentifier> allowedTypes, bool disableCache = false)
         {
             _originalCode = originalCode;
             _allowedTypes = allowedTypes;
             _disableCache = disableCache;
         }
 
-        public AssembliesProvider GetMutatedModules(Mutant mutant)
+        public ModulesProvider GetMutatedModules(Mutant mutant)
         {
             _log.Info("Request to cache for mutant: "+mutant.Id);
            // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
             
-            AssembliesProvider result;
+            ModulesProvider result;
             if (!_cache.Contains(mutant.Id) || _disableCache)
             {
-                result = _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
+                result = _mutantsContainer.ExecuteMutation(mutant, _originalCode, _allowedTypes.ToList(), ProgressCounter.Inactive());
                 _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
             }
             else
             {
-                result = (AssembliesProvider)_cache.Get(mutant.Id);
+                result = (ModulesProvider)_cache.Get(mutant.Id);
             }
             return result;
             

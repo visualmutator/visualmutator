@@ -20,7 +20,7 @@
     {
 
         CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant,
-            AssembliesProvider currentOriginalAssemblies);
+            ModulesProvider currentOriginalModules);
     }
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
@@ -48,16 +48,16 @@
             };
         }
 
-        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, AssembliesProvider currentOriginalAssemblies)
+        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, ModulesProvider currentOriginalModules)
         {
 
-            AssembliesProvider assemblyDefinitions = _mutantsCache.GetMutatedModules(mutant);
+            ModulesProvider moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {
                 CodePair pair = new CodePair
                 {
-                    OriginalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, currentOriginalAssemblies),
-                    MutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, assemblyDefinitions),
+                    OriginalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, currentOriginalModules),
+                    MutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, moduleDefinitions),
                 };
                 return GetDiff(language, pair.OriginalCode, pair.MutatedCode);
             }
@@ -73,9 +73,9 @@
 
             
         }
-        public string GetListing(CodeLanguage language, AssembliesProvider assemblies)
+        public string GetListing(CodeLanguage language, ModulesProvider modules)
         {
-            return _codeVisualizer.Visualize(language, assemblies);
+            return _codeVisualizer.Visualize(language, modules);
 
         }
         private LineChange NewLineChange(LineChangeType type, 

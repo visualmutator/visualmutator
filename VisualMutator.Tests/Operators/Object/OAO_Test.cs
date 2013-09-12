@@ -57,7 +57,7 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutationsFromFile(_assemblyPath, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
 

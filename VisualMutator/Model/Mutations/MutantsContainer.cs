@@ -14,6 +14,7 @@
     using Operators;
     using OperatorsStandard;
     using StoringMutants;
+    using Types;
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Model.Exceptions;
@@ -31,13 +32,12 @@
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        AssembliesProvider ExecuteMutation( Mutant mutant, IList<IModule> modules, IList<TypeIdentifier> allowedTypes,
-                        ProgressCounter percentCompleted);
+        ModulesProvider ExecuteMutation(Mutant mutant, IList<AssemblyNode> modules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted);
 
         MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies, IList<TypeIdentifier> toList);
 
-        List<ExecutedOperator> GenerateMutantsForOperators(ICollection<IMutationOperator> operators,
-                                                                           ICollection<TypeIdentifier> allowedTypes, AssembliesProvider originalAssemblies, ProgressCounter percentCompleted);
+        List<ExecutedOperator> InitMutantsForOperators(ICollection<IMutationOperator> operators,
+                                                                           ICollection<TypeIdentifier> allowedTypes, ModulesProvider originalModules, ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -69,15 +69,15 @@
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
         {
             _choices = choices;
-            var copiedModules = new StoredAssemblies(choices.Assemblies.Select(a => a.AssemblyDefinition)
-                                                         .Select(_assembliesManager.Copy).Cast<IModule>().ToList());
+         //   var copiedModules = new StoredAssemblies(choices.Assemblies.Select(a => a.AssemblyDefinition)
+         //                                                .Select(_assembliesManager.Copy).Cast<IModule>().ToList());
 
 
             List<TypeIdentifier> copiedTypes = choices.SelectedTypes.Types.Select(t => new TypeIdentifier(t)).ToList();//
      
             return new MutationTestingSession
             {
-                OriginalAssemblies = new AssembliesProvider(copiedModules.Modules),
+                OriginalAssemblies = choices.Assemblies,
     
                 SelectedTypes = copiedTypes,
                 Choices = choices,
@@ -105,8 +105,8 @@
         }
 
 
-        public List<ExecutedOperator> GenerateMutantsForOperators(ICollection<IMutationOperator> operators,
-            ICollection<TypeIdentifier> allowedTypes, AssembliesProvider originalAssemblies, ProgressCounter percentCompleted)
+        public List<ExecutedOperator> InitMutantsForOperators(ICollection<IMutationOperator> operators,
+            ICollection<TypeIdentifier> allowedTypes, ModulesProvider originalModules, ProgressCounter percentCompleted)
         {
             var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
@@ -128,7 +128,7 @@
 
                 sw.Restart();
 
-                OperatorWithTargets operatorResult = FindTargets(oper, originalAssemblies.Assemblies, allowedTypes.ToList());
+                OperatorWithTargets operatorResult = FindTargets(oper, originalModules.Assemblies, allowedTypes.ToList());
 
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
@@ -231,15 +231,19 @@
 
         }
 
-        public AssembliesProvider ExecuteMutation(Mutant mutant, IList<IModule> sourceModules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
+        public ModulesProvider ExecuteMutation(Mutant mutant, IList<AssemblyNode> sourceModules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
         {
             try
             {
-                _log.Info("Execute mutation of " + mutant.MutationTarget+ " contained in " +mutant.MutationTarget.Method + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
-                List<IModule> copiedModules = sourceModules.Select(module => _assembliesManager.DecompileCopy(module)).Cast<IModule>().ToList();
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.Method + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
+                var cci = new CommonCompilerAssemblies();
                 var mutatedModules = new List<IModule>();
-                foreach (var module in copiedModules)
+                foreach (var sourceModule in sourceModules)
                 {
+                    IModule module = cci.AppendFromFile(sourceModule.AssemblyPath.ToString());
+                    //  var copiedModules = sourceModules.Assemblies.Select(module => _assembliesManager.DecompileCopy(module)).ToList();
+                    
+
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitorBack);
@@ -263,7 +267,7 @@
                     IModule rewrittenModule = rewriter.Rewrite(module);
                     mutatedModules.Add(rewrittenModule);
                 }
-                return new AssembliesProvider( mutatedModules);
+                return new ModulesProvider(mutatedModules);
             }
             catch (Exception e)
             {

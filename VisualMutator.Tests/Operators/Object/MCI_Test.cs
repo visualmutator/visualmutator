@@ -55,7 +55,7 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            AssembliesProvider original;
+            ModulesProvider original;
             CodeDifferenceCreator diff;
             Common.RunMutations(code, new MCI_MemberCallFromAnotherInheritedClass(), out mutants, out original, out diff);
 

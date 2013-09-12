@@ -221,7 +221,7 @@
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
-    <Compile Include="Model\AssembliesProvider.cs" />
+    <Compile Include="Model\ModulesProvider.cs" />
     <Compile Include="Model\CommonCompilerAssemblies.cs" />
     <Compile Include="Model\CommonCompilerAssemblyManager.cs" />
     <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />
