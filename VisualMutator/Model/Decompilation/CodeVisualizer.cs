@@ -12,7 +12,7 @@
     {
 
 
-        string Visualize(CodeLanguage language, MutationTarget target, ModulesProvider modules);
+        string Visualize(CodeLanguage language, IMethodDefinition method, ModulesProvider modules);
         string Visualize(CodeLanguage language, ModulesProvider modules);
     }
 
@@ -44,44 +44,26 @@
   
             return sb.ToString();
         }
-
-        public string Visualize(CodeLanguage language, MutationTarget target, ModulesProvider modules)
+        
+        public string Visualize(CodeLanguage language, IMethodDefinition method, ModulesProvider modules)
         {
-            
-           //.// GetSourceEmitter
+            if (method == null)
+            {
+                return "";
+            }
 
             var sb = new StringBuilder();
-            if (target.Method != null)
-            {//TODO: handle namespaces
-                _log.Info("Visualize: " + target + " method: " + target.Method);
-                var method = modules.Assemblies.SelectMany(a => a.GetAllTypes())
-              .Single(t => t.Name.Value == target.Method.TypeName).Methods
-              .Single(m => m.ToString() == target.Method.MethodSignature);
+            _log.Info("Visualize: " + method);
+            var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
+            var sourceEmitterOutput = new SourceEmitterOutputString();
 
-                var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
-                var sourceEmitterOutput = new SourceEmitterOutputString();
-
-                var sourceEmitter = _cci.GetSourceEmitter(language, module, sourceEmitterOutput);
-                sourceEmitter.Traverse(method);
+            var sourceEmitter = _cci.GetSourceEmitter(language, module, sourceEmitterOutput);
+            sourceEmitter.Traverse(method);
        
-                sb.Append(sourceEmitterOutput.Data);
+            sb.Append(sourceEmitterOutput.Data);
 
                
 
-            }
-            /*  foreach (IMutationElement mutationElement in target.RetrieveNonHidden())
-              {
-
-
-                  var output = Switch.Into<string>().FromTypeOf(mutationElement)
-                      .Case<MutationElementMethod>(elem => _decompiler.DecompileMethod(elem.FindIn(modules)))
-                      .Case<MutationElementType>(elem => _decompiler.DecompileType(elem.FindIn(modules)))
-                      .Case<MutationElementProperty>(elem => _decompiler.DecompileProperty(elem.FindIn(modules)))
-                      .Case<MutationElementField>(elem => _decompiler.DecompileField(elem.FindIn(modules)))
-                      .GetResult();
-
-                  sb.Append(output);
-              }*/
             return sb.ToString();
         }
       

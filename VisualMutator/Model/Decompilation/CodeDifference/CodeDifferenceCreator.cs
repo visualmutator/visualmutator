@@ -56,8 +56,8 @@
             {
                 CodePair pair = new CodePair
                 {
-                    OriginalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, currentOriginalModules),
-                    MutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget, moduleDefinitions),
+                    OriginalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, currentOriginalModules),
+                    MutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, moduleDefinitions),
                 };
                 return GetDiff(language, pair.OriginalCode, pair.MutatedCode);
             }

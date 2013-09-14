@@ -56,19 +56,18 @@
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
-            _log.Debug("MarkMutationTarget: " + TreeObjectsCounter + " - " + Formatter.Format(obj)+" : " + obj.GetHashCode());
+           // _log.Debug("MarkMutationTarget: " + TreeObjectsCounter + " - " + Formatter.Format(obj)+" : " + obj.GetHashCode());
             var targets = new List<MutationTarget>();
             foreach (var mutationVariant in variants)
             {
-                
                 var mutationTarget = new MutationTarget(mutationVariant.Signature, 
                     TreeObjectsCounter,  typeof(T).Name, mutationVariant);
 
-                if (_currentMethod != null && _currentMethod.ContainingTypeDefinition is INamedTypeDefinition)
+                if (_currentMethod != null)
                 {
-                    mutationTarget.Method = new MethodIdentifier(_currentMethod);
+                    //mutationTarget.Method = new MethodIdentifier(_currentMethod);
+                    mutationTarget.MethodRaw = _currentMethod;
                 }
-
                 
                 targets.Add( mutationTarget);
             }
@@ -81,6 +80,7 @@
         {
             foreach (var mutationTarget in _mutationTargets.Select(t => t.Item2).Flatten())
             {
+                //just unspecialize all stored objects
                 mutationTarget.Variant.AstObjects = mutationTarget.Variant.AstObjects
                     .ToDictionary(pair => pair.Key, pair => Unspecialize(pair.Value));
 
@@ -88,8 +88,9 @@
                 {
                     Debugger.Break();
                 }
+                //translate objects to their idices that identify them
                 mutationTarget.VariantObjectsIndices = mutationTarget.Variant.AstObjects.MapValues((key, val) => AllAstIndices[val]);
-
+                mutationTarget.MethodIndex = AllAstIndices[mutationTarget.MethodRaw];
             }
         }
 
@@ -120,13 +121,10 @@
 
         public void MarkSharedTarget<T>(T o)
         {
-
             var mutationTarget = new MutationTarget(o.GetType().Name, TreeObjectsCounter, "", 
                 new MutationVariant("", new Dictionary<string, object>()));
 
             _sharedTargets.Add(mutationTarget);
-
-
         }
 
         public void MethodEnter(IMethodDefinition method)

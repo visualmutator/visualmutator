@@ -235,7 +235,7 @@
         {
             try
             {
-                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.Method + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
                 var cci = new CommonCompilerAssemblies();
                 var mutatedModules = new List<IModule>();
                 foreach (var sourceModule in sourceModules)
@@ -243,7 +243,6 @@
                     IModule module = cci.AppendFromFile(sourceModule.AssemblyPath.ToString());
                     //  var copiedModules = sourceModules.Assemblies.Select(module => _assembliesManager.DecompileCopy(module)).ToList();
                     
-
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitorBack);
@@ -256,7 +255,7 @@
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
-                        
+                    
                     operatorCodeRewriter.NameTable = _assembliesManager.Host.NameTable;
                     operatorCodeRewriter.Host = _assembliesManager.Host;
                     operatorCodeRewriter.Module = (Module)module;

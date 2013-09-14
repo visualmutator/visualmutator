@@ -40,18 +40,16 @@
             }
         }
 
-        public MethodIdentifier Method
-        {
-            get;
-            set;
-        }
-
+     
         public MutationVariant Variant
         {
             get { return _variant; }
         }
 
         public IDictionary<string, int> VariantObjectsIndices { get; set; }
+        public IMethodDefinition MethodRaw { get; set; }
+        public int MethodIndex { get; set; }
+        public IMethodDefinition MethodMutated { get; set; }
 
         public override string ToString()
         {

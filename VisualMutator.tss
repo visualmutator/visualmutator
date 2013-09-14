@@ -8,9 +8,6 @@
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\MutationTarget.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\CommonCompilerAssemblies.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\BruteForceTests.cs</string>
     </ArrayOfString>
     <ArrayOfString>
@@ -21,9 +18,6 @@
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\Test_EMM.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\VisualCodeVisitor.cs</string>
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Mutations\MutantsContainer.cs</string>
@@ -47,7 +41,88 @@
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Controllers\SessionController.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\AssembliesProvider.cs</string>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\MutationSessionChoices.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Mutations\Types\TypeNode.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Standard\TestLogicalConnectorReplacement.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Decompilation\CodeDifference\CodeDifferenceCreator.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Controllers\MutantDetailsController.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\OAO_Test.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\XmlResultsGenerator.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\EHR_Test.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Decompilation\CodeVisualizer.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\TestGeneration\GenerationEngine.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Standard\TestRelationalOperatorReplacement.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Standard\TestUnaryOperatorInsertion.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\DEH_Test.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\ISD_Test.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\TestNullInsertion.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Standard\TestLogicalOperatorReplacement.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\TestOverloadingMethodContentsChange.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\TestFieldInitializationDeletion.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\TestEqualityOperatorChange.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\OAN_Test.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\MCI_Test.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Mutations\MutantsContainerTests.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\VisualCodeTraverser.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\VisualCodeVisitor.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\VisualCodeRewriter.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\OperatorCodeRewriter.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\OperatorCodeVisitor.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\VisualCodeVisitorBack.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>
