@@ -1,6 +1,8 @@
 ﻿namespace VisualMutator.Model
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using Extensibility;
     using Microsoft.Cci;
 
     public class LoadedTypes
@@ -18,5 +20,9 @@
         }
 
 
+        public IList<TypeIdentifier> GetIdentifiers()
+        {
+            return Types.Select(t => new TypeIdentifier(t)).ToList();
+        }
     }
 }

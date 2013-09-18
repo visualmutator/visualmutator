@@ -152,7 +152,9 @@
 
             _svc.Threading.ScheduleAsync(() =>
             {
-                _currentSession = _mutantsContainer.PrepareSession(choices);
+                var allowedTypes = choices.SelectedTypes.GetIdentifiers();
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
+
                 ExecutedOperator oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
 
@@ -237,7 +239,16 @@
             _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
-                _currentSession = _mutantsContainer.PrepareSession(choices);
+                var allowedTypes = choices.SelectedTypes.GetIdentifiers();
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
+
+                _currentSession = new MutationTestingSession
+                {
+                    OriginalAssemblies = choices.Assemblies,
+                    SelectedTypes = allowedTypes,
+                    Choices = choices,
+                };
+
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
               

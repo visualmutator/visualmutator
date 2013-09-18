@@ -88,7 +88,8 @@
                 AssemblyPath = new FilePathAbsolute(filePath)
             }.InList();
 
-            cache.setDisabled();
+
+            //cache.setDisabled();
             var diff = new CodeDifferenceCreator(cache, visualizer);
 
             var visitor = new DebugOperatorCodeVisitor();
@@ -166,13 +167,15 @@
                 {
                     MutantsCreationOptions = new MutantsCreationOptions()
                         {
-                            MaxNumerOfMutantPerOperator = 2,
+                            MaxNumerOfMutantPerOperator = 1,
                         },
                         Assemblies = new List<AssemblyNode>(),
                         SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>())
                 };
 
-            container.PrepareSession(choices);
+
+            var allowedTypes = choices.SelectedTypes.GetIdentifiers();
+            container.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
 
    
 

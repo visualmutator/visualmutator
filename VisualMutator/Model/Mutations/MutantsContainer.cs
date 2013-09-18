@@ -25,7 +25,7 @@
 
     public interface IMutantsContainer
     {
-        MutationTestingSession PrepareSession(MutationSessionChoices choices);
+        void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes, IList<AssemblyNode> assemblies);
 
        
         Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator);
@@ -42,7 +42,7 @@
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly ICommonCompilerInfra _assembliesManager;
+        private readonly ICommonCompilerInfra _cci;
         private readonly IOperatorUtils _operatorUtils;
 
         private bool _debugConfig ;
@@ -54,37 +54,26 @@
         }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private MutationSessionChoices _choices;
-        private List<TypeIdentifier> _allowedTypes;
+        private IList<TypeIdentifier> _allowedTypes;
+        private MutantsCreationOptions _options;
+        private IList<AssemblyNode> _assemblies;
 
-        public MutantsContainer(ICommonCompilerInfra assembliesManager, 
+        public MutantsContainer(ICommonCompilerInfra cci, 
             IOperatorUtils operatorUtils
         
             )
         {
-            _assembliesManager = assembliesManager;
+            _cci = cci;
             _operatorUtils = operatorUtils;
 
         }
 
-        public MutationTestingSession PrepareSession(MutationSessionChoices choices)
+        public void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes, 
+            IList<AssemblyNode> assemblies)
         {
-            _choices = choices;
-           
-         //   var copiedModules = new StoredAssemblies(choices.Assemblies.Select(a => a.AssemblyDefinition)
-         //                                                .Select(_assembliesManager.Copy).Cast<IModule>().ToList());
-
-
-            _allowedTypes = choices.SelectedTypes.Types.Select(t => new TypeIdentifier(t)).ToList();//
-     
-            return new MutationTestingSession
-            {
-                OriginalAssemblies = choices.Assemblies,
-
-                SelectedTypes = _allowedTypes,
-                Choices = choices,
-
-            };
+            _options = options;
+            _allowedTypes = allowedTypes;
+            _assemblies = assemblies;
         }
 
         public Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator)
@@ -172,7 +161,7 @@
         {
             var mapping = operatorResult.MutationTargets
                 .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
-                .Take(_choices.MutantsCreationOptions.MaxNumerOfMutantPerOperator).ToList();
+                .Take(_options.MaxNumerOfMutantPerOperator).ToList();
             return mapping.ToLookup(pair => pair.Item1, pair => pair.Item2);
         }
 
@@ -190,7 +179,7 @@
               
                 var ded = mutOperator.CreateVisitor();
                 IOperatorCodeVisitor operatorVisitor = ded;
-                operatorVisitor.Host = _assembliesManager.Host;
+                operatorVisitor.Host = _cci.Host;
                 operatorVisitor.OperatorUtils = _operatorUtils;
                 operatorVisitor.Initialize();
                 var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
@@ -238,7 +227,7 @@
 
         public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted)
         {
-            IList<AssemblyNode> sourceModules = _choices.Assemblies;
+            IList<AssemblyNode> sourceModules = _assemblies;
             IList<TypeIdentifier> allowedTypes = _allowedTypes;
             try
             {
@@ -248,7 +237,7 @@
                 foreach (var sourceModule in sourceModules)
                 {
                     IModule module = cci.AppendFromFile(sourceModule.AssemblyPath.ToString());
-                    //  var copiedModules = sourceModules.Assemblies.Select(module => _assembliesManager.DecompileCopy(module)).ToList();
+                    //  var copiedModules = sourceModules.Assemblies.Select(module => _cci.DecompileCopy(module)).ToList();
                     
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
@@ -257,14 +246,14 @@
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.CreateRewriter();
 
-                    var rewriter = new VisualCodeRewriter(_assembliesManager.Host, visitorBack.TargetAstObjects, 
+                    var rewriter = new VisualCodeRewriter(_cci.Host, visitorBack.TargetAstObjects, 
                         visitorBack.SharedAstObjects, allowedTypes, operatorCodeRewriter);
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
                     
-                    operatorCodeRewriter.NameTable = _assembliesManager.Host.NameTable;
-                    operatorCodeRewriter.Host = _assembliesManager.Host;
+                    operatorCodeRewriter.NameTable = _cci.Host.NameTable;
+                    operatorCodeRewriter.Host = _cci.Host;
                     operatorCodeRewriter.Module = (Module)module;
                     operatorCodeRewriter.OperatorUtils = _operatorUtils;
 

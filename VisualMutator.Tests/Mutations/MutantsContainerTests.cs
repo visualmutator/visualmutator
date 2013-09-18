@@ -37,7 +37,7 @@
                 SelectedOperators = new[] { new TestOperator() }
             };
             // Act
-            var mutationTestingSession = mutantsContainer.PrepareSession(choices);
+            var mutationTestingSession = mutantsContainer.Initialize(choices);
             mutantsContainer.InitMutantsForOperators(mutationTestingSession);
             var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
 

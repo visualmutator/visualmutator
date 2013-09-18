@@ -6,7 +6,7 @@
     {
         public void Test()
         {
-             var gen = new XmlResultsGenerator();
+            // var gen = new XmlResultsGenerator();
             //gen.
         }
     }
