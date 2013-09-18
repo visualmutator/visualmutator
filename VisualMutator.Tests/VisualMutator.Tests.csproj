@@ -183,10 +183,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Difference.cs" />
+    <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
-    <Compile Include="Mutations\TestOperator.cs" />
     <Compile Include="Operators\Common.cs" />
     <Compile Include="Operators\BruteForceTests.cs" />
     <Compile Include="Operators\Object\EHC_Test.cs" />
@@ -214,14 +213,10 @@
     <Compile Include="Results\XmlResultsGeneratorTests.cs" />
     <Compile Include="TestGeneration\TestRoslyn.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
-    <Compile Include="Util\CecilUtils.cs" />
-    <Compile Include="MonoCecilTests.cs" />
     <Compile Include="UnitTesting\MsTestServiceTests.cs" />
-    <Compile Include="MutationGeneratorTests.cs" />
     <Compile Include="UnitTesting\NUnitServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolutionTypesTests.cs" />
-    <Compile Include="Test.cs" />
     <Compile Include="UnitTesting\TestContainerTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -253,7 +248,9 @@
       <Name>VisualMutator</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Util\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

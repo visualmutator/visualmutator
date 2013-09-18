@@ -38,7 +38,7 @@ namespace VisualMutator.Model.Mutations.Types
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ICommonCompilerAssemblies _assemblyReaderWriter;
+        private readonly ICommonCompilerInfra _assemblyReaderWriter;
 
         private readonly IHostEnviromentConnection _hostEnviroment;
 
@@ -55,7 +55,7 @@ namespace VisualMutator.Model.Mutations.Types
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
-            ICommonCompilerAssemblies assemblyReaderWriter,
+            ICommonCompilerInfra assemblyReaderWriter,
             IHostEnviromentConnection hostEnviroment)
         {
             _assemblyReaderWriter = assemblyReaderWriter;

@@ -38,7 +38,7 @@
         {
             _log.Info("Common.RunMutations configuring for " + oper + "...");
 
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -49,7 +49,7 @@
 
             original = new ModulesProvider(cci.Modules);
             List<AssemblyNode> assemblyNodes = new AssemblyNode("", module) {AssemblyPath = new FilePathAbsolute(filePath)}.InList();
-            cache.Initialize(assemblyNodes, new List<TypeIdentifier>(), disableCache: true);
+            cache.setDisabled(disableCache: true);
             diff = new CodeDifferenceCreator(cache, visualizer);
 
            
@@ -72,7 +72,7 @@
         {
         
 
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -88,7 +88,7 @@
                 AssemblyPath = new FilePathAbsolute(filePath)
             }.InList();
 
-            cache.Initialize(assemblyNodes, new List<TypeIdentifier>());
+            cache.setDisabled();
             var diff = new CodeDifferenceCreator(cache, visualizer);
 
             var visitor = new DebugOperatorCodeVisitor();
@@ -142,7 +142,7 @@
         public static List<IModule> CreateModules(string code)
         {
             var path = CreateModule(code);
-            return CreateModules(path, new CommonCompilerAssemblies());
+            return CreateModules(path, new CommonCompilerInfra());
         }
 
         public static string CreateModule2(string code)
@@ -156,7 +156,7 @@
             
             _log.Info("Copying modules...");
            // ModulesProvider copiedModules = new ModulesProvider(cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
-            var ccii = new CommonCompilerAssemblies();
+            var ccii = new CommonCompilerInfra();
             foreach (var assemblyNode in assemblyNodes)
             {
                 ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
@@ -203,7 +203,7 @@
             }
             return mutants;*/
         }
-        public static List<IModule> CreateModules(string filePath, CommonCompilerAssemblies cci)
+        public static List<IModule> CreateModules(string filePath, CommonCompilerInfra cci)
         {
             cci.AppendFromFile(filePath);
             _log.Info("Copying modules...");

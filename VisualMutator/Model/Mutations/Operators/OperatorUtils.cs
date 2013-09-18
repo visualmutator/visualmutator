@@ -12,9 +12,9 @@
 
     public class OperatorUtils : IOperatorUtils
     {
-        private readonly ICommonCompilerAssemblies _cci;
+        private readonly ICommonCompilerInfra _cci;
 
-        public OperatorUtils(ICommonCompilerAssemblies cci)
+        public OperatorUtils(ICommonCompilerInfra cci)
         {
             _cci = cci;
         }

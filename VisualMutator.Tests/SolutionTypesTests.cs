@@ -64,7 +64,7 @@
 
             string path = @"C:\TestAssembly.dll";
 
-            var mock = new Mock<ICommonCompilerAssemblies>();
+            var mock = new Mock<ICommonCompilerInfra>();
 
             //    var assembly = CecilUtils.CreateAssembly("TestAssembly", list);
             //     mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);
@@ -89,7 +89,7 @@
 
             string path = @"C:\TestAssembly.dll";
 
-            var mock = new Mock<ICommonCompilerAssemblies>();
+            var mock = new Mock<ICommonCompilerInfra>();
 
             //  var assembly = CecilUtils.CreateAssembly("TestAssembly", list);
             //   mock.Setup(_ => _.ReadAssembly(path)).Returns(assembly);

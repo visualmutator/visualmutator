@@ -19,7 +19,7 @@
 
     public interface IMutantsCache
     {
-        void Initialize(IList<AssemblyNode> originalCode, ICollection<TypeIdentifier> allowedTypes, bool disableCache = false);
+        void setDisabled( bool disableCache = false);
 
         ModulesProvider GetMutatedModules(Mutant mutant);
     }
@@ -28,15 +28,12 @@
     {
         private readonly IMutantsContainer _mutantsContainer;
 
-        private MemoryCache _cache;
+        private readonly MemoryCache _cache;
 
-        private IList<AssemblyNode> _originalCode;
-
-        private ICollection<TypeIdentifier> _allowedTypes;
-
+ 
         private const int MaxLoadedModules = 5;
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private bool _disableCache;
 
         //private IDictionary<Mutant, IList<IModule>> 
@@ -54,10 +51,9 @@
             _cache = new MemoryCache("CustomCache", config);
         }
 
-        public void Initialize(IList<AssemblyNode> originalCode, ICollection<TypeIdentifier> allowedTypes, bool disableCache = false)
+        public void setDisabled(bool disableCache = false)
         {
-            _originalCode = originalCode;
-            _allowedTypes = allowedTypes;
+           
             _disableCache = disableCache;
         }
 
@@ -69,7 +65,7 @@
             ModulesProvider result;
             if (!_cache.Contains(mutant.Id) || _disableCache)
             {
-                result = _mutantsContainer.ExecuteMutation(mutant, _originalCode, _allowedTypes.ToList(), ProgressCounter.Inactive());
+                result = _mutantsContainer.ExecuteMutation(mutant, ProgressCounter.Inactive());
                 _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
             }
             else

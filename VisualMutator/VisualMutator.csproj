@@ -221,14 +221,13 @@
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
-    <Compile Include="Model\ModulesProvider.cs" />
-    <Compile Include="Model\CommonCompilerAssemblies.cs" />
-    <Compile Include="Model\CommonCompilerAssemblyManager.cs" />
+    <Compile Include="Model\StoringMutants\ModulesProvider.cs" />
+    <Compile Include="Model\CommonCompilerInfra.cs" />
     <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\Exceptions\TestingCancelledException.cs" />
     <Compile Include="Model\LoadedTypes.cs" />
-    <Compile Include="Model\MutantsCache.cs" />
+    <Compile Include="Model\StoringMutants\MutantsCache.cs" />
     <Compile Include="Model\MutantsCreationOptions.cs" />
     <Compile Include="Model\MutantsTestingOptions.cs" />
     <Compile Include="Model\MutationSessionChoices.cs" />

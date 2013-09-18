@@ -19,7 +19,7 @@
     using Module = Microsoft.Cci.MutableCodeModel.Module;
     using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
 
-    public interface ICommonCompilerAssemblies
+    public interface ICommonCompilerInfra
     {
         List<IModule> Modules { get; }
         void Cleanup();
@@ -29,8 +29,8 @@
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
-        CommonCompilerAssemblies.ModuleInfo FindModuleInfo(IModule module);
-        CommonCompilerAssemblies.ModuleInfo DecompileCopy(IModule module);
+        CommonCompilerInfra.ModuleInfo FindModuleInfo(IModule module);
+        CommonCompilerInfra.ModuleInfo DecompileCopy(IModule module);
     }
     public class Sss : MetadataReaderHost
     {
@@ -44,7 +44,7 @@
         }
         
     }
-    public class CommonCompilerAssemblies : IDisposable, ICommonCompilerAssemblies
+    public class CommonCompilerInfra : IDisposable, ICommonCompilerInfra
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
@@ -57,7 +57,7 @@
             get { return _moduleInfoList.Select(_ => _.Module).ToList(); }
         }
 
-        public CommonCompilerAssemblies()
+        public CommonCompilerInfra()
         {
             _host = new PeReader.DefaultHost();
             _moduleInfoList = new List<ModuleInfo>();
@@ -122,7 +122,7 @@
         public ModuleInfo DecompileCopy(IModule module)
         {
             ModuleInfo info = FindModuleInfo(module);
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
             ModuleInfo moduleCopy = cci.DecompileFile(info.FilePath);
             moduleCopy.SubCci = cci;
             return moduleCopy;
@@ -134,7 +134,7 @@
         }
         public IModule AppendFromFile(string filePath)
         {
-            _log.Info("CommonCompilerAssemblies.AppendFromFile:" + filePath);
+            _log.Info("CommonCompilerInfra.AppendFromFile:" + filePath);
             ModuleInfo module = DecompileFile(filePath);
             
             _moduleInfoList.Add(module);
@@ -184,7 +184,7 @@
         }
         public Module Copy(IModule module)
         {
-           // _log.Info("CommonCompilerAssemblies.Module:" + module.Name);
+           // _log.Info("CommonCompilerInfra.Module:" + module.Name);
             var info = FindModuleInfo(module);
             var copier = new CodeDeepCopier(_host, info.SourceLocationProvider);
             return copier.Copy(module);
@@ -197,7 +197,7 @@
         }
         public void WriteToFile(IModule module, string filePath)
         {
-            _log.Info("CommonCompilerAssemblies.WriteToFile:" + module.Name);
+            _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
             var info = FindModuleInfo(module);
             using (FileStream peStream = File.Create(filePath))
             {
@@ -244,7 +244,7 @@
                 set;
             }
             [CanBeNull]
-            public CommonCompilerAssemblies SubCci { get; set; }
+            public CommonCompilerInfra SubCci { get; set; }
         }
 
         #endregion

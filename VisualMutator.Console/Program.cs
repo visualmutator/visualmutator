@@ -96,7 +96,7 @@ namespace VisualMutator.Console
         private static void Main(string[] args)
         {
 
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
 
             cci.AppendFromFile(file);
             cci.AppendFromFile(file2);
@@ -114,7 +114,7 @@ namespace VisualMutator.Console
              //Console.WriteLine(listing0);
             File.WriteAllText("module11.txt", listing0, new UTF8Encoding());
             
-            var cci2 = new CommonCompilerAssemblies();
+            var cci2 = new CommonCompilerInfra();
             cci2.AppendFromFile(file);
             cci2.AppendFromFile(file2);
 
@@ -140,7 +140,7 @@ namespace VisualMutator.Console
                    Layout = new PatternLayout("%-5level - %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
                    Threshold = Level.Warn
                });
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);

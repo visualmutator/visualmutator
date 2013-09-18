@@ -87,7 +87,7 @@ namespace Ns
         public void DebugTraverse()
         {
 
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
            
             cci.AppendFromFile(file);
             cci.AppendFromFile(file2);
@@ -102,7 +102,7 @@ namespace Ns
            // Console.WriteLine(listing0);
             File.WriteAllText("module11.txt",listing0);
 
-            var cci2 = new CommonCompilerAssemblies();
+            var cci2 = new CommonCompilerInfra();
             cci2.AppendFromFile(file);
             cci2.AppendFromFile(file2);
 

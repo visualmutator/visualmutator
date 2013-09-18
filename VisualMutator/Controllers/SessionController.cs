@@ -52,7 +52,7 @@
         private readonly XmlResultsGenerator _xmlResultsGenerator;
         private readonly ICodeVisualizer _codeVisualizer;
         private readonly SessionCreationController _scc;
-        private readonly ICommonCompilerAssemblies _commonCompiler;
+        private readonly ICommonCompilerInfra _commonCompiler;
 
         private int _allMutantsCount;
 
@@ -87,7 +87,7 @@
             SessionCreationController scc,
             IFactory<SessionCreationController> mutantsCreationFactory,
             IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
-            ICommonCompilerAssemblies commonCompiler)
+            ICommonCompilerInfra commonCompiler)
         {
             MutantsCreationFactory = mutantsCreationFactory;
             OnlyMutantsCreationFactory = onlyMutantsCreationFactory;
@@ -154,7 +154,7 @@
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
                 ExecutedOperator oper;
-                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out oper);
+                Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                 StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
@@ -239,14 +239,11 @@
             {
                 _currentSession = _mutantsContainer.PrepareSession(choices);
 
-                _mutantsCache.Initialize(_currentSession.OriginalAssemblies, _currentSession.SelectedTypes);//TODO wynieść gdzie indziej
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
               
-
                 _log.Info("Creating pure mutant for initial checks...");
                 ExecutedOperator execOperator;
-                Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out execOperator);
-         
+                Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out execOperator);
                 
 
                 _svc.Threading.InvokeOnGui(() =>

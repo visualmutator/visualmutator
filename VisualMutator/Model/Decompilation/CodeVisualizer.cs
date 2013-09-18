@@ -18,13 +18,13 @@
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly ICommonCompilerAssemblies _cci;
+        private readonly ICommonCompilerInfra _cci;
         
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public CodeVisualizer(ICommonCompilerAssemblies cci)
+        public CodeVisualizer(ICommonCompilerInfra cci)
         {
             _cci = cci;
         }

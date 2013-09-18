@@ -21,9 +21,7 @@ namespace VisualMutator.Model.Decompilation.CodeDifference
 
         private string NormalizeLine(string line)
         {
-            //IL_00ca: 
 
-            
             line = line.Trim();
 
             var regex = new Regex(@"^IL_[\D\d]*: ");

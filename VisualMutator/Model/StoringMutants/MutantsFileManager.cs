@@ -39,7 +39,7 @@
 
         private readonly IMutantsCache _mutantsCache;
 
-        private readonly ICommonCompilerAssemblies _commonCompilerAssemblies;
+        private readonly ICommonCompilerInfra _commonCompilerInfra;
 
         private readonly IFileSystem _fs;
 
@@ -52,13 +52,13 @@
         public MutantsFileManager(
             IHostEnviromentConnection hostEnviroment,
             IMutantsCache mutantsCache,
-            ICommonCompilerAssemblies commonCompilerAssemblies,
+            ICommonCompilerInfra commonCompilerInfra,
             IFileSystem fs)
         {
             _hostEnviroment = hostEnviroment;
 
             _mutantsCache = mutantsCache;
-            _commonCompilerAssemblies = commonCompilerAssemblies;
+            _commonCompilerInfra = commonCompilerInfra;
             _fs = fs;
         }
 
@@ -145,7 +145,7 @@
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                 string file = Path.Combine(directory, module.Name.Value + ".dll");
-                _commonCompilerAssemblies.WriteToFile(module, file);
+                _commonCompilerInfra.WriteToFile(module, file);
                // _fs.File.Delete(file);
             //    _assemblyReaderWriter.WriteAssembly(assemblyDefinition, file);
                 result.AssembliesPaths.Add(file);

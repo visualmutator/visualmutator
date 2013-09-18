@@ -28,11 +28,11 @@
         MutationTestingSession PrepareSession(MutationSessionChoices choices);
 
        
-        Mutant CreateChangelessMutant(out ExecutedOperator executedOperator);
+        Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator);
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        ModulesProvider ExecuteMutation(Mutant mutant, IList<AssemblyNode> modules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted);
+        ModulesProvider ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted);
 
         MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies, IList<TypeIdentifier> toList);
 
@@ -42,7 +42,7 @@
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly ICommonCompilerAssemblies _assembliesManager;
+        private readonly ICommonCompilerInfra _assembliesManager;
         private readonly IOperatorUtils _operatorUtils;
 
         private bool _debugConfig ;
@@ -55,8 +55,9 @@
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private MutationSessionChoices _choices;
+        private List<TypeIdentifier> _allowedTypes;
 
-        public MutantsContainer(ICommonCompilerAssemblies assembliesManager, 
+        public MutantsContainer(ICommonCompilerInfra assembliesManager, 
             IOperatorUtils operatorUtils
         
             )
@@ -69,23 +70,24 @@
         public MutationTestingSession PrepareSession(MutationSessionChoices choices)
         {
             _choices = choices;
+           
          //   var copiedModules = new StoredAssemblies(choices.Assemblies.Select(a => a.AssemblyDefinition)
          //                                                .Select(_assembliesManager.Copy).Cast<IModule>().ToList());
 
 
-            List<TypeIdentifier> copiedTypes = choices.SelectedTypes.Types.Select(t => new TypeIdentifier(t)).ToList();//
+            _allowedTypes = choices.SelectedTypes.Types.Select(t => new TypeIdentifier(t)).ToList();//
      
             return new MutationTestingSession
             {
                 OriginalAssemblies = choices.Assemblies,
-    
-                SelectedTypes = copiedTypes,
+
+                SelectedTypes = _allowedTypes,
                 Choices = choices,
 
             };
         }
 
-        public Mutant CreateChangelessMutant(out ExecutedOperator executedOperator)
+        public Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator)
         {
             var op = new IdentityOperator();
           
@@ -234,12 +236,14 @@
 
         }
 
-        public ModulesProvider ExecuteMutation(Mutant mutant, IList<AssemblyNode> sourceModules, IList<TypeIdentifier> allowedTypes, ProgressCounter percentCompleted)
+        public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted)
         {
+            IList<AssemblyNode> sourceModules = _choices.Assemblies;
+            IList<TypeIdentifier> allowedTypes = _allowedTypes;
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
-                var cci = new CommonCompilerAssemblies();
+                var cci = new CommonCompilerInfra();
                 var mutatedModules = new List<IModule>();
                 foreach (var sourceModule in sourceModules)
                 {

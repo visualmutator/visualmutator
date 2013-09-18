@@ -160,7 +160,7 @@
                 childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
                 childKernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
                 childKernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-                childKernel.Bind<ICommonCompilerAssemblies>().To<CommonCompilerAssemblies>().InSingletonScope();
+                childKernel.Bind<ICommonCompilerInfra>().To<CommonCompilerInfra>().InSingletonScope();
                 childKernel.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
 
                 childKernel.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();

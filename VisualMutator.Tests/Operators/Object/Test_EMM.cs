@@ -113,7 +113,7 @@
         {
 
         
-            var cci = new CommonCompilerAssemblies();
+            var cci = new CommonCompilerInfra();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
