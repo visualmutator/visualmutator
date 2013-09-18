@@ -54,10 +54,12 @@
             ModulesProvider moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {
+                var originalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, currentOriginalModules);
+                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, moduleDefinitions);
                 CodePair pair = new CodePair
                 {
-                    OriginalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, currentOriginalModules),
-                    MutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, moduleDefinitions),
+                    OriginalCode = originalCode,
+                    MutatedCode = mutatedCode
                 };
                 return GetDiff(language, pair.OriginalCode, pair.MutatedCode);
             }

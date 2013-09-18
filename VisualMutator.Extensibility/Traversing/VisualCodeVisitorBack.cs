@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using CommonUtilityInfrastructure;
@@ -11,7 +12,7 @@
     public class VisualCodeVisitorBack : VisualCodeVisitor
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ICollection<MutationTarget> _mutationTargets;
+        private readonly ICollection<MutationTarget> _mutationTargets;//TODO: remove, its ambigius with base class field of the same name
         private readonly List<MutationTarget> _sharedTargets;
         private readonly List<Tuple<object, MutationTarget>> _targetAstObjects;
         private readonly List<object> _sharedAstObjects;
@@ -56,12 +57,21 @@
 
         public override void PostProcess()
         {
-            foreach (var mutationTarget in MutationTargets.Select(t => t.Item2).Flatten())
+            foreach (var mutationTarget in _mutationTargets)
             {
-                mutationTarget.Variant.AstObjects = mutationTarget.VariantObjectsIndices
+                //TODO: do better. now they can be null for changeless mutant
+                if (mutationTarget.VariantObjectsIndices != null && AllAstObjects != null)
+                {
+                    mutationTarget.Variant.AstObjects = mutationTarget.VariantObjectsIndices
                     .MapValues((key, val) => AllAstObjects[val]);
+                    if (!AllAstObjects.ContainsKey(mutationTarget.MethodIndex))
+                    {
+                        Debugger.Break();
+                    }
+                    mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[mutationTarget.MethodIndex];
+                }
 
-                mutationTarget.MethodMutated = (IMethodDefinition) AllAstObjects[mutationTarget.MethodIndex];
+                
             }
         }
     }

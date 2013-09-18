@@ -256,7 +256,7 @@
     <Compile Include="Model\Decompilation\CodePair.cs" />
     <Compile Include="Model\Decompilation\CodeVisualizer.cs" />
     <Compile Include="Model\Decompilation\MonoCecilDecompiler.cs" />
-    <Compile Include="Model\Mutations\Operators\PreOperator.cs" />
+    <Compile Include="Model\Mutations\Operators\IdentityOperator.cs" />
     <Compile Include="Model\Mutations\MutantsTree\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />

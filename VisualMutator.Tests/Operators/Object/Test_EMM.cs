@@ -215,11 +215,11 @@
             CodeDifferenceCreator diff;
             Common.RunMutationsFromFile(_assemblyPath, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
 
-            foreach (Mutant mutant in mutants)
+            foreach (Mutant mutant in mutants.Take(2))
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                    original);
-
+                Console.WriteLine(codeWithDifference.Code);
                 if(codeWithDifference.LineChanges.Count == 0)
                 {
                     Console.WriteLine();

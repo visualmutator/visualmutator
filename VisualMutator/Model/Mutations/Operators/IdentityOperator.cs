@@ -2,7 +2,7 @@ namespace VisualMutator.Model.Mutations.Operators
 {
     using VisualMutator.Extensibility;
 
-    class PreOperator : IMutationOperator
+    class IdentityOperator : IMutationOperator
     {
         public OperatorInfo Info
         {

@@ -247,6 +247,8 @@
                 ExecutedOperator execOperator;
                 Mutant changelessMutant = _mutantsContainer.CreateChangelessMutant(out execOperator);
          
+                
+
                 _svc.Threading.InvokeOnGui(() =>
                     {
                         _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
@@ -379,28 +381,41 @@
 
                 Mutant mutant = _mutantsToTest.Dequeue();
                 mutant.State = MutantResultState.Creating;
-                _mutantsContainer.ExecuteMutation(mutant, 
-                    _currentSession.OriginalAssemblies,
-                    _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
-                var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
-          
-                if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
+
+                try
                 {
-                    _testsContainer.VerifyMutant(storedMutantInfo, mutant);
+                    //  _mutantsCache.GetMutatedModules(mutant);
+
+                    // _mutantsContainer.ExecuteMutation(mutant, 
+                    //    _currentSession.OriginalAssemblies,
+                    //    _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
+                    var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
+
+                    if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
+                    {
+                        _testsContainer.VerifyMutant(storedMutantInfo, mutant);
+                    }
+
+                    _testingProcessExtensionOptions.TestingProcessExtension
+                        .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+
+
+                    _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, mutant);
+
+                    _testedMutants.Add(mutant);
+
+                    _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
+
+                    _currentSession.MutationScore = ((double)_mutantsKilledCount) / _testedMutants.Count;
+
+                    raiseTestingProgress();
                 }
-
-                _testingProcessExtensionOptions.TestingProcessExtension
-                    .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
-
-                
-                _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, mutant);
-                _testedMutants.Add(mutant);
-       
-                _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
-
-                _currentSession.MutationScore = ((double)_mutantsKilledCount) / _testedMutants.Count;
-
-                raiseTestingProgress();
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                    mutant.State = MutantResultState.Error;
+                }
+             
             }
             
             _svc.Threading.InvokeOnGui(()=>

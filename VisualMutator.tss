@@ -124,5 +124,35 @@
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\VisualCodeVisitorBack.cs</string>
     </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\MutationVariant.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\MethodIdentifier.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\UserMutationTarget.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\IOperatorCodeVisitor.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\AstFormatter.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Tests\TestsContainer.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\StoringMutants\MutantsFileManager.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Tests\Custom\ITestingProcessExtension.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\CommonUtilityInfrastructure\Utility.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Mutations\Operators\IdentityOperator.cs</string>
+    </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

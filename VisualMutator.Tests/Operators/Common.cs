@@ -166,7 +166,7 @@
                 {
                     MutantsCreationOptions = new MutantsCreationOptions()
                         {
-                            MaxNumerOfMutantPerOperator = 50,
+                            MaxNumerOfMutantPerOperator = 2,
                         },
                         Assemblies = new List<AssemblyNode>(),
                         SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>())

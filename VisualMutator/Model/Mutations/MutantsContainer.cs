@@ -87,7 +87,7 @@
 
         public Mutant CreateChangelessMutant(out ExecutedOperator executedOperator)
         {
-            var op = new PreOperator();
+            var op = new IdentityOperator();
           
             executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
             var group = new MutantGroup("Testing original program", executedOperator);
@@ -95,7 +95,10 @@
            
             group.Children.Add(mutant);
             executedOperator.Children.Add(group);
-        
+
+            //InitMutantsForOperators(op.InList(),
+            //       _currentSession.SelectedTypes, new ModulesProvider(_currentSession.OriginalAssemblies.Select(_ => _.AssemblyDefinition).ToList()), counter);
+
             return mutant;
         }
 

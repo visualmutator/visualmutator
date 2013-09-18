@@ -89,7 +89,8 @@
                     Debugger.Break();
                 }
                 //translate objects to their idices that identify them
-                mutationTarget.VariantObjectsIndices = mutationTarget.Variant.AstObjects.MapValues((key, val) => AllAstIndices[val]);
+                mutationTarget.VariantObjectsIndices = mutationTarget.Variant
+                    .AstObjects.MapValues((key, val) => AllAstIndices[val]);
                 mutationTarget.MethodIndex = AllAstIndices[mutationTarget.MethodRaw];
             }
         }
