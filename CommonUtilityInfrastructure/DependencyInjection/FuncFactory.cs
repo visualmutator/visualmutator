@@ -16,9 +16,14 @@
         }
 
    
-        public TObject Create(params object[] parameters)
+        public TObject Create()
         {
             return _func();
+        }
+
+        public TObject CreateWithParams(params object[] parameters)
+        {
+            throw new NotImplementedException();
         }
     }
 }

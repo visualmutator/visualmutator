@@ -18,56 +18,29 @@
 
     public class NinjectFactory<TObject> : IFactory<TObject>
     {
-        private readonly IKernel _kernel;
+        protected readonly IKernel _kernel;
 
         public NinjectFactory(IKernel kernel)
         {
             _kernel = kernel;
         }
 
-       
-        public TObject Create(params object[] parameters)
+        public virtual TObject Create()
         {
-      
-            if(parameters.Length == 0)
-            {
-                return _kernel.Get<TObject>();
-            }
-            else
-            {
-                var constr = typeof (TObject).GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
-                var pars = constr.GetParameters()
-                    .Skip(constr.GetParameters().Length - parameters.Length)
-                    .Select(param => param.Name);
-                var pa = pars.Zip(parameters, (name, obj) => new ConstructorArgument(name, obj));
-                return _kernel.Get<TObject>(pa.Cast<IParameter>().ToArray());
-            }
-            
-        }
-    }
-    public class NinjectChildFactory<TObject> : IFactory<TObject>
-    {
-        private readonly IKernel _kernel;
-        private readonly Action<IKernel> _childBindings;
-        private readonly ICollection<ChildKernel> _childKernels;
-
-        public NinjectChildFactory(IKernel kernel, Action<IKernel> childBindings)
-        {
-            _kernel = kernel;
-            _childBindings = childBindings;
-            _childKernels = new Collection<ChildKernel>();
+            return _kernel.Get<TObject>();
         }
 
-
-        public TObject Create(params object[] parameters)
+        public virtual TObject CreateWithParams(params object[] parameters)
         {
-            var childKernel = new ChildKernel(_kernel);
-            _childKernels.Add(childKernel);
-            _childBindings(childKernel);
+            return CreateWithParams(_kernel, parameters);
 
+        }
+
+        protected TObject CreateWithParams(IKernel kernel, params object[] parameters)
+        {
             if (parameters.Length == 0)
             {
-                return childKernel.Get<TObject>();
+                return kernel.Get<TObject>();
             }
             else
             {
@@ -76,8 +49,35 @@
                     .Skip(constr.GetParameters().Length - parameters.Length)
                     .Select(param => param.Name);
                 var pa = pars.Zip(parameters, (name, obj) => new ConstructorArgument(name, obj));
-                return childKernel.Get<TObject>(pa.Cast<IParameter>().ToArray());
+                return kernel.Get<TObject>(pa.Cast<IParameter>().ToArray());
             }
+        }
+    }
+    public class NinjectChildFactory<TObject> : NinjectFactory<TObject>
+    {
+        private readonly Action<IKernel> _childBindings;
+        private readonly ICollection<ChildKernel> _childKernels;
+
+        public NinjectChildFactory(IKernel kernel, Action<IKernel> childBindings) : base(kernel)
+        {
+            _childBindings = childBindings;
+            _childKernels = new Collection<ChildKernel>();
+        }
+        public override TObject Create()
+        {
+            var childKernel = new ChildKernel(_kernel);
+            _childKernels.Add(childKernel);
+            _childBindings(childKernel);
+            return childKernel.Get<TObject>();
+        }
+
+        public override TObject CreateWithParams(params object[] parameters)
+        {
+            var childKernel = new ChildKernel(_kernel);
+            _childKernels.Add(childKernel);
+            _childBindings(childKernel);
+
+            return CreateWithParams(childKernel, parameters);
 
         }
 

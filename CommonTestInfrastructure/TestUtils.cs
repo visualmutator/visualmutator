@@ -24,6 +24,11 @@
     public static class TestUtils
     {
         [DebuggerStepThrough]
+        public static void ShouldBeNotNull<T>(this T obj)
+        {
+            Assert.IsNotNull(obj);
+        }
+        [DebuggerStepThrough]
         public static void ShouldEqual<T>(this T obj, T another)
         {
             Assert.AreEqual(another, obj);
