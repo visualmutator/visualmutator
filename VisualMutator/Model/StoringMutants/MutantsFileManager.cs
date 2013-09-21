@@ -46,7 +46,6 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        private AspNetTestingProcessExtension prep = new AspNetTestingProcessExtension();
 
 
         public MutantsFileManager(

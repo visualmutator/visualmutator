@@ -27,8 +27,9 @@
             get { return _targetAstObjects; }
         }
 
-        public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, List<MutationTarget> sharedTargets)
-            : base(new OperatorCodeVisitor())
+        public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, 
+            List<MutationTarget> sharedTargets, IModule module)
+            : base(new OperatorCodeVisitor(), module)
         {
             _mutationTargets = mutationTargets;
             _sharedTargets = sharedTargets;
@@ -59,19 +60,20 @@
         {
             foreach (var mutationTarget in _mutationTargets)
             {
-                //TODO: do better. now they can be null for changeless mutant
-                if (mutationTarget.VariantObjectsIndices != null && AllAstObjects != null)
+                if (mutationTarget.ModuleName == _traversedModule.Name.Value)
                 {
-                    mutationTarget.Variant.AstObjects = mutationTarget.VariantObjectsIndices
-                    .MapValues((key, val) => AllAstObjects[val]);
-                    if (!AllAstObjects.ContainsKey(mutationTarget.MethodIndex))
+                    //TODO: do better. now they can be null for changeless mutant
+                    if (mutationTarget.VariantObjectsIndices != null && AllAstObjects != null)
                     {
-                        Debugger.Break();
+                        mutationTarget.Variant.AstObjects = mutationTarget.VariantObjectsIndices
+                        .MapValues((key, val) => AllAstObjects[val]);
+                        if (!AllAstObjects.ContainsKey(mutationTarget.MethodIndex))
+                        {
+                            Debugger.Break();
+                        }
+                        mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[mutationTarget.MethodIndex];
                     }
-                    mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[mutationTarget.MethodIndex];
                 }
-
-                
             }
         }
     }

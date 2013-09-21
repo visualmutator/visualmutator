@@ -392,11 +392,6 @@
 
                 try
                 {
-                    //  _mutantsCache.GetMutatedModules(mutant);
-
-                    // _mutantsContainer.ExecuteMutation(mutant, 
-                    //    _currentSession.OriginalAssemblies,
-                    //    _currentSession.SelectedTypes.ToList(),ProgressCounter.Inactive());
                     var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
 
                     if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)

@@ -20,16 +20,18 @@
         private readonly List<MutationTarget> _sharedTargets;
         private IMethodDefinition _currentMethod;
         private readonly AstFormatter _formatter;
+        protected IModule _traversedModule;
 
         public AstFormatter Formatter
         {
             get { return _formatter; }
         }
 
-        public VisualCodeVisitor(IOperatorCodeVisitor visitor):base(visitor)
+        public VisualCodeVisitor(IOperatorCodeVisitor visitor, IModule module):base(visitor)
         {
             visitor.Parent = this;
-               _mutationTargets = new List<Tuple<string/*GroupName*/, List<MutationTarget>>>();
+            _traversedModule = module;
+            _mutationTargets = new List<Tuple<string/*GroupName*/, List<MutationTarget>>>();
             _sharedTargets = new List<MutationTarget>();
             AllAstIndices = new Dictionary<object, int>();
             AllAstObjects = new Dictionary<int, object>();
@@ -38,7 +40,6 @@
 
         protected override bool Process(object obj)
         {
-            
             TreeObjectsCounter++;
             _currentObj = obj;
             if (!AllAstIndices.ContainsKey(obj))
@@ -46,7 +47,7 @@
                 AllAstIndices.Add(obj, TreeObjectsCounter);
                 AllAstObjects.Add(TreeObjectsCounter, obj);
             }
-            this.visitor.VisitAny(obj);
+            visitor.VisitAny(obj);
             return true;
         }
 
@@ -60,12 +61,16 @@
             var targets = new List<MutationTarget>();
             foreach (var mutationVariant in variants)
             {
-                var mutationTarget = new MutationTarget(mutationVariant.Signature, 
-                    TreeObjectsCounter,  typeof(T).Name, mutationVariant);
+                var mutationTarget = new MutationTarget(mutationVariant)
+                {
+                    Name = mutationVariant.Signature,
+                    CounterValue = TreeObjectsCounter,
+                    CallTypeName = typeof(T).Name,
+                    ModuleName = _traversedModule.Name.Value,
+                };
 
                 if (_currentMethod != null)
                 {
-                    //mutationTarget.Method = new MethodIdentifier(_currentMethod);
                     mutationTarget.MethodRaw = _currentMethod;
                 }
                 
@@ -88,7 +93,7 @@
                 {
                     Debugger.Break();
                 }
-                //translate objects to their idices that identify them
+                //translate objects to their indices that identify them
                 mutationTarget.VariantObjectsIndices = mutationTarget.Variant
                     .AstObjects.MapValues((key, val) => AllAstIndices[val]);
                 mutationTarget.MethodIndex = AllAstIndices[mutationTarget.MethodRaw];
@@ -122,8 +127,13 @@
 
         public void MarkSharedTarget<T>(T o)
         {
-            var mutationTarget = new MutationTarget(o.GetType().Name, TreeObjectsCounter, "", 
-                new MutationVariant("", new Dictionary<string, object>()));
+            var mutationTarget = new MutationTarget( 
+                new MutationVariant("", new Dictionary<string, object>()))
+                                 {
+                                     Name = o.GetType().Name, 
+                                     CounterValue = TreeObjectsCounter,
+                                     CallTypeName = "",
+                                 };
 
             _sharedTargets.Add(mutationTarget);
         }

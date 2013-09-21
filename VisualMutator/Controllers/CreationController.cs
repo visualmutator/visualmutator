@@ -77,9 +77,9 @@
            
         }
 
-        public async void Run()
+        public void Run()
         {
-            _svc.Threading.PostOnGui(async () =>
+           /* _svc.Threading.PostOnGui(async () =>
                 {
 
 
@@ -113,28 +113,33 @@
 
                     _viewModel.MutationsTree.MutationPackages = tAll[2].CastTo<IList<PackageNode>>().ToReadonly();
 
-
                 });
-            /*
-         //   _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
-         //       packages => _viewModel.MutationsTree.MutationPackages = new ReadOnlyCollection<PackageNode>(packages));
+            */
+            _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
+                packages => _viewModel.MutationsTree.MutationPackages 
+                    = new ReadOnlyCollection<PackageNode>(packages));
 
             _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
                 assemblies =>
                 {
                     _viewModel.TypesTreeMutate.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
-                  //  _viewModel.TypesTreeToTest.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
 
-
-                    var testNodeNamespaces = _testsContainer.LoadTests(_hostEnviroment.GetProjectAssemblyPaths().Select(p => (string)p).ToList());
-                    
                     if (_typesManager.IsAssemblyLoadError)
                     {
-                        
                         _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
                     }
                 });
-            */
+            _svc.Threading.ScheduleAsync(() => _testsContainer.LoadTests(
+                _hostEnviroment.GetProjectAssemblyPaths().AsStrings()),
+               tests =>
+               {
+                   _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests.ToList());
+
+                   if (_typesManager.IsAssemblyLoadError)
+                   {
+                       _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
+                   }
+               });
             _viewModel.ShowDialog();
     
         }

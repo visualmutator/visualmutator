@@ -180,7 +180,6 @@ namespace VisualMutator.Controllers
         public void RunMutationSession()
         {
             _log.Info("Showing mutation session window.");
-           // var o = new AppDomainCreator();
             Clean();
             _currenSessionController = _sessionControllerFactory.Create();
             var mutantsCreationController = _currenSessionController.MutantsCreationFactory.Create();
@@ -189,12 +188,9 @@ namespace VisualMutator.Controllers
             {
                 MutationSessionChoices choices = mutantsCreationController.Result;
                
-
-
                 _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
 
                 Subscribe(_currenSessionController);
-
 
                 _log.Info("Starting mutation session...");
                 _currenSessionController.RunMutationSession(choices);

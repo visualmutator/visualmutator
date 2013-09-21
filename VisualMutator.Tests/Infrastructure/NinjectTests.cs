@@ -20,20 +20,7 @@
         [Test]
         public void Test1()
         {
-            var modules = new INinjectModule[]
-            {
-                new TestModule(), 
-            };
-
-
-
-            _kernel = new StandardKernel();
-            _kernel.Components.Add<IActivationStrategy, MyMonitorActivationStrategy>();
-
-
-
-
-            _kernel.Load(modules);
+          
         }
 
         [Test]

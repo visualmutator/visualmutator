@@ -7,8 +7,6 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Controls;
-
-    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.Comparers;
     using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
@@ -28,27 +26,17 @@
     public class MutantDetailsController : Controller
     {
         private readonly MutantDetailsViewModel _viewModel;
-
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
-
-
-        private readonly CommonServices _commonServices;
-
- 
-
         private Mutant _currentMutant;
         private MutationTestingSession _session;
 
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
-            ICodeDifferenceCreator codeDifferenceCreator,
-            CommonServices commonServices)
+            ICodeDifferenceCreator codeDifferenceCreator)
         {
             _viewModel = viewModel;
             _codeDifferenceCreator = codeDifferenceCreator;
-       
 
-            _commonServices = commonServices;
 
             _viewModel.RegisterPropertyChanged(_=>_.SelectedTabHeader)
                 .Where(x=> _currentMutant != null).Subscribe(LoadData);
@@ -84,8 +72,10 @@
 
             if(mutant != null)
             {
-                CodeWithDifference diff = await GetCodeWithDifference(selectedLanguage, 
-                    mutant, new ModulesProvider(assemblies.Select(_=>_.AssemblyDefinition).ToList()));
+                var modules = new ModulesProvider(assemblies.Select(_ => _.AssemblyDefinition).ToList());
+                CodeWithDifference diff = await Task.Run(
+                    () => _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
+                    mutant, modules));
                 if (diff != null)
                 {
                     _viewModel.PresentCode(diff);
@@ -95,13 +85,7 @@
             
         }
 
-        private async Task<CodeWithDifference> GetCodeWithDifference(CodeLanguage selectedLanguage, Mutant mutant, ModulesProvider modules)
-        {
-
-            return await Task.FromResult(_codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
-                mutant, modules));
-        }
-
+    
         private void LoadTests(Mutant mutant)
         {
             _viewModel.TestNamespaces.Clear();

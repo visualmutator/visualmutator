@@ -56,9 +56,6 @@
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Tests\Operators\Object\Test_EMM.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Tests\TestsContainer.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\StoringMutants\MutantsFileManager.cs</string>
     </ArrayOfString>
     <ArrayOfString>
@@ -84,6 +81,24 @@
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\CommonUtilityInfrastructure\DependencyInjection\FuncFactory.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\PrintingOperator.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator.Extensibility\UserMutationTarget.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Controllers\MutantDetailsController.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Controllers\MainController.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Controllers\CreationController.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\Arego\Documents\Visual Studio 2012\Projects\VisualMutator\VisualMutator\Model\Tests\TestsContainer.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

@@ -48,18 +48,15 @@
             IModule module = cci.AppendFromFile(filePath);
 
             original = new ModulesProvider(cci.Modules);
-            List<AssemblyNode> assemblyNodes = new AssemblyNode("", module) {AssemblyPath = new FilePathAbsolute(filePath)}.InList();
+            List<AssemblyNode> assemblyNodes = new AssemblyNode("", module) 
+                {AssemblyPath = new FilePathAbsolute(filePath)}.InList();
+
             cache.setDisabled(disableCache: true);
             diff = new CodeDifferenceCreator(cache, visualizer);
 
-           
-
             container.DebugConfig = true;
-            var mutmods = CreateMutants(oper, container, assemblyNodes, cache);
+            var mutmods = CreateMutants(oper, container, assemblyNodes, cache, 1);
             mutants = mutmods.Select(m => m.Mutant).ToList();
-
-
-
 
         }
 
@@ -152,32 +149,24 @@
             return null;
         }
 
-        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container, List<AssemblyNode> assemblyNodes,  MutantsCache cache)
+        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container, 
+            List<AssemblyNode> assemblyNodes,  MutantsCache cache, int numberOfMutants)
         {
-            
             _log.Info("Copying modules...");
-           // ModulesProvider copiedModules = new ModulesProvider(cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
             var ccii = new CommonCompilerInfra();
             foreach (var assemblyNode in assemblyNodes)
             {
                 ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
             }
             ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
-            var choices = new MutationSessionChoices()
-                {
-                    MutantsCreationOptions = new MutantsCreationOptions()
-                        {
-                            MaxNumerOfMutantPerOperator = 1,
-                        },
-                        Assemblies = new List<AssemblyNode>(),
-                        SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>())
-                };
+            var mutantsCreationOptions = new MutantsCreationOptions()
+            {
+                MaxNumerOfMutantPerOperator = numberOfMutants,
+            };
+         
 
-
-            var allowedTypes = choices.SelectedTypes.GetIdentifiers();
-            container.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
-
-   
+            var allowedTypes = new List<TypeIdentifier>();
+            container.Initialize(mutantsCreationOptions, allowedTypes, assemblyNodes);
 
             var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());
@@ -185,26 +174,7 @@
             return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants)
                 .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
 
-            /*
-            MutantsContainer.OperatorWithTargets operatorWithTargets = container.CreateVisitor(operatorr,
-                                                                                             copiedModules,
-                                                                                             new List<TypeIdentifier>());
-
-            var mutants = new List<MutMod>();
-            foreach (MutationTarget mutationTarget in operatorWithTargets.MutationTargets.Values.SelectMany(v => v))
-            {
-                var exec = new ExecutedOperator("", "", operatorWithTargets.Operator);
-                var mutant = new Mutant("0", exec, mutationTarget, operatorWithTargets._sharedTargets);
-
-                var ModulesProvider = container.ExecuteMutation(mutant, cci.Modules, new List<TypeIdentifier>(), ProgressCounter.Inactive());
-                mutants.Add(new MutMod ( mutant, ModulesProvider ));
-            
-            
-
-            
-            
-            }
-            return mutants;*/
+    
         }
         public static List<IModule> CreateModules(string filePath, CommonCompilerInfra cci)
         {

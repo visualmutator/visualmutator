@@ -14,7 +14,7 @@
             _visitor = visitor;
             PreorderVisitor = visitor;
         }
-
+      
         public override void TraverseChildren(INamespaceTypeDefinition namespaceTypeDefinition)
         {
             if (_allowedTypes.Count == 0 || _allowedTypes.Contains(new TypeIdentifier(namespaceTypeDefinition)))

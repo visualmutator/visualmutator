@@ -31,6 +31,10 @@
         {
             return string.IsNullOrEmpty(str);
         }
+        public static IEnumerable<string> AsStrings<T>(this IEnumerable<T> elems)
+        {
+            return elems.Select(e => e.ToString());
+        }
         public static IList<Tuple<T1,T2>> Pairs<T1, T2>(params object[] elements)
         {
             Throw.IfNull(elements);

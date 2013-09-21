@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using CommonUtilityInfrastructure;
+    using CommonUtilityInfrastructure.Paths;
     using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
@@ -14,6 +15,7 @@
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
+    using Model.Mutations.Types;
     using Mutations;
     using NUnit.Framework;
     using OperatorsObject.Operators;
@@ -106,7 +108,9 @@
         }
 
         #endregion
-        String _assemblyPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
+
+        private const String _dsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
+        String _dsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
         
         [Test]
         public void Tee()
@@ -120,7 +124,7 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(_assemblyPath);
+            cci.AppendFromFile(_dsaPath);
 
             var original = new ModulesProvider(cci.Modules);
             ModulesProvider copiedModules = new ModulesProvider(
@@ -138,8 +142,8 @@
             var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
 
 
-            
-            var visitor = new VisualCodeVisitor(operatorVisitor);
+
+            var visitor = new VisualCodeVisitor(operatorVisitor, copiedModules.Assemblies.Single());
 
             var traverser = new VisualCodeTraverser(new List<TypeIdentifier>(), visitor);
 
@@ -151,7 +155,8 @@
             commonTargets.AddRange(visitor.SharedTargets);
             var mutargets = visitor.MutationTargets.Select(t => t.Item2).Flatten().ToList();
 
-            var visitorBack = new VisualCodeVisitorBack(mutargets, new List<MutationTarget>());
+            var visitorBack = new VisualCodeVisitorBack(mutargets, new List<MutationTarget>(), 
+                copiedModules.Assemblies.Single());
             var traverser2 = new VisualCodeTraverser(new List<TypeIdentifier>(), visitorBack);
             traverser2.Traverse(copiedModules.Assemblies.Single());
             visitorBack.PostProcess();
@@ -161,49 +166,7 @@
                 Assert.IsTrue(oper.visitor.objects.Any(o => int.Parse(o.Item2) == pair.Item2.CounterValue && o.Item1 == pair.Item1));
             }
             */
-            /*
-          var operatorCodeRewriter = oper.CreateRewriter();
-          foreach (var mutationTarget in mutargets)
-          {
-
-              var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                  visitorBack.SharedAstObjects, new List<TypeIdentifier>(), operatorCodeRewriter);
-
-              operatorCodeRewriter.MutationTarget =
-                  new UserMutationTarget(mutationTarget.Variant.Signature, mutationTarget.Variant.AstObjects);
-
-              operatorCodeRewriter.NameTable = cci.Host.NameTable;
-              operatorCodeRewriter.Host = cci.Host;
-              operatorCodeRewriter.Module = (Module)copiedModules.Assemblies.Single();
-              operatorCodeRewriter.OperatorUtils = utils;
-
-              operatorCodeRewriter.Initialize();
-
-
-              IModule rewrittenModule = rewriter.Rewrite(copiedModules.Assemblies.Single());
-          }
-        var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-              visitorBack.SharedAstObjects, allowedTypes, operatorCodeRewriter);
-
-          operatorCodeRewriter.MutationTarget =
-              new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
-
-          operatorCodeRewriter.NameTable = cci.Host.NameTable;
-          operatorCodeRewriter.Host = cci.Host;
-          operatorCodeRewriter.Module = (Module)copiedModules.Assemblies.Single();
-          operatorCodeRewriter.OperatorUtils = utils;
-
-          operatorCodeRewriter.Initialize();
-
-
-          IModule rewrittenModule = rewriter.Rewrite(module);
-
-
-
-          _log.Info("Got: " + mergedTargets.Select(i => i.Item2).Flatten().Count() + " mutation targets.");
-         
-          */
-
+          
         }
         [Test]
         public void MutationAccessorSuccess()
@@ -213,7 +176,7 @@
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutationsFromFile(_assemblyPath, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
+            Common.RunMutationsFromFile(_dsaPath, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants.Take(1))
             {
@@ -240,7 +203,44 @@
             
             mutants.Count.ShouldEqual(1);
         }
+        [Test]
+        public void Mutation_Of_Two_Modules()
+        {
+            var oper = new EAM_AccessorMethodChange();
+            ///////
+            var cci = new CommonCompilerInfra();
+            var utils = new OperatorUtils(cci);
+            var container = new MutantsContainer(cci, utils);
+            var visualizer = new CodeVisualizer(cci);
+            var cache = new MutantsCache(container);
+            List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
+            {
+                new AssemblyNode("", cci.AppendFromFile(_dsaPath))
+                {
+                    AssemblyPath = new FilePathAbsolute(_dsaPath)
+                },
+                new AssemblyNode("", cci.AppendFromFile(_dsaTestsPath))
+                {
+                    AssemblyPath = new FilePathAbsolute(_dsaTestsPath)
+                }
+            };
+            var original = new ModulesProvider(cci.Modules);
+            cache.setDisabled(disableCache: true);
+            var diff = new CodeDifferenceCreator(cache, visualizer);
+            container.DebugConfig = true;
+            var mutmods = Common.CreateMutants(oper, container, assemblyNodes, cache, 1);
+            var mutants = mutmods.Select(m => m.Mutant).ToList();
 
+            foreach (Mutant mutant in mutants.Take(1))
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                   original);
+                Console.WriteLine(codeWithDifference.Code);
+              
+            }
+
+            mutants.Count.ShouldEqual(1);
+        }
         [Test]
         public void MutationModifierSuccess()
         {

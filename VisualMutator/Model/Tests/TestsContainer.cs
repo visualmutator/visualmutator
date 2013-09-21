@@ -7,8 +7,6 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-
-    using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.CheckboxedTree;
     using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.Paths;
@@ -48,7 +46,7 @@
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
         StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant);
-        IEnumerable<TestNodeNamespace> LoadTests(List<string> paths);
+        IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> paths);
 
         ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces);
         void CreateTestFilter(ICollection<TestId> selectedTests);
@@ -57,8 +55,6 @@
     public class TestsContainer : ITestsContainer
     {
         private readonly IMutantsFileManager _mutantsFileManager;
-
-        private readonly CommonServices _commonServices;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
 
@@ -73,13 +69,10 @@
 
         public TestsContainer(
             NUnitTestService nunit, 
-           // MsTestService ms,
-            IMutantsFileManager mutantsFileManager, 
-            CommonServices commonServices,
+            IMutantsFileManager mutantsFileManager,
             IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
-            _commonServices = commonServices;
             _assemblyVerifier = assemblyVerifier;
             _testServices = new List<ITestService>
             {
@@ -150,7 +143,7 @@
         {
             return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath, mutant);
         }
-        public IEnumerable<TestNodeNamespace> LoadTests(List<string> paths)
+        public IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> paths)
         {
             var session = new MutantTestSession();
             LoadTests(paths, session);
@@ -279,7 +272,7 @@
             }
         }
 
-        public void LoadTests(List<string> assembliesPaths, MutantTestSession mutantTestSession)
+        public void LoadTests(IEnumerable<string> assembliesPaths, MutantTestSession mutantTestSession)
         {
             Throw.IfNull(assembliesPaths, "assembliesPaths");
            

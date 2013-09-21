@@ -80,15 +80,16 @@
         {
             var op = new IdentityOperator();
           
-            executedOperator = new ExecutedOperator(op.Info.Id, op.Info.Name, op);
+            executedOperator = new ExecutedOperator("E", "Equivalency operator", op);
             var group = new MutantGroup("Testing original program", executedOperator);
-            var mutant = new Mutant("0", group, new MutationTarget("Original program", -1, "", new MutationVariant()), new List<MutationTarget>());
+            var target = new MutationTarget(new MutationVariant())
+                         {
+                             Name = "Original program",
+                         };
+            var mutant = new Mutant("0", group, target, new List<MutationTarget>());
            
             group.Children.Add(mutant);
             executedOperator.Children.Add(group);
-
-            //InitMutantsForOperators(op.InList(),
-            //       _currentSession.SelectedTypes, new ModulesProvider(_currentSession.OriginalAssemblies.Select(_ => _.AssemblyDefinition).ToList()), counter);
 
             return mutant;
         }
@@ -127,7 +128,7 @@
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
                 operatorsWithTargets.Add(operatorResult);
-                var mutations = LimitMutationTargets(operatorResult);
+                ILookup<string/*groupName*/, MutationTarget> mutations = LimitMutationTargets(operatorResult);
                 //subProgress.Initialize(targets.MutationTargets.Count);
                 foreach (var grouping in mutations)
                 {
@@ -169,8 +170,6 @@
         public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, 
             IList<TypeIdentifier> allowedTypes)
         {
-           
-
             _log.Info("Finding targets for mutation operator: " + mutOperator.Info);
 
             try
@@ -185,18 +184,15 @@
                 var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
                 foreach (var module in modules)
                 {
-                    var visitor = new VisualCodeVisitor(operatorVisitor);
+                    var visitor = new VisualCodeVisitor(operatorVisitor, module);
  
                     var traverser = new VisualCodeTraverser(allowedTypes, visitor);
                   
                     traverser.Traverse(module);
                     visitor.PostProcess();
-                    IEnumerable<Tuple<string, List<MutationTarget>>> s = visitor.MutationTargets.AsEnumerable();
-                    mergedTargets.AddRange(s);
-                  
+                    mergedTargets.AddRange(visitor.MutationTargets);
                     commonTargets.AddRange(visitor.SharedTargets);
                 }
-
 
                 _log.Info("Got: " + mergedTargets.Select(i => i.Item2).Flatten().Count() + " mutation targets.");
          
@@ -207,8 +203,6 @@
                     Operator = mutOperator,
               
                 };
-
-                
             }
             catch (Exception e)
             {
@@ -237,10 +231,9 @@
                 foreach (var sourceModule in sourceModules)
                 {
                     IModule module = cci.AppendFromFile(sourceModule.AssemblyPath.ToString());
-                    //  var copiedModules = sourceModules.Assemblies.Select(module => _cci.DecompileCopy(module)).ToList();
-                    
                     percentCompleted.Progress();
-                    var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(), mutant.CommonTargets);
+                    var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
+                        mutant.CommonTargets, module);
                     var traverser2 = new VisualCodeTraverser(allowedTypes, visitorBack);
                     traverser2.Traverse(module);
                     visitorBack.PostProcess();
@@ -254,7 +247,7 @@
                     
                     operatorCodeRewriter.NameTable = _cci.Host.NameTable;
                     operatorCodeRewriter.Host = _cci.Host;
-                    operatorCodeRewriter.Module = (Module)module;
+                    operatorCodeRewriter.Module = module;
                     operatorCodeRewriter.OperatorUtils = _operatorUtils;
 
                     operatorCodeRewriter.Initialize();

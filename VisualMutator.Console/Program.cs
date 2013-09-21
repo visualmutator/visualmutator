@@ -95,7 +95,7 @@ namespace VisualMutator.Console
         
         private static void Main(string[] args)
         {
-
+/*
             var cci = new CommonCompilerInfra();
 
             cci.AppendFromFile(file);
@@ -131,10 +131,7 @@ namespace VisualMutator.Console
 
 
             BasicConfigurator.Configure(
-                /*new FileAppender(){Writer = File.CreateText(@"vmlog.txt"), 
-                  AppendToFile = false, Threshold = Level.Warn,
-              Layout = new PatternLayout("%-5level - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
-                      }*/
+           
               new ConsoleAppender
                {
                    Layout = new PatternLayout("%-5level - %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
@@ -170,7 +167,7 @@ namespace VisualMutator.Console
             operatorVisitor.Host = cci.Host;
             operatorVisitor.OperatorUtils = utils;
             operatorVisitor.Initialize();
-            var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
+            var mergedTargets = new List<Tuple<string , List<MutationTarget>>>();
 
             var visitor = new VisualCodeVisitor(operatorVisitor);
 
@@ -187,7 +184,7 @@ namespace VisualMutator.Console
             var visitorBack = new VisualCodeVisitorBack(mutargets, new List<MutationTarget>());
             var traverser2 = new VisualCodeTraverser(new List<TypeIdentifier>(), visitorBack);
             traverser2.Traverse(copiedModules1.Assemblies.Single());
-            visitorBack.PostProcess();
+            visitorBack.PostProcess();*/
         }
     }
 }
