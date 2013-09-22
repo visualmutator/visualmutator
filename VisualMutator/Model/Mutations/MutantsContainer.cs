@@ -90,7 +90,9 @@
            
             group.Children.Add(mutant);
             executedOperator.Children.Add(group);
-
+            executedOperator.UpdateDisplayedText();
+            group.UpdateDisplayedText();
+            mutant.UpdateDisplayedText();
             return mutant;
         }
 

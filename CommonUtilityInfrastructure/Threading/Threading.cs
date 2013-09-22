@@ -127,14 +127,20 @@ namespace CommonUtilityInfrastructure.Threading
         public Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, 
             Action onException = null, Action onFinally = null)
         {
-            return new TaskFactory(_threadPoolExecute.ThreadPoolScheduler)
+            return Task.Run(onBackground)
+                .ContinueWith(prev =>
+            {
+                ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
+
+            }, _execute.GuiScheduler);
+         /*   return new TaskFactory(_threadPoolExecute.ThreadPoolScheduler)
                 .StartNew(onBackground)
                 .ContinueWith(prev =>
                 {
                     ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
 
                 }, _execute.GuiScheduler);
-        
+        */
         }
 
     
