@@ -121,7 +121,6 @@ namespace CommonUtilityInfrastructure.Threading
                     ContinueWithMethod(prev.Exception, onGui, onException, onFinally);
 
                 }, _execute.GuiScheduler);
-
         }
         
         public Task ScheduleAsync<T>(Func<T> onBackground, Action<T> onGui, 

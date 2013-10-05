@@ -25,6 +25,11 @@
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public const String DsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
+        public const String DsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
+        
+
+
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
                                         out ModulesProvider original, out CodeDifferenceCreator diff)
         {
@@ -55,7 +60,7 @@
             diff = new CodeDifferenceCreator(cache, visualizer);
 
             container.DebugConfig = true;
-            var mutmods = CreateMutants(oper, container, assemblyNodes, cache, 1);
+            var mutmods = CreateMutants(oper, container, assemblyNodes, cache, 100);
             mutants = mutmods.Select(m => m.Mutant).ToList();
 
         }
@@ -176,6 +181,32 @@
 
     
         }
+        public static IEnumerable<MutantGroup> CreateMutantsLight(IMutationOperator operatorr, MutantsContainer container,
+            List<AssemblyNode> assemblyNodes, MutantsCache cache, int numberOfMutants)
+        {
+            _log.Info("Copying modules...");
+            var ccii = new CommonCompilerInfra();
+            foreach (var assemblyNode in assemblyNodes)
+            {
+                ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
+            }
+            ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
+            var mutantsCreationOptions = new MutantsCreationOptions()
+            {
+                MaxNumerOfMutantPerOperator = numberOfMutants,
+            };
+
+
+            var allowedTypes = new List<TypeIdentifier>();
+            container.Initialize(mutantsCreationOptions, allowedTypes, assemblyNodes);
+
+            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
+                                                                          copiedModules, ProgressCounter.Inactive());
+            return executedOperators.Single().MutantGroups;
+           
+
+
+        }
         public static List<IModule> CreateModules(string filePath, CommonCompilerInfra cci)
         {
             cci.AppendFromFile(filePath);
@@ -185,10 +216,6 @@
 
             return copiedModules;
         }
-        
-
-
-       
     }
      public class MutMod
      {

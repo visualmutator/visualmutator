@@ -109,9 +109,7 @@
 
         #endregion
 
-        private const String _dsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
-        String _dsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
-        
+      
         [Test]
         public void Tee()
         {
@@ -124,7 +122,7 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(_dsaPath);
+            cci.AppendFromFile(Common.DsaPath);
 
             var original = new ModulesProvider(cci.Modules);
             ModulesProvider copiedModules = new ModulesProvider(
@@ -173,35 +171,7 @@
         {
   
 
-            List<Mutant> mutants;
-            ModulesProvider original;
-            CodeDifferenceCreator diff;
-            Common.RunMutationsFromFile(_dsaPath, new EAM_AccessorMethodChange(), out mutants, out original, out diff);
-
-            foreach (Mutant mutant in mutants.Take(1))
-            {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                   original);
-                Console.WriteLine(codeWithDifference.Code);
-                if(codeWithDifference.LineChanges.Count == 0)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("##########################################################");
-                    Console.WriteLine("EQUIVALENT MUTANT DETECTED:");
-                    Console.WriteLine("From: "+mutant.MutantGroup);
-                    Console.WriteLine(mutant.MutationTarget);
-                    
-                    Console.WriteLine(codeWithDifference.Code);
-
-                    CodeWithDifference codeWithDifference2 = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                   original);
-
-                }
-
-                // codeWithDifference.LineChanges.Count.ShouldEqual(2);
-            }
             
-            mutants.Count.ShouldEqual(1);
         }
         [Test]
         public void Mutation_Of_Two_Modules()
@@ -215,13 +185,13 @@
             var cache = new MutantsCache(container);
             List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
             {
-                new AssemblyNode("", cci.AppendFromFile(_dsaPath))
+                new AssemblyNode("", cci.AppendFromFile(Common.DsaPath))
                 {
-                    AssemblyPath = new FilePathAbsolute(_dsaPath)
+                    AssemblyPath = new FilePathAbsolute(Common.DsaPath)
                 },
-                new AssemblyNode("", cci.AppendFromFile(_dsaTestsPath))
+                new AssemblyNode("", cci.AppendFromFile(Common.DsaTestsPath))
                 {
-                    AssemblyPath = new FilePathAbsolute(_dsaTestsPath)
+                    AssemblyPath = new FilePathAbsolute(Common.DsaTestsPath)
                 }
             };
             var original = new ModulesProvider(cci.Modules);

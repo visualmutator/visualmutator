@@ -196,7 +196,7 @@
                     commonTargets.AddRange(visitor.SharedTargets);
                 }
 
-                _log.Info("Got: " + mergedTargets.Select(i => i.Item2).Flatten().Count() + " mutation targets.");
+                _log.Info("Found total of: " + mergedTargets.Select(i => i.Item2).Flatten().Count() + " mutation targets.");
          
                 return new OperatorWithTargets
                 {

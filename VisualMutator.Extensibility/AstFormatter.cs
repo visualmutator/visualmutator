@@ -74,6 +74,47 @@
             {
                 _formattedValue = Format(binary.LeftOperand) + " ~#~ " + Format(binary.RightOperand);
             }
+            public override void Visit(IAddition binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " + " + Format(binary.RightOperand);
+            }
+            public override void Visit(ISubtraction binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " - " + Format(binary.RightOperand);
+            }
+            public override void Visit(IMultiplication binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " * " + Format(binary.RightOperand);
+            }
+            public override void Visit(IDivision binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " / " + Format(binary.RightOperand);
+            }
+            public override void Visit(IGreaterThan binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " > " + Format(binary.RightOperand);
+            }
+            public override void Visit(ILessThan binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " < " + Format(binary.RightOperand);
+            }
+            public override void Visit(ILessThanOrEqual binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " <= " + Format(binary.RightOperand);
+            }
+            public override void Visit(IGreaterThanOrEqual binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " >= " + Format(binary.RightOperand);
+            }
+            public override void Visit(IEquality binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " == " + Format(binary.RightOperand);
+            }
+            public override void Visit(INotEquality binary)
+            {
+                _formattedValue = Format(binary.LeftOperand) + " != " + Format(binary.RightOperand);
+            }
+           
             public override void Visit(IBoundExpression expression)
             {
                 _formattedValue = "{" + expression.Definition.GetType().Name + "}";

@@ -49,7 +49,7 @@
         {
             if (method == null)
             {
-                return "";
+                return "No method to visualize.";
             }
 
             var sb = new StringBuilder();

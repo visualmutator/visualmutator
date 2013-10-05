@@ -3,10 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using CommonUtilityInfrastructure.Paths;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
+    using Model.Mutations;
     using Model.Mutations.MutantsTree;
+    using Model.Mutations.Operators;
+    using Model.Mutations.Types;
     using NUnit.Framework;
     using OperatorsStandard;
     using Util;
@@ -17,6 +21,8 @@
     [TestFixture]
     public class TestRelationalOperatorReplacement
     {
+        private String _dsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
+
         #region Setup/Teardown
 
         [SetUp]
@@ -30,6 +36,10 @@
         }
 
         #endregion
+
+
+
+        
 
         [Test]
         public void MutationFullOnFloat()
@@ -144,8 +154,50 @@ namespace Ns
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
-                Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
+                codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
+        }
+
+        [Test]
+        public void Test()
+        {
+            var oper = new ROR_RelationalOperatorReplacement();
+            ///////
+            var cci = new CommonCompilerInfra();
+            var utils = new OperatorUtils(cci);
+            var container = new MutantsContainer(cci, utils);
+            var visualizer = new CodeVisualizer(cci);
+            var cache = new MutantsCache(container);
+            List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
+            {
+                new AssemblyNode("", cci.AppendFromFile(Common.DsaPath))
+                {
+                    AssemblyPath = new FilePathAbsolute(Common.DsaPath)
+                },
+                new AssemblyNode("", cci.AppendFromFile(Common.DsaTestsPath))
+                {
+                    AssemblyPath = new FilePathAbsolute(Common.DsaTestsPath)
+                }
+            };
+            var original = new ModulesProvider(cci.Modules);
+            cache.setDisabled(disableCache: false);
+            var diff = new CodeDifferenceCreator(cache, visualizer);
+            container.DebugConfig = true;
+            var groups = Common.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
+            var mutants = groups.SelectMany(g=>g.Mutants).ToList();
+
+            var groupsBad = groups
+                .Where(g=> g.Mutants.Select(m=>m.ToString()).Distinct().Count() != g.Mutants.Count()).ToList();
+            int y = groupsBad.Count;
+            foreach (Mutant mutant in mutants)
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                   original);
+                Console.WriteLine(codeWithDifference.Code);
+
+            }
+            groupsBad.Count.ShouldEqual(0);
+            mutants.Count.ShouldEqual(1);
         }
     }
 }

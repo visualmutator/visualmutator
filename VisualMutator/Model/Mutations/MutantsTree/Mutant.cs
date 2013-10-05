@@ -109,6 +109,11 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             }
         }
 
+        public override string ToString()
+        {
+            return MutationTarget.Variant.Signature;
+        }
+
         private MutantTestSession _mutantTestSession;
 
         public MutantTestSession MutantTestSession
