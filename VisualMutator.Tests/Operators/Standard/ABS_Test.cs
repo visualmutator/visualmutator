@@ -30,34 +30,7 @@
 
         #endregion
 
-        [Test]
-        public void MutationFail()
-        {
-            const string code =
-                @"using System;
-namespace Ns
-{
-    public class Test
-    {
-        public bool Method1(float a, float b)
-        {
-            bool result = true;
-            string s = ""dd"";
-            s = s + ""dd"";
-            return result;
-        }
-    }
-}";
-
-            List<Mutant> mutants;
-            ModulesProvider original;
-            CodeDifferenceCreator diff;
-            Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
-
-
-            mutants.Count.ShouldEqual(0);
-        }
-
+       
         [Test]
         public void MutationSuccess()
         {

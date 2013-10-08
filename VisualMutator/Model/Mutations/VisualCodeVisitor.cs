@@ -47,6 +47,10 @@
             _currentObj = obj;
             if (!AllAstIndices.ContainsKey(obj))
             {
+                if (obj is IMethodDefinition)
+                {
+                //    Debugger.Break();
+                }
                 AllAstIndices.Add(obj, TreeObjectsCounter);
                 AllAstObjects.Add(TreeObjectsCounter, obj);
             }

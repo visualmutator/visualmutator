@@ -56,7 +56,7 @@
             List<AssemblyNode> assemblyNodes = new AssemblyNode("", module) 
                 {AssemblyPath = new FilePathAbsolute(filePath)}.InList();
 
-            cache.setDisabled(disableCache: true);
+            cache.setDisabled(disableCache: false);
             diff = new CodeDifferenceCreator(cache, visualizer);
 
             container.DebugConfig = true;

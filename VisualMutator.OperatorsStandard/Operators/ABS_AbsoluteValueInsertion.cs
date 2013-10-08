@@ -35,7 +35,36 @@
         {
             return new ABSRewriter();
         }
+        public class ABSVisitor : OperatorCodeVisitor
+        {
 
+
+            private void ProcessOperation(IExpression operation)
+            {
+                //TODO:other types
+                if (operation.Type.TypeCode == PrimitiveTypeCode.Int32)
+                {
+                    List<string> passes = new List<string>
+                    {
+                        "Abs",
+                        "NegAbs",
+                        "FailOnZero"
+                    }.ToList();
+
+                    MarkMutationTarget(operation, passes);
+                }
+
+            }
+            public override void Visit(IExpression operation)
+            {
+                ProcessOperation(operation);
+            }
+            public override void Visit(IRootUnitNamespace ns)
+            {
+                MarkCommon(ns);
+            }
+
+        }
     
         public class ABSRewriter : OperatorCodeRewriter
         {
@@ -173,41 +202,12 @@ namespace VisualMutatorGeneratedNamespace
                
                
                 body.Block = GeneratedBlock;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          return root;
+                return root;
             }
       
         }
 
-        public class ABSVisitor : OperatorCodeVisitor
-        {
-      
     
-            private void ProcessOperation(IExpression operation)
-            {
-                //TODO:other types
-                if (operation.Type.TypeCode == PrimitiveTypeCode.Int32)
-                {
-                    List<string> passes = new List<string>
-                    {
-                        "Abs",
-                        "NegAbs",
-                        "FailOnZero"
-                    }.ToList();
-
-                    MarkMutationTarget(operation, passes);
-                }
-                
-            }
-            public override void Visit(IExpression operation)
-            {
-                ProcessOperation(operation);
-            }
-            public override void Visit(IRootUnitNamespace ns)
-            {
-                MarkCommon(ns);
-            }
-
-        }
 
     }
 }

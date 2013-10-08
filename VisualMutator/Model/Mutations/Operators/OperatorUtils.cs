@@ -31,7 +31,7 @@
                 .AddSyntaxTrees(tree)
                 .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location));
 
-            var outputFileName = Path.Combine(Path.GetTempPath(), "MyCompilation.lib");
+            var outputFileName = Path.GetTempFileName();//Path.Combine(Path.GeGetTempPath(), "MyCompilation.lib");
             var ilStream = new FileStream(outputFileName, FileMode.OpenOrCreate);
 
             var result = comp.Emit(ilStream);
