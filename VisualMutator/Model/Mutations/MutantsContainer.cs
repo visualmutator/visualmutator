@@ -130,9 +130,10 @@
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
                 operatorsWithTargets.Add(operatorResult);
-                ILookup<string/*groupName*/, MutationTarget> mutations = LimitMutationTargets(operatorResult);
+                IEnumerable<MutationTarget> mutations = LimitMutationTargets(operatorResult.MutationTargets);
+                var groupedTargets = mutations.ToLookup(target => target.GroupName);
                 //subProgress.Initialize(targets.MutationTargets.Count);
-                foreach (var grouping in mutations)
+                foreach (var grouping in groupedTargets)
                 {
                     var group = new MutantGroup(grouping.Key, executedOperator);
                     foreach (var mutationTarget in grouping)
@@ -153,19 +154,18 @@
 
                 percentCompleted.Progress();
             }
-                
        
             root.State = MutantResultState.Untested;
 
             return mutantsGroupedByOperators;
         }
 
-        private ILookup<string, MutationTarget> LimitMutationTargets(OperatorWithTargets operatorResult)
+        private IList<MutationTarget> LimitMutationTargets(IEnumerable<MutationTarget> targets)
         {
-            var mapping = operatorResult.MutationTargets
-                .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
+            var mapping = targets.Shuffle()
+              //  .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
                 .Take(_options.MaxNumerOfMutantPerOperator).ToList();
-            return mapping.ToLookup(pair => pair.Item1, pair => pair.Item2);
+            return mapping;
         }
 
 
@@ -183,7 +183,7 @@
                 operatorVisitor.Host = _cci.Host;
                 operatorVisitor.OperatorUtils = _operatorUtils;
                 operatorVisitor.Initialize();
-                var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
+                var mergedTargets = new List<MutationTarget>();
                 foreach (var module in modules)
                 {
                     var visitor = new VisualCodeVisitor(operatorVisitor, module);
@@ -196,7 +196,7 @@
                     commonTargets.AddRange(visitor.SharedTargets);
                 }
 
-                _log.Info("Found total of: " + mergedTargets.Select(i => i.Item2).Flatten().Count() + " mutation targets.");
+                _log.Info("Found total of: " + mergedTargets.Count() + " mutation targets.");
          
                 return new OperatorWithTargets
                 {
@@ -274,7 +274,7 @@
         }
         public class OperatorWithTargets
         {
-            public List<Tuple<string, List<MutationTarget>>> MutationTargets
+            public List<MutationTarget> MutationTargets
             {
                 get;
                 set;

@@ -973,8 +973,12 @@ namespace VisualMutator.Extensibility
         /// Performs some computation with the given Win32 resource.
         /// </summary>
         void Visit(IWin32Resource win32Resource);
-    
-        VisualCodeVisitor Parent { get; set; }
+
+        IVisualCodeVisitor Parent
+        {
+            get;
+            set;
+        }
         MetadataReaderHost Host { get; set; }
         
 

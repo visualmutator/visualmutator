@@ -29,7 +29,7 @@ namespace VisualMutator.OperatorsStandard
         {
             
       
-            private void ProcessOperation(IBinaryOperation operation)
+            private void ProcessOperation<T>(T operation) where T : IBinaryOperation
             {
                 var operandTypeCode = operation.LeftOperand.Type.TypeCode;
                 var passes = new List<string>

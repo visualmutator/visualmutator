@@ -14,6 +14,7 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly ICollection<MutationTarget> _mutationTargets;//TODO: remove, its ambigius with base class field of the same name
         private readonly List<MutationTarget> _sharedTargets;
+        //List of objects found in this model tree corresponding to mutation targets
         private readonly List<Tuple<object, MutationTarget>> _targetAstObjects;
         private readonly List<object> _sharedAstObjects;
 
@@ -42,12 +43,15 @@
         {
             base.Process(obj);
          //   _log.Debug("Process back: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " : " + obj.GetHashCode());
-            var target = _mutationTargets.FirstOrDefault(t => t.CounterValue == TreeObjectsCounter);
+            //Are we processing an object corresponding to any mutation target?
+            var target = _mutationTargets.SingleOrDefault(t => t.CounterValue == TreeObjectsCounter);
+            
+        //    _log.Debug("Creating pair: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " <===> " + target);
             if (target != null)
             {
-            //    _log.Debug("Creating pair: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " <===> " + target);
                 _targetAstObjects.Add(Tuple.Create(obj, target));
             }
+            
             if (_sharedTargets.Any(t => t.CounterValue == TreeObjectsCounter))
             {
                 _sharedAstObjects.Add(obj);

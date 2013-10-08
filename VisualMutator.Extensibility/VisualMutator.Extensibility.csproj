@@ -156,6 +156,8 @@
     <Compile Include="AstFormatter.cs" />
     <Compile Include="InvokInfo.cs" />
     <Compile Include="MutationVariant.cs" />
+    <Compile Include="Traversing\IVisualCodeRewriter.cs" />
+    <Compile Include="Traversing\IVisualCodeVisitor.cs" />
     <Compile Include="Traversing\OperatorCodeVisitorBase.cs" />
     <Compile Include="Traversing\OperatorCodeRewriterBase.cs" />
     <Compile Include="UserMutationTarget.cs" />
@@ -175,12 +177,6 @@
     <Compile Include="PrintingOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeIdentifier.cs" />
-    <Compile Include="Traversing\VisualCodeRewriter.cs" />
-    <Compile Include="Traversing\VisualCodeRewriterBase.cs" />
-    <Compile Include="Traversing\VisualCodeTraverser.cs" />
-    <Compile Include="Traversing\VisualCodeVisitor.cs" />
-    <Compile Include="Traversing\VisualCodeVisitorBack.cs" />
-    <Compile Include="Traversing\VisualCodeVisitorBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

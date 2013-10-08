@@ -137,7 +137,7 @@
             operatorVisitor.Host = cci.Host;
             operatorVisitor.OperatorUtils = utils;
             operatorVisitor.Initialize();
-            var mergedTargets = new List<Tuple<string /*GroupName*/, List<MutationTarget>>>();
+            var mergedTargets = new List<MutationTarget>();
 
 
 
@@ -147,13 +147,12 @@
 
             traverser.Traverse(copiedModules.Assemblies.Single());
             visitor.PostProcess();
-            IEnumerable<Tuple<string, List<MutationTarget>>> s = visitor.MutationTargets.AsEnumerable();
-            mergedTargets.AddRange(s);
+         //   IEnumerable<Tuple<string, List<MutationTarget>>> s = visitor.MutationTargets.AsEnumerable();
+            mergedTargets.AddRange(visitor.MutationTargets);
 
             commonTargets.AddRange(visitor.SharedTargets);
-            var mutargets = visitor.MutationTargets.Select(t => t.Item2).Flatten().ToList();
 
-            var visitorBack = new VisualCodeVisitorBack(mutargets, new List<MutationTarget>(), 
+            var visitorBack = new VisualCodeVisitorBack(visitor.MutationTargets, new List<MutationTarget>(), 
                 copiedModules.Assemblies.Single());
             var traverser2 = new VisualCodeTraverser(new List<TypeIdentifier>(), visitorBack);
             traverser2.Traverse(copiedModules.Assemblies.Single());

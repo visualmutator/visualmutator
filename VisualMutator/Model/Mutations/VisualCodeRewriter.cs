@@ -1,19 +1,21 @@
-﻿namespace VisualMutator.Extensibility
+﻿namespace VisualMutator.Model.Mutations
 {
+    using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using CommonUtilityInfrastructure;
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using MethodReference = Microsoft.Cci.MutableCodeModel.MethodReference;
-    using System;
-    using System.Linq;
 
     /// <summary>
     /// Internal object of the rewriting phase.
     /// </summary>
-    public class VisualCodeRewriter : VisualCodeRewriterBase
+    public class VisualCodeRewriter : VisualCodeRewriterBase, IVisualCodeRewriter
     {
-
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// Collection of objects to be processed. Contains only objects that were not processed yet.
         /// </summary>
@@ -58,11 +60,15 @@
         /// <returns>True if allowed to rewrite the current object</returns>
         protected override bool Process<T>(T obj)
         {
-
-
-            string typeName = typeof (T).Name;
-            var newList = _capturedASTObjects.Where(t => t.Item1 != obj || t.Item2.CallTypeName != typeName).ToList();
-            if (newList.Count != _capturedASTObjects.Count)
+            string typeName = typeof(T).Name;
+            //We are checking if it is the same object (of course) and if 
+            var newList = _capturedASTObjects.WhereNot(t => t.Item1 == obj).ToList();
+            if (newList.Count < _capturedASTObjects.Count)
+            {
+                _log.Debug("Found object: " + Formatter.Format(obj));
+            }
+            newList = _capturedASTObjects.WhereNot(t => t.Item1 == obj && t.Item2.CallTypeName == typeName).ToList();
+            if (newList.Count < _capturedASTObjects.Count)
             {
                 _capturedASTObjects = newList;
                 return true;

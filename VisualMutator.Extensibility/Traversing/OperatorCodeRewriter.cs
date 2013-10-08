@@ -20,7 +20,11 @@
             set;
         }
 
-        public VisualCodeRewriter Parent { get; set; }
+        public IVisualCodeRewriter Parent
+        {
+            get;
+            set;
+        }
 
         public MethodDefinition CurrentMethod
         {

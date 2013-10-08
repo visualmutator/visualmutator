@@ -892,7 +892,7 @@ namespace VisualMutator.Extensibility
 
       
 
-        public VisualCodeVisitor Parent { get; set; }
+        public IVisualCodeVisitor Parent { get; set; }
         public MetadataReaderHost Host { get; set; }
         public IOperatorUtils OperatorUtils { get; set; }
 

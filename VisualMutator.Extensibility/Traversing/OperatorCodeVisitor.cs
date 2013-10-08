@@ -9,6 +9,8 @@
 
     public class OperatorCodeVisitor : OperatorCodeVisitorBase, IOperatorCodeVisitor
     {
+
+        //MarkMutationTarget MUST be invoked only while visiting an object
         public void MarkMutationTarget<T>(T obj)
         {
 
@@ -52,7 +54,7 @@
         }
 
 
-        public VisualCodeVisitor Parent
+        public IVisualCodeVisitor Parent
         {
             get;
             set;

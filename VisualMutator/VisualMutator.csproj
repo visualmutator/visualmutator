@@ -222,6 +222,12 @@
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
+    <Compile Include="Model\Mutations\VisualCodeRewriter.cs" />
+    <Compile Include="Model\Mutations\VisualCodeRewriterBase.cs" />
+    <Compile Include="Model\Mutations\VisualCodeTraverser.cs" />
+    <Compile Include="Model\Mutations\VisualCodeVisitor.cs" />
+    <Compile Include="Model\Mutations\VisualCodeVisitorBack.cs" />
+    <Compile Include="Model\Mutations\VisualCodeVisitorBase.cs" />
     <Compile Include="Model\StoringMutants\ModulesProvider.cs" />
     <Compile Include="Model\CommonCompilerInfra.cs" />
     <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />

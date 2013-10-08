@@ -47,6 +47,7 @@
         public IMethodDefinition MethodRaw/*?*/ { get; set; }
         public int MethodIndex { get; set; }
         public IMethodDefinition MethodMutated { get; set; }
+        public string GroupName { get; set; }
 
         public override string ToString()
         {

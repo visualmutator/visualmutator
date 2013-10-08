@@ -21,7 +21,10 @@
 
         protected abstract bool Process<T>(T obj) where T : class;
 
-
+        //First, we check if the object must be processed by mutation (Process method).
+        //If yes, then the IOperatorCodeRewriter is used to mutate the object
+        //Resulting new object (that will replace the former) is then dispatched to the base call sequence
+        //as more specific or more general whether it is still the same type as was before or not.
         public override IExpression Rewrite(IAddition addition)
         {if(Process(addition)){var additionNew = rewriter.Rewrite(addition); return  (additionNew is IAddition) ? base.Rewrite(additionNew as IAddition) :base.Rewrite(additionNew);}
             return base.Rewrite(addition);

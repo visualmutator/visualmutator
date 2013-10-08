@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using CommonUtilityInfrastructure.Paths;
     using Model;
@@ -174,16 +175,16 @@ namespace Ns
                 {
                     AssemblyPath = new FilePathAbsolute(Common.DsaPath)
                 },
-                new AssemblyNode("", cci.AppendFromFile(Common.DsaTestsPath))
+              /*  new AssemblyNode("", cci.AppendFromFile(Common.DsaTestsPath))
                 {
                     AssemblyPath = new FilePathAbsolute(Common.DsaTestsPath)
-                }
+                }*/
             };
             var original = new ModulesProvider(cci.Modules);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            var groups = Common.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
+            List<MutantGroup> groups = Common.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
             var mutants = groups.SelectMany(g=>g.Mutants).ToList();
 
             var groupsBad = groups
@@ -194,7 +195,10 @@ namespace Ns
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                    original);
                 Console.WriteLine(codeWithDifference.Code);
-
+                if (codeWithDifference.LineChanges.Count > 4 || codeWithDifference.LineChanges.Count == 0)
+                {
+                    Debugger.Break();
+                }
             }
             groupsBad.Count.ShouldEqual(0);
             mutants.Count.ShouldEqual(1);

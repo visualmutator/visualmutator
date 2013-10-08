@@ -72,6 +72,10 @@
         {
             return collection.Any() ? collection.Average(func) : 0;
         }
+        public static IEnumerable<T> WhereNot<T>(this IEnumerable<T> collection, Func<T, bool> func)
+        {
+            return collection.Where(e => !func(e));
+        }
         public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> collection)
         {
             return collection.SelectMany(e => e);
