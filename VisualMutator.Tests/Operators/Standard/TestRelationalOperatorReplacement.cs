@@ -68,7 +68,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
@@ -103,7 +103,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
 
             foreach (Mutant mutant in mutants)
@@ -146,7 +146,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
@@ -158,9 +158,8 @@ namespace Ns
                 codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
         }
-
         [Test]
-        public void Test()
+        public void Mutant_Groups_Are_Formed_with_correct_number_of_mutants()
         {
             var oper = new ROR_RelationalOperatorReplacement();
             ///////
@@ -171,25 +170,47 @@ namespace Ns
             var cache = new MutantsCache(container);
             List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
             {
-                new AssemblyNode("", cci.AppendFromFile(Common.DsaPath))
+                new AssemblyNode("", cci.AppendFromFile(MutationTests.DsaPath))
                 {
-                    AssemblyPath = new FilePathAbsolute(Common.DsaPath)
+                    AssemblyPath = new FilePathAbsolute(MutationTests.DsaPath)
                 },
-              /*  new AssemblyNode("", cci.AppendFromFile(Common.DsaTestsPath))
-                {
-                    AssemblyPath = new FilePathAbsolute(Common.DsaTestsPath)
-                }*/
             };
             var original = new ModulesProvider(cci.Modules);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            List<MutantGroup> groups = Common.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
-            var mutants = groups.SelectMany(g=>g.Mutants).ToList();
+            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
 
             var groupsBad = groups
-                .Where(g=> g.Mutants.Select(m=>m.ToString()).Distinct().Count() != g.Mutants.Count()).ToList();
+                .Where(g => g.Mutants.Select(m => m.ToString()).Distinct().Count() != g.Mutants.Count()).ToList();
             int y = groupsBad.Count;
+            
+            groupsBad.Count.ShouldEqual(0);
+        }
+        [Test]
+        public void ROR_Success()
+        {
+            var oper = new ROR_RelationalOperatorReplacement();
+            ///////
+            var cci = new CommonCompilerInfra();
+            var utils = new OperatorUtils(cci);
+            var container = new MutantsContainer(cci, utils);
+            var visualizer = new CodeVisualizer(cci);
+            var cache = new MutantsCache(container);
+            List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
+            {
+                new AssemblyNode("", cci.AppendFromFile(MutationTests.DsaPath))
+                {
+                    AssemblyPath = new FilePathAbsolute(MutationTests.DsaPath)
+                },
+            };
+            var original = new ModulesProvider(cci.Modules);
+            cache.setDisabled(disableCache: false);
+            var diff = new CodeDifferenceCreator(cache, visualizer);
+            container.DebugConfig = true;
+            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
+            var mutants = groups.SelectMany(g=>g.Mutants).ToList();
+
             foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
@@ -197,10 +218,9 @@ namespace Ns
                 Console.WriteLine(codeWithDifference.Code);
                 if (codeWithDifference.LineChanges.Count > 4 || codeWithDifference.LineChanges.Count == 0)
                 {
-                    Debugger.Break();
+                    Assert.Fail();
                 }
             }
-            groupsBad.Count.ShouldEqual(0);
             mutants.Count.ShouldEqual(1);
         }
     }

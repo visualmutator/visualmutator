@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>adjunct-JetBrains.Annotations.Core</id>
+    <version>1.0.0</version>
+    <title>JetBrains.Annotations.Core</title>
+    <authors>JetBrains,  Eddie Garmon</authors>
+    <owners>JetBrains,  Eddie Garmon</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://adjunct.codeplex.com/</projectUrl>
+    <iconUrl>http://download.codeplex.com/Download?ProjectName=adjunct&amp;DownloadId=301256&amp;Build=18301</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Annotation attributes for use with ReSharper, so you dont have to reference the ReSharper DLLs directly.</description>
+    <summary>Annotation attributes for use with ReSharper, so you dont have to reference the ReSharper DLLs directly.</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>Adjunct Annotations ReSharper</tags>
+    <references />
+  </metadata>
+</package>

@@ -52,7 +52,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new LOR_LogicalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new LOR_LogicalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 12);
 

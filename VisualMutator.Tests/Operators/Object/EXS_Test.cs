@@ -32,11 +32,11 @@
         #endregion
 
 
-        [Test]
-        public void MutationSuccess()
-        {
-            const string code =
-                @"using System;
+[Test]
+public void EXS_Success()
+{
+    const string code =
+        @"using System;
 namespace Ns
 {
     public class Test
@@ -60,22 +60,22 @@ namespace Ns
         }
     }
 }";
-            Common.DebugTraverse(code);
-            List<Mutant> mutants;
-            ModulesProvider original;
-            CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EXS_ExceptionSwallowing(), out mutants, out original, out diff);
+    MutationTests.DebugTraverse(code);
+    List<Mutant> mutants;
+    ModulesProvider original;
+    CodeDifferenceCreator diff;
+    MutationTests.RunMutations(code, new EXS_ExceptionSwallowing(), out mutants, out original, out diff);
 
-            foreach (Mutant mutant in mutants)
-            {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
-                Console.WriteLine(codeWithDifference.Code);
+    foreach (Mutant mutant in mutants)
+    {
+        CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                                original);
+        Console.WriteLine(codeWithDifference.Code);
 
-                //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
-            }
+        //   codeWithDifference.LineChanges.Count.ShouldEqual(2);
+    }
 
-            mutants.Count.ShouldEqual(1);
-        }
+    mutants.Count.ShouldEqual(1);
+}
     }
 }

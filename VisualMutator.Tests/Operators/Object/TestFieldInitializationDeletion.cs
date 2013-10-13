@@ -53,7 +53,7 @@ namespace Ns
 }";
 
 
-           // Common.DebugTraverse(code);
+           // MutationTests.DebugTraverse(code);
 
 
 
@@ -62,7 +62,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, oper, out mutants, out original, out diff);
+            MutationTests.RunMutations(code, oper, out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

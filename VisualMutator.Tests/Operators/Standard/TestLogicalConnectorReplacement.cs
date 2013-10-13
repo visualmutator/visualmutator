@@ -51,11 +51,11 @@ namespace Ns
     }
 }";
        //     new Conditional().;
-            Common.DebugTraverse(code);
+            MutationTests.DebugTraverse(code);
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
 
             
 

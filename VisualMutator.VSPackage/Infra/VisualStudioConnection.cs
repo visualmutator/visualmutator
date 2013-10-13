@@ -131,6 +131,7 @@
                          && confManager.ActiveConfiguration != null
                          && confManager.ActiveConfiguration.IsBuildable
                    let values = project.Properties.Cast<Property>().ToDictionary(prop => prop.Name)
+                   where values.ContainsKey("LocalPath")
                    select values["LocalPath"].Value.CastTo<string>().ToDirPathAbs();
         }
         public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
@@ -140,14 +141,14 @@
                    let config = project.ConfigurationManager.ActiveConfiguration
                    where config != null && config.IsBuildable
                    let values = project.Properties.Cast<Property>().ToDictionary(p => p.Name)
+                   where values.ContainsKey("LocalPath") && values.ContainsKey("OutputFileName")
+                   where config.Properties.Cast<Property>().Any(p => p.Name == "OutputPath")
                    let localPath = values["LocalPath"].Value.CastTo<string>()
                    let outputFileName = values["OutputFileName"].Value.CastTo<string>()
                    let outputDir = (string)config.Properties.Cast<Property>()
                         .Single(p => p.Name == "OutputPath").Value
                    select Path.Combine(localPath, outputDir, outputFileName).ToFilePathAbs();
         }
-
-      
 
         public string GetMutantsRootFolderPath()
         {

@@ -220,6 +220,7 @@
   <ItemGroup>
     <VSCTCompile Include="VisualMutator.VSPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>

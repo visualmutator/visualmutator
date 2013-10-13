@@ -60,7 +60,7 @@ namespace Ns
         [Test]
         public void MutationSuccess()
         {
-            var m = Common.CreateModules(code);
+            var m = MutationTests.CreateModules(code);
                 Assert.Pass();
         }
      

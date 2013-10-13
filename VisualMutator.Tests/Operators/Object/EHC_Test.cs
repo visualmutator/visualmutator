@@ -72,11 +72,11 @@ namespace Ns
         }
     }
 }";
-            Common.DebugTraverse(code);
+            MutationTests.DebugTraverse(code);
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new EHC_ExceptionHandlingChange(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new EHC_ExceptionHandlingChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

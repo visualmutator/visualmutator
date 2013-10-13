@@ -43,8 +43,8 @@
         {
             var cci = new CommonCompilerInfra();
            
-            cci.AppendFromFile(Common.DsaPath);
-            cci.AppendFromFile(Common.DsaTestsPath);
+            cci.AppendFromFile(MutationTests.DsaPath);
+            cci.AppendFromFile(MutationTests.DsaTestsPath);
 
             var visitor = new DebugOperatorCodeVisitor();
             var traverser = new DebugCodeTraverser(visitor);
@@ -55,8 +55,8 @@
             string listing0 = visitor.ToString();
 
             var cci2 = new CommonCompilerInfra();
-            cci2.AppendFromFile(Common.DsaPath);
-            cci2.AppendFromFile(Common.DsaTestsPath);
+            cci2.AppendFromFile(MutationTests.DsaPath);
+            cci2.AppendFromFile(MutationTests.DsaTestsPath);
 
             var visitor2 = new DebugOperatorCodeVisitor();
             var traverser2 = new DebugCodeTraverser(visitor2);

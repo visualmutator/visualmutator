@@ -53,13 +53,13 @@ namespace Ns
     }
 }";
        //     new Conditional().;
-        //    Common.DebugTraverse(code);
+        //    MutationTests.DebugTraverse(code);
            
             
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutationsFromFile(_assemblyPath, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
+            MutationTests.RunMutationsFromFile(_assemblyPath, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
 
          
 

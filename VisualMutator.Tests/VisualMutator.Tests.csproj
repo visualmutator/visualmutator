@@ -192,7 +192,7 @@
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
-    <Compile Include="Operators\Common.cs" />
+    <Compile Include="Operators\MutationTests.cs" />
     <Compile Include="Operators\BruteForceTests.cs" />
     <Compile Include="Operators\Object\EHC_Test.cs" />
     <Compile Include="Operators\Object\OAN_Test.cs" />

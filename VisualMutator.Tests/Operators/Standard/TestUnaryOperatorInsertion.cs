@@ -52,7 +52,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
 
             mutants.Count.ShouldEqual(0);
@@ -78,7 +78,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

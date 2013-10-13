@@ -52,7 +52,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, oper, out mutants, out original, out diff);
+            MutationTests.RunMutations(code, oper, out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
 
@@ -89,7 +89,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            Common.RunMutations(code, oper, out mutants, out original, out diff);
+            MutationTests.RunMutations(code, oper, out mutants, out original, out diff);
             
             mutants.Count.ShouldEqual(2);
            

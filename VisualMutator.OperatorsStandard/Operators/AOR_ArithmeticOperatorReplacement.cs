@@ -22,37 +22,8 @@ namespace VisualMutator.OperatorsStandard
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public class ArithmeticOperatorReplacementVisitor : OperatorCodeVisitor
+        public class AORVisitor : OperatorCodeVisitor
         {
-
-            private void ProcessOperation<T>(T operation) where T : IBinaryOperation
-            {
-                _log.Info("Visiting: " + operation);
-                var passes = new List<string>
-                {
-                    "Addition",
-                    "Subtraction",
-                    "Multiplication",
-                    "Division",
-                    "Modulus",
-                }.Where(elem => elem != operation.GetType().Name).ToList();
-
-                if (!operation.ResultIsUnmodifiedLeftOperand && !(operation.LeftOperand is ITargetExpression))
-                {
-                    passes.Add("LeftParam");
-                    passes.Add("RightParam");
-                }
-               // if (operation.LeftOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
-              //  {
-                    
-              //  }
-              //  if (operation.RightOperand.IsAnyOf<BoundExpression, CompileTimeConstant>())
-           //     {
-                    
-          //      }
-                MarkMutationTarget(operation, passes);
-            }
-
             public override void Visit(IAddition operation)
             {
                 ProcessOperation(operation);
@@ -73,8 +44,29 @@ namespace VisualMutator.OperatorsStandard
             {
                 ProcessOperation(operation);
             }
+            private void ProcessOperation<T>(T operation) where T : IBinaryOperation
+            {
+                _log.Info("Visiting: " + operation);
+                var passes = new List<string>
+                {
+                    "Addition",
+                    "Subtraction",
+                    "Multiplication",
+                    "Division",
+                    "Modulus",
+                }.Where(elem => elem != operation.GetType().Name).ToList();
+
+                if (!operation.ResultIsUnmodifiedLeftOperand && !(operation.LeftOperand is ITargetExpression))
+                {
+                    passes.Add("LeftParam");
+                    passes.Add("RightParam");
+                }
+          
+                MarkMutationTarget(operation, passes);
+            }
+
         }
-        public class ArithmeticOperatorReplacementRewriter : OperatorCodeRewriter
+        public class AORRewriter : OperatorCodeRewriter
         {
            
             private IExpression ReplaceOperation<T>(T operation) where T : IBinaryOperation
@@ -143,12 +135,12 @@ namespace VisualMutator.OperatorsStandard
 
         public IOperatorCodeVisitor CreateVisitor()
         {
-            return new ArithmeticOperatorReplacementVisitor();
+            return new AORVisitor();
         }
 
         public IOperatorCodeRewriter CreateRewriter()
         {
-            return new ArithmeticOperatorReplacementRewriter();
+            return new AORRewriter();
         }
     }
 }
