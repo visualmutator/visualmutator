@@ -133,7 +133,7 @@
                 IEnumerable<MutationTarget> mutations = LimitMutationTargets(operatorResult.MutationTargets);
                 var groupedTargets = mutations.ToLookup(target => target.GroupName);
                 //subProgress.Initialize(targets.MutationTargets.Count);
-                foreach (var grouping in groupedTargets)
+                foreach (var grouping in groupedTargets.OrderBy(g => g.Key))
                 {
                     var group = new MutantGroup(grouping.Key, executedOperator);
                     foreach (var mutationTarget in grouping)
@@ -162,7 +162,8 @@
 
         private IList<MutationTarget> LimitMutationTargets(IEnumerable<MutationTarget> targets)
         {
-            var mapping = targets.Shuffle()
+           // return targets.ToList();
+            var mapping = targets//.Shuffle()
               //  .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
                 .Take(_options.MaxNumerOfMutantPerOperator).ToList();
             return mapping;

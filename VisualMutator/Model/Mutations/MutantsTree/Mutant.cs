@@ -114,6 +114,13 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             return MutationTarget.Variant.Signature;
         }
 
+        public string Description
+        {
+            get
+            {
+                return MutationTarget.Variant.Signature;
+            }
+        }
         private MutantTestSession _mutantTestSession;
 
         public MutantTestSession MutantTestSession

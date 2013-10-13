@@ -14,7 +14,7 @@
         public ResultsSavingViewModel(IResultsSavingView view)
             : base(view)
         {
-            this.IncludeDetailedTestResults = true;
+            this.IncludeDetailedTestResults = false;
             this.IncludeCodeDifferenceListings= false;
         }
 

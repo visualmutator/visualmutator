@@ -52,6 +52,7 @@
         private readonly XmlResultsGenerator _xmlResultsGenerator;
         private readonly ICodeVisualizer _codeVisualizer;
         private readonly SessionCreationController _scc;
+        private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly ICommonCompilerInfra _commonCompiler;
 
         private int _allMutantsCount;
@@ -87,6 +88,7 @@
             SessionCreationController scc,
             IFactory<SessionCreationController> mutantsCreationFactory,
             IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
+            IFactory<ResultsSavingController> resultsSavingFactory,
             ICommonCompilerInfra commonCompiler)
         {
             MutantsCreationFactory = mutantsCreationFactory;
@@ -102,6 +104,7 @@
             _xmlResultsGenerator = xmlResultsGenerator;
             _codeVisualizer = codeVisualizer;
             _scc = scc;
+            _resultsSavingFactory = resultsSavingFactory;
             _commonCompiler = commonCompiler;
             _sessionState = SessionState.NotStarted;
 
@@ -532,6 +535,12 @@
         public void LoadDetails(Mutant mutant)
         {
             _mutantDetailsController.LoadDetails(mutant, Session);
+        }
+
+        public void SaveResults()
+        {
+            var resultsSavingController = _resultsSavingFactory.Create();
+            resultsSavingController.Run(Session);
         }
     }
 

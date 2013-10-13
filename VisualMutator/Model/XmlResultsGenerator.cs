@@ -69,24 +69,21 @@
                     new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
                     new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
                         oper.MutationTimeMiliseconds / oper.Children.Count),
-                    from mutant in oper.MutantGroups.SelectMany(m => m.Mutants)
-                    select new XElement("Mutant",
-                        new XAttribute("Id", mutant.Id),
-                        //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
-                        new XAttribute("State", Switch.Into<string>().From(mutant.State)
-                        .Case(MutantResultState.Killed, "Killed")
-                        .Case(MutantResultState.Live, "Live")
-                        .Case(MutantResultState.Untested, "Untested")
-                        .Case(MutantResultState.Error, "WithError")
-                        .GetResult()
-                        ),
-                        new XElement("ErrorInfo",
-                             new XElement("Description", mutant.MutantTestSession.ErrorDescription),
-                             new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
-                             ).InArrayIf(mutant.State == MutantResultState.Error)
-                          
-
-
+                    from mutGroup in oper.MutantGroups
+                    select new XElement("MutantGroup",
+                        new XAttribute("Name", mutGroup.Name),
+                        from mutant in mutGroup.Mutants
+                        select new XElement("Mutant",
+                            new XAttribute("Id", mutant.Id),
+                            new XAttribute("Description", mutant.Description),
+                            //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
+                            new XAttribute("State", mutant.State.ToString()
+                            ),
+                            new XElement("ErrorInfo",
+                                 new XElement("Description", mutant.MutantTestSession.ErrorDescription),
+                                 new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
+                                 ).InArrayIf(mutant.State == MutantResultState.Error)
+                            )
                         )
                     )
                 );

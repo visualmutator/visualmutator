@@ -52,15 +52,12 @@ namespace VisualMutator.Controllers
             MainViewModel viewModel,
             IFactory<SessionController> sessionControllerFactory,
 
-            IFactory<ResultsSavingController> resultsSavingFactory,
            
             CommonServices svc)
         {
             _viewModel = viewModel;
             _sessionControllerFactory = sessionControllerFactory;
 
-         
-            _resultsSavingFactory = resultsSavingFactory;
      
             _svc = svc;
 
@@ -241,8 +238,8 @@ namespace VisualMutator.Controllers
         }
         public void SaveResults()
         {
-            var resultsSavingController = _resultsSavingFactory.Create();
-            resultsSavingController.Run(_currenSessionController.Session);
+            
+            _currenSessionController.SaveResults();
         }
 
         public void Initialize()
