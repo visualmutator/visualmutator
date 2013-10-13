@@ -153,6 +153,13 @@
             _svc.Threading.ScheduleAsync(() =>
             {
                 var allowedTypes = choices.SelectedTypes.GetIdentifiers();
+
+                _currentSession = new MutationTestingSession
+                {
+                    OriginalAssemblies = choices.Assemblies,
+                    SelectedTypes = allowedTypes,
+                    Choices = choices,
+                };
                 _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
 
                 ExecutedOperator oper;
@@ -166,9 +173,7 @@
             },
             () =>
             {
-
                 CreateMutants(continuation: SaveMutants);
-               
             },
             onException: FinishWithError);
         }
@@ -319,7 +324,10 @@
 
         private void Finish()
         {
-            _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+            if (_currentSession != null)
+            {
+                _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+            }
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
             _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
@@ -328,8 +336,10 @@
 
         private void FinishWithError()
         {
-            _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
-
+            if (_currentSession!= null)
+            {
+                _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+            }
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Error, 0);
             _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();

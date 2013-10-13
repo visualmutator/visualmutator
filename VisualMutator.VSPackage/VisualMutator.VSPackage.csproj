@@ -44,10 +44,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations, Version=6.1.0.0, Culture=neutral, PublicKeyToken=3f033448d4bb5376, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
@@ -160,6 +156,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infra\Bootstrapper.cs" />
     <Compile Include="Infra\VSNinjectModule.cs" />
     <Compile Include="Infra\VisualStudioOwnerWindowProvider.cs" />

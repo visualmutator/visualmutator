@@ -63,10 +63,6 @@
     <Reference Include="ILSpy">
       <HintPath>..\packages\ILSpy.exe</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=6.1.0.0, Culture=neutral, PublicKeyToken=3f033448d4bb5376, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="LinqLib">
       <HintPath>..\packages\LinqExtLibrary.1.0.4.0\lib\LinqLib.dll</HintPath>
     </Reference>
@@ -216,6 +212,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />

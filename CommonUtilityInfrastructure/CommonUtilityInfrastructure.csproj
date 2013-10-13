@@ -54,9 +54,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations">
-      <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
@@ -76,6 +73,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="CheckboxedTree\FakeNode.cs" />
     <Compile Include="CheckboxedTree\IHasChildren.cs" />
     <Compile Include="CheckboxedTree\IHasParent.cs" />

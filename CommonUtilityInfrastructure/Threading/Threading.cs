@@ -154,7 +154,14 @@ namespace CommonUtilityInfrastructure.Threading
                     var prevException = aggregateException.InnerException;
                     if (onException != null)
                     {
-                        onException();
+                        try
+                        {
+                            onException();
+                        }
+                        catch (Exception e)
+                        {
+                            _messageService.ShowFatalError(e, _log);
+                        }
                     }
                     var nonFatalWrapped = prevException as NonFatalWrappedException;
                     if (nonFatalWrapped != null)

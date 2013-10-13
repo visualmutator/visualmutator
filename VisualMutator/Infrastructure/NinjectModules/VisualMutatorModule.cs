@@ -132,7 +132,7 @@
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
-            Bind<ResultsSavingController>().ToSelf().AndFromFactory();
+            
 
            
 
@@ -151,6 +151,7 @@
                 childKernel.Bind<SessionCreationController>().ToSelf().AndFromFactory();
                 childKernel.Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory();
                 childKernel.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
+                childKernel.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
                 childKernel.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
 
                 childKernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
