@@ -11,20 +11,14 @@
         where T : class
     {
 
-        public CollectionComparer()
-        {
-            
-        }
-
         public bool Equals(ICollection<T> first, ICollection<T> second)
         {
             return first.SequenceEqual(second);
         }
 
-        public int GetHashCode(ICollection<T> enumerable)
+        public int GetHashCode(ICollection<T> collection)
         {
-            return 0;//
-           // enumerable.Aggregate(17, (one, two) => 11 * one.GetHashCode() ^ two.GetHashCode());
+            return collection.Aggregate(17, (one, two) => 11 * one.GetHashCode() ^ two.GetHashCode());
         }
 
     }

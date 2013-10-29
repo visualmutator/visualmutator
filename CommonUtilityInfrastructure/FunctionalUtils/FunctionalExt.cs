@@ -190,11 +190,7 @@
     }
     public class SwitchIntoSelector<T>
     {
-        public SwitchIntoSelector()
-        {
- 
-        }
-
+    
     }
 
 

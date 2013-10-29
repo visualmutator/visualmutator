@@ -39,7 +39,7 @@
                 Name = "File",
                 AppendToFile = true,
                 File = filePath,
-                Layout = new PatternLayout("%-5level [%thread] - %date %5rms %-35.35logger{2} %-25.25method: %newline%message%newline%newline"),
+                Layout = new PatternLayout("%-5level [%thread] - %date %5rms %-35.35logger{2} %-25.25method: %message%newline"),
                 Threshold = threshold
             };
 

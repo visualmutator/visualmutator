@@ -74,15 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
-    <Compile Include="CheckboxedTree\FakeNode.cs" />
-    <Compile Include="CheckboxedTree\IHasChildren.cs" />
-    <Compile Include="CheckboxedTree\IHasParent.cs" />
-    <Compile Include="CheckboxedTree\LeafNode.cs" />
-    <Compile Include="CheckboxedTree\Node.cs" />
-    <Compile Include="CheckboxedTree\NodeWithChildrenBase.cs" />
-    <Compile Include="CheckboxedTree\NormalNode.cs" />
+    <Compile Include="CheckboxedTree\RootNode.cs" />
+    <Compile Include="CheckboxedTree\CheckedNodeBase.cs" />
+    <Compile Include="CheckboxedTree\CheckedNode.cs" />
     <Compile Include="CheckboxedTree\StateNode.cs" />
-    <Compile Include="CheckboxedTree\TreeNode.cs" />
     <Compile Include="Comparers\CollectionComparer.cs" />
     <Compile Include="Comparers\Comparers.cs" />
     <Compile Include="Comparers\FuncComparer.cs" />

@@ -68,7 +68,7 @@
                         {
                             SelectedOperators =
                                 _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
-                                .Where(oper => oper.IsLeafIncluded).Select(n => n.Operator).ToList(),
+                                .Where(oper => (bool) oper.IsIncluded).Select(n => n.Operator).ToList(),
                             ProjectPaths = _typesManager.ProjectPaths.ToList(),
                             Assemblies = _viewModel.TypesTreeMutate.Assemblies,
                             SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),

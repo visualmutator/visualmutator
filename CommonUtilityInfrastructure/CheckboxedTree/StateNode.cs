@@ -5,12 +5,22 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
     using System.Linq;
     using CommonUtilityInfrastructure.FunctionalUtils;
 
-    public abstract class StateNode<TState> : NormalNode
+    /// <summary>
+    /// A tree node with build-in state management and propagation.
+    /// </summary>
+    /// <typeparam name="TState">A type representing a state of a tree node. Possibly an enum</typeparam>
+    public abstract class StateNode<TState> : CheckedNode
     {
         private readonly IList<TState> _propagationDown;
         private readonly IList<TState> _propagationUp;
         private TState _state;
-
+        /// <summary>
+        /// Creates a new state node.
+        /// </summary>
+        /// <param name="name">A name of the node.</param>
+        /// <param name="hasChildren">Whether the node may have any children (is non-leaf)</param>
+        /// <param name="propagationDown">List of possible states that can propagate down the tree starting at this node.</param>
+        /// <param name="propagationUp">List of possible states that can propagate up the tree starting at this node.</param>
         protected StateNode(string name, bool hasChildren,
                             IList<TState> propagationDown, IList<TState> propagationUp)
             : base( name, hasChildren)
@@ -33,7 +43,6 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
 
         protected virtual void SetState(TState value, bool updateChildren, bool updateParent)
         {
-
             _state = value;
 
             if (updateChildren && Children != null)
@@ -81,12 +90,7 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
             }
             TState state = @switch.GetValue();
 
-        
             SetState(state, updateChildren: false, updateParent: true);
-
-
-
-
 
         }
 

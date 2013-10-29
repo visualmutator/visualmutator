@@ -14,7 +14,6 @@
         {
             _func = func;
         }
-
    
         public TObject Create()
         {
@@ -23,7 +22,7 @@
 
         public TObject CreateWithParams(params object[] parameters)
         {
-            throw new NotImplementedException();
+            throw new InvalidOperationException("No arguments supported.");
         }
     }
 }

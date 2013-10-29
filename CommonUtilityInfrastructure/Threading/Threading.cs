@@ -132,14 +132,7 @@ namespace CommonUtilityInfrastructure.Threading
                 ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
 
             }, _execute.GuiScheduler);
-         /*   return new TaskFactory(_threadPoolExecute.ThreadPoolScheduler)
-                .StartNew(onBackground)
-                .ContinueWith(prev =>
-                {
-                    ContinueWithMethod(prev.Exception, () => onGui(prev.Result), onException, onFinally);
-
-                }, _execute.GuiScheduler);
-        */
+    
         }
 
     

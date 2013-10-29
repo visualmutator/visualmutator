@@ -38,12 +38,12 @@
             public override void Visit(IAssignment assignment)
             {
                 _log.Info("Visiting IAssignment: " + assignment);
-                var defaultEqualsDefinition = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
-                                                                  Host.NameTable.GetNameFor("Equals"), 
-                                                                  Host.PlatformType.SystemObject);
+            //    var defaultEqualsDefinition = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
+              //                                                    Host.NameTable.GetNameFor("Equals"), 
+              //                                                    Host.PlatformType.SystemObject);
                 var targetType = assignment.Target.Type;
                 IMethodDefinition currentMethod = this.Parent.CurrentMethod;
-                IFieldDefinition d;
+                
 
 
                 var field = currentMethod.ContainingTypeDefinition.Fields

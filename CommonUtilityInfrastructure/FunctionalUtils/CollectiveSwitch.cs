@@ -6,7 +6,7 @@ namespace CommonUtilityInfrastructure.FunctionalUtils
     public class CollectiveSwitch<T, R>
     {
         private readonly IEnumerable<T> _values;
-        private List<Case> _cases;
+        private readonly List<Case> _cases;
         private R _allResult;
         private bool _hasAllResult;
 
@@ -32,13 +32,13 @@ namespace CommonUtilityInfrastructure.FunctionalUtils
 
             public bool HasResult { get; set; }
         }
+
         public CollectiveSwitch(IEnumerable<T> values)
         {
             _values = values;
             _cases = new List<Case>();
         }
 
-   
         public CollectiveSwitch<T, R> CaseAny(T caseValue, Func<R> action)
         {
             _cases.Add(new Case( caseValue, action ));
@@ -55,11 +55,11 @@ namespace CommonUtilityInfrastructure.FunctionalUtils
             return this;
         }
 
-
         public CollectiveSwitch<T, R> CaseAny(T caseValue, R result)
         {
             return CaseAny(caseValue, () => result);
         }
+
         public CollectiveSwitch<T, R> CaseAll(T caseAllValue, R allResult)
         {
             bool hasAllResult = true;

@@ -3,28 +3,29 @@
     #region Usings
 
     using System.Collections.Generic;
+    using System.Linq;
     using CommonUtilityInfrastructure.CheckboxedTree;
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;
 
     #endregion
-    public class FakeOperatorPackageRootNode : FakeRootNode<FakeOperatorPackageRootNode, PackageNode>
+    public class FakeOperatorPackageRootNode : CheckedNode
     {
         public FakeOperatorPackageRootNode(string name)
             : base(name)
         {
         }
     }
-    public class PackageNode : NormalNode<FakeOperatorPackageRootNode, PackageNode, OperatorNode>
+    public class PackageNode : CheckedNode
     {
         private readonly IOperatorsPackage _operatorsPackage;
 
 
         public PackageNode(FakeOperatorPackageRootNode root, IOperatorsPackage operatorsPackage)
-            : base(root, operatorsPackage.Name)
+            : base( operatorsPackage.Name)
         {
             _operatorsPackage = operatorsPackage;
-
+            Parent = root;
 
         }
 
@@ -41,17 +42,17 @@
 
             get
             {
-                return Children;
+                return Children.Cast<OperatorNode>().ToList();
             }
         }
     }
-    public class OperatorNode : LeafNode<PackageNode, OperatorNode>
+    public class OperatorNode : CheckedNode
     {
         public OperatorNode(PackageNode parent, IMutationOperator mutationOperator)
-            : base(parent,mutationOperator.Info.Id+" - "+ mutationOperator.Info.Name)
+            : base(mutationOperator.Info.Id+" - "+ mutationOperator.Info.Name)
         {
             Operator = mutationOperator;
-         
+            Parent = parent;
         }
 
         public IMutationOperator Operator { get; set; }

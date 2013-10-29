@@ -10,7 +10,7 @@
     using VisualMutator.Infrastructure;
 
     #endregion
-    public class AssemblyNode : NormalNode
+    public class AssemblyNode : CheckedNode
     {
         private IModule _assemblyDefinition;
 
@@ -36,10 +36,10 @@
         }
     }
 
-    public class TypeNamespaceNode : NormalNode
+    public class TypeNamespaceNode : CheckedNode
     {
 
-        public TypeNamespaceNode(NormalNode parent, string name)
+        public TypeNamespaceNode(CheckedNode parent, string name)
             : base( name, true)
         {
             Parent = parent;
@@ -48,11 +48,11 @@
     }
 
 
-    public class TypeNode : NormalNode
+    public class TypeNode : CheckedNode
     {
         private readonly INamespaceTypeDefinition _typeDefinition;
 
-        public TypeNode(NormalNode parent, string name, INamespaceTypeDefinition typeDefinition)
+        public TypeNode(CheckedNode parent, string name, INamespaceTypeDefinition typeDefinition)
             : base( name, false)
         {
             _typeDefinition = typeDefinition;

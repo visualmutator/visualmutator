@@ -50,9 +50,9 @@ namespace VisualMutator.Extensibility
                     {
                         return _obj.Equals(p.GetValue(_parentObject, null));
                     }
-                    catch (TargetInvocationException e)
+                    catch (TargetInvocationException )
                     {
-                        prefix = "exc on: "+p.Name;
+                        prefix = "exc on: "+p.Name ;
                         return false;
                     }
                 });

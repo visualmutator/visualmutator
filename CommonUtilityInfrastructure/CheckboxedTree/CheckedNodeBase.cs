@@ -2,14 +2,12 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
 {
     using WpfUtils;
 
-    public abstract class Node : ModelElement
+    public abstract class CheckedNodeBase : ModelElement
     {
         protected bool? _isIncluded;
         private string _name;
-
-     
        
-        protected Node(string name)
+        protected CheckedNodeBase(string name)
         {
             _name = name;
         }

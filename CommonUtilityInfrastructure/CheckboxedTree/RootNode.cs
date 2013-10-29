@@ -1,8 +1,8 @@
 namespace CommonUtilityInfrastructure.CheckboxedTree
 {
-    public class FakeNode : NormalNode
+    public class RootNode : CheckedNode
     {
-        public FakeNode()
+        public RootNode()
             : base( "", true)
         {
         }

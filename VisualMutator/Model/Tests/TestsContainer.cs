@@ -82,7 +82,7 @@
         public ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces)
         {
             return testNodeNamespaces
-                .SelectManyRecursive<NormalNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
+                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
                 .Cast<TestNodeMethod>().Select(m => m.TestId).ToList();
         
         }
@@ -149,7 +149,7 @@
             LoadTests(paths, session);
             UnloadTests();
 
-            var root = new FakeNode();
+            var root = new RootNode();
             root.Children.AddRange(session.TestNamespaces);
             root.IsIncluded = true;
 

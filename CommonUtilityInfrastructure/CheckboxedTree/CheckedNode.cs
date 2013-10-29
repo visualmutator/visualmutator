@@ -5,60 +5,30 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
     using System.Linq;
     using WpfUtils;
 
-    public class NormalNode<TParent, TThis, TChildren> : NodeWithChildrenBase<TThis, TChildren>, IHasChildren<TThis, TChildren>, IHasParent<TParent, TThis>
-        where TThis : NormalNode<TParent, TThis, TChildren>, IHasChildren<TThis, TChildren>,
-            IHasParent<TParent, TThis>
-        where TChildren : Node, IHasParent<TThis, TChildren>
-        where TParent : NodeWithChildrenBase<TParent, TThis>
-    {
-        private readonly TParent _parent;
 
-        protected NormalNode(TParent parent, string name)
+    public class CheckedNode : CheckedNodeBase
+    {
+        private readonly NotifyingCollection<CheckedNode> _children;
+
+        public CheckedNode(string name, bool hasChildren = true)
             : base(name)
         {
-            _parent = parent;
-        }
-
-        public TParent Parent
-        {
-            get
-            {
-                return _parent;
-            }
-        }
-
-        protected override void UpdateParent()
-        {
-            _parent.UpdateIsIncludedBasedOnChildren();
-        }
-
-    }
-
-    public class NormalNode : Node
-  
-    {
-        private readonly NotifyingCollection<NormalNode> _children;
-
-        public NormalNode(string name, bool hasChildren = true)
-            : base(name)
-        {
-       
             if (hasChildren)
             {
-                _children = new NotifyingCollection<NormalNode>();
+                _children = new NotifyingCollection<CheckedNode>();
                 _children.CollectionChanged += (sender, args) =>
                     {
                         if (args.Action == NotifyCollectionChangedAction.Add)
                         {
-                            if (args.NewItems.Cast<NormalNode>().Any(n => ReferenceEquals(this, n)))
+                            if (args.NewItems.Cast<CheckedNode>().Any(n => ReferenceEquals(this, n)))
                             {
                                 throw new InvalidOperationException("Cannot add self as child.");
                             }
-                            if (args.NewItems.Cast<NormalNode>().Any(n => n.Parent == null))
+                            if (args.NewItems.Cast<CheckedNode>().Any(n => n.Parent == null))
                             {
-                                throw new InvalidOperationException("Parent is not set on one of the items.");
+                                throw new InvalidOperationException(@"Property ""Parent"" is not set on one of the items.");
                             }
-                            if (args.NewItems.Cast<NormalNode>().Any(n => !ReferenceEquals(n.Parent, this)))
+                            if (args.NewItems.Cast<CheckedNode>().Any(n => !ReferenceEquals(n.Parent, this)))
                             {
                                 throw new InvalidOperationException("One of the children has invalid parent.");
                             }
@@ -68,10 +38,10 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
 
         }
 
-        private NormalNode _parent;
+        private CheckedNode _parent;
 
     
-        public NormalNode Parent
+        public CheckedNode Parent
         {
             get
             {
@@ -95,7 +65,7 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
             }
         }
 
-        public NotifyingCollection<NormalNode> Children
+        public NotifyingCollection<CheckedNode> Children
         {
             get
             {
@@ -115,10 +85,12 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
         protected override void UpdateChildren()
         {
             if(Children != null)
+            {
                 foreach (var child in Children)
                 {
                     child.SetIsIncluded(_isIncluded, updateChildren: true, updateParent: false);
                 }
+            }
     
         }
 
@@ -134,7 +106,8 @@ namespace CommonUtilityInfrastructure.CheckboxedTree
 
         public override string ToString()
         {
-            return string.Format("{0}, IsIncluded: {1}, Children: {2}", Name, IsIncluded, Children != null ? Children.Count.ToString() : "none");
+            return string.Format("{0}, IsIncluded: {1}, Children: {2}", 
+                Name, IsIncluded, Children != null ? Children.Count.ToString() : "none");
         }
     }
 }

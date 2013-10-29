@@ -59,7 +59,6 @@
 
     public static class ValuedTypeSwitchMixin
     {
-/*
         public static ValuedTypeSwitch< R> Case<T, R>(this ValuedTypeSwitch<R> @switch, Func<T,R> action) where T : class
         {
             T val = @switch.Value as T;
@@ -79,8 +78,5 @@
 
             return @switch;
         }
-*/
-
-
     }
 }

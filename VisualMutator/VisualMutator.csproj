@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -173,6 +174,9 @@
     <Reference Include="nunit.util">
       <HintPath>..\packages\NUnit-core-2.6.2\nunit.util.dll</HintPath>
     </Reference>
+    <Reference Include="PostSharp">
+      <HintPath>..\packages\PostSharp.3.0.38\lib\net20\PostSharp.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -219,6 +223,7 @@
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
+    <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriter.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriterBase.cs" />
     <Compile Include="Model\Mutations\VisualCodeTraverser.cs" />
@@ -264,6 +269,7 @@
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
+    <Compile Include="RequiresPostSharp.cs" />
     <Compile Include="ViewModels\ChooseTestingExtensionViewModel.cs" />
     <Compile Include="ViewModels\TestsSelectableTreeViewModel.cs" />
     <Compile Include="ViewModels\CreationViewModel.cs" />
@@ -495,6 +501,7 @@
     <Resource Include="Views\images\button_stop_pressed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\PostSharp.3.0.38\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.3.0.38\tools\PostSharp.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

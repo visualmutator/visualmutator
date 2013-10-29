@@ -68,7 +68,7 @@ namespace VisualMutator.Model.Mutations.Types
         public LoadedTypes GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
         {
             var types = assemblies
-                .SelectManyRecursive<NormalNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
+                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
                 .Cast<TypeNode>().Select(type=>type.TypeDefinition).ToList();
             return new LoadedTypes(types);
         }
@@ -77,7 +77,7 @@ namespace VisualMutator.Model.Mutations.Types
         {
 
             var loadedAssemblies = LoadAssemblies(_hostEnviroment.GetProjectAssemblyPaths());
-            var root = new FakeNode();
+            var root = new RootNode();
             root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;
 
@@ -121,7 +121,7 @@ namespace VisualMutator.Model.Mutations.Types
 
         }
 
-        public void GroupTypes(NormalNode parent, string currentNamespace, ICollection<INamespaceTypeDefinition> types)
+        public void GroupTypes(CheckedNode parent, string currentNamespace, ICollection<INamespaceTypeDefinition> types)
         {
             var groupsByNamespaces = types
                 .Where(t => t.ContainingNamespace.Name.Value != currentNamespace)

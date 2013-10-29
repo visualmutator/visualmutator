@@ -1,16 +1,19 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+//using PostSharp.Extensibility;
+using PostSharp.Extensibility;
+using VisualMutator.Infrastructure;
+
 [assembly: AssemblyTitle("VisualMutator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("PiotrTrzpil")]
 [assembly: AssemblyProduct("VisualMutator")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © PiotrTrzpil 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +35,10 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.5.0.0")]
+[assembly: AssemblyFileVersion("1.5.0.0")]
+
+
+[assembly: Trace(AttributeTargetTypes = "VisualMutator.*",
+ AttributeTargetTypeAttributes = MulticastAttributes.Public,
+ AttributeTargetMemberAttributes = MulticastAttributes.Public)]

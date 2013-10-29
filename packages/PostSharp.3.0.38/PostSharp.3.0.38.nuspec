@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>PostSharp</id>
+    <version>3.0.38</version>
+    <title>PostSharp</title>
+    <authors>SharpCrafters s.r.o.</authors>
+    <owners>SharpCrafters s.r.o.</owners>
+    <licenseUrl>http://www.sharpcrafters.com/links/nuget-license</licenseUrl>
+    <projectUrl>http://www.sharpcrafters.com/links/nuget-home</projectUrl>
+    <iconUrl>http://www.sharpcrafters.com/nuget/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A comprehensive Aspect-Oriented Programming (AOP) framework for .NET.</description>
+    <summary>PostSharp is a leading compiler add-on that enables application developers to automate design pattern implementation and deliver higher quality software in less time.</summary>
+    <language>en-US</language>
+    <tags>postsharp sharcrafters post-compiler postcompiler aop aspect aosd castle spring dynamic interceptor interception linfu unity dependency di monitoring instrumentation logging tracing design pattern</tags>
+    <references>
+      <reference file="PostSharp.dll" />
+    </references>
+  </metadata>
+</package>

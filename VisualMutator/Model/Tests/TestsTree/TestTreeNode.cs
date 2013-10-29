@@ -14,7 +14,7 @@
 
     #endregion
 
-    public abstract class TestTreeNode : NormalNode
+    public abstract class TestTreeNode : CheckedNode
     {
         private ICommand _commandRunTest;
 

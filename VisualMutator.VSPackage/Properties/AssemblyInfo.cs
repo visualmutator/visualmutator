@@ -1,4 +1,9 @@
-﻿#region Usings
+﻿//using PostSharp.Extensibility;
+
+using PostSharp.Extensibility;
+using VisualMutator.Infrastructure;
+
+#region Usings
 
 using System;
 using System.Reflection;
@@ -12,11 +17,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("VisualMutator.VSPackage")]
+[assembly: AssemblyTitle("VisualMutator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("PiotrTrzpil")]
-[assembly: AssemblyProduct("VisualMutator.VSPackage")]
+[assembly: AssemblyProduct("VisualMutator")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -37,3 +42,9 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("1.5.0.0")]
 [assembly: AssemblyFileVersion("1.5.0.0")]
+
+
+
+[assembly: Trace(AttributeTargetTypes = "PiotrTrzpil.*",
+ AttributeTargetTypeAttributes = MulticastAttributes.Public,
+ AttributeTargetMemberAttributes = MulticastAttributes.Public)]

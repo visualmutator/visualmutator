@@ -1,6 +1,5 @@
 ﻿namespace VisualMutator.Model.Decompilation
 {
-    using System;
     using CSharpSourceEmitter;
     using Microsoft.Cci;
 
@@ -15,14 +14,8 @@
     // PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
     //
     //-----------------------------------------------------------------------------
-    using System;
     using System.Collections.Generic;
-    using System.IO;
-    using CSharpSourceEmitter;
-    using Microsoft.Cci;
-    using Microsoft.Cci.MetadataReader;
     using Microsoft.Cci.ILToCodeModel;
-    using Microsoft.Cci.Contracts;
 
     namespace PeToText
     {

@@ -108,11 +108,11 @@
 
             assemblies.Single().Children.Count.ShouldEqual(2);
 
-            NormalNode one = assemblies.Single().Children.First();
+            CheckedNode one = assemblies.Single().Children.First();
             one.Children.Count.ShouldEqual(5);
-            NormalNode two = one.Children.Single(_ => _.Name == "Two");
+            CheckedNode two = one.Children.Single(_ => _.Name == "Two");
             two.Children.Count.ShouldEqual(3);
-            NormalNode merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
+            CheckedNode merged = one.Children.Single(_ => _.Name == "ZZZ.YYY.Four");
             merged.Children.Count.ShouldEqual(2);
         }*/
     }

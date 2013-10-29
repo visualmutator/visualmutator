@@ -17,18 +17,18 @@
     {
         
 
-        private NormalNode CreateTree()
+        private CheckedNode CreateTree()
         {
-            var o = new NormalNode("o");
-            var a = new NormalNode("a");
-            var ab = new NormalNode("ab");
-            var aba = new NormalNode("aba", false);
-            var b = new NormalNode("b");
-            var ba = new NormalNode("ba");
-            var baa = new NormalNode("baa", false);
-            var bab = new NormalNode("bab", false);
-            var bac = new NormalNode("bac");
-            var baca = new NormalNode("baca", false);
+            var o = new CheckedNode("o");
+            var a = new CheckedNode("a");
+            var ab = new CheckedNode("ab");
+            var aba = new CheckedNode("aba", false);
+            var b = new CheckedNode("b");
+            var ba = new CheckedNode("ba");
+            var baa = new CheckedNode("baa", false);
+            var bab = new CheckedNode("bab", false);
+            var bac = new CheckedNode("bac");
+            var baca = new CheckedNode("baca", false);
 
             o.Children.AddRange(new[] {a, b});
             a.Children.AddRange(new[] {ab});
@@ -59,8 +59,8 @@
         [Test, ExpectedException(typeof(InvalidOperationException))]
         public void InvalidSelfChild()
         {
-            var a = new NormalNode("a");
-            var ab = new NormalNode("ab");
+            var a = new CheckedNode("a");
+            var ab = new CheckedNode("ab");
 
             ab.Parent = a;
 
@@ -71,8 +71,8 @@
         public void ValidParent()
         {
   
-            var a = new NormalNode("a");
-            var ab = new NormalNode("ab");
+            var a = new CheckedNode("a");
+            var ab = new CheckedNode("ab");
 
             ab.Parent = a;
 
@@ -82,9 +82,9 @@
         [Test,ExpectedException(typeof(InvalidOperationException))]
         public void InvalidParent()
         {
-            var o = new NormalNode("o");
-            var a = new NormalNode("a");
-            var ab = new NormalNode("ab");
+            var o = new CheckedNode("o");
+            var a = new CheckedNode("a");
+            var ab = new CheckedNode("ab");
 
             ab.Parent = a;
 
@@ -95,9 +95,9 @@
         [Test, ExpectedException(typeof(InvalidOperationException))]
         public void TooLateParent()
         {
-            var o = new NormalNode("o");
-            var a = new NormalNode("a");
-            var ab = new NormalNode("ab");
+            var o = new CheckedNode("o");
+            var a = new CheckedNode("a");
+            var ab = new CheckedNode("ab");
 
             o.Children.Add(a);
 
@@ -107,7 +107,7 @@
         [Test, ExpectedException(typeof(InvalidOperationException))]
         public void InvalidSelfParent()
         {
-            var ab = new NormalNode("ab");
+            var ab = new CheckedNode("ab");
 
             ab.Parent = ab;
         }

@@ -6,7 +6,7 @@
     using System.Text;
 
     /// <summary>
-    /// Provides methods for the creation, copying, deletion, moving, and opening of files, and aids in the creation of System.IO.FileStream objects.
+    /// Contains file operations.
     /// </summary>
     public interface IFile
     {
