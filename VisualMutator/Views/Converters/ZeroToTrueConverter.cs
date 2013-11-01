@@ -1,8 +1,11 @@
 ﻿namespace VisualMutator.Views.Converters
 {
+    #region
+
     using System;
-    using System.Windows;
     using System.Windows.Data;
+
+    #endregion
 
     [ValueConversion(typeof(int), typeof(bool))]
     public class ZeroToTrueConverter : Converter<ZeroToTrueConverter, double, bool>

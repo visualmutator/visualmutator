@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-namespace VisualMutator.Views
+﻿namespace VisualMutator.Views
 {
-    using System.Text.RegularExpressions;
+    #region
 
-    using CommonUtilityInfrastructure.Comparers;
-    using CommonUtilityInfrastructure.WpfUtils;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using System.Windows.Controls;
+    using System.Windows.Documents;
+    using System.Windows.Media;
     using Model.Decompilation.CodeDifference;
-    using VisualMutator.Controllers;
-    using VisualMutator.ViewModels;
+    using UsefulTools.Core;
+    using ViewModels;
+
+    #endregion
 
     /// <summary>
     /// Interaction logic for MutantDetailsView.xaml
@@ -91,7 +82,7 @@ namespace VisualMutator.Views
             // 'VisualMutator.Model.Mutations.CSharpCodeLanguage' in addedItems? ... 
             if (e.AddedItems.Cast<object>().All(i => i is TabItem))
             {
-                ((MutantDetailsViewModel)this.DataContext)
+                ((MutantDetailsViewModel)DataContext)
                    .SelectedTabHeader = (string)e.AddedItems.Cast<TabItem>().Single().Header;
             }
            

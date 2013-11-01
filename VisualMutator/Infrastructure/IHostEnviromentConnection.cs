@@ -2,15 +2,16 @@
 
 namespace VisualMutator.Infrastructure
 {
+    #region
 
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Windows.Forms;
+    using UsefulTools.Paths;
+    using UsefulTools.Wpf;
 
-    using CommonUtilityInfrastructure.Paths;
-    using CommonUtilityInfrastructure.WpfUtils;
+    #endregion
+
     public enum EventType
     {
         HostOpened,

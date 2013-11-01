@@ -1,8 +1,12 @@
 ﻿namespace VisualMutator.Views.Converters
 {
+    #region
+
     using System;
     using System.Windows;
     using System.Windows.Data;
+
+    #endregion
 
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class TrueToVisibilityConverter : Converter<TrueToVisibilityConverter, bool, Visibility>

@@ -1,7 +1,11 @@
 namespace VisualMutator.Model
 {
-    using CommonUtilityInfrastructure.WpfUtils;
-    using VisualMutator.Model.Tests.Custom;
+    #region
+
+    using Tests.Custom;
+    using UsefulTools.Core;
+
+    #endregion
 
     public class MutantsTestingOptions : ModelElement
     {

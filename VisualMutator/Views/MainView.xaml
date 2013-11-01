@@ -1,175 +1,174 @@
 ﻿<UserControl x:Class="VisualMutator.Views.MutationResultsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
              xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
              xmlns:Views="clr-namespace:VisualMutator.Views"
              xmlns:Controls="clr-namespace:VisualMutator.Views.Controls"
-             xmlns:MutantsTree="clr-namespace:VisualMutator.Model.Mutations.MutantsTree" mc:Ignorable="d" 
+             xmlns:MutantsTree="clr-namespace:VisualMutator.Model.Mutations.MutantsTree" mc:Ignorable="d"
              d:DesignHeight="488" d:DesignWidth="544" Visibility="Hidden">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Global.xaml" />
-                <ResourceDictionary Source="Controls/Resources.xaml"/>
-                <ResourceDictionary Source="Controls/ImageButton.xaml"/>
+                <ResourceDictionary Source="Controls/Resources.xaml" />
+                <ResourceDictionary Source="Controls/ImageButton.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="Rectangle" x:Key="MutationStateRectangleStyle">
-                <Setter Property="Height" Value="10"/>
-                <Setter Property="Width" Value="10"/>
-                <Setter Property="Margin" Value="0,0,5,0"/>
-                <Setter Property="Stroke" Value="Black"/>
-                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
+                <Setter Property="Height" Value="10" />
+                <Setter Property="Width" Value="10" />
+                <Setter Property="Margin" Value="0,0,5,0" />
+                <Setter Property="Stroke" Value="Black" />
+                <Setter Property="Fill"
+                        Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
                 AncestorType={x:Type TreeViewItem}}, Path=DataContext.State,
-                Converter={Converters:MutantResultStateToFillConverter}}"/>
+                Converter={Converters:MutantResultStateToFillConverter}}" />
             </Style>
-            
+
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid d:DataContext="{d:DesignInstance ViewModels:MainViewModel}" 
-        
-        >
+    <Grid d:DataContext="{d:DesignInstance ViewModels:MainViewModel}">
         <!-- Visibility="{Binding IsVisible, Converter={Converters:BoolToVisibilityConverter}}"-->
         <Grid.Resources>
-           
-            
+
+
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition  Height="Auto"/>
-            <RowDefinition  />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
             <RowDefinition Height="5" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
 
-
         <Grid Grid.Row="0">
 
             <Grid.RowDefinitions>
-                <RowDefinition  />
-                <RowDefinition  />
+                <RowDefinition />
+                <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            
-            
+
             <WrapPanel Grid.Row="0">
-                <TextBlock Width="180"  HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
-          
-                    <Button  HorizontalAlignment="Right" Content="Generate to disk..." Command="{Binding CommandOnlyCreateMutants}"/>
-                    <Button  HorizontalAlignment="Right" Content="New session..." Command="{Binding CommandCreateNewMutants}"/>
-                    <!--<Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
-                    <Controls:ImageButton HorizontalAlignment="Right" 
-                                          NormalImage="/VisualMutator;component/Views/images/button_stop_unpressed.png"
-                                          DisabledImage="/VisualMutator;component/Views/images/button_stop_disabled.png"
-                                          HoverImage="/VisualMutator;component/Views/images/button_stop_mouseover.png"
-                                          PressedImage="/VisualMutator;component/Views/images/button_stop_pressed.png"
-                                          ImageSize="18" ToolTip="Stop"
-                                          Command="{Binding CommandStop}"/>
-                    <Controls:ImageButton HorizontalAlignment="Right" 
-                                          NormalImage="/VisualMutator;component/Views/images/button_continue_unpressed.png"
-                                          DisabledImage="/VisualMutator;component/Views/images/button_continue_disabled.png"
-                                          HoverImage="/VisualMutator;component/Views/images/button_continue_mouseover.png"
-                                          PressedImage="/VisualMutator;component/Views/images/button_continue_pressed.png"
-                                          ImageSize="18" ToolTip="Continue"
-                                          Command="{Binding CommandContinue}"/>
-                    <Controls:ImageButton HorizontalAlignment="Right" 
-                                          NormalImage="/VisualMutator;component/Views/images/button_pause_unpressed.png"
-                                          DisabledImage="/VisualMutator;component/Views/images/button_pause_disabled.png"
-                                          HoverImage="/VisualMutator;component/Views/images/button_pause_mouseover.png"
-                                          PressedImage="/VisualMutator;component/Views/images/button_pause_pressed.png"
-                                          ImageSize="18" ToolTip="Pause"
-                                          Command="{Binding CommandPause}"/>
+                <TextBlock Width="180" HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
+
+                <Button HorizontalAlignment="Right" Content="Generate to disk..."
+                        Command="{Binding CommandOnlyCreateMutants}" />
+                <Button HorizontalAlignment="Right" Content="New session..."
+                        Command="{Binding CommandCreateNewMutants}" />
+                <!--<Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
+                <Controls:ImageButton HorizontalAlignment="Right"
+                                      NormalImage="/VisualMutator;component/Views/images/button_stop_unpressed.png"
+                                      DisabledImage="/VisualMutator;component/Views/images/button_stop_disabled.png"
+                                      HoverImage="/VisualMutator;component/Views/images/button_stop_mouseover.png"
+                                      PressedImage="/VisualMutator;component/Views/images/button_stop_pressed.png"
+                                      ImageSize="18" ToolTip="Stop"
+                                      Command="{Binding CommandStop}" />
+                <Controls:ImageButton HorizontalAlignment="Right"
+                                      NormalImage="/VisualMutator;component/Views/images/button_continue_unpressed.png"
+                                      DisabledImage="/VisualMutator;component/Views/images/button_continue_disabled.png"
+                                      HoverImage="/VisualMutator;component/Views/images/button_continue_mouseover.png"
+                                      PressedImage="/VisualMutator;component/Views/images/button_continue_pressed.png"
+                                      ImageSize="18" ToolTip="Continue"
+                                      Command="{Binding CommandContinue}" />
+                <Controls:ImageButton HorizontalAlignment="Right"
+                                      NormalImage="/VisualMutator;component/Views/images/button_pause_unpressed.png"
+                                      DisabledImage="/VisualMutator;component/Views/images/button_pause_disabled.png"
+                                      HoverImage="/VisualMutator;component/Views/images/button_pause_mouseover.png"
+                                      PressedImage="/VisualMutator;component/Views/images/button_pause_pressed.png"
+                                      ImageSize="18" ToolTip="Pause"
+                                      Command="{Binding CommandPause}" />
 
 
             </WrapPanel>
 
             <DockPanel Grid.Row="1">
-                <TextBlock  DockPanel.Dock="Left" Text="{Binding MutantsRatio}" />
-                <TextBlock  DockPanel.Dock="Right" Text="{Binding MutationScore}" />
-                
+                <TextBlock DockPanel.Dock="Left" Text="{Binding MutantsRatio}" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding MutationScore}" />
+
             </DockPanel>
-         
 
-            <ProgressBar Height="25" Grid.Row="2"  
+
+            <ProgressBar Height="25" Grid.Row="2"
                          IsIndeterminate="{Binding IsProgressIndeterminate}"
-                         Value="{Binding Progress}"/>
+                         Value="{Binding Progress}" />
 
-            <TextBlock  Grid.Row="3"  Text="Mutants gruped by operators:" />
+            <TextBlock Grid.Row="3" Text="Mutants gruped by operators:" />
         </Grid>
 
 
-
-        <TreeView Grid.Row="1" Name="Tree" ItemsSource="{Binding Operators}" SelectedItemChanged="TreeView_SelectedItemChanged">
+        <TreeView Grid.Row="1" Name="Tree" ItemsSource="{Binding Operators}"
+                  SelectedItemChanged="TreeView_SelectedItemChanged">
 
             <TreeView.Resources>
                 <ContextMenu x:Key="ErrorMutantContextMenu" StaysOpen="true">
-                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click"/>
+                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" />
 
                 </ContextMenu>
-                
-                <HierarchicalDataTemplate DataType="{x:Type MutantsTree:ExecutedOperator}"
-                                    ItemsSource="{Binding Children}">
-                    <DockPanel>
-                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
 
-                        <TextBlock Text="{Binding DisplayedText}"/>
+                <HierarchicalDataTemplate DataType="{x:Type MutantsTree:ExecutedOperator}"
+                                          ItemsSource="{Binding Children}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
+
+                        <TextBlock Text="{Binding DisplayedText}" />
                     </DockPanel>
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="True"/>
+                            <Setter Property="IsExpanded" Value="True" />
                             <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown"
-                           Handler="trv_PreviewMouseRightButtonDown"/>
+                                         Handler="trv_PreviewMouseRightButtonDown" />
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
 
                 <HierarchicalDataTemplate DataType="{x:Type MutantsTree:MutantGroup}"
-                                    ItemsSource="{Binding Children}">
+                                          ItemsSource="{Binding Children}">
                     <DockPanel>
-                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
 
-                        <TextBlock Text="{Binding DisplayedText}"/>
+                        <TextBlock Text="{Binding DisplayedText}" />
                     </DockPanel>
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="True"/>
-                      
+                            <Setter Property="IsExpanded" Value="True" />
+
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
-                
+
                 <DataTemplate DataType="{x:Type MutantsTree:Mutant}">
                     <DockPanel>
-                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}"/>
-                        <TextBlock Text="{Binding DisplayedText}"/>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
+                        <TextBlock Text="{Binding DisplayedText}" />
                     </DockPanel>
-                   
+
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>
 
 
-        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" />
 
-        
-        <Grid  Grid.Row="3">
+
+        <Grid Grid.Row="3">
 
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
 
-            <Views:MutantDetailsView Grid.Row="0" Content="{Binding MutantDetailsViewModel.View}"/>
-            <Button Grid.Row="1" Content="Save Results..." Command="{Binding CommandSaveResults}"/>
+            <Views:MutantDetailsView Grid.Row="0" Content="{Binding MutantDetailsViewModel.View}" />
+            <Button Grid.Row="1" Content="Save Results..." Command="{Binding CommandSaveResults}" />
         </Grid>
 
     </Grid>

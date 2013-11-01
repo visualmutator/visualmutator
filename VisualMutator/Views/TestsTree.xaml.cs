@@ -1,21 +1,12 @@
 ﻿namespace VisualMutator.Views
 {
-    #region Usings
+    #region
 
     using System.Windows;
     using System.Windows.Controls;
-
     using System.Windows.Input;
-    using System.Windows.Media;
-
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Model.Tests.TestsTree;
-
-    using ContextMenu = System.Windows.Controls.ContextMenu;
-    using MenuItem = System.Windows.Controls.MenuItem;
-    using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-    using UserControl = System.Windows.Controls.UserControl;
+    using Model.Tests.TestsTree;
+    using UsefulTools.Core;
 
     #endregion
 

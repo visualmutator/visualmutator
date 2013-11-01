@@ -1,8 +1,10 @@
 namespace VisualMutator.Model.Tests.Custom
 {
+    #region
+
     using System.Collections.Generic;
 
-    using CommonUtilityInfrastructure.Paths;
+    #endregion
 
     public interface ITestingProcessExtension
     {

@@ -1,9 +1,12 @@
 namespace VisualMutator.Model.Mutations
 {
+    #region
+
     using System;
     using System.Collections.Generic;
-
     using Mono.Cecil;
+
+    #endregion
 
     public class ClearableCacheAssemblyResolver : BaseAssemblyResolver
     {

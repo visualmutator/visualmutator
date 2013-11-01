@@ -1,18 +1,18 @@
 ﻿namespace VisualMutator.Controllers
 {
-    #region Usings
+    #region
 
     using System;
     using System.IO;
     using System.Linq;
     using System.Windows.Forms;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils;
     using Infrastructure;
     using Model;
     using Model.Mutations.Operators;
     using Model.Mutations.Types;
     using Model.Tests;
+    using UsefulTools.Core;
+    using UsefulTools.Wpf;
     using ViewModels;
     using Views;
 

@@ -148,6 +148,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UsefulTools">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.dll</HintPath>
+    </Reference>
+    <Reference Include="UsefulTools.Wpf">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
@@ -178,12 +184,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
-      <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
-      <Name>CommonUtilityInfrastructure</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

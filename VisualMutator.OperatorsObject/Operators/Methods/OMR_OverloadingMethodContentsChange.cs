@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Reflection;
 
-    using CommonUtilityInfrastructure;
     using Extensibility;
     using Microsoft.Cci;
 
@@ -13,7 +12,8 @@
 
 
     using log4net;
- 
+    using UsefulTools.ExtensionMethods;
+
 
     public class OMR_OverloadingMethodContentsChange  : IMutationOperator
     {

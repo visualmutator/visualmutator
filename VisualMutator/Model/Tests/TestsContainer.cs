@@ -1,28 +1,21 @@
 ﻿namespace VisualMutator.Model.Tests
 {
+    #region
+
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Diagnostics;
-    using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
-    using CommonUtilityInfrastructure.CheckboxedTree;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using CommonUtilityInfrastructure.Paths;
-    using Mono.Cecil;
+    using Exceptions;
     using Mutations.MutantsTree;
-    using Mutations.Types;
-    using NUnit.Core;
+    using Services;
     using StoringMutants;
+    using TestsTree;
+    using UsefulTools.CheckboxedTree;
+    using UsefulTools.ExtensionMethods;
     using Verification;
-    using VisualMutator.Controllers;
-    using VisualMutator.Model.Exceptions;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Tests.Services;
-    using VisualMutator.Model.Tests.TestsTree;
 
-    using Switch = CommonUtilityInfrastructure.FunctionalUtils.Switch;
+    #endregion
 
     public interface ITestsContainer
     {

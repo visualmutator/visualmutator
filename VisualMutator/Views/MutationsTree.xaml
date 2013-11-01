@@ -1,12 +1,12 @@
 ﻿<UserControl x:Class="VisualMutator.Views.MutationsTree"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
              xmlns:Operators="clr-namespace:VisualMutator.Model.Mutations.Operators"
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
-             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d" 
+             xmlns:Views="clr-namespace:VisualMutator.Views" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid d:DataContext="{d:DesignInstance ViewModels:MutationsTreeViewModel}">
 
@@ -15,26 +15,26 @@
             <HierarchicalDataTemplate DataType="{x:Type Operators:PackageNode}" ItemsSource="{Binding Operators}">
 
                 <DockPanel>
-                    <Image Source="Resources/mutation.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}"/>
-                    <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPackage.Description}"/>
+                    <Image Source="Resources/mutation.png" />
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
+                    <TextBlock Text="{Binding Name}" ToolTip="{Binding OperatorsPackage.Description}" />
                 </DockPanel>
 
             </HierarchicalDataTemplate>
 
             <DataTemplate DataType="{x:Type Operators:OperatorNode}">
                 <DockPanel>
-                    <Image Source="Resources/mutation.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}"/>
-                    <TextBlock Text="{Binding Name}" ToolTip="{Binding Operator.Description}"/>
+                    <Image Source="Resources/mutation.png" />
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
+                    <TextBlock Text="{Binding Name}" ToolTip="{Binding Operator.Description}" />
                 </DockPanel>
 
             </DataTemplate>
 
         </Grid.Resources>
 
-        <TreeView ItemsSource="{Binding MutationPackages}"/>
-        <Views:ProgressControl  HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="{Binding MutationPackages, Converter={Converters:EmptyToVisibleConverter}}"/>
+        <TreeView ItemsSource="{Binding MutationPackages}" />
+        <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding MutationPackages, Converter={Converters:EmptyToVisibleConverter}}" />
     </Grid>
 </UserControl>

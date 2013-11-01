@@ -1,21 +1,16 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Xml.Linq;
-
-    using CommonUtilityInfrastructure;
-    using Microsoft.Cci;
-    using Microsoft.Cci.MutableCodeModel;
-    using Mono.Cecil;
-
-    using VisualMutator.Model.Tests.TestsTree;
-
     using log4net;
+    using Microsoft.Cci;
+    using TestsTree;
+    using UsefulTools.ExtensionMethods;
 
     #endregion
 

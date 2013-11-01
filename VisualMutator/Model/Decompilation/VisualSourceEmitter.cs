@@ -1,9 +1,5 @@
 ﻿namespace VisualMutator.Model.Decompilation
 {
-    using CSharpSourceEmitter;
-    using Microsoft.Cci;
-
-
     //-----------------------------------------------------------------------------
     //
     // Copyright (c) Microsoft. All rights reserved.
@@ -14,12 +10,20 @@
     // PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
     //
     //-----------------------------------------------------------------------------
-    using System.Collections.Generic;
-    using Microsoft.Cci.ILToCodeModel;
 
     namespace PeToText
     {
-        public class VisualSourceEmitter : CSharpSourceEmitter.SourceEmitter
+        #region
+
+        using System.Collections.Generic;
+        using CSharpSourceEmitter;
+        using Microsoft.Cci;
+        using Microsoft.Cci.ILToCodeModel;
+        using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
+
+        #endregion
+
+        public class VisualSourceEmitter : SourceEmitter
         {
 
             public VisualSourceEmitter(ISourceEmitterOutput sourceEmitterOutput, IMetadataHost host, PdbReader/*?*/ pdbReader, bool noIL, bool printCompilerGeneratedMembers)
@@ -43,18 +47,18 @@
                 if (sourceMethodBody == null)
                 {
                     var options = DecompilerOptions.Loops;
-                    if (!this.printCompilerGeneratedMembers)
+                    if (!printCompilerGeneratedMembers)
                         options |= (DecompilerOptions.AnonymousDelegates | DecompilerOptions.Iterators);
-                    sourceMethodBody = new SourceMethodBody(methodBody, this.host, this.pdbReader, this.pdbReader, options);
+                    sourceMethodBody = new SourceMethodBody(methodBody, host, pdbReader, pdbReader, options);
                 }
-                if (this.noIL)
-                    this.Traverse(sourceMethodBody.Block.Statements);
+                if (noIL)
+                    Traverse(sourceMethodBody.Block.Statements);
                 else
                 {
                    // this.Traverse(sourceMethodBody.Block);
                   //  PrintToken(CSharpToken.NewLine);
 
-                    if (this.pdbReader != null)
+                    if (pdbReader != null)
                         PrintScopes(methodBody);
                     else
                         PrintLocals(methodBody.LocalVariables);
@@ -62,9 +66,9 @@
                     int currentIndex = -1; // a number no index matches
                     foreach (IOperation operation in methodBody.Operations)
                     {
-                        if (this.pdbReader != null)
+                        if (pdbReader != null)
                         {
-                            foreach (IPrimarySourceLocation psloc in this.pdbReader.GetPrimarySourceLocationsFor(operation.Location))
+                            foreach (IPrimarySourceLocation psloc in pdbReader.GetPrimarySourceLocationsFor(operation.Location))
                             {
                                 if (psloc.StartIndex != currentIndex)
                                 {
@@ -82,7 +86,7 @@
 
             private void PrintScopes(IMethodBody methodBody)
             {
-                foreach (ILocalScope scope in this.pdbReader.GetLocalScopes(methodBody))
+                foreach (ILocalScope scope in pdbReader.GetLocalScopes(methodBody))
                     PrintScopes(scope);
             }
 
@@ -91,8 +95,8 @@
                 sourceEmitterOutput.Write(string.Format("IL_{0} ... IL_{1} ", scope.Offset.ToString("x4"), (scope.Offset + scope.Length).ToString("x4")), true);
                 sourceEmitterOutput.WriteLine("{");
                 sourceEmitterOutput.IncreaseIndent();
-                PrintConstants(this.pdbReader.GetConstantsInScope(scope));
-                PrintLocals(this.pdbReader.GetVariablesInScope(scope));
+                PrintConstants(pdbReader.GetConstantsInScope(scope));
+                PrintLocals(pdbReader.GetVariablesInScope(scope));
                 sourceEmitterOutput.DecreaseIndent();
                 sourceEmitterOutput.WriteLine("}", true);
             }
@@ -103,7 +107,7 @@
                 {
                     sourceEmitterOutput.Write("const ", true);
                     PrintTypeReference(local.Type);
-                    sourceEmitterOutput.WriteLine(" " + this.GetLocalName(local));
+                    sourceEmitterOutput.WriteLine(" " + GetLocalName(local));
                 }
             }
 
@@ -113,13 +117,13 @@
                 {
                     sourceEmitterOutput.Write("", true);
                     PrintTypeReference(local.Type);
-                    sourceEmitterOutput.WriteLine(" " + this.GetLocalName(local));
+                    sourceEmitterOutput.WriteLine(" " + GetLocalName(local));
                 }
             }
 
             public override void PrintLocalName(ILocalDefinition local)
             {
-                this.sourceEmitterOutput.Write(this.GetLocalName(local));
+                sourceEmitterOutput.Write(GetLocalName(local));
             }
 
             private void PrintOperation(IOperation operation)
@@ -128,7 +132,7 @@
                 sourceEmitterOutput.Write(operation.OperationCode.ToString());
                 ILocalDefinition/*?*/ local = operation.Value as ILocalDefinition;
                 if (local != null)
-                    sourceEmitterOutput.Write(" " + this.GetLocalName(local));
+                    sourceEmitterOutput.Write(" " + GetLocalName(local));
                 else if (operation.Value is string)
                     sourceEmitterOutput.Write(" \"" + operation.Value + "\"");
                 else if (operation.Value != null)
@@ -149,9 +153,9 @@
             protected virtual string GetLocalName(ILocalDefinition local)
             {
                 string localName = local.Name.Value;
-                if (this.pdbReader != null)
+                if (pdbReader != null)
                 {
-                    foreach (IPrimarySourceLocation psloc in this.pdbReader.GetPrimarySourceLocationsForDefinitionOf(local))
+                    foreach (IPrimarySourceLocation psloc in pdbReader.GetPrimarySourceLocationsForDefinitionOf(local))
                     {
                         if (psloc.Source.Length > 0)
                         {

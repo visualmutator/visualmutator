@@ -1,21 +1,16 @@
 ﻿namespace VisualMutator.Model
 {
-    using System;
-    using System.Collections.Generic;
+    #region
+
     using System.Collections.Specialized;
-    using System.Linq;
     using System.Reflection;
     using System.Runtime.Caching;
-    using System.Text;
-
-    using CommonUtilityInfrastructure;
-
-    using Microsoft.Cci;
-    using Mutations.Types;
-    using VisualMutator.Extensibility;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.MutantsTree;
     using log4net;
+    using Mutations;
+    using Mutations.MutantsTree;
+    using UsefulTools.Core;
+
+    #endregion
 
     public interface IMutantsCache
     {

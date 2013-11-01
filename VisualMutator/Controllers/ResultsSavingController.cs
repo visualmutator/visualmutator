@@ -1,20 +1,18 @@
 ﻿namespace VisualMutator.Controllers
 {
-    using System;
-    using System.Collections.Generic;
+    #region
+
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
-    using System.Text;
     using System.Xml.Linq;
+    using Microsoft.Win32;
+    using Model;
+    using UsefulTools.Core;
+    using UsefulTools.FileSystem;
+    using UsefulTools.Wpf;
+    using ViewModels;
 
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FileSystem;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Model;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.ViewModels;
+    #endregion
 
     public class ResultsSavingController : Controller
     {
@@ -61,7 +59,7 @@
         public void BrowsePath()
         {
 
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
+            SaveFileDialog dlg = new SaveFileDialog
             {
                 FileName = "MutationResults",
                 DefaultExt = ".xml",

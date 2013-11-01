@@ -1,11 +1,13 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules
 {
+    #region
+
     using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils;
     using Model;
     using Ninject.Modules;
     using VisualMutator.Infrastructure;
 
+    #endregion
 
     public class VSNinjectModule : NinjectModule
     {

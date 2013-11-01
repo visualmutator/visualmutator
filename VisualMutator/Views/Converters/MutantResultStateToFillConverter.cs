@@ -1,19 +1,13 @@
 ﻿namespace VisualMutator.Views.Converters
 {
-    #region Usings
+    #region
 
     using System;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Linq;
     using System.Windows.Data;
     using System.Windows.Media;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
     using Model.Mutations.MutantsTree;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Tests.TestsTree;
+    using Model.Tests.TestsTree;
+    using UsefulTools.Switches;
 
     #endregion
 

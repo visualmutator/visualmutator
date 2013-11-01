@@ -1,21 +1,19 @@
 ﻿namespace VisualMutator.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    #region
 
-    using CommonUtilityInfrastructure.WpfUtils;
+    using UsefulTools.Wpf;
+    using Views;
 
-    using VisualMutator.Views;
+    #endregion
 
     public class ResultsSavingViewModel : ViewModel<IResultsSavingView>
     {
         public ResultsSavingViewModel(IResultsSavingView view)
             : base(view)
         {
-            this.IncludeDetailedTestResults = false;
-            this.IncludeCodeDifferenceListings= false;
+            IncludeDetailedTestResults = false;
+            IncludeCodeDifferenceListings= false;
         }
 
         public void Show()

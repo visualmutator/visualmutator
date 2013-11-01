@@ -1,20 +1,16 @@
 ﻿namespace VisualMutator.Model.Mutations.Operators
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
     using System.ComponentModel.Composition.Primitives;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.DependencyInjection;
-    using CommonUtilityInfrastructure.Paths;
-    using VisualMutator.Extensibility;
+    using Extensibility;
+    using UsefulTools.Paths;
 
     #endregion
 

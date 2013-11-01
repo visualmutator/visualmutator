@@ -1,10 +1,13 @@
 ﻿namespace VisualMutator.Views.Converters
 {
+    #region
+
     using System;
     using System.Collections;
-    using System.Linq;
     using System.Windows;
     using System.Windows.Data;
+
+    #endregion
 
     [ValueConversion(typeof(IEnumerable), typeof(Visibility))]
     public class EmptyToVisibleConverter : Converter<EmptyToVisibleConverter, IEnumerable, Visibility>

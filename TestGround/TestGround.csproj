@@ -165,6 +165,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UsefulTools">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.dll</HintPath>
+    </Reference>
+    <Reference Include="UsefulTools.Wpf">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />

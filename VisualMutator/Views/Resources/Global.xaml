@@ -2,15 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     x:Class="VisualMutator.Views.Resources.c__users_sysop_documents_visual_studio_2010_projects_visualmutator_visualmutator_views_resources_global_xaml">
 
-    
+
     <ResourceDictionary.MergedDictionaries>
 
         <ResourceDictionary Source="GlobalStyles.xaml" />
-       <!-- <ResourceDictionary Source="/PresentationFramework.Luna, Version=3.0.0.0, Culture=neutral,
+        <!-- <ResourceDictionary Source="/PresentationFramework.Luna, Version=3.0.0.0, Culture=neutral,
                             PublicKeyToken=31bf3856ad364e35,
                             ProcessorArchitecture=MSIL;component/themes/luna.normalcolor.xaml" />-->
-        
-        
+
+
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

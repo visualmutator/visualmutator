@@ -5,9 +5,10 @@
     using System.Linq;
     using System.Reflection;
 
-    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
+    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
+    using UsefulTools.ExtensionMethods;
     using VisualMutator.Extensibility;
 
     using log4net;
@@ -63,7 +64,7 @@
                 _log.Info("Visiting IEquality: " + operation);
                 var passes = new List<string>();
                 foreach (Tuple<IExpression, string> pair in
-                    Utility.Pairs<IExpression, string>(operation.LeftOperand, "Left", operation.RightOperand, "Right"))
+                    Collections.Pairs<IExpression, string>(operation.LeftOperand, "Left", operation.RightOperand, "Right"))
                 {
                     ITypeDefinition operandType = pair.Item1.Type.ResolvedType;
                     if (operandType != Host.PlatformType.SystemString &&

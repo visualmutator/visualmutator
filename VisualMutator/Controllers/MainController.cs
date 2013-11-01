@@ -1,33 +1,22 @@
-﻿using System.Drawing;
-namespace VisualMutator.Controllers
+﻿namespace VisualMutator.Controllers
 {
+    #region
+
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.DependencyInjection;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using CommonUtilityInfrastructure.WpfUtils;
-    using Model.Mutations.MutantsTree;
-    using TestGeneration;
-    using VisualMutator.Infrastructure;
-    using VisualMutator.Model;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Model.Tests;
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.ViewModels;
-
     using log4net;
+    using Model;
+    using Model.Mutations.MutantsTree;
+    using UsefulTools.Core;
+    using UsefulTools.DependencyInjection;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Switches;
+    using UsefulTools.Wpf;
+    using ViewModels;
 
-    using Switch = CommonUtilityInfrastructure.FunctionalUtils.Switch;
+    #endregion
 
     public class MainController : Controller
     {

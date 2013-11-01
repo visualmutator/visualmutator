@@ -1,14 +1,18 @@
 ﻿namespace VisualMutator.Infrastructure
 {
+    #region
+
     using System;
     using System.IO;
     using System.Reflection;
-    using CommonUtilityInfrastructure.Paths;
     using log4net;
     using log4net.Appender;
     using log4net.Core;
     using log4net.Layout;
     using log4net.Repository.Hierarchy;
+    using UsefulTools.Paths;
+
+    #endregion
 
     public class Log4NetConfig
     {

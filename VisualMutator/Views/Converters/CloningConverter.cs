@@ -1,9 +1,13 @@
 ﻿namespace VisualMutator.Views.Converters
 {
+    #region
+
     using System;
     using System.Globalization;
     using System.Windows;
     using System.Windows.Data;
+
+    #endregion
 
     [ValueConversion(typeof(Freezable), typeof(Freezable))]
     internal class CloningConverter : IValueConverter

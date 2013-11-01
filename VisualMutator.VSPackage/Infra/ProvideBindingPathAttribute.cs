@@ -1,10 +1,9 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
-    #region Usings
+    #region
 
     using System;
     using System.Text;
-
     using Microsoft.VisualStudio.Shell;
 
     #endregion

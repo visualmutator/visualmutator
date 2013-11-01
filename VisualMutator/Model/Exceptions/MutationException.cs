@@ -1,7 +1,11 @@
 ﻿namespace VisualMutator.Model.Exceptions
 {
+    #region
+
     using System;
     using System.Runtime.Serialization;
+
+    #endregion
 
     [Serializable]
     public class MutationException : Exception

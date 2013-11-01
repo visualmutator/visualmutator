@@ -1,16 +1,11 @@
 ﻿namespace CommonUtilityInfrastructure
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using FunctionalUtils;
+    #region
+
     using Microsoft.VisualStudio.Settings;
-
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
-    using PiotrTrzpil.VisualMutator_VSPackage.Properties;
 
-    using VisualMutator.Infrastructure;
+    #endregion
 
     public class VisualStudioSettingsProvider : ISettingsManager
     {

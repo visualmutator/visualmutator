@@ -1,30 +1,21 @@
 ﻿namespace VisualMutator.Controllers
 {
-    #region Usings
+    #region
 
-    using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.Threading;
-    using CommonUtilityInfrastructure.WpfUtils;
+    using Infrastructure;
+    using log4net;
     using Model;
+    using Model.Mutations.Operators;
+    using Model.Mutations.Types;
     using Model.Tests;
     using Model.Tests.TestsTree;
-    using VisualMutator.Infrastructure;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Operators;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.ViewModels;
-    using VisualMutator.Views;
-
-    using log4net;
+    using UsefulTools.Core;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Wpf;
+    using ViewModels;
 
     #endregion
 
@@ -126,7 +117,7 @@
 
                     if (_typesManager.IsAssemblyLoadError)
                     {
-                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(),  _viewModel.View);
                     }
                 });
             _svc.Threading.ScheduleAsync(() => _testsContainer.LoadTests(
@@ -137,7 +128,7 @@
 
                    if (_typesManager.IsAssemblyLoadError)
                    {
-                       _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _log, _viewModel.View);
+                       _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
                    }
                });
             _viewModel.ShowDialog();

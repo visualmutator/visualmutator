@@ -1,20 +1,20 @@
 ﻿namespace VisualMutator.ViewModels
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.ComponentModel.Composition.Hosting;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
+    using Model.Tests.Custom;
+    using UsefulTools.Core;
+    using UsefulTools.Paths;
+    using UsefulTools.Wpf;
+    using Views;
 
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.Paths;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Model.Tests.Custom;
-    using VisualMutator.Views;
+    #endregion
 
     public class ChooseTestingExtensionViewModel : ViewModel<IChooseTestingExtensionView>
     {

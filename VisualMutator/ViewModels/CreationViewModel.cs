@@ -1,16 +1,11 @@
 ﻿namespace VisualMutator.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
+    #region
 
-    using CommonUtilityInfrastructure.WpfUtils;
+    using UsefulTools.Core;
+    using UsefulTools.Wpf;
 
-    using VisualMutator.Model.Mutations.Operators;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Views;
+    #endregion
 
     public class CreationViewModel<TView> : ViewModel<TView>
         where TView : class, IWindow

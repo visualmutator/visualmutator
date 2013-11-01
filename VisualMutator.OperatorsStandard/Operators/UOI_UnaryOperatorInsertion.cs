@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using CommonUtilityInfrastructure;
     using Extensibility;
     using Microsoft.Cci;
 

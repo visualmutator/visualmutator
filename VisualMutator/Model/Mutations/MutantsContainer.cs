@@ -1,25 +1,21 @@
 ﻿namespace VisualMutator.Model.Mutations
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
-    using LinqLib.Sequence;
+    using Exceptions;
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using MutantsTree;
     using Operators;
-    using OperatorsStandard;
-    using StoringMutants;
     using Types;
-    using VisualMutator.Controllers;
-    using VisualMutator.Extensibility;
-    using VisualMutator.Model.Exceptions;
-    using log4net;
-    using Module = Microsoft.Cci.MutableCodeModel.Module;
+    using UsefulTools.Core;
+    using UsefulTools.ExtensionMethods;
 
     #endregion
 

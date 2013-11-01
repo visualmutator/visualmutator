@@ -1,12 +1,13 @@
 ﻿namespace VisualMutator.Extensibility
 {
+    #region
+
     using System.Collections.Generic;
-    using System.Diagnostics;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using MethodReference = Microsoft.Cci.MutableCodeModel.MethodReference;
-    using System;
-    using System.Linq;
+
+    #endregion
+
     public abstract class VisualCodeRewriterBase : CodeRewriter
     {
        

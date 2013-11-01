@@ -1,13 +1,9 @@
 ﻿namespace VisualMutator.Model.Mutations.Operators
 {
-    #region Usings
+    #region
 
     using System.Collections.Generic;
-    using System.Linq;
-
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Extensibility;
+    using Extensibility;
 
     #endregion
 

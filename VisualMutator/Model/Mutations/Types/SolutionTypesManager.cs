@@ -1,25 +1,18 @@
-﻿using System.Collections;
-namespace VisualMutator.Model.Mutations.Types
+﻿namespace VisualMutator.Model.Mutations.Types
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.CheckboxedTree;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using CommonUtilityInfrastructure.Paths;
-    using Microsoft.Cci;
-    using Mono.Cecil;
-
-    using VisualMutator.Infrastructure;
-    using VisualMutator.Model.Exceptions;
-
+    using Exceptions;
+    using Infrastructure;
     using log4net;
+    using Microsoft.Cci;
+    using UsefulTools.CheckboxedTree;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
 
     #endregion
 

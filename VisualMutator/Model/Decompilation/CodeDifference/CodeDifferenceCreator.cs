@@ -1,18 +1,16 @@
 ﻿namespace VisualMutator.Model.Decompilation.CodeDifference
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Text;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
     using DiffLib;
-    using Mutations.MutantsTree;
-    using StoringMutants;
     using log4net;
+    using Mutations.MutantsTree;
+    using UsefulTools.Switches;
 
     #endregion
 

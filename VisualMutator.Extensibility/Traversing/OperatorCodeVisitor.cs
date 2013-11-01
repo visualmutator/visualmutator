@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
-    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
+    using UsefulTools.ExtensionMethods;
 
     public class OperatorCodeVisitor : OperatorCodeVisitorBase, IOperatorCodeVisitor
     {

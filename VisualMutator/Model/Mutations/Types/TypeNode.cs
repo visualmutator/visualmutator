@@ -1,13 +1,10 @@
 ﻿namespace VisualMutator.Model.Mutations.Types
 {
-    #region Usings
+    #region
 
-    using CommonUtilityInfrastructure.CheckboxedTree;
-    using CommonUtilityInfrastructure.Paths;
     using Microsoft.Cci;
-    using Mono.Cecil;
-
-    using VisualMutator.Infrastructure;
+    using UsefulTools.CheckboxedTree;
+    using UsefulTools.Paths;
 
     #endregion
     public class AssemblyNode : CheckedNode

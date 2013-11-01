@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
+    using UsefulTools.ExtensionMethods;
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;

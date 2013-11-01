@@ -1,6 +1,6 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage
 {
-    #region Usings
+    #region
 
     using System;
 

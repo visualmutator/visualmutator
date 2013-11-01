@@ -1,11 +1,12 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
+    #region
+
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Cci;
-    using Mono.Cecil;
 
-    using VisualMutator.Model.Mutations.Types;
+    #endregion
 
     public class AssemblyScanResult
     {

@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
+    using UsefulTools.ExtensionMethods;
 
     public class AstFormatter
     {

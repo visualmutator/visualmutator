@@ -3,10 +3,10 @@ namespace VisualMutator.Model
     #region
 
     using System.Collections.Generic;
-    using CommonUtilityInfrastructure.Paths;
     using Extensibility;
     using Mutations.Types;
     using Tests;
+    using UsefulTools.Paths;
 
     #endregion
 

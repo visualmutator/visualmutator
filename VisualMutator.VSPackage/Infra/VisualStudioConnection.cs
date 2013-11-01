@@ -1,6 +1,6 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
@@ -8,22 +8,17 @@
     using System.Linq;
     using System.Reactive.Subjects;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.Paths;
-    using CommonUtilityInfrastructure.WpfUtils;
+    using System.Windows.Forms;
     using EnvDTE;
-
     using EnvDTE80;
+    using log4net;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Shell.Settings;
-    using Microsoft.Win32;
-
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
+    using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
-
-    using log4net;
-    using IWin32Window = System.Windows.Forms.IWin32Window;
 
     #endregion
 
@@ -67,7 +62,7 @@
         {
             get
             {
-                EnvDTE.Window vsWindow = _dte.MainWindow;
+                Window vsWindow = _dte.MainWindow;
                 return new NativeWindowInfo(new IntPtr(vsWindow.HWnd), vsWindow.Top, 
                     vsWindow.Left, vsWindow.Width, vsWindow.Height);
                     //new IntPtr(vsWindow.HWnd); 
@@ -76,7 +71,7 @@
 
         public IWin32Window GetWindow()
         {
-            EnvDTE.Window vsWindow = _dte.MainWindow;
+            Window vsWindow = _dte.MainWindow;
 
             // Get the handle to the non-WPF owner window
 

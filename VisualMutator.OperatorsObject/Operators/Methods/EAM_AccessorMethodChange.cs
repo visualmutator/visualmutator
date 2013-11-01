@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Reflection;
 
-    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
+    using UsefulTools.ExtensionMethods;
     using VisualMutator.Extensibility;
 
     using log4net;

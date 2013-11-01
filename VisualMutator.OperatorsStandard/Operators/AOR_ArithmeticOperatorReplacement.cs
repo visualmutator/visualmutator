@@ -8,12 +8,10 @@ namespace VisualMutator.OperatorsStandard
     using System.Collections;
     using System.ComponentModel.Composition;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-  
-
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Switches;
     using VisualMutator.Extensibility;
     using log4net;
 

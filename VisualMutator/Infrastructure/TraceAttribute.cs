@@ -1,15 +1,15 @@
 ﻿namespace VisualMutator.Infrastructure
 {
+    #region
+
     using System;
-    using System.Diagnostics;
     using System.Reflection;
     using log4net;
+    using PostSharp.Aspects;
 
-     using PostSharp.Aspects;
-     using PostSharp.Extensibility;
+    #endregion
 
-
-     [Serializable] 
+    [Serializable] 
      public sealed class TraceAttribute : OnMethodBoundaryAspect
      {
        

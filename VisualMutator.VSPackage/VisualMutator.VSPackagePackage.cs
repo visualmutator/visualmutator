@@ -1,6 +1,6 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage
 {
-    #region Usings
+    #region
 
     using System;
     using System.ComponentModel.Design;
@@ -8,12 +8,10 @@
     using System.Globalization;
     using System.Runtime.InteropServices;
     using System.Windows;
-
+    using Infrastructure;
     using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
 
     #endregion
 

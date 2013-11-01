@@ -1,6 +1,10 @@
 namespace VisualMutator.Model.Mutations.Operators
 {
-    using VisualMutator.Extensibility;
+    #region
+
+    using Extensibility;
+
+    #endregion
 
     class IdentityOperator : IMutationOperator
     {

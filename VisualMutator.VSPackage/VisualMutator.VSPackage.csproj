@@ -100,6 +100,12 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="UsefulTools">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.dll</HintPath>
+    </Reference>
+    <Reference Include="UsefulTools.Wpf">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
   </ItemGroup>
@@ -226,10 +232,6 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
-      <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
-      <Name>CommonUtilityInfrastructure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\VisualMutator.Extensibility\VisualMutator.Extensibility.csproj">
       <Project>{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}</Project>
       <Name>VisualMutator.Extensibility</Name>

@@ -1,41 +1,41 @@
 ﻿<UserControl x:Class="VisualMutator.Views.TypesTree"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Types="clr-namespace:VisualMutator.Model.Mutations.Types"
              xmlns:Views="clr-namespace:VisualMutator.Views"
              xmlns:Converters="clr-namespace:VisualMutator.Views.Converters"
-             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" 
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid d:DataContext="{d:DesignInstance ViewModels:TypesTreeViewModel}">
         <Grid.Resources>
 
             <HierarchicalDataTemplate DataType="{x:Type Types:AssemblyNode}" ItemsSource="{Binding Path=Children}">
                 <DockPanel>
-                    <Image Source="Resources/assembly.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}"/>
-                    <TextBlock Text="{Binding Name}"/>
+                    <Image Source="Resources/assembly.png" />
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
+                    <TextBlock Text="{Binding Name}" />
                 </DockPanel>
 
             </HierarchicalDataTemplate>
 
             <HierarchicalDataTemplate DataType="{x:Type Types:TypeNamespaceNode}" ItemsSource="{Binding Path=Children}">
                 <DockPanel>
-                    <Image Source="Resources/namespace.png"/>
-                    <CheckBox IsChecked="{Binding IsIncluded}"/>
-                    <TextBlock Text="{Binding Name}"/>
+                    <Image Source="Resources/namespace.png" />
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
+                    <TextBlock Text="{Binding Name}" />
                 </DockPanel>
 
             </HierarchicalDataTemplate>
 
-            <DataTemplate DataType="{x:Type Types:TypeNode}" >
+            <DataTemplate DataType="{x:Type Types:TypeNode}">
                 <DockPanel>
-                    <Image Source="Resources/type.png"/>
+                    <Image Source="Resources/type.png" />
                     <CheckBox IsChecked="{Binding IsIncluded}" />
-                    <TextBlock Text="{Binding Name}"/>
+                    <TextBlock Text="{Binding Name}" />
                 </DockPanel>
-                
+
             </DataTemplate>
         </Grid.Resources>
 
@@ -48,7 +48,7 @@
         </TreeView>
 
         <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="{Binding Assemblies, Converter={Converters:EmptyToVisibleConverter}}"/>
+                               Visibility="{Binding Assemblies, Converter={Converters:EmptyToVisibleConverter}}" />
 
     </Grid>
 </UserControl>

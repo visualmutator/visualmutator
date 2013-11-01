@@ -1,9 +1,13 @@
 ﻿namespace VisualMutator.Model
 {
+    #region
+
     using System.Collections.Generic;
     using System.Linq;
     using Extensibility;
     using Microsoft.Cci;
+
+    #endregion
 
     public class LoadedTypes
     {

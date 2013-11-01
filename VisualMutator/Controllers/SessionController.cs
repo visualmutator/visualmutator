@@ -1,6 +1,6 @@
 ﻿namespace VisualMutator.Controllers
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
@@ -8,28 +8,21 @@
     using System.Linq;
     using System.Reflection;
     using System.Xml.Linq;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.DependencyInjection;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using CommonUtilityInfrastructure.WpfUtils;
-    using Extensibility;
-    using Microsoft.Cci;
-    using Model.Decompilation;
-    using Model.Mutations.MutantsTree;
-    using Model.Mutations.Operators;
-    using Model.StoringMutants;
-    using Model.Verification;
-    using OperatorsStandard;
-    using VisualMutator.Infrastructure;
-    using VisualMutator.Model;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Tests;
-    using VisualMutator.Model.Tests.Custom;
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.ViewModels;
-
+    using Infrastructure;
     using log4net;
+    using Model;
+    using Model.Decompilation;
+    using Model.Mutations;
+    using Model.Mutations.MutantsTree;
+    using Model.StoringMutants;
+    using Model.Tests;
+    using Model.Tests.Custom;
+    using Model.Tests.TestsTree;
+    using Model.Verification;
+    using UsefulTools.Core;
+    using UsefulTools.DependencyInjection;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Switches;
 
     #endregion
 
@@ -188,7 +181,7 @@
                    && !_testsContainer.VerifyMutant(storedMutantInfo, changelessMutant))
             {
                 _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
-                    changelessMutant.MutantTestSession.Exception.Message), _log);
+                    changelessMutant.MutantTestSession.Exception.Message));
 
                 _currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
             }
@@ -202,19 +195,16 @@
                 
                 var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.SavingMutants);
     
-                System.Action<Mutant, StoredMutantInfo> verify = (mutant, storageInfo) => {};
+                Action<Mutant, StoredMutantInfo> verify = (mutant, storageInfo) => {};
                 if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
                 {
                     verify = (mutant, storageInfo) => _testsContainer.VerifyMutant(storageInfo, mutant);
                 }
 
+                //        StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+
                 _mutantsFileManager.WriteMutantsToDisk(_currentSession.Choices.MutantsCreationFolderPath,
-
-
-             //        StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
-
-
-                 _currentSession.MutantsGroupedByOperators, verify,counter);
+                        _currentSession.MutantsGroupedByOperators, verify,counter);
 
 
                 XDocument results = _xmlResultsGenerator.GenerateResults(_currentSession, includeDetailedTestResults: false, 
@@ -494,7 +484,7 @@
             {
                 
                 _svc.Logging.ShowError(UserMessages.ErrorPretest_UnknownError(
-                        changelessMutant.MutantTestSession.Exception.ToString()), _log);
+                        changelessMutant.MutantTestSession.Exception.ToString()));
 
                 return false;
                 

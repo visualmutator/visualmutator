@@ -1,12 +1,14 @@
 ﻿namespace VisualMutator.Model.Decompilation
 {
-    using System.Linq;
+    #region
+
     using System.Reflection;
     using System.Text;
     using CSharpSourceEmitter;
-    using Microsoft.Cci;
-    using VisualMutator.Extensibility;
     using log4net;
+    using Microsoft.Cci;
+
+    #endregion
 
     public interface ICodeVisualizer
     {

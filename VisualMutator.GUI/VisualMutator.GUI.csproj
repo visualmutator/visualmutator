@@ -85,6 +85,12 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UsefulTools">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.dll</HintPath>
+    </Reference>
+    <Reference Include="UsefulTools.Wpf">
+      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -142,10 +148,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtilityInfrastructure\CommonUtilityInfrastructure.csproj">
-      <Project>{A8B8F24D-3181-45BF-9ED3-F734E04F0BC4}</Project>
-      <Name>CommonUtilityInfrastructure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
       <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
       <Name>VisualMutator</Name>

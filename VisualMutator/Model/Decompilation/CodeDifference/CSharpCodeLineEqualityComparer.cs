@@ -1,6 +1,10 @@
 namespace VisualMutator.Model.Decompilation.CodeDifference
 {
+    #region
+
     using System.Collections.Generic;
+
+    #endregion
 
     public class CSharpCodeLineEqualityComparer : IEqualityComparer<string>
     {

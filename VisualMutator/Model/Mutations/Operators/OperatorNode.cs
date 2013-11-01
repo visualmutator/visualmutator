@@ -1,12 +1,11 @@
 ﻿namespace VisualMutator.Model.Mutations.Operators
 {
-    #region Usings
+    #region
 
     using System.Collections.Generic;
     using System.Linq;
-    using CommonUtilityInfrastructure.CheckboxedTree;
-    using VisualMutator.Extensibility;
-    using VisualMutator.Infrastructure;
+    using Extensibility;
+    using UsefulTools.CheckboxedTree;
 
     #endregion
     public class FakeOperatorPackageRootNode : CheckedNode

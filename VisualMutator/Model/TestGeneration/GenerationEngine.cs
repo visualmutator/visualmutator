@@ -1,12 +1,16 @@
 ﻿namespace VisualMutator.TestGeneration
 {
+    #region
+
     using System;
     using System.IO;
     using System.Linq;
+    using Model;
+    using Model.Mutations.MutantsTree;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
-    using VisualMutator.Model;
-    using VisualMutator.Model.Mutations.MutantsTree;
+
+    #endregion
 
     public class GenerationEngine
     {

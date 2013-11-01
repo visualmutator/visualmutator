@@ -1,10 +1,10 @@
 ﻿namespace VisualMutator.Extensibility
 {
+    #region
 
-using System.Collections.Generic;
-    using System.Linq;
     using Microsoft.Cci;
-    using System;
+
+    #endregion
 
     public abstract class VisualCodeVisitorBase : CodeVisitor
     {

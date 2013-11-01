@@ -1,10 +1,12 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-
-namespace VisualMutator.Views.Controls
+﻿namespace VisualMutator.Views.Controls
 {
-    using System.Diagnostics;
+    #region
+
+    using System;
+    using System.Windows;
+    using System.Windows.Controls;
+
+    #endregion
 
     public class ImageButton : Button
   {

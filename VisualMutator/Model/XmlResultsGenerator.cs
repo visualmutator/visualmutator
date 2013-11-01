@@ -1,21 +1,17 @@
 ﻿namespace VisualMutator.Model
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml.Linq;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
     using Decompilation;
     using Decompilation.CodeDifference;
-    using Mono.Cecil;
     using Mutations.MutantsTree;
-    using StoringMutants;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Tests.TestsTree;
+    using Tests.TestsTree;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Switches;
 
     #endregion
 

@@ -1,21 +1,16 @@
 ﻿namespace VisualMutator.Controllers
 {
-    #region Usings
+    #region
 
     using System;
     using System.Reflection;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Threading;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using CommonUtilityInfrastructure.WpfUtils;
-    using UsefulTools.Core;
-    using VisualMutator.Infrastructure;
-    using VisualMutator.ViewModels;
-
+    using Infrastructure;
     using log4net;
+    using UsefulTools.Core;
+    using UsefulTools.Switches;
 
     #endregion
 
@@ -101,7 +96,7 @@
         private void Current_DispatcherUnhandledException(
             object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            _messageService.ShowFatalError(e.Exception,_log );
+            _messageService.ShowFatalError(e.Exception,null);
             e.Handled = true;
         }
 
@@ -110,7 +105,7 @@
         {
             var exception = (Exception)e.ExceptionObject;
 
-            _messageService.ShowFatalError(exception, _log);
+            _messageService.ShowFatalError(exception, null);
 
         }
 

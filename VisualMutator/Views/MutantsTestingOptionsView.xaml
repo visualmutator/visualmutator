@@ -4,48 +4,47 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extToolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
-             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" d:DesignHeight="60" d:DesignWidth="405">
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Resources/Global.xaml"/>
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </UserControl.Resources>
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" d:DesignHeight="60"
+             d:DesignWidth="405">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Global.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-  <Grid d:DataContext="{d:DesignInstance ViewModels:MutantsTestingOptionsViewModel}">
-    <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
+    <Grid d:DataContext="{d:DesignInstance ViewModels:MutantsTestingOptionsViewModel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
 
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0"  Grid.Column="0" Text="Mutant testing timeout (seconds):"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutant testing timeout (seconds):" />
 
 
-        <extToolkit:IntegerUpDown  Grid.Row="0"  Grid.Column="1"  Maximum="1000" Minimum="1"
-                                Value="{Binding Options.TestingTimeoutSeconds, Mode=TwoWay}"/>
+        <extToolkit:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
+                                  Value="{Binding Options.TestingTimeoutSeconds, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="1"  Grid.Column="0" Text="Testing process extension: (?)" 
-                   ToolTip="Custom extension to testing process operations."/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Testing process extension: (?)"
+                   ToolTip="Custom extension to testing process operations." />
 
 
-        <Grid Grid.Row="1"  Grid.Column="1" >
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" IsEnabled="False"
                      Text="{Binding Path=Options.TestingProcessExtensionOptions.TestingProcessExtension.Name, Mode=OneWay}" />
             <Button Grid.Column="1" Content="Choose..." Command="{Binding CommandChooseTestingExtension}" />
         </Grid>
-
-
 
 
     </Grid>

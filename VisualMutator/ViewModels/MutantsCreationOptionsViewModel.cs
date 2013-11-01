@@ -1,16 +1,14 @@
 ﻿namespace VisualMutator.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
+    #region
 
-    using CommonUtilityInfrastructure.WpfUtils;
+    using Microsoft.Win32;
     using Model;
-    using VisualMutator.Controllers;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Views;
+    using UsefulTools.Core;
+    using UsefulTools.Wpf;
+    using Views;
+
+    #endregion
 
     public class MutantsCreationOptionsViewModel : ViewModel<IMutantsCreationOptionsView>
     {
@@ -28,7 +26,7 @@
 
         public void ChooseFiles()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog();
+            var dlg = new OpenFileDialog();
 
             bool? result = dlg.ShowDialog();
 

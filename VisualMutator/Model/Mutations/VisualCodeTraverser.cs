@@ -1,8 +1,11 @@
 ﻿namespace VisualMutator.Extensibility
 {
+    #region
+
     using System.Collections.Generic;
     using Microsoft.Cci;
-    using Microsoft.Cci.MutableCodeModel;
+
+    #endregion
 
     public class VisualCodeTraverser : CodeTraverser
     {

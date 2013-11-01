@@ -1,9 +1,8 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage
 {
-    #region Usings
+    #region
 
     using System.Runtime.InteropServices;
-
     using Microsoft.VisualStudio.Shell;
 
     #endregion

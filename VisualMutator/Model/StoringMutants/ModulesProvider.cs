@@ -1,8 +1,11 @@
 ﻿namespace VisualMutator.Model
 {
+    #region
+
     using System.Collections.Generic;
     using Microsoft.Cci;
-    using Mono.Cecil;
+
+    #endregion
 
     public class ModulesProvider
     {

@@ -1,9 +1,12 @@
 ﻿namespace VisualMutator.Model.Tests.TestsTree
 {
+    #region
+
     using System.Diagnostics;
     using System.Windows;
+    using UsefulTools.Wpf;
 
-    using CommonUtilityInfrastructure.WpfUtils;
+    #endregion
 
     public class TestNodeMethod : TestTreeNode
     {

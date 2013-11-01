@@ -1,7 +1,11 @@
 namespace VisualMutator.Model.StoringMutants
 {
+    #region
+
     using System.Collections.Generic;
     using Microsoft.Cci;
+
+    #endregion
 
     public class StoredAssemblies
     {

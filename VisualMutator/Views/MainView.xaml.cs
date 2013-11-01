@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-namespace VisualMutator.Views
+﻿namespace VisualMutator.Views
 {
-    using CommonUtilityInfrastructure.WpfUtils;
+    #region
+
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
     using Model.Mutations.MutantsTree;
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.ViewModels;
+    using UsefulTools.Core;
+    using ViewModels;
+
+    #endregion
 
     public interface IMutationResultsView : IView
     {
@@ -32,7 +24,7 @@ namespace VisualMutator.Views
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var vm = (MainViewModel)this.DataContext;
+            var vm = (MainViewModel)DataContext;
             vm.SelectedMutationTreeItem = e.NewValue;
         }
 

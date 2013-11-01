@@ -1,11 +1,15 @@
 namespace VisualMutator.ViewModels
 {
-    using CommonUtilityInfrastructure.WpfUtils;
+    #region
+
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Tests.TestsTree;
-    using VisualMutator.Views;
+    using Model.Tests.TestsTree;
+    using UsefulTools.Core;
+    using UsefulTools.Wpf;
+    using Views;
+
+    #endregion
 
     public class MutantDetailsViewModel: ViewModel<IMutantDetailsView>
     {

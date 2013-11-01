@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Reflection;
 
-    using CommonUtilityInfrastructure;
     using Microsoft.Cci;
 
     using Microsoft.Cci.MutableCodeModel;

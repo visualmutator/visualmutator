@@ -1,13 +1,17 @@
 ﻿namespace VisualMutator.Extensibility
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
     using log4net;
     using Microsoft.Cci;
+    using UsefulTools.ExtensionMethods;
+
+    #endregion
 
     public class VisualCodeVisitorBack : VisualCodeVisitor
     {

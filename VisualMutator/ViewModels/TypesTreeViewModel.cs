@@ -1,15 +1,14 @@
 ﻿namespace VisualMutator.ViewModels
 {
-    using System;
+    #region
+
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
+    using Model.Mutations.Types;
+    using UsefulTools.Wpf;
+    using Views;
 
-    using CommonUtilityInfrastructure.WpfUtils;
-    using Model.Tests.TestsTree;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Views;
+    #endregion
 
     public class TypesTreeViewModel : ViewModel<ITypesTreeView>
     {

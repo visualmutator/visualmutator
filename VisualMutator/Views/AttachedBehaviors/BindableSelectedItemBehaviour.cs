@@ -1,6 +1,6 @@
 ﻿namespace VisualMutator.Views.AttachedBehaviors
 {
-    #region Usings
+    #region
 
     using System.Windows;
     using System.Windows.Controls;

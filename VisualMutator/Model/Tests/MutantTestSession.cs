@@ -1,13 +1,14 @@
 namespace VisualMutator.Model.Tests
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using TestsTree;
+    using UsefulTools.Core;
 
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Tests.TestsTree;
+    #endregion
 
     public class MutantTestSession : ModelElement
     {

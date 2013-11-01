@@ -1,10 +1,14 @@
 ﻿namespace VisualMutator.Model.Verification
 {
+    #region
+
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
+    using UsefulTools.ExtensionMethods;
+
+    #endregion
 
     public interface IAssemblyVerifier
     {

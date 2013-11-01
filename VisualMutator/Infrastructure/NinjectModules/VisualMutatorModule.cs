@@ -1,27 +1,18 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules
 {
+    #region
+
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.DependencyInjection;
-    using CommonUtilityInfrastructure.FileSystem;
-    using CommonUtilityInfrastructure.Threading;
-    using CommonUtilityInfrastructure.WpfUtils;
-
     using Ninject;
-    using Ninject.Activation;
-    using Ninject.Activation.Strategies;
-    using Ninject.Extensions.ChildKernel;
     using Ninject.Extensions.ContextPreservation;
     using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
     using UsefulTools.Core;
+    using UsefulTools.FileSystem;
+    using UsefulTools.Threading;
+    using UsefulTools.Wpf;
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
-    using VisualMutator.Infrastructure;
     using VisualMutator.Model;
     using VisualMutator.Model.Decompilation;
     using VisualMutator.Model.Decompilation.CodeDifference;
@@ -35,7 +26,8 @@
     using VisualMutator.ViewModels;
     using VisualMutator.Views;
 
-   
+    #endregion
+
     public class VisualMutatorModule : NinjectModule
     {
       //  private ChildKernel childKernel;

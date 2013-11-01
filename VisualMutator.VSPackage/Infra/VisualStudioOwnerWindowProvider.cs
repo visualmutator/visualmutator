@@ -1,10 +1,13 @@
 namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 {
+    #region
+
     using System.Windows;
     using System.Windows.Interop;
-    using CommonUtilityInfrastructure.WpfUtils;
     using VisualMutator.Infrastructure;
     using IWin32Window = System.Windows.Forms.IWin32Window;
+
+    #endregion
 
     public class VisualStudioOwnerWindowProvider : IOwnerWindowProvider
     {

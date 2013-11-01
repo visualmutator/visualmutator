@@ -1,14 +1,17 @@
 ﻿namespace VisualMutator.Model.Mutations.Operators
 {
+    #region
+
     using System;
     using System.IO;
     using System.Linq;
     using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
-    using Microsoft.Cci.MutableCodeModel;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
+
+    #endregion
 
     public class OperatorUtils : IOperatorUtils
     {

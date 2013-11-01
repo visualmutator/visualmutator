@@ -1,23 +1,25 @@
 ﻿namespace VisualMutator.Model
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using CommonUtilityInfrastructure.Paths;
     using CSharpSourceEmitter;
     using Decompilation;
     using Decompilation.PeToText;
     using Exceptions;
     using JetBrains.Annotations;
+    using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
-    using log4net;
-
     using Module = Microsoft.Cci.MutableCodeModel.Module;
     using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
+
+    #endregion
 
     public interface ICommonCompilerInfra
     {

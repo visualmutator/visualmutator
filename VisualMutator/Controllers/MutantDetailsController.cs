@@ -1,27 +1,19 @@
 ﻿namespace VisualMutator.Controllers
 {
+    #region
+
     using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
-    using System.Windows.Controls;
-    using CommonUtilityInfrastructure.Comparers;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using ICSharpCode.Decompiler;
-
-    using ICSharpCode.ILSpy;
+    using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
-    using Mono.Cecil;
+    using UsefulTools.Switches;
+    using UsefulTools.Wpf;
+    using ViewModels;
 
-    using VisualMutator.Model;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.ViewModels;
+    #endregion
 
     public class MutantDetailsController : Controller
     {

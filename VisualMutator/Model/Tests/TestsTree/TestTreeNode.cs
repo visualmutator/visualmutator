@@ -1,16 +1,12 @@
 ﻿namespace VisualMutator.Model.Tests.TestsTree
 {
-    #region Usings
+    #region
 
     using System;
     using System.Linq;
     using System.Windows.Input;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.CheckboxedTree;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using VisualMutator.Infrastructure;
+    using UsefulTools.CheckboxedTree;
+    using UsefulTools.Wpf;
 
     #endregion
 

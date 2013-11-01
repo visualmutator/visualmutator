@@ -1,36 +1,26 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
-    #region Usings
+    #region
 
     using System;
     using System.Diagnostics;
-    using System.IO;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Windows;
-    using System.Windows.Threading;
-
-    using CommonUtilityInfrastructure;
-
+    using log4net;
     using Microsoft.VisualStudio.Shell;
-
+    using Model;
     using Ninject;
     using Ninject.Activation.Strategies;
-    using Ninject.Extensions.ContextPreservation;
-    using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
-
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
-    using PiotrTrzpil.VisualMutator_VSPackage.Model;
-
-
-    using VisualMutator;
+    using NinjectModules;
     using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;
 
     #endregion
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
+    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Bootstrapper
     {
         private readonly Package _package;
@@ -39,7 +29,7 @@
 
         private IKernel _kernel;
 
-        private static log4net.ILog _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
         static Bootstrapper()
@@ -94,7 +84,7 @@
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void SetupDependencyInjection()
         {
 

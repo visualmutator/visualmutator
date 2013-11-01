@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
-    using CommonUtilityInfrastructure;
     using VisualMutator.Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;

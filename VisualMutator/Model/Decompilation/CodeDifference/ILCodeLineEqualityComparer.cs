@@ -1,7 +1,11 @@
 namespace VisualMutator.Model.Decompilation.CodeDifference
 {
+    #region
+
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
+
+    #endregion
 
     public class ILCodeLineEqualityComparer : IEqualityComparer<string>
     {

@@ -1,12 +1,15 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿#region
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //using PostSharp.Extensibility;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using PostSharp.Extensibility;
 using VisualMutator.Infrastructure;
+
+#endregion
 
 [assembly: AssemblyTitle("VisualMutator")]
 [assembly: AssemblyDescription("")]

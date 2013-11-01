@@ -4,8 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
     using Extensibility;
     using Microsoft.Cci;
 
@@ -13,6 +11,7 @@
     using Microsoft.Cci.MutableCodeModel;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
+    using UsefulTools.ExtensionMethods;
     using SourceMethodBody = Microsoft.Cci.MutableCodeModel.SourceMethodBody;
 
     public class ABS_AbsoluteValueInsertion : IMutationOperator

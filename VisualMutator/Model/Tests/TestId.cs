@@ -1,6 +1,10 @@
 ﻿namespace VisualMutator.Model.Tests
 {
+    #region
+
     using NUnit.Core;
+
+    #endregion
 
     public abstract class TestId
     {

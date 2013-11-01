@@ -1,9 +1,13 @@
 namespace VisualMutator.Model.Mutations.MutantsTree
 {
+    #region
+
     using System.Collections.Generic;
     using System.Linq;
-    using CommonUtilityInfrastructure;
-    using VisualMutator.Extensibility;
+    using Extensibility;
+    using UsefulTools.ExtensionMethods;
+
+    #endregion
 
     public class ExecutedOperator : MutationNode
     {

@@ -1,7 +1,11 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
+    #region
+
     using System;
     using System.Runtime.Serialization;
+
+    #endregion
 
     [Serializable]
     public class MsTestException : Exception

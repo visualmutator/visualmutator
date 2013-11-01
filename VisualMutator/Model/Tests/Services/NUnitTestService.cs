@@ -1,6 +1,6 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
@@ -8,17 +8,11 @@
     using System.Linq;
     using System.Reflection;
     using System.Threading;
-
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.WpfUtils;
-
-    using NUnit.Core;
-    using NUnit.Util;
-
-    using VisualMutator.Model.Exceptions;
-    using VisualMutator.Model.Tests.TestsTree;
-
+    using Exceptions;
     using log4net;
+    using NUnit.Core;
+    using TestsTree;
+    using UsefulTools.Core;
 
     #endregion
 
@@ -99,7 +93,7 @@
                     node.Message = result.Message;
                     list.Add(node);
                 },
-                onError: ex => _messageService.ShowFatalError(ex, _log),
+                onError: ex => _messageService.ShowFatalError(ex),
                 onCompleted: eventObj.Set);
                 eventObj.Wait();
                 sw.Stop();

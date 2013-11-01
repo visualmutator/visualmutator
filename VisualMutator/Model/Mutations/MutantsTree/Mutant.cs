@@ -1,11 +1,14 @@
 namespace VisualMutator.Model.Mutations.MutantsTree
 {
+    #region
+
     using System.Collections.Generic;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
-    using Microsoft.Cci;
+    using Extensibility;
     using Tests;
-    using VisualMutator.Extensibility;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Switches;
+
+    #endregion
 
     public class Mutant : MutationNode
     {

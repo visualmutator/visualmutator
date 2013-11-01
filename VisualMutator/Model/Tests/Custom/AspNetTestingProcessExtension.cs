@@ -1,5 +1,7 @@
 ﻿namespace VisualMutator.Model.Tests.Custom
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -9,9 +11,10 @@
     using System.Linq;
     using System.Management;
     using System.Text;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
 
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.Paths;
+    #endregion
 
     [Export(typeof(ITestingProcessExtension))]
     public class AspNetTestingProcessExtension : ITestingProcessExtension

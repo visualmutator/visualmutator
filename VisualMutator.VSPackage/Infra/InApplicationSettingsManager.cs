@@ -1,17 +1,17 @@
 ﻿namespace CommonUtilityInfrastructure
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    #region
 
+    using System;
     using PiotrTrzpil.VisualMutator_VSPackage.Properties;
+
+    #endregion
 
     public class InApplicationSettingsManager : ISettingsManager
     {
         private readonly Settings _settings;
 
-        public InApplicationSettingsManager(PiotrTrzpil.VisualMutator_VSPackage.Properties.Settings settings)
+        public InApplicationSettingsManager(Settings settings)
         {
             _settings = settings;
         }

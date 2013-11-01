@@ -1,8 +1,12 @@
 ﻿namespace VisualMutator.Views.Converters
 {
+    #region
+
     using System;
     using System.Windows;
     using System.Windows.Data;
+
+    #endregion
 
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class NullToVisibilityConverter : Converter<NullToVisibilityConverter, object, Visibility>

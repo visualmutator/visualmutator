@@ -1,19 +1,14 @@
 ﻿namespace VisualMutator.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
+    #region
 
-    using CommonUtilityInfrastructure.DependencyInjection;
-    using CommonUtilityInfrastructure.WpfUtils;
     using Model;
-    using VisualMutator.Controllers;
-    using VisualMutator.Model.Mutations;
-    using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Model.Tests.Custom;
-    using VisualMutator.Views;
+    using Model.Tests.Custom;
+    using UsefulTools.DependencyInjection;
+    using UsefulTools.Wpf;
+    using Views;
+
+    #endregion
 
     public class MutantsTestingOptionsViewModel : ViewModel<IMutantsTestingOptionsView>
     {

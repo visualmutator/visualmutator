@@ -1,14 +1,18 @@
 ﻿namespace VisualMutator.Model.Mutations
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using CommonUtilityInfrastructure;
     using Extensibility;
     using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
+    using UsefulTools.ExtensionMethods;
+
+    #endregion
 
     /// <summary>
     /// Internal object of the rewriting phase.

@@ -1,18 +1,17 @@
 ﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.DependencyInjection;
     using Mono.Collections.Generic;
     using Ninject;
     using Ninject.Activation;
     using Ninject.Extensions.ChildKernel;
     using Ninject.Parameters;
     using Ninject.Syntax;
+    using UsefulTools.DependencyInjection;
 
     #endregion
 

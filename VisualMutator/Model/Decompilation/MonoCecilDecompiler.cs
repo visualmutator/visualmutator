@@ -1,10 +1,13 @@
 namespace VisualMutator.Model.Decompilation
 {
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.FunctionalUtils;
+    #region
+
     using ICSharpCode.Decompiler;
     using ICSharpCode.ILSpy;
     using Mono.Cecil;
+    using UsefulTools.Switches;
+
+    #endregion
 
     public interface IMonoCecilDecompiler
     {

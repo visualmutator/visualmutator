@@ -1,6 +1,6 @@
 ﻿namespace VisualMutator.Model.StoringMutants
 {
-    #region Usings
+    #region
 
     using System.Collections.Generic;
 

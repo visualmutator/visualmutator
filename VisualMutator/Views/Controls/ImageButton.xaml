@@ -1,67 +1,73 @@
 ﻿<ResourceDictionary
-xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Controls="clr-namespace:VisualMutator.Views.Controls">
 
-  <ControlTemplate x:Key="ImageButtonTemplate" TargetType="{x:Type Controls:ImageButton}">
-    <Grid x:Name="Grid">
-     <!--  <Border 
+    <ControlTemplate x:Key="ImageButtonTemplate" TargetType="{x:Type Controls:ImageButton}">
+        <Grid x:Name="Grid">
+            <!--  <Border 
         x:Name="Background" 
         Background="{TemplateBinding Background}" 
         BorderBrush="{TemplateBinding BorderBrush}" 
         BorderThickness="{TemplateBinding BorderThickness}" 
         CornerRadius="3" 
         Visibility="{Binding BorderVisibility, RelativeSource={RelativeSource TemplatedParent}}"/>-->
-            <Image x:Name="ButtonImage" 
-               Source="{Binding NormalImage, RelativeSource={RelativeSource TemplatedParent}}" 
-               Height="{Binding ImageSize, RelativeSource={RelativeSource TemplatedParent}}" 
-               Width="{Binding ImageSize, RelativeSource={RelativeSource TemplatedParent}}"
-               ToolTip="{TemplateBinding ToolTip}"/>
+            <Image x:Name="ButtonImage"
+                   Source="{Binding NormalImage, RelativeSource={RelativeSource TemplatedParent}}"
+                   Height="{Binding ImageSize, RelativeSource={RelativeSource TemplatedParent}}"
+                   Width="{Binding ImageSize, RelativeSource={RelativeSource TemplatedParent}}"
+                   ToolTip="{TemplateBinding ToolTip}" />
         </Grid>
-    <ControlTemplate.Triggers>     
-      <Trigger Property="IsMouseOver" Value="true">
-        <Setter TargetName="ButtonImage" Property="Source" Value="{Binding HoverImage, RelativeSource={RelativeSource TemplatedParent}}" />        
-      </Trigger>
-      <Trigger Property="IsPressed" Value="true">
-        <Setter TargetName="ButtonImage" Property="Source" Value="{Binding PressedImage, RelativeSource={RelativeSource TemplatedParent}}" />        
-      </Trigger>
-      <Trigger Property="IsEnabled" Value="false">
-        <Setter TargetName="ButtonImage" Property="Source" Value="{Binding DisabledImage, RelativeSource={RelativeSource TemplatedParent}}" />        
-      </Trigger>
-    </ControlTemplate.Triggers>
-  </ControlTemplate>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="ButtonImage" Property="Source"
+                        Value="{Binding HoverImage, RelativeSource={RelativeSource TemplatedParent}}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="true">
+                <Setter TargetName="ButtonImage" Property="Source"
+                        Value="{Binding PressedImage, RelativeSource={RelativeSource TemplatedParent}}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter TargetName="ButtonImage" Property="Source"
+                        Value="{Binding DisabledImage, RelativeSource={RelativeSource TemplatedParent}}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
 
-  <Style TargetType="{x:Type Controls:ImageButton}" BasedOn="{x:Null}">    
-    <Setter Property="Padding" Value="3" />
-    <Setter Property="Margin" Value="5" />   
-    <Setter Property="ImageSize" Value="32" />
-    <Setter Property="BorderThickness" Value="3"/>
-    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-    <Setter Property="Background" Value="{DynamicResource ButtonBackgroundBrush}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    <Setter Property="Template" Value="{StaticResource ImageButtonTemplate}" />
-  </Style>
+    <Style TargetType="{x:Type Controls:ImageButton}" BasedOn="{x:Null}">
+        <Setter Property="Padding" Value="3" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="ImageSize" Value="32" />
+        <Setter Property="BorderThickness" Value="3" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template" Value="{StaticResource ImageButtonTemplate}" />
+    </Style>
 
-  <Style x:Key="ButtonStyleOne" TargetType="{x:Type Controls:ImageButton}" BasedOn="{StaticResource {x:Type Controls:ImageButton}}">
-    <Setter Property="NormalImage" Value="/VisualMutator;component/Resources/button-stop-unpressed.png"/>
-    <Setter Property="DisabledImage" Value="/VisualMutator;component/Resources/button-stop-disabled.png" />
-    <Setter Property="ToolTip" Value="Button One"/>
-  </Style>
+    <Style x:Key="ButtonStyleOne" TargetType="{x:Type Controls:ImageButton}"
+           BasedOn="{StaticResource {x:Type Controls:ImageButton}}">
+        <Setter Property="NormalImage" Value="/VisualMutator;component/Resources/button-stop-unpressed.png" />
+        <Setter Property="DisabledImage" Value="/VisualMutator;component/Resources/button-stop-disabled.png" />
+        <Setter Property="ToolTip" Value="Button One" />
+    </Style>
 
-  <Style x:Key="ButtonStyleTwo" TargetType="{x:Type Controls:ImageButton}" BasedOn="{StaticResource {x:Type Controls:ImageButton}}">
-    <Setter Property="NormalImage" Value="/ImageButton;component/Resources/Happy.png"/>
-    <Setter Property="HoverImage"  Value="/ImageButton;component/Resources/Tounge.png" />
-    <Setter Property="PressedImage" Value="/ImageButton;component/Resources/Surprize.png" />
-    <Setter Property="DisabledImage" Value="/ImageButton;component/Resources/Sad.png" />
-    <Setter Property="ToolTip" Value="Button Two"/>
-  </Style>
+    <Style x:Key="ButtonStyleTwo" TargetType="{x:Type Controls:ImageButton}"
+           BasedOn="{StaticResource {x:Type Controls:ImageButton}}">
+        <Setter Property="NormalImage" Value="/ImageButton;component/Resources/Happy.png" />
+        <Setter Property="HoverImage" Value="/ImageButton;component/Resources/Tounge.png" />
+        <Setter Property="PressedImage" Value="/ImageButton;component/Resources/Surprize.png" />
+        <Setter Property="DisabledImage" Value="/ImageButton;component/Resources/Sad.png" />
+        <Setter Property="ToolTip" Value="Button Two" />
+    </Style>
 
-  <Style x:Key="ButtonStyleThree" TargetType="{x:Type Controls:ImageButton}" BasedOn="{StaticResource ButtonStyleTwo}">
-    <Setter Property="PressedImage" Value="/ImageButton;component/Resources/Normal.png" />
-    <Setter Property="ToolTip" Value="Button Three"/>
-    <Setter Property="BorderVisibility" Value="Visible"/>
-  </Style>
+    <Style x:Key="ButtonStyleThree" TargetType="{x:Type Controls:ImageButton}"
+           BasedOn="{StaticResource ButtonStyleTwo}">
+        <Setter Property="PressedImage" Value="/ImageButton;component/Resources/Normal.png" />
+        <Setter Property="ToolTip" Value="Button Three" />
+        <Setter Property="BorderVisibility" Value="Visible" />
+    </Style>
 
 </ResourceDictionary>

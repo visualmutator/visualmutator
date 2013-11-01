@@ -1,6 +1,6 @@
 namespace VisualMutator.Model
 {
-    using CommonUtilityInfrastructure.WpfUtils;
+    using UsefulTools.Core;
 
     public class MutantsCreationOptions : ModelElement
     {

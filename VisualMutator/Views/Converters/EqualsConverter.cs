@@ -1,8 +1,11 @@
 ﻿namespace VisualMutator.Views.Converters
 {
+    #region
+
     using System;
-    using System.Windows;
     using System.Windows.Data;
+
+    #endregion
 
     [ValueConversion(typeof(object), typeof(bool))]
     public class EqualsConverter : ParameterConverter<EqualsConverter, object, bool, object>

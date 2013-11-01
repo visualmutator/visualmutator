@@ -1,9 +1,11 @@
 namespace VisualMutator.Model.Tests.Custom
 {
+    #region
+
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
 
-    using CommonUtilityInfrastructure.Paths;
+    #endregion
 
     [Export(typeof(ITestingProcessExtension))]
     class DefaultTestingProcessExtension : ITestingProcessExtension

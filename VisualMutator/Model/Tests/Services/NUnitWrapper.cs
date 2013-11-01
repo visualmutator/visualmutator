@@ -1,17 +1,18 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
-    using CommonUtilityInfrastructure.WpfUtils;
-
+    using log4net;
     using NUnit.Core;
     using NUnit.Core.Filters;
     using NUnit.Util;
+    using UsefulTools.Core;
 
-    using log4net;
+    #endregion
 
     public interface INUnitWrapper
     {
@@ -131,7 +132,7 @@
 
         private void HandleException(Exception e)
         {
-            _messageService.ShowFatalError(e, _log);
+            _messageService.ShowFatalError(e);
         }
         
         public void LoadTests(IEnumerable<string> assemblies)

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VisualMutator.TestGeneration
+﻿namespace VisualMutator.TestGeneration
 {
-    using System.IO;
-    using System.Reflection;
+    #region
+
+    using System;
+    using System.Linq;
     using Model.TestGeneration;
-    using Roslyn.Compilers;
-    using Roslyn.Compilers.CSharp;
+
+    #endregion
 
     public class AppDomainCreator : MarshalByRefObject
     {

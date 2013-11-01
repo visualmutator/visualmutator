@@ -1,22 +1,20 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
-    #region Usings
+    #region
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Xml.Linq;
-
-    using CommonUtilityInfrastructure;
-    using Microsoft.Win32;
-    using VisualMutator.Infrastructure;
-    using VisualMutator.Model.Exceptions;
-
+    using Exceptions;
+    using Infrastructure;
     using log4net;
+    using Microsoft.Win32;
+    using UsefulTools.Core;
+    using UsefulTools.ExtensionMethods;
 
     #endregion
 

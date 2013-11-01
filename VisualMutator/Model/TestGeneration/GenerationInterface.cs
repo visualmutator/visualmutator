@@ -1,6 +1,12 @@
 ﻿namespace VisualMutator.Model.TestGeneration
 {
-    public abstract class GenerationInterface : System.MarshalByRefObject
+    #region
+
+    using System;
+
+    #endregion
+
+    public abstract class GenerationInterface : MarshalByRefObject
     {
         public abstract string TestRun(int s);
     }

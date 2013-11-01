@@ -2,9 +2,12 @@
 
 namespace VisualMutator.Model.Tests.Services
 {
-    using System.Collections.Generic;
+    #region
 
-    using VisualMutator.Model.Tests.TestsTree;
+    using System.Collections.Generic;
+    using TestsTree;
+
+    #endregion
 
     public interface ITestService
     {

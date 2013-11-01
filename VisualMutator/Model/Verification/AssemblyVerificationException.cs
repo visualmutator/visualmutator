@@ -1,7 +1,11 @@
 ﻿namespace VisualMutator.Model.Verification
 {
+    #region
+
     using System;
     using System.Runtime.Serialization;
+
+    #endregion
 
     [Serializable]
     public class AssemblyVerificationException : Exception
