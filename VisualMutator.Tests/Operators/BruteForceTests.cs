@@ -1,23 +1,13 @@
 ﻿namespace VisualMutator.Tests.Operators
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using CommonUtilityInfrastructure.Paths;
-    using Extensibility;
-    using Model;
-    using Model.Decompilation;
-    using Model.Decompilation.CodeDifference;
-    using Model.Mutations;
-    using Model.Mutations.MutantsTree;
-    using Model.Mutations.Operators;
-    using NUnit.Framework;
-    using OperatorsStandard;
-    using Util;
+    #region
+
     using log4net.Appender;
     using log4net.Config;
     using log4net.Layout;
+    using NUnit.Framework;
+
+    #endregion
 
     [TestFixture]
     public class BruteForceTests

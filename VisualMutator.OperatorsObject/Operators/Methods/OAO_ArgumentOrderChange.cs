@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Cci;
+    using UsefulTools.ExtensionMethods;
     using VisualMutator.Extensibility;
     using Microsoft.Cci.MutableCodeModel;
     using LinqLib.Sequence;

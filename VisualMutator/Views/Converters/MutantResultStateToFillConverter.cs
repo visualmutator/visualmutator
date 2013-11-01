@@ -25,7 +25,6 @@
                 .Case(MutantResultState.Creating, Brushes.Green)
                 .Case(MutantResultState.Error, Brushes.Red)
                 .GetResult();
-
         }
 
         public override MutantResultState ConvertBack(Brush br)

@@ -4,6 +4,8 @@
 
     using Microsoft.VisualStudio.Settings;
     using PiotrTrzpil.VisualMutator_VSPackage.Model;
+    using UsefulTools.Core;
+    using UsefulTools.ExtensionMethods;
 
     #endregion
 

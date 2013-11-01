@@ -1,6 +1,10 @@
 ﻿namespace VisualMutator.Tests.Mutations
 {
+    #region
+
     using NUnit.Framework;
+
+    #endregion
 
     [TestFixture]
     public class MutantsContainerTests

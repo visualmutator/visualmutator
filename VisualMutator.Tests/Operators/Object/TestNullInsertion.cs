@@ -1,7 +1,12 @@
 ﻿namespace VisualMutator.Tests.Operators
 {
+    #region
+
     using System;
     using System.Collections.Generic;
+    using log4net.Appender;
+    using log4net.Config;
+    using log4net.Layout;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
@@ -9,10 +14,9 @@
     using NUnit.Framework;
     using OperatorsObject.Operators;
     using OperatorsStandard;
-    using Util;
-    using log4net.Appender;
-    using log4net.Config;
-    using log4net.Layout;
+    using SoftwareApproach.TestingExtensions;
+
+    #endregion
 
     [TestFixture]
     public class TestNullInsertion

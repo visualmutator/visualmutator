@@ -4,6 +4,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 
     using System.Windows;
     using System.Windows.Interop;
+    using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
     using IWin32Window = System.Windows.Forms.IWin32Window;
 

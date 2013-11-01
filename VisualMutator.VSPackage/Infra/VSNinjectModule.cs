@@ -5,6 +5,8 @@
     using CommonUtilityInfrastructure;
     using Model;
     using Ninject.Modules;
+    using UsefulTools.Core;
+    using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
 
     #endregion

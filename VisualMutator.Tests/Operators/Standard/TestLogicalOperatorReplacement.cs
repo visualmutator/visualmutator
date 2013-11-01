@@ -1,16 +1,20 @@
 ﻿namespace VisualMutator.Tests.Operators
 {
+    #region
+
     using System;
     using System.Collections.Generic;
+    using log4net.Appender;
+    using log4net.Config;
+    using log4net.Layout;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
     using NUnit.Framework;
     using OperatorsStandard;
-    using log4net.Appender;
-    using log4net.Config;
-    using log4net.Layout;
+
+    #endregion
 
     [TestFixture]
     public class TestLogicalOperatorReplacement

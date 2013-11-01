@@ -4,6 +4,7 @@
 
     using System;
     using PiotrTrzpil.VisualMutator_VSPackage.Properties;
+    using UsefulTools.Core;
 
     #endregion
 

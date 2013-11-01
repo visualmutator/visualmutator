@@ -1,8 +1,12 @@
 ﻿namespace VisualMutator.Tests
 {
+    #region
+
     using System;
     using Model.Decompilation.CodeDifference;
     using NUnit.Framework;
+
+    #endregion
 
     [TestFixture]
     public class Difference

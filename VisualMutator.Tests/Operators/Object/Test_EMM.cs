@@ -1,14 +1,16 @@
 ﻿namespace VisualMutator.Tests.Operators
 {
+    #region
+
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.Paths;
     using Extensibility;
+    using log4net.Appender;
+    using log4net.Config;
+    using log4net.Core;
+    using log4net.Layout;
     using Microsoft.Cci;
-    using Microsoft.Cci.MutableCodeModel;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
@@ -16,14 +18,12 @@
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
     using Model.Mutations.Types;
-    using Mutations;
     using NUnit.Framework;
     using OperatorsObject.Operators;
-    using Util;
-    using log4net.Appender;
-    using log4net.Config;
-    using log4net.Core;
-    using log4net.Layout;
+    using SoftwareApproach.TestingExtensions;
+    using UsefulTools.Paths;
+
+    #endregion
 
     [TestFixture]
     public class Test_EMM

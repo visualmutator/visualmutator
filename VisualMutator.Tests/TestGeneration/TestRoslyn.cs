@@ -1,24 +1,20 @@
 ﻿namespace VisualMutator.Tests.TestGeneration
 {
+    #region
+
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Model.TestGeneration;
-    using Operators;
-    using Roslyn.Compilers;
-    using Roslyn.Compilers.CSharp;
-    using VisualMutator.Model;
-    using VisualMutator.Model.Decompilation.CodeDifference;
-    using VisualMutator.Model.Mutations.MutantsTree;
-    using NUnit.Framework;
-    using VisualMutator.OperatorsStandard;
-    using VisualMutator.TestGeneration;
-    using VisualMutator.Tests.Util;
     using log4net.Appender;
     using log4net.Config;
     using log4net.Layout;
+    using NUnit.Framework;
+    using Roslyn.Compilers;
+    using Roslyn.Compilers.CSharp;
+    using VisualMutator.TestGeneration;
+
+    #endregion
 
     [TestFixture]
     public class TestRoslyn 

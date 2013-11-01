@@ -1,10 +1,13 @@
 ﻿namespace VisualMutator.Tests.Operators
 {
+    #region
+
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using CommonUtilityInfrastructure.Paths;
+    using log4net.Appender;
+    using log4net.Config;
+    using log4net.Layout;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
@@ -14,10 +17,10 @@
     using Model.Mutations.Types;
     using NUnit.Framework;
     using OperatorsStandard;
-    using Util;
-    using log4net.Appender;
-    using log4net.Config;
-    using log4net.Layout;
+    using SoftwareApproach.TestingExtensions;
+    using UsefulTools.Paths;
+
+    #endregion
 
     [TestFixture]
     public class TestRelationalOperatorReplacement

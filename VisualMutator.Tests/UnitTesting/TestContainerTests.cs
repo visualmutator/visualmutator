@@ -1,17 +1,10 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using CommonUtilityInfrastructure.WpfUtils;
-    using Model.StoringMutants;
-    using Model.Tests;
-    using Model.Tests.Services;
-    using Model.Tests.TestsTree;
- 
-    using Moq;
-    using NUnit.Core;
+    #region
+
     using NUnit.Framework;
-    using Util;
+
+    #endregion
 
     [TestFixture]
     public class TestContainerTests

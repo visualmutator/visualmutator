@@ -1,18 +1,8 @@
 ﻿namespace VisualMutator.Tests
 {
-    #region Usings
+    #region
 
-    using System.Collections.Generic;
-    using System.Linq;
-    using CommonUtilityInfrastructure.CheckboxedTree;
-    using CommonUtilityInfrastructure.Paths;
-    using Model;
-    using Model.Mutations.Types;
-  
-    using Moq;
     using NUnit.Framework;
-    using Util;
-    using VisualMutator.Infrastructure;
 
     #endregion
 

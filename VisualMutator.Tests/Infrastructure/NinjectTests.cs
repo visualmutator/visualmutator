@@ -1,16 +1,17 @@
 ﻿namespace VisualMutator.Tests.Mutations
 {
-    using CommonUtilityInfrastructure.DependencyInjection;
+    #region
+
     using Ninject;
     using Ninject.Activation.Strategies;
-    using Ninject.Extensions.ContextPreservation;
-    using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
     using NUnit.Framework;
     using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
-    using Util;
+    using SoftwareApproach.TestingExtensions;
+    using UsefulTools.DependencyInjection;
     using VisualMutator.Infrastructure.NinjectModules;
+
+    #endregion
 
     [TestFixture]
     public class NinjectTests
@@ -39,7 +40,7 @@
             var factory = _kernel.Get<IFactory<SomeObject>>();
             SomeObject withParams = factory.CreateWithParams(1);
             withParams.Parameter.ShouldEqual(1);
-            withParams.Module.ShouldBeNotNull();
+            withParams.Module.ShouldNotBeNull();
         }
         public class TestModule : NinjectModule
         {

@@ -1,13 +1,12 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
-    using System;
+    #region
+
     using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reactive.Linq;
-    using Model.Tests.Services;
     using Moq;
     using NUnit.Core;
+
+    #endregion
 
     public static class TestWrapperMocking
     {

@@ -1,9 +1,13 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
+    #region
+
     using System;
     using Moq;
     using NUnit.Core;
     using NUnit.Framework;
+
+    #endregion
 
     [TestFixture]
     public class NUnitServiceTests

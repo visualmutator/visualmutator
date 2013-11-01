@@ -1,14 +1,15 @@
 ﻿namespace VisualMutator.Tests.Operators
 {
+    #region
+
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Security.Policy;
-    using CommonUtilityInfrastructure;
-    using CommonUtilityInfrastructure.Paths;
     using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using Model;
     using Model.Decompilation;
@@ -19,7 +20,11 @@
     using Model.Mutations.Types;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
-    using log4net;
+    using UsefulTools.Core;
+    using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
+
+    #endregion
 
     public class MutationTests
     {
