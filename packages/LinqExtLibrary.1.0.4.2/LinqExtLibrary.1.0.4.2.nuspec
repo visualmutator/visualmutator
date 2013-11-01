@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>LinqExtLibrary</id>
+    <version>1.0.4.2</version>
+    <title>LINQ Extensions Library</title>
+    <authors>Amir Liberman</authors>
+    <owners>Amir Liberman</owners>
+    <licenseUrl>http://linqlib.codeplex.com/license</licenseUrl>
+    <projectUrl>http://linqlib.codeplex.com/</projectUrl>
+    <iconUrl>http://download.codeplex.com/Download?ProjectName=linqlib&amp;DownloadId=299005</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>The LINQ extension library is a collection of extensions written in C# that help in common programming tasks related to arrays, collections and any other type of enumerable.</description>
+    <summary>A library of useful LINQ extensions allowing for arithmetic manipulation of sequences, statistical analysis, sequence generation, sequence manipulation, pattern detection and more.</summary>
+    <releaseNotes>This release includes an extensive set of Array manipulation functions such as Flip, Rotate, Slice, Fuse, Resize and more.</releaseNotes>
+    <copyright>Copyright © Amir Liberman 2010-2013</copyright>
+    <language />
+    <tags>LINQ Sort Analysis Arithmetic Expression Lambda Sequence Generator Statistics Pivot Combinatronics</tags>
+  </metadata>
+</package>

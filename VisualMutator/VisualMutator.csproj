@@ -64,11 +64,13 @@
     <Reference Include="ILSpy">
       <HintPath>..\packages\ILSpy.exe</HintPath>
     </Reference>
-    <Reference Include="LinqLib">
-      <HintPath>..\packages\LinqExtLibrary.1.0.4.0\lib\LinqLib.dll</HintPath>
+    <Reference Include="LinqLib, Version=1.0.4.2, Culture=neutral, PublicKeyToken=100a413726ba3d7c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\LinqExtLibrary.1.0.4.2\lib\LinqLib.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.2.0.2\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
       <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
@@ -148,7 +150,16 @@
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -171,11 +182,15 @@
     <Reference Include="nunit.core.interfaces">
       <HintPath>..\packages\NUnit-core-2.6.2\nunit.core.interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.util">
       <HintPath>..\packages\NUnit-core-2.6.2\nunit.util.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp">
-      <HintPath>..\packages\PostSharp.3.0.38\lib\net20\PostSharp.dll</HintPath>
+    <Reference Include="PostSharp, Version=3.0.40.9, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\PostSharp.3.0.40\lib\net20\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -212,15 +227,30 @@
     <Reference Include="System.Xml" />
     <Reference Include="UsefulTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.0.9.2\lib\net45\UsefulTools.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.0.9.3\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
     <Reference Include="UsefulTools.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\UsefulTools.Wpf.0.9.3\lib\net45\UsefulTools.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="WPFToolkit.Extended">
-      <HintPath>..\packages\Extended.Wpf.Toolkit.1.5.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -506,7 +536,7 @@
     <Resource Include="Views\images\button_stop_pressed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\PostSharp.3.0.38\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.3.0.38\tools\PostSharp.targets')" />
+  <Import Project="..\packages\PostSharp.3.0.40\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.3.0.40\tools\PostSharp.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
