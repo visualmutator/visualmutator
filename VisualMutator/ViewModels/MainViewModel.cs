@@ -49,9 +49,9 @@
 
       
 
-        private BasicCommand _commandCreateNewMutants;
+        private SmartCommand _commandCreateNewMutants;
 
-        public BasicCommand CommandCreateNewMutants
+        public SmartCommand CommandCreateNewMutants
         {
             get
             {
@@ -63,9 +63,9 @@
             }
         }
 
-        private BasicCommand _commandContinue;
+        private SmartCommand _commandContinue;
 
-        public BasicCommand CommandContinue
+        public SmartCommand CommandContinue
         {
             get
             {
@@ -76,9 +76,9 @@
                 SetAndRise(ref _commandContinue, value, () => CommandContinue);
             }
         }
-        private BasicCommand _commandStop;
+        private SmartCommand _commandStop;
 
-        public BasicCommand CommandStop
+        public SmartCommand CommandStop
         {
             get
             {
@@ -90,9 +90,9 @@
             }
         }
 
-        private BasicCommand _commandOnlyCreateMutants;
+        private SmartCommand _commandOnlyCreateMutants;
 
-        public BasicCommand CommandOnlyCreateMutants
+        public SmartCommand CommandOnlyCreateMutants
         {
             get
             {
@@ -103,9 +103,9 @@
                 SetAndRise(ref _commandOnlyCreateMutants, value, () => CommandOnlyCreateMutants);
             }
         }
-        private BasicCommand _commandPause;
+        private SmartCommand _commandPause;
 
-        public BasicCommand CommandPause
+        public SmartCommand CommandPause
         {
             get
             {
@@ -240,8 +240,8 @@
                 SetAndRise(ref _mutantDetailsViewModel, value, () => MutantDetailsViewModel);
             }
         }
-        private BasicCommand _commandSaveResults;
-        public BasicCommand CommandSaveResults
+        private SmartCommand _commandSaveResults;
+        public SmartCommand CommandSaveResults
         {
             get
             {

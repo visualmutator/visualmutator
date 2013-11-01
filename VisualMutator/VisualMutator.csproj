@@ -210,11 +210,13 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-    <Reference Include="UsefulTools">
-      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.dll</HintPath>
+    <Reference Include="UsefulTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\UsefulTools.0.9.2\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
-    <Reference Include="UsefulTools.Wpf">
-      <HintPath>..\packages\UsefulTools.0.9.1\lib\net45\UsefulTools.Wpf.dll</HintPath>
+    <Reference Include="UsefulTools.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\UsefulTools.Wpf.0.9.3\lib\net45\UsefulTools.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WPFToolkit.Extended">
@@ -226,6 +228,7 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
+    <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />

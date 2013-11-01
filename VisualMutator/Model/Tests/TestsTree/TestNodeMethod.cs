@@ -13,7 +13,7 @@
         public TestNodeMethod(TestNodeClass parent, string name)
             : base(parent, name, false)
         {
-            CommandShowMessage = new BasicCommand(ShowMessage);
+            CommandShowMessage = new SmartCommand(ShowMessage);
         }
         public TestNodeClass ContainingClass
         {
@@ -40,9 +40,9 @@
             }
         }
 
-        private BasicCommand _commandShowMessage;
+        private SmartCommand _commandShowMessage;
 
-        public BasicCommand CommandShowMessage
+        public SmartCommand CommandShowMessage
         {
             get
             {

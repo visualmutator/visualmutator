@@ -67,9 +67,9 @@
                 SetAndRise(ref _includeCodeDifferenceListings, value, () => IncludeCodeDifferenceListings);
             }
         }
-        private BasicCommand _commandSaveResults;
+        private SmartCommand _commandSaveResults;
 
-        public BasicCommand CommandSaveResults
+        public SmartCommand CommandSaveResults
         {
             get
             {
@@ -81,9 +81,9 @@
             }
         }
 
-        private BasicCommand _commandClose;
+        private SmartCommand _commandClose;
 
-        public BasicCommand CommandClose
+        public SmartCommand CommandClose
         {
             get
             {
@@ -95,9 +95,9 @@
             }
         }
 
-        private BasicCommand _commandBrowse;
+        private SmartCommand _commandBrowse;
 
-        public BasicCommand CommandBrowse
+        public SmartCommand CommandBrowse
         {
             get
             {

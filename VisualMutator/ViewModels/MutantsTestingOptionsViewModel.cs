@@ -26,7 +26,7 @@
                 TestingProcessExtensionOptions = TestingProcessExtensionOptions.Default
             };
 
-            CommandChooseTestingExtension = new BasicCommand(ChooseTestingExtension);
+            CommandChooseTestingExtension = new SmartCommand(ChooseTestingExtension);
         }
         public void Initialize(ISessionCreationView parent)
         {
@@ -56,11 +56,11 @@
             }
         }
 
-        private BasicCommand _commandChooseTestingExtension;
+        private SmartCommand _commandChooseTestingExtension;
 
         private ISessionCreationView _parent;
 
-        public BasicCommand CommandChooseTestingExtension
+        public SmartCommand CommandChooseTestingExtension
         {
             get
             {

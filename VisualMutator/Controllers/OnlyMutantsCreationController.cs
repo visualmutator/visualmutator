@@ -27,7 +27,7 @@
                                              CommonServices svc)
             : base(viewModel, typesManager, operatorsManager, hostEnviroment, testsContainer, svc)
         {
-            _viewModel.CommandBrowseForMutantFolder = new BasicCommand(BrowseForMutantsFolder);
+            _viewModel.CommandBrowseForMutantFolder = new SmartCommand(BrowseForMutantsFolder);
         }
 
         public void BrowseForMutantsFolder()

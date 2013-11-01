@@ -85,10 +85,10 @@
         }
    
 
-        private BasicCommand _commandCreateMutants;
+        private SmartCommand _commandCreateMutants;
 
    
-        public BasicCommand CommandCreateMutants
+        public SmartCommand CommandCreateMutants
         {
             get
             {

@@ -25,9 +25,9 @@
             CommonServices svc) :base(view)
         {
             _svc = svc;
-            CommandOk = new BasicCommand(Ok, () => SelectedTestingProcessExtension != null)
+            CommandOk = new SmartCommand(Ok, () => SelectedTestingProcessExtension != null)
                 .UpdateOnChanged(this, _ => _.SelectedTestingProcessExtension);
-            CommandCancel = new BasicCommand(Cancel);
+            CommandCancel = new SmartCommand(Cancel);
 
         }
 
@@ -131,9 +131,9 @@
         {
             View.Close();
         }
-        private BasicCommand _commandOk;
+        private SmartCommand _commandOk;
 
-        public BasicCommand CommandOk
+        public SmartCommand CommandOk
         {
             get
             {
@@ -146,9 +146,9 @@
         }
 
 
-        private BasicCommand _commandCancel;
+        private SmartCommand _commandCancel;
 
-        public BasicCommand CommandCancel
+        public SmartCommand CommandCancel
         {
             get
             {

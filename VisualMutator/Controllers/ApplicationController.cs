@@ -3,6 +3,7 @@
     #region
 
     using System;
+    using System.Diagnostics;
     using System.Reflection;
     using System.Windows;
     using System.Windows.Controls;
@@ -11,6 +12,7 @@
     using log4net;
     using UsefulTools.Core;
     using UsefulTools.Switches;
+    using Switch = UsefulTools.Switches.Switch;
 
     #endregion
 
@@ -62,13 +64,14 @@
             _log.Info("Initializing package VisualMutator...");
             _log.Debug("Debug Test...");
             
-
         
             _disp = _hostEnviroment.Events.Subscribe(type =>
                 Switch.On(type)
                 .Case(EventType.HostOpened, ActivateOnSolutionOpened)
                 .Case(EventType.HostClosed, DeactivateOnSolutionClosed)
                 .ThrowIfNoMatch());
+
+            Trace.Listeners.Add(new CustomTraceListener());
 
             _hostEnviroment.Initialize();
             _settingsManager.Initialize();

@@ -14,7 +14,7 @@
 
 
 
-        private BasicCommand _commandBrowseForMutantFolder;
+        private SmartCommand _commandBrowseForMutantFolder;
 
         public OnlyMutantsCreationViewModel(
             IOnlyMutantsCreationView view, 
@@ -29,7 +29,7 @@
             MutantsCreation = mutantsCreation;
         }
 
-        public BasicCommand CommandBrowseForMutantFolder
+        public SmartCommand CommandBrowseForMutantFolder
         {
             get
             {

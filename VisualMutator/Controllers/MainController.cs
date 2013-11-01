@@ -51,31 +51,31 @@
             _svc = svc;
 
 
-            _viewModel.CommandCreateNewMutants = new BasicCommand(RunMutationSession,
+            _viewModel.CommandCreateNewMutants = new SmartCommand(RunMutationSession,
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.CommandOnlyCreateMutants = new BasicCommand(OnlyCreateMutants,
+            _viewModel.CommandOnlyCreateMutants = new SmartCommand(OnlyCreateMutants,
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.CommandPause = new BasicCommand(PauseOperations, 
+            _viewModel.CommandPause = new SmartCommand(PauseOperations, 
                 () => _viewModel.OperationsState.IsIn(OperationsState.Testing))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
-            _viewModel.CommandStop = new BasicCommand(StopOperations,
+            _viewModel.CommandStop = new SmartCommand(StopOperations,
                 () => _viewModel.OperationsState.IsIn(OperationsState.Mutating, OperationsState.PreCheck,
                     OperationsState.Testing, OperationsState.TestingPaused, OperationsState.Pausing))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
-            _viewModel.CommandContinue = new BasicCommand(ResumeOperations,
+            _viewModel.CommandContinue = new SmartCommand(ResumeOperations,
                 () => _viewModel.OperationsState == OperationsState.TestingPaused)
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.CommandSaveResults = new BasicCommand(SaveResults, () =>
+            _viewModel.CommandSaveResults = new SmartCommand(SaveResults, () =>
                 _viewModel.OperationsState == OperationsState.Finished)
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 

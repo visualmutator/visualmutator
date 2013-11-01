@@ -56,7 +56,7 @@
             _svc = svc;
 
 
-            _viewModel.CommandCreateMutants = new BasicCommand(AcceptChoices,
+            _viewModel.CommandCreateMutants = new SmartCommand(AcceptChoices,
                 () => _viewModel.TypesTreeMutate.Assemblies.Count != 0
                     && _viewModel.TypesTreeToTest.Namespaces.Count != 0
                     && _viewModel.MutationsTree.MutationPackages.Count != 0)

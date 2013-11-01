@@ -37,10 +37,10 @@
             _svc = svc;
             _generator = generator;
 
-            _viewModel.CommandSaveResults = new BasicCommand(SaveResults);
+            _viewModel.CommandSaveResults = new SmartCommand(SaveResults);
 
-            _viewModel.CommandClose = new BasicCommand(Close);
-            _viewModel.CommandBrowse = new BasicCommand(BrowsePath);
+            _viewModel.CommandClose = new SmartCommand(Close);
+            _viewModel.CommandBrowse = new SmartCommand(BrowsePath);
 
             if (_svc.Settings.ContainsKey("MutationResultsFilePath"))
             {

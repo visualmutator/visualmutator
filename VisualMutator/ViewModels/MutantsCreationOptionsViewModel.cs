@@ -20,7 +20,7 @@
            Options.IsMutantVerificationEnabled = false;
            Options.MaxNumerOfMutantPerOperator = 100;
 
-           CommandAdditionalFilesToCopy = new BasicCommand(ChooseFiles);
+           CommandAdditionalFilesToCopy = new SmartCommand(ChooseFiles);
         }
 
 
@@ -49,8 +49,8 @@
                 SetAndRise(ref _options, value, () => Options);
             }
         }
-        private BasicCommand _commandAdditionalFilesToCopy;
-        public BasicCommand CommandAdditionalFilesToCopy
+        private SmartCommand _commandAdditionalFilesToCopy;
+        public SmartCommand CommandAdditionalFilesToCopy
         {
             get
             {

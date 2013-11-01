@@ -21,7 +21,7 @@
             : base( name, hasChildren)
         {
             Parent = parent;
-            CommandRunTest = new BasicCommand(Comm);
+            CommandRunTest = new SmartCommand(Comm);
         }
 
         public bool HasResults
