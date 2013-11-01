@@ -14,6 +14,9 @@
       <VisualStudio Version="11.0">
         <Edition>Pro</Edition>
       </VisualStudio>
+      <VisualStudio Version="12.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
     </SupportedProducts>
     <SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="4.5" />
   </Identifier>

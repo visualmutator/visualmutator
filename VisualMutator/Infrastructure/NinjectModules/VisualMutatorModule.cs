@@ -18,10 +18,7 @@
     using Ninject.Extensions.ContextPreservation;
     using Ninject.Extensions.NamedScope;
     using Ninject.Modules;
-
- 
-  
-
+    using UsefulTools.Core;
     using VisualMutator.Controllers;
     using VisualMutator.Extensibility;
     using VisualMutator.Infrastructure;

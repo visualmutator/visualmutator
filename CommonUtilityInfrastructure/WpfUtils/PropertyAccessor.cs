@@ -6,7 +6,6 @@
 
     public interface IPropertyAccessor
     {
-
         PropertyInfo PropertyInfo
         {
             get;
@@ -20,7 +19,6 @@
         object GetValue(object source);
 
         void SetValue(object source, object value);
-
     }
 
 

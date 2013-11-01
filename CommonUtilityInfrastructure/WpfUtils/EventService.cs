@@ -1,4 +1,4 @@
-﻿namespace CommonUtilityInfrastructure.WpfUtils
+﻿namespace UsefulTools.Core
 {
     #region Usings
 

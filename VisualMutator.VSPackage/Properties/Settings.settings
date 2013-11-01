@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="MutationResultsFilePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\results.xml</Value>
+      <Value Profile="(Default)">C:\visualmutator-results.xml</Value>
     </Setting>
   </Settings>
 </SettingsFile>

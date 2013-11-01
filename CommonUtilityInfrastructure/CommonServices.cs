@@ -8,6 +8,7 @@
     using CommonUtilityInfrastructure.FileSystem;
     using CommonUtilityInfrastructure.Threading;
     using CommonUtilityInfrastructure.WpfUtils;
+    using UsefulTools.Core;
 
     public class CommonServices
     {

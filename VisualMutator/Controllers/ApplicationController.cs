@@ -11,7 +11,7 @@
     using CommonUtilityInfrastructure;
     using CommonUtilityInfrastructure.FunctionalUtils;
     using CommonUtilityInfrastructure.WpfUtils;
-
+    using UsefulTools.Core;
     using VisualMutator.Infrastructure;
     using VisualMutator.ViewModels;
 
