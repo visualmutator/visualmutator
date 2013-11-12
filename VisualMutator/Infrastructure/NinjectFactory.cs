@@ -93,7 +93,7 @@
         public static IBindingWhenInNamedWithOrOnSyntax<T> AndFromFactory<T>(this IBindingWhenInNamedWithOrOnSyntax<T> binding)
         {
 
-            binding.Kernel.Bind<IFactory<T>>().ToProvider(new FactoryPrivider<T>(binding.Kernel));//ToConstant(new NinjectFactory<T>(binding.Kernel));
+            binding.Kernel.Bind<IFactory<T>>().ToProvider(new FactoryProvider<T>(binding.Kernel));//ToConstant(new NinjectFactory<T>(binding.Kernel));
             return binding;
         }
         public static void InjectChildFactory<T>(this IKernel kernel, Action<IKernel> childBindings)
@@ -104,11 +104,11 @@
         }
     }
 
-    public class FactoryPrivider<T> : IProvider<IFactory<T>>
+    public class FactoryProvider<T> : IProvider<IFactory<T>>
     {
         private readonly IKernel _kernel;
 
-        public FactoryPrivider(IKernel kernel)
+        public FactoryProvider(IKernel kernel)
         {
             _kernel = kernel;
         }

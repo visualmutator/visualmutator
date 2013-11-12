@@ -31,7 +31,8 @@
 
 
             _viewModel.RegisterPropertyChanged(_=>_.SelectedTabHeader)
-                .Where(x=> _currentMutant != null).Subscribe(LoadData);
+                .Where(header => _currentMutant != null)
+                .Subscribe(LoadData);
 
             _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
 

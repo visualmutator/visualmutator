@@ -10,7 +10,7 @@
     public class OperatorCodeVisitor : OperatorCodeVisitorBase, IOperatorCodeVisitor
     {
 
-        //MarkMutationTarget MUST be invoked only while visiting an object
+        //MarkMutationTarget may be invoked only while visiting an object
         public void MarkMutationTarget<T>(T obj)
         {
 

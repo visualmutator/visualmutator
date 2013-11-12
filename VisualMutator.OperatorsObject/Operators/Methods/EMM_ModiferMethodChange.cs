@@ -89,13 +89,13 @@
 
             public override IExpression Rewrite(IMethodCall methodCall)
             {
-                _log.Info("Rewrite IMethodCall: " + Parent.Formatter.Format(methodCall));
+                _log.Info("Rewrite IMethodCall: " + OperatorUtils.Formatter.Format(methodCall));
                 var methodDefinition = TypeHelper.GetMethod(methodCall.MethodToCall.ContainingType.ResolvedType, 
                     NameTable.GetNameFor(MutationTarget.PassInfo), methodCall.Arguments.Select(a => a.Type).ToArray());
                 var newCall = new MethodCall(methodCall);
                 newCall.MethodToCall = methodDefinition;//
              //   (IMethodReference)MutationTarget.StoredObjects.Values.Single();
-                _log.Info("Returning MethodCall to: " + Parent.Formatter.Format(methodCall));
+                _log.Info("Returning MethodCall to: " + OperatorUtils.Formatter.Format(methodCall));
                 return newCall;
             }
            

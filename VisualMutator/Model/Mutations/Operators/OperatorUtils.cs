@@ -16,12 +16,19 @@
     public class OperatorUtils : IOperatorUtils
     {
         private readonly ICommonCompilerInfra _cci;
+        private readonly AstFormatter _formatter;
 
-        public OperatorUtils(ICommonCompilerInfra cci)
+        public OperatorUtils(ICommonCompilerInfra cci, 
+            AstFormatter formatter)
         {
             _cci = cci;
+            _formatter = formatter;
         }
 
+        public AstFormatter Formatter
+        {
+            get { return _formatter; }
+        }
 
         public IModule CompileModuleFromCode(string code, IMetadataReaderHost host)
         {

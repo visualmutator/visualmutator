@@ -30,7 +30,7 @@
         {if(Process(addition)){var additionNew = rewriter.Rewrite(addition); return  (additionNew is IAddition) ? base.Rewrite(additionNew as IAddition) :base.Rewrite(additionNew);}
             return base.Rewrite(addition);
         }
-
+        
         public override IAddressableExpression Rewrite(IAddressableExpression addressableExpression)
         {if(Process(addressableExpression)){var addressableExpressionNew = rewriter.Rewrite(addressableExpression); return  (addressableExpressionNew is IAddressableExpression) ? base.Rewrite(addressableExpressionNew as IAddressableExpression) :base.Rewrite(addressableExpressionNew);}
             return base.Rewrite(addressableExpression);

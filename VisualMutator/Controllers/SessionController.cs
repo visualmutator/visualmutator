@@ -225,7 +225,7 @@
 
         public void OnTestingStarting(string directory, Mutant mutant)
         {
-
+        
         }
 
         public void RunMutationSession(MutationSessionChoices choices)

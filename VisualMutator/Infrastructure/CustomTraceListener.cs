@@ -25,7 +25,7 @@
                     a = () => _log.Error(format, e);
                 }
             }
-           
+            
             Switch.On(eventType)
                 .Case(TraceEventType.Error, a)
                 .Case(TraceEventType.Warning, ()=>_log.Warn(format))

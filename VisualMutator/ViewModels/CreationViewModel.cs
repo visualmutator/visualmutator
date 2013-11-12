@@ -10,9 +10,6 @@
     public class CreationViewModel<TView> : ViewModel<TView>
         where TView : class, IWindow
     {
-
-
-
         public CreationViewModel(
             TView view,
             TypesTreeViewModel typesTreeToMutate,

@@ -53,7 +53,6 @@
         private void Infrastructure()
         {
             Bind<IMessageService>().To<MessageService>().InSingletonScope();
-
             Bind<IEventService>().To<EventService>().InSingletonScope();
             Bind<IThreading>().To<Threading>().InSingletonScope();
             Bind<CommonServices>().ToSelf().InSingletonScope();
@@ -156,6 +155,7 @@
                 childKernel.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
 
 
+                childKernel.Bind<AstFormatter>().ToSelf();
                 childKernel.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
 
 

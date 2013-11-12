@@ -50,7 +50,7 @@
             _sharedASTObjects = sharedAstObjects;
             _allowedTypes = allowedTypes;
             _rewriter = rewriter;
-            _rewriter.Parent = this;
+        //    _rewriter.Parent = this;
             _formatter = new AstFormatter();
         }
 
