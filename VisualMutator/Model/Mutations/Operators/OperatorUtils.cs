@@ -24,7 +24,11 @@
             _cci = cci;
             _formatter = formatter;
         }
-
+        public OperatorUtils(ICommonCompilerInfra cci)
+        {
+            _cci = cci;
+            _formatter = new AstFormatter();
+        }
         public AstFormatter Formatter
         {
             get { return _formatter; }

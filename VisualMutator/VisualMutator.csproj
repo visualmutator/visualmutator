@@ -13,7 +13,6 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -148,19 +147,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net45-full\Ninject.dll</HintPath>
@@ -187,10 +173,6 @@
     </Reference>
     <Reference Include="nunit.util">
       <HintPath>..\packages\NUnit-core-2.6.2\nunit.util.dll</HintPath>
-    </Reference>
-    <Reference Include="PostSharp, Version=3.0.40.9, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\PostSharp.3.0.40\lib\net20\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -302,13 +284,11 @@
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />
     <Compile Include="Model\Decompilation\CodePair.cs" />
     <Compile Include="Model\Decompilation\CodeVisualizer.cs" />
-    <Compile Include="Model\Decompilation\MonoCecilDecompiler.cs" />
     <Compile Include="Model\Mutations\Operators\IdentityOperator.cs" />
     <Compile Include="Model\Mutations\MutantsTree\ExecutedOperator.cs" />
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
-    <Compile Include="RequiresPostSharp.cs" />
     <Compile Include="ViewModels\ChooseTestingExtensionViewModel.cs" />
     <Compile Include="ViewModels\TestsSelectableTreeViewModel.cs" />
     <Compile Include="ViewModels\CreationViewModel.cs" />
@@ -326,7 +306,6 @@
     <Compile Include="Model\Decompilation\CodeDifference\CodeWithDifference.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\LineChange.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\LineChangeType.cs" />
-    <Compile Include="Model\Mutations\ClearableCacheAssemblyResolver.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutantResultState.cs" />
     <Compile Include="Model\Mutations\MutantsContainer.cs" />
     <Compile Include="Model\Exceptions\MutationException.cs" />
@@ -536,7 +515,6 @@
     <Resource Include="Views\images\button_stop_pressed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\PostSharp.3.0.40\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.3.0.40\tools\PostSharp.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

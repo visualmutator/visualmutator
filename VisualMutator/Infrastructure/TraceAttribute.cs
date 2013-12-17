@@ -5,10 +5,9 @@
     using System;
     using System.Reflection;
     using log4net;
-    using PostSharp.Aspects;
 
     #endregion
-
+    /*
     [Serializable] 
      public sealed class TraceAttribute : OnMethodBoundaryAspect
      {
@@ -34,5 +33,5 @@
                  args.Method.DeclaringType.Name, args.Method.Name, args.ReturnValue));
          } 
 
-     } 
+     } */
 }

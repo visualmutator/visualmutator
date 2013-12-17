@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extToolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
-             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" d:DesignHeight="60"
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" d:DesignHeight="60"
              d:DesignWidth="405">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -29,7 +31,7 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutant testing timeout (seconds):" />
 
 
-        <extToolkit:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
                                   Value="{Binding Options.TestingTimeoutSeconds, Mode=TwoWay}" />
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Testing process extension: (?)"

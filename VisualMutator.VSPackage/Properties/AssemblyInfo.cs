@@ -2,7 +2,6 @@
 
 //using PostSharp.Extensibility;
 
-using PostSharp.Extensibility;
 using VisualMutator.Infrastructure;
 
 #region Usings
@@ -47,7 +46,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.5.0.0")]
 
 
-
+/*
 [assembly: Trace(AttributeTargetTypes = "PiotrTrzpil.*",
  AttributeTargetTypeAttributes = MulticastAttributes.Public,
- AttributeTargetMemberAttributes = MulticastAttributes.Public)]
+ AttributeTargetMemberAttributes = MulticastAttributes.Public)]*/

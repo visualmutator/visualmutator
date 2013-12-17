@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extToolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit/extended"
-             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels" mc:Ignorable="d" d:DesignHeight="300"
+             xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" d:DesignHeight="300"
              d:DesignWidth="300">
 
     <UserControl.Resources>
@@ -32,7 +34,7 @@
         <!-- 
     <CheckBox Grid.Row="0" Content="Create 20 times more mutants"
               IsChecked="{Binding Options.CreateMoreMutants, Mode=TwoWay}"/>-->
-        <extToolkit:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
                                   Value="{Binding Options.MaxNumerOfMutantPerOperator, Mode=TwoWay}" />
         <CheckBox Grid.Row="1" Grid.ColumnSpan="2" Content="Verify IL code of mutants"
                   IsChecked="{Binding Options.IsMutantVerificationEnabled, Mode=TwoWay}" />

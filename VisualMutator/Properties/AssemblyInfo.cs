@@ -6,7 +6,6 @@
 //using PostSharp.Extensibility;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using PostSharp.Extensibility;
 using VisualMutator.Infrastructure;
 
 #endregion
@@ -41,7 +40,8 @@ using VisualMutator.Infrastructure;
 [assembly: AssemblyVersion("1.5.0.0")]
 [assembly: AssemblyFileVersion("1.5.0.0")]
 
-
+/*
 [assembly: Trace(AttributeTargetTypes = "VisualMutator.*",
  AttributeTargetTypeAttributes = MulticastAttributes.Public,
  AttributeTargetMemberAttributes = MulticastAttributes.Public)]
+*/

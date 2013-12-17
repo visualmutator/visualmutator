@@ -13,7 +13,6 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -159,10 +158,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp, Version=3.0.40.9, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\PostSharp.3.0.40\lib\net20\PostSharp.dll</HintPath>
-    </Reference>
     <Reference Include="Roslyn.Compilers">
       <HintPath>..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
     </Reference>
@@ -204,7 +199,6 @@
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Operators\CciAssumptions.cs" />
-    <Compile Include="RequiresPostSharp.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
@@ -266,7 +260,6 @@
     <Folder Include="Util\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\PostSharp.3.0.40\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.3.0.40\tools\PostSharp.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

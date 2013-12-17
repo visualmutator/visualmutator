@@ -8,7 +8,6 @@ namespace VisualMutator.Extensibility
     using System.Linq;
     using System.Text;
 
-    using Mono.Cecil;
 
     public interface IMutationOperator
     {
