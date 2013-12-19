@@ -2,14 +2,103 @@
 {
     #region
 
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Extensibility;
+    using Model;
+    using Model.Mutations;
+    using Model.Mutations.MutantsTree;
+    using Model.Mutations.Operators;
+    using Model.StoringMutants;
+    using Model.Tests;
+    using Model.Tests.Services;
+    using Model.Tests.TestsTree;
+    using Model.Verification;
+    using Moq;
     using NUnit.Framework;
+    using UsefulTools.Core;
+    using UsefulTools.FileSystem;
+    using UsefulTools.Paths;
+    using UsefulTools.Wpf;
+    using Util;
+    using VisualMutator.Infrastructure;
 
     #endregion
 
     [TestFixture]
     public class TestContainerTests
     {
-       /* [Test]
+        [SetUp]
+        public void TestSetUp()
+        {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+        }
+        [Test]
+        public void Test1()
+        {
+            var list = new List<string>
+                       {
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.ValueInjecter.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.Awesome.Core.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.Awesome.Mvc.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.AwesomeDemo.Core.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.AwesomeDemo.Data.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.AwesomeDemo.Infra.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.AwesomeDemo.Service.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.AwesomeDemo.Tests.dll",
+                           @"C:\PLIKI\Programowanie\awesome-19058\Tests\bin\Release\Omu.AwesomeDemo.WebUI.dll"
+                       };
+            var logMessageService = new LogMessageService();
+        //    var mess = new Mock<IMessageService>();
+          //  mess.Setup(_=>_.ShowError(It.IsAny<IMessageService>(), It.IsAny<string>(), It.IsAny<IWindow>()))
+            var hostEnv = new Mock<IHostEnviromentConnection>();
+            var dispMock = new Mock<IDispatcherExecute>();
+            dispMock.Setup(_ => _.GuiScheduler).Returns(TaskScheduler.FromCurrentSynchronizationContext());
+            
+            var fs = new FileSystemService();
+            var cci = new CommonCompilerInfra();
+            foreach (var path in list)
+            {
+                cci.AppendFromFile(path);
+            }
+            
+            var mutantsContainer = new MutantsContainer(cci, new OperatorUtils(cci));
+            var mutantCache = new MutantsCache(mutantsContainer);
+
+            hostEnv.Setup(_ => _.GetProjectAssemblyPaths()).Returns(list.Select(_ => _.ToFilePathAbs()));
+            hostEnv.Setup(_ => _.GetTempPath()).Returns(@"C:\PLIKI\Programowanie\Testy");
+
+            FileManager fileManager = new FileManager(hostEnv.Object, new FileSystemService());
+            MutantsFileManager mutantsFileManager = new MutantsFileManager(mutantCache, cci, fs);
+
+            mutantsContainer.Initialize(new MutantsCreationOptions(), new List<TypeIdentifier>(), list.Select(_ => _.ToFilePathAbs()).ToList());
+
+
+            TestEnvironmentInfo initTestEnvironment = fileManager.InitTestEnvironment(null);
+
+            ExecutedOperator execOperator;
+            Mutant changelessMutant = mutantsContainer.CreateEquivalentMutant(out execOperator);
+
+
+            var testServ = new NUnitTestService(new NUnitWrapper(logMessageService, dispMock.Object), logMessageService);
+            var mutantTestSession = new MutantTestSession();
+            IEnumerable<TestNodeClass> testNodeClasses = testServ.LoadTests(list, mutantTestSession);
+
+            var teco = new TestsContainer(testServ, mutantsFileManager, fileManager, new AssemblyVerifier());
+            teco.InitTestEnvironment(new MutationTestingSession(initTestEnvironment));
+
+            var storedMutantInfo = teco.StoreMutant(initTestEnvironment, changelessMutant);
+
+            bool ddd = true;
+            teco.RunTestsForMutant(new MutantsTestingOptions(), storedMutantInfo, changelessMutant);
+
+            Assert.That(ddd, Is.True.After(5000));
+            Assert.IsNotNull(testNodeClasses);
+        }
+
+        /* [Test]
         public void Test1()
         {
             List<ITest> testClasses;

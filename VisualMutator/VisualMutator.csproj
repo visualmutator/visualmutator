@@ -67,9 +67,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\LinqExtLibrary.1.0.4.2\lib\LinqLib.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\log4net.2.0.2\lib\net40-full\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
       <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
@@ -269,6 +269,7 @@
     <Compile Include="Model\Mutations\MutantsTree\MutantGroup.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutationRootNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
+    <Compile Include="Model\StoringMutants\FileManager.cs" />
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />

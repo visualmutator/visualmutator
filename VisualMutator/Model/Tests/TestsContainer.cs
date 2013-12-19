@@ -28,7 +28,7 @@
 
 
 
-        void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant);
+        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant);
 
         TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
 
@@ -48,6 +48,7 @@
     public class TestsContainer : ITestsContainer
     {
         private readonly IMutantsFileManager _mutantsFileManager;
+        private readonly IFileManager _fileManager;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
 
@@ -63,9 +64,11 @@
         public TestsContainer(
             NUnitTestService nunit, 
             IMutantsFileManager mutantsFileManager,
+            IFileManager fileManager,
             IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
+            _fileManager = fileManager;
             _assemblyVerifier = assemblyVerifier;
             _testServices = new List<ITestService>
             {
@@ -99,13 +102,13 @@
         public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
             _currentSession = currentSession;
-            return _mutantsFileManager.InitTestEnvironment(currentSession);
+            return _fileManager.InitTestEnvironment(currentSession);
         }
 
 
         public void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo)
         {
-            _mutantsFileManager.CleanupTestEnvironment(testEnvironmentInfo);
+            _fileManager.CleanupTestEnvironment(testEnvironmentInfo);
         }
 
 
@@ -139,7 +142,7 @@
         public IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> paths)
         {
             var session = new MutantTestSession();
-            LoadTests(paths, session);
+            LoadTests(paths.ToList(), session);
             UnloadTests();
 
             var root = new RootNode();
@@ -149,7 +152,7 @@
             return session.TestNamespaces;
         }
 
-        public void RunTestsForMutant(MutationTestingSession session, StoredMutantInfo storedMutantInfo, Mutant mutant)
+        public void RunTestsForMutant(MutantsTestingOptions options, StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
             if (_allTestingCancelled)
             {
@@ -169,8 +172,8 @@
 
                 testsLoaded = true;
 
-                timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(session.Choices
-                    .MutantsTestingOptions.TestingTimeoutSeconds)).Subscribe(e => CancelCurrentTestRun());
+                timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
+                    .Subscribe(e => CancelCurrentTestRun());
 
                 RunTests(mutant.MutantTestSession);
 
@@ -258,14 +261,17 @@
             foreach (var service in _testServices)
             {
                 service.Cancel();
-
-                _currentSession.Choices.MutantsTestingOptions
-                    .TestingProcessExtensionOptions.TestingProcessExtension.OnTestingCancelled();
+                if (_currentSession.Choices.MutantsTestingOptions
+                    .TestingProcessExtensionOptions.TestingProcessExtension != null)
+                {
+                    _currentSession.Choices.MutantsTestingOptions
+                        .TestingProcessExtensionOptions.TestingProcessExtension.OnTestingCancelled();
+                }
                // _mutantsFileManager.OnTestingCancelled();
             }
         }
 
-        public void LoadTests(IEnumerable<string> assembliesPaths, MutantTestSession mutantTestSession)
+        public void LoadTests(IList<string> assembliesPaths, MutantTestSession mutantTestSession)
         {
             Throw.IfNull(assembliesPaths, "assembliesPaths");
            

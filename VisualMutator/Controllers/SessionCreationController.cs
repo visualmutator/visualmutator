@@ -7,6 +7,7 @@
     using Model;
     using Model.Mutations.Operators;
     using Model.Mutations.Types;
+    using Model.StoringMutants;
     using Model.Tests;
     using UsefulTools.Core;
     using ViewModels;
@@ -18,9 +19,10 @@
     {
         public SessionCreationController(SessionCreationViewModel viewModel, ITypesManager typesManager,
                                          IOperatorsManager operatorsManager, IHostEnviromentConnection hostEnviroment,
-                                         ITestsContainer testsContainer, 
+                                         ITestsContainer testsContainer,
+                                        IFileManager mutantsFileManager,
                                          CommonServices svc)
-            : base(viewModel, typesManager, operatorsManager, hostEnviroment, testsContainer, svc)
+            : base(viewModel, typesManager, operatorsManager, hostEnviroment, testsContainer, mutantsFileManager, svc)
         {
         }
 

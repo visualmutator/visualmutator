@@ -29,7 +29,7 @@
             _msTestLoader = msTestLoader;
         }
 
-        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, MutantTestSession mutantTestSession)
+        public IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession)
         {
           
          

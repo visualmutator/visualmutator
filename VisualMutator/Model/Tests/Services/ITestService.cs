@@ -11,7 +11,7 @@ namespace VisualMutator.Model.Tests.Services
 
     public interface ITestService
     {
-        IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, MutantTestSession mutantTestSession);
+        IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession);
 
         List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession);
 

@@ -144,6 +144,7 @@
 
                 childKernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
                 childKernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
+                childKernel.Bind<IFileManager>().To<FileManager>().InSingletonScope();
 
 
                 childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();

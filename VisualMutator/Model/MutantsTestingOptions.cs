@@ -9,7 +9,10 @@ namespace VisualMutator.Model
 
     public class MutantsTestingOptions : ModelElement
     {
-
+        public MutantsTestingOptions()
+        {
+        TestingProcessExtensionOptions = new TestingProcessExtensionOptions();
+        }
         private int _testingTimeoutSeconds;
 
         public int TestingTimeoutSeconds

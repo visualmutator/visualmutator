@@ -40,7 +40,7 @@
                 foreach (IMutationOperator mutationOperator in operatorsPack.Operators)
                 {
                     var operatorNode = new OperatorNode(package,mutationOperator);
-                    package.Operators.Add(operatorNode);
+                    package.Children.Add(operatorNode);
                 }
                 root.Children.Add(package);
                 list.Add(package);

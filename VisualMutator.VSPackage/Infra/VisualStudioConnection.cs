@@ -115,7 +115,11 @@
             ProjectItem projectItem = projectItems.First(i => i.Name == className);
         }
 
-  
+
+        public string GetTempPath()
+        {
+            return Path.GetTempPath();
+        }
 
         public IEnumerable<DirectoryPathAbsolute> GetProjectPaths()
         {

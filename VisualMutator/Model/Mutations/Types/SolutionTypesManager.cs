@@ -18,8 +18,8 @@
 
     public interface ITypesManager
     {
-       
-        IList<AssemblyNode> GetTypesFromAssemblies();
+
+        IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths);
 
         LoadedTypes GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
 
@@ -66,10 +66,10 @@
             return new LoadedTypes(types);
         }
        
-        public IList<AssemblyNode> GetTypesFromAssemblies()
+        public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths)
         {
 
-            var loadedAssemblies = LoadAssemblies(_hostEnviroment.GetProjectAssemblyPaths());
+            var loadedAssemblies = LoadAssemblies(paths);
             var root = new RootNode();
             root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;

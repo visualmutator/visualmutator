@@ -4,6 +4,10 @@ namespace VisualMutator.Model
 
     public class MutantsCreationOptions : ModelElement
     {
+        public MutantsCreationOptions()
+        {
+            AdditionalFilesToCopy = new NotifyingCollection<string>();
+        }
         private bool _createMoreMutants;
 
         public bool CreateMoreMutants

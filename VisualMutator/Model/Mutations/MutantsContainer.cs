@@ -16,12 +16,13 @@
     using Types;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
 
     #endregion
 
     public interface IMutantsContainer
     {
-        void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes, IList<AssemblyNode> assemblies);
+        void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes, IList<FilePathAbsolute> assemblies);
 
        
         Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator);
@@ -52,7 +53,7 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IList<TypeIdentifier> _allowedTypes;
         private MutantsCreationOptions _options;
-        private IList<AssemblyNode> _assemblies;
+        private IList<FilePathAbsolute> _assemblies;
 
         public MutantsContainer(ICommonCompilerInfra cci, 
             IOperatorUtils operatorUtils
@@ -64,8 +65,8 @@
 
         }
 
-        public void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes, 
-            IList<AssemblyNode> assemblies)
+        public void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes,
+            IList<FilePathAbsolute> assemblies)
         {
             _options = options;
             _allowedTypes = allowedTypes;
@@ -220,7 +221,7 @@
 
         public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted)
         {
-            IList<AssemblyNode> sourceModules = _assemblies;
+            IList<FilePathAbsolute> sourceModules = _assemblies;
             IList<TypeIdentifier> allowedTypes = _allowedTypes;
             try
             {
@@ -229,7 +230,7 @@
                 var mutatedModules = new List<IModule>();
                 foreach (var sourceModule in sourceModules)
                 {
-                    IModule module = cci.AppendFromFile(sourceModule.AssemblyPath.ToString());
+                    IModule module = cci.AppendFromFile(sourceModule.ToString());
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
                         mutant.CommonTargets, module);

@@ -156,7 +156,7 @@
                     SelectedTypes = allowedTypes,
                     Choices = choices,
                 };
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies.Select(_ => _.AssemblyPath).ToList());
 
                 ExecutedOperator oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
@@ -238,7 +238,7 @@
             _svc.Threading.ScheduleAsync(() =>
             {
                 var allowedTypes = choices.SelectedTypes.GetIdentifiers();
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies);
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies.Select(_ => _.AssemblyPath).ToList());
 
                 _currentSession = new MutationTestingSession
                 {
@@ -283,7 +283,7 @@
                     .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
                 _log.Info("Running tests for pure mutant...");
-                _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, changelessMutant);
+                _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, storedMutantInfo, changelessMutant);
                 return changelessMutant;
 
             },
@@ -406,7 +406,7 @@
                         .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
 
-                    _testsContainer.RunTestsForMutant(_currentSession, storedMutantInfo, mutant);
+                    _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, storedMutantInfo, mutant);
 
                     _testedMutants.Add(mutant);
 

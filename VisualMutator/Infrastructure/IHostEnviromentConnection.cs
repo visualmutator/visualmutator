@@ -31,6 +31,7 @@ namespace VisualMutator.Infrastructure
         IWin32Window GetWindow();
 
         IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths();
+        string GetTempPath();
     
         IEnumerable<DirectoryPathAbsolute> GetProjectPaths();
     }

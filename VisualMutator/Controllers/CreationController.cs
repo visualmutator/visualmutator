@@ -2,18 +2,23 @@
 {
     #region
 
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Security.Cryptography;
     using Infrastructure;
     using log4net;
     using Model;
     using Model.Mutations.Operators;
     using Model.Mutations.Types;
+    using Model.StoringMutants;
     using Model.Tests;
     using Model.Tests.TestsTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
     using UsefulTools.Wpf;
     using ViewModels;
 
@@ -29,6 +34,7 @@
         protected readonly IOperatorsManager _operatorsManager;
         private readonly IHostEnviromentConnection _hostEnviroment;
         protected readonly ITestsContainer _testsContainer;
+        private readonly IFileManager _fileManager;
 
         protected readonly CommonServices _svc;
 
@@ -45,6 +51,7 @@
             IOperatorsManager operatorsManager,
              IHostEnviromentConnection hostEnviroment,
             ITestsContainer testsContainer,
+            IFileManager fileManager,
             CommonServices svc)
         {
             _viewModel = viewModel;
@@ -53,6 +60,7 @@
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _testsContainer = testsContainer;
+            _fileManager = fileManager;
             _svc = svc;
 
 
@@ -106,11 +114,16 @@
 
                 });
             */
+            
+        
+            var originalFilesList = _fileManager.CopyOriginalFiles();
+           
+
             _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
                 packages => _viewModel.MutationsTree.MutationPackages 
                     = new ReadOnlyCollection<PackageNode>(packages));
 
-            _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(),
+            _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(originalFilesList),
                 assemblies =>
                 {
                     _viewModel.TypesTreeMutate.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
@@ -121,7 +134,7 @@
                     }
                 });
             _svc.Threading.ScheduleAsync(() => _testsContainer.LoadTests(
-                _hostEnviroment.GetProjectAssemblyPaths().AsStrings()),
+                originalFilesList.AsStrings()),
                tests =>
                {
                    _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests.ToList());

@@ -22,22 +22,15 @@
     {
 
 
+        void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
         StoredMutantInfo StoreMutant(string directory, Mutant mutant);
 
-        TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
-
-        void CleanupTestEnvironment(TestEnvironmentInfo info);
-
-        void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
-
-        void OnTestingCancelled();
     }
 
  
     public class MutantsFileManager : IMutantsFileManager
     {
-        private readonly IHostEnviromentConnection _hostEnviroment;
-
+       
     
 
         private readonly IMutantsCache _mutantsCache;
@@ -52,13 +45,11 @@
 
 
         public MutantsFileManager(
-            IHostEnviromentConnection hostEnviroment,
             IMutantsCache mutantsCache,
             ICommonCompilerInfra commonCompilerInfra,
             IFileSystem fs)
         {
-            _hostEnviroment = hostEnviroment;
-
+         
             _mutantsCache = mutantsCache;
             _commonCompilerInfra = commonCompilerInfra;
             _fs = fs;
@@ -97,44 +88,7 @@
          //   return storedMutantsList;
         }
 
-        public void OnTestingCancelled()
-        {
-         //   prep.OnTestingCancelled();
-        }
-        public IEnumerable<string> GetReferencedAssemblies()
-        {
-            var projects = _hostEnviroment.GetProjectAssemblyPaths().ToList();
-    
-            var list = new List<string>();
-            foreach (var binDir in projects.Select(p => p.ParentDirectoryPath))
-            {
-                var files = Directory.GetFiles(binDir.Path, "*.dll", SearchOption.AllDirectories)
-                    .Where(p => !projects.Contains(p.ToFilePathAbs()));
-                list.AddRange(files);
-            }
-            return list;
-        }
-        public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
-        {
-       
-            string mutantDirectoryPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            _fs.Directory.CreateDirectory(mutantDirectoryPath);
-
-            var refer = GetReferencedAssemblies();//TODO: Use better way
-            foreach (var referenced in refer)
-            {
-                string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(referenced));
-                _fs.File.Copy(referenced, destination, overwrite: true); //TODO: Remove overwrite?
-            }
-
-            foreach (string path in currentSession.Choices.MutantsCreationOptions.AdditionalFilesToCopy)
-            {
-                string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(path));
-                _fs.File.Copy(path, destination, overwrite: true); 
-            }
-            return new TestEnvironmentInfo(mutantDirectoryPath);
-        }
-
+  
         public StoredMutantInfo StoreMutant(string directory, Mutant mutant)
         {
 
@@ -172,35 +126,8 @@
         }
 
        
-
-        public void CleanupTestEnvironment(TestEnvironmentInfo info)
-        {
-
-            if (info != null && _fs.Directory.Exists(info.DirectoryPath))
-            {
-                try
-                {
-                    _fs.Directory.Delete(info.DirectoryPath, recursive: true);
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    _log.Warn(e);
-                }
-                
-            }
-        }
-
     
 
     }
 
-    public class TestEnvironmentInfo
-    {
-        public TestEnvironmentInfo(string directory)
-        {
-            DirectoryPath = directory;
-        }
-
-        public string DirectoryPath { get; set; }
-    }
 }

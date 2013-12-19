@@ -36,12 +36,12 @@
             }
         }
 
-        public IList<OperatorNode> Operators
+        public IEnumerable<OperatorNode> Operators
         {
 
             get
             {
-                return Children.Cast<OperatorNode>().ToList();
+                return Children.Cast<OperatorNode>();
             }
         }
     }

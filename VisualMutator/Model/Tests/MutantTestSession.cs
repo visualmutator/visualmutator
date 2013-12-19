@@ -14,9 +14,6 @@ namespace VisualMutator.Model.Tests
     {
         private IDictionary<string, TestNodeMethod> _testMap;
 
-    
-
-
         private TestsRootNode _testsRootNode;
 
         public MutantTestSession()

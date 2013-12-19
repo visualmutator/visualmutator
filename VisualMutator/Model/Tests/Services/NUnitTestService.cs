@@ -42,8 +42,21 @@
         }
 
 
-        public IEnumerable<TestNodeClass> LoadTests(IEnumerable<string> assemblies, MutantTestSession mutantTestSession)
+        public IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession)
         {
+            /*
+             *   _currentRunCancelled = false;
+            Exception exc = null;
+            IEnumerable<TestNodeClass> tests = null;
+
+            var job = new TestsLoadJob(this, assemblies)
+            Task.Run(() =>
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                job.Subscribe()
+            });
+             */
             _currentRunCancelled = false;
             Exception exc = null;
             IEnumerable<TestNodeClass> tests = null;
@@ -195,11 +208,11 @@
 
             private IDisposable _testLoaded;
 
-            private IEnumerable<string> _assemblies;
+            private IList<string> _assemblies;
 
             private IObserver<ITest> _observer;
 
-            public TestsLoadJob(NUnitTestService service, IEnumerable<string> assemblies)
+            public TestsLoadJob(NUnitTestService service, IList<string> assemblies)
             {
                 _service = service;
                 _assemblies = assemblies;
@@ -273,8 +286,8 @@
                 _observer = observer;
 
                 _testFinished = _service.TestLoader.TestFinished.Subscribe(TestFinished);
-               
-                _runFinished = _service.TestLoader.RunFinished.Subscribe(RunFinished);
+
+                _runFinished = _service.TestLoader.RunFinished.Subscribe(RunFinished, Error);
                 _service.TestLoader.RunTests();
                 return this;
             }
@@ -283,6 +296,12 @@
             {
 
                 _observer.OnNext(result);
+            } 
+            private void Error(Exception result)
+            {
+
+                _observer.OnError(result);
+                _observer.OnCompleted();
             }
 
             private void RunFinished(TestResult result)
