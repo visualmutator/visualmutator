@@ -114,10 +114,14 @@
 
                 });
             */
-            
-        
-            var originalFilesList = _fileManager.CopyOriginalFiles();
-           
+
+
+            bool loadError;
+            var originalFilesList = _fileManager.CopyOriginalFiles(out loadError);
+            if (loadError)
+            {
+                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
+            }
 
             _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
                 packages => _viewModel.MutationsTree.MutationPackages 

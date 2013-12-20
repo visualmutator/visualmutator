@@ -35,7 +35,7 @@
         [Test]
         public void Tree_Models_Should_Be_Identical_When_Using_Different_CCI_Instances()
         {
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
            
             cci.AppendFromFile(MutationTests.DsaPath);
             cci.AppendFromFile(MutationTests.DsaTestsPath);
@@ -48,7 +48,7 @@
             Console.WriteLine("ORIGINAL ObjectStructure:");
             string listing0 = visitor.ToString();
 
-            var cci2 = new CommonCompilerInfra();
+            var cci2 = new ModuleSource();
             cci2.AppendFromFile(MutationTests.DsaPath);
             cci2.AppendFromFile(MutationTests.DsaTestsPath);
 

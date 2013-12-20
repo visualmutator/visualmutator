@@ -115,7 +115,7 @@
         {
 
         
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -177,7 +177,7 @@
         {
             var oper = new EAM_AccessorMethodChange();
             ///////
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);

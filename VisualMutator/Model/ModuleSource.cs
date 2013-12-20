@@ -21,7 +21,7 @@
 
     #endregion
 
-    public interface ICommonCompilerInfra
+    public interface IModuleSource
     {
         List<IModule> Modules { get; }
         void Cleanup();
@@ -31,8 +31,8 @@
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
-        CommonCompilerInfra.ModuleInfo FindModuleInfo(IModule module);
-        CommonCompilerInfra.ModuleInfo DecompileCopy(IModule module);
+        ModuleSource.ModuleInfo FindModuleInfo(IModule module);
+        ModuleSource.ModuleInfo DecompileCopy(IModule module);
     }
     public class Sss : MetadataReaderHost
     {
@@ -46,7 +46,7 @@
         }
         
     }
-    public class CommonCompilerInfra : IDisposable, ICommonCompilerInfra
+    public class ModuleSource : IDisposable, IModuleSource
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
@@ -59,7 +59,7 @@
             get { return _moduleInfoList.Select(_ => _.Module).ToList(); }
         }
 
-        public CommonCompilerInfra()
+        public ModuleSource()
         {
             _host = new PeReader.DefaultHost();
             _moduleInfoList = new List<ModuleInfo>();
@@ -124,7 +124,7 @@
         public ModuleInfo DecompileCopy(IModule module)
         {
             ModuleInfo info = FindModuleInfo(module);
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             ModuleInfo moduleCopy = cci.DecompileFile(info.FilePath);
             moduleCopy.SubCci = cci;
             return moduleCopy;
@@ -246,7 +246,7 @@
                 set;
             }
             [CanBeNull]
-            public CommonCompilerInfra SubCci { get; set; }
+            public ModuleSource SubCci { get; set; }
         }
 
         #endregion

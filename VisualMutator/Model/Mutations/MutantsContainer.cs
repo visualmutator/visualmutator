@@ -22,14 +22,14 @@
 
     public interface IMutantsContainer
     {
-        void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes, IList<FilePathAbsolute> assemblies);
+        void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes);
 
        
         Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator);
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        ModulesProvider ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted);
+        ModulesProvider ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, ModuleSource moduleSource);
 
         MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies, IList<TypeIdentifier> toList);
 
@@ -39,7 +39,7 @@
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly ICommonCompilerInfra _cci;
+        private readonly IModuleSource _cci;
         private readonly IOperatorUtils _operatorUtils;
 
         private bool _debugConfig ;
@@ -53,9 +53,8 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IList<TypeIdentifier> _allowedTypes;
         private MutantsCreationOptions _options;
-        private IList<FilePathAbsolute> _assemblies;
 
-        public MutantsContainer(ICommonCompilerInfra cci, 
+        public MutantsContainer(IModuleSource cci, 
             IOperatorUtils operatorUtils
         
             )
@@ -65,12 +64,10 @@
 
         }
 
-        public void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes,
-            IList<FilePathAbsolute> assemblies)
+        public void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes)
         {
             _options = options;
             _allowedTypes = allowedTypes;
-            _assemblies = assemblies;
         }
 
         public Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator)
@@ -219,18 +216,16 @@
 
         }
 
-        public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted)
+        public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, ModuleSource moduleSource)
         {
-            IList<FilePathAbsolute> sourceModules = _assemblies;
             IList<TypeIdentifier> allowedTypes = _allowedTypes;
             try
             {
-                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " on " + sourceModules.Count + " modules. Allowed types: " + allowedTypes.Count);
-                var cci = new CommonCompilerInfra();
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. Allowed types: " + allowedTypes.Count);
+              //  var cci = new ModuleSource();
                 var mutatedModules = new List<IModule>();
-                foreach (var sourceModule in sourceModules)
+                foreach (var module in moduleSource.Modules)
                 {
-                    IModule module = cci.AppendFromFile(sourceModule.ToString());
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
                         mutant.CommonTargets, module);

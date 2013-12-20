@@ -20,13 +20,13 @@
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly ICommonCompilerInfra _cci;
+        private readonly IModuleSource _cci;
         
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public CodeVisualizer(ICommonCompilerInfra cci)
+        public CodeVisualizer(IModuleSource cci)
         {
             _cci = cci;
         }

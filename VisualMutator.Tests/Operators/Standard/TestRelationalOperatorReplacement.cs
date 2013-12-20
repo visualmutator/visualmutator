@@ -166,7 +166,7 @@ namespace Ns
         {
             var oper = new ROR_RelationalOperatorReplacement();
             ///////
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
@@ -195,7 +195,7 @@ namespace Ns
         {
             var oper = new ROR_RelationalOperatorReplacement();
             ///////
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);

@@ -43,8 +43,17 @@
 
         public static bool IsPropertyAccessor(IMethodDefinition method)
         {
-            return method.IsSpecialName && method.ContainingTypeDefinition
-                                               .Properties.Any(p => p.Getter.Name.UniqueKey == method.Name.UniqueKey);
+            try
+            {
+                return method.IsSpecialName && method.ContainingTypeDefinition
+                                              .Properties.Any(p => p.Getter.Name.UniqueKey == method.Name.UniqueKey);
+            }
+            catch (Exception e)
+            {
+                _log.Warn("Exception "+e.StackTrace);
+                return false;
+            }
+           
 
         }
 

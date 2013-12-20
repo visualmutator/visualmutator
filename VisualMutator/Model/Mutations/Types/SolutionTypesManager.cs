@@ -31,7 +31,7 @@
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ICommonCompilerInfra _assemblyReaderWriter;
+        private readonly IModuleSource _moduleSource;
 
         private readonly IHostEnviromentConnection _hostEnviroment;
 
@@ -48,10 +48,10 @@
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
-            ICommonCompilerInfra assemblyReaderWriter,
+            IModuleSource moduleSource,
             IHostEnviromentConnection hostEnviroment)
         {
-            _assemblyReaderWriter = assemblyReaderWriter;
+            _moduleSource = moduleSource;
             _hostEnviroment = hostEnviroment;
 
             _projectPaths = _hostEnviroment.GetProjectPaths();
@@ -85,7 +85,7 @@
                 
                 try
                 {
-                    IModule module = _assemblyReaderWriter.AppendFromFile((string)assemblyPath);
+                    IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
                    
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
                     assemblyNode.AssemblyPath = assemblyPath;
@@ -97,6 +97,11 @@
 
                 }
                 catch (AssemblyReadException e)
+                {
+                    _log.Info("ReadAssembly failed. ", e);
+                    IsAssemblyLoadError = true;
+                }
+                catch (Exception e)
                 {
                     _log.Info("ReadAssembly failed. ", e);
                     IsAssemblyLoadError = true;

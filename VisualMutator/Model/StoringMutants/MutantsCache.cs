@@ -8,6 +8,7 @@
     using log4net;
     using Mutations;
     using Mutations.MutantsTree;
+    using StoringMutants;
     using UsefulTools.Core;
 
     #endregion
@@ -17,13 +18,16 @@
         void setDisabled( bool disableCache = false);
 
         ModulesProvider GetMutatedModules(Mutant mutant);
+        WhiteCache WhiteCache { get; }
     }
 
     public class MutantsCache : IMutantsCache
     {
+        private readonly WhiteCache _whiteCache;
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly MemoryCache _cache;
+       
 
  
         private const int MaxLoadedModules = 5;
@@ -32,23 +36,25 @@
         private bool _disableCache;
 
         //private IDictionary<Mutant, IList<IModule>> 
-
-
-        public MutantsCache(IMutantsContainer mutantsContainer)
+        public WhiteCache WhiteCache
         {
+            get { return _whiteCache; }
+        }
+
+        public MutantsCache(WhiteCache whiteCache,IMutantsContainer mutantsContainer)
+        {
+            _whiteCache = whiteCache;
             _mutantsContainer = mutantsContainer;
             var config = new NameValueCollection();
  
             config.Add("physicalMemoryLimitPercentage", "50");
             config.Add("cacheMemoryLimitMegabytes", "256");
 
-   
             _cache = new MemoryCache("CustomCache", config);
         }
 
         public void setDisabled(bool disableCache = false)
         {
-           
             _disableCache = disableCache;
         }
 
@@ -60,7 +66,9 @@
             ModulesProvider result;
             if (!_cache.Contains(mutant.Id) || _disableCache)
             {
-                result = _mutantsContainer.ExecuteMutation(mutant, ProgressCounter.Inactive());
+                result = _mutantsContainer.ExecuteMutation(mutant, 
+                    ProgressCounter.Inactive(), _whiteCache.GetWhiteModules());
+
                 _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
             }
             else
@@ -68,9 +76,7 @@
                 result = (ModulesProvider)_cache.Get(mutant.Id);
             }
             return result;
-            
         }
-
 
     }
 }

@@ -43,9 +43,13 @@
         public Bootstrapper(Package package)
         {
             _package = package;
-            _log.Info("Starting bootstrapper.");
+            
 
-   
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string version = fvi.FileVersion;
+            _log.Info("Starting VisualMutator version: " + version);
+            _log.Info("Starting bootstrapper.");
             try
             {
 

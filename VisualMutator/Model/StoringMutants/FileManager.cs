@@ -27,7 +27,7 @@
 
         void CleanupTestEnvironment(TestEnvironmentInfo info);
 
-        List<FilePathAbsolute> CopyOriginalFiles();
+        List<FilePathAbsolute> CopyOriginalFiles(out bool isError);
         void OnTestingCancelled();
         IEnumerable<string> GetReferencedAssemblies(IList<FilePathAbsolute> projects);
     }
@@ -56,22 +56,38 @@
         }
 
 
-       public List<FilePathAbsolute> CopyOriginalFiles()
+       public List<FilePathAbsolute> CopyOriginalFiles(out bool isError)
        {
+           isError = false;
            string tmpDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), Path.GetRandomFileName());
            _fs.Directory.CreateDirectory(tmpDirectoryPath);
            var originalFilesList = new List<FilePathAbsolute>();
            foreach (var referenced in GetReferencedAssemblies(_hostEnviroment.GetProjectAssemblyPaths().ToList()).AsStrings())
            {
-               string destination = Path.Combine(tmpDirectoryPath, Path.GetFileName(referenced));
-               _fs.File.Copy(referenced, destination, overwrite: true);
-
+               try
+               {
+                   string destination = Path.Combine(tmpDirectoryPath, Path.GetFileName(referenced));
+                   _fs.File.Copy(referenced, destination, overwrite: true);
+               }
+               catch (Exception e)
+               {
+                   _log.Warn("File load error", e);
+                   isError = true;
+               }
            }
            foreach (var projFile in _hostEnviroment.GetProjectAssemblyPaths().AsStrings().ToList())
            {
-               string destination = Path.Combine(tmpDirectoryPath, Path.GetFileName(projFile));
-
-               originalFilesList.Add(destination.ToFilePathAbs());
+               try
+               {
+                   string destination = Path.Combine(tmpDirectoryPath, Path.GetFileName(projFile));
+                   _fs.File.Copy(projFile, destination, overwrite: true);
+                   originalFilesList.Add(destination.ToFilePathAbs());
+               }
+               catch (Exception e)
+               {
+                   _log.Warn("File load error", e);
+                   isError = true;
+               }
            }
            return originalFilesList;
        }
@@ -95,9 +111,13 @@
         public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
         {
 
-            string mutantDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), Path.GetRandomFileName());
-            _fs.Directory.CreateDirectory(mutantDirectoryPath);
+          //  string mutantDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), Path.GetRandomFileName());
+           // _fs.Directory.CreateDirectory(mutantDirectoryPath);
 
+            bool loadError;
+            var originalFilesList = CopyOriginalFiles(out loadError);
+            return new TestEnvironmentInfo(originalFilesList.First().ParentDirectoryPath.ToString());
+            /*
             var refer = GetReferencedAssemblies(_hostEnviroment.GetProjectAssemblyPaths().ToList());//TODO: Use better way
             foreach (var referenced in refer)
             {
@@ -111,8 +131,8 @@
                     string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(path));
                     _fs.File.Copy(path, destination, overwrite: true); 
                 }
-            }
-            return new TestEnvironmentInfo(mutantDirectoryPath);
+            }*/
+        //    return new TestEnvironmentInfo(mutantDirectoryPath);
         }
 
       

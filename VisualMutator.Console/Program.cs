@@ -133,7 +133,7 @@ namespace VisualMutator.Console
 
 
             var fs = new FileSystemService();
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             foreach (var path in list)
             {
                 cci.AppendFromFile(path);

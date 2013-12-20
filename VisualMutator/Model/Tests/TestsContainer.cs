@@ -6,8 +6,10 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using Exceptions;
+    using log4net;
     using Mutations.MutantsTree;
     using Services;
     using StoringMutants;
@@ -55,7 +57,7 @@
 
         private readonly IEnumerable<ITestService> _testServices;
 
-      
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private bool _allTestingCancelled;
         private bool _testsLoaded;
@@ -158,6 +160,8 @@
         {
             if (_allTestingCancelled)
             {
+                mutant.State = MutantResultState.Killed;
+                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
                 return;
             }
             bool testsLoaded = false;
@@ -170,6 +174,7 @@
             try
             {
                 CreateTestFilter(selectedTests);
+                _log.Info("Loading tests for mutant " + mutant.Id);
                 LoadTests(storedMutantInfo.AssembliesPaths, mutant.MutantTestSession);
 
                 testsLoaded = true;
@@ -179,6 +184,7 @@
                 timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
                     .Subscribe(e => CancelCurrentTestRun());
 
+                _log.Info("Running tests for mutant " + mutant.Id);
                 Task<List<TestNodeMethod>[]> runTests = RunTests(mutant.MutantTestSession);
                 runTests.Wait();
 
@@ -223,6 +229,7 @@
             mutant.MutantTestSession.ErrorMessage = e.Message;
             mutant.MutantTestSession.Exception = e;
             mutant.State = MutantResultState.Error;
+            _log.Info("Set mutant " + mutant.Id + " error: " + mutant.State + " message: " + e.Message);
         }
         private void ResolveMutantState(Mutant mutant)
         {
@@ -252,11 +259,12 @@
             {
                 throw new InvalidOperationException("Unknown state");
             }
-
+            _log.Info("Resolved mutant"+mutant.Id+" state: " + mutant.State + " sub: " + mutant.KilledSubstate);
         }
 
         public void CancelAllTesting()
         {
+            _log.Info("Request to cancel all testing.");
             _allTestingCancelled = true;
             CancelCurrentTestRun();
         }

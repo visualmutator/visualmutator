@@ -251,8 +251,9 @@
     <Compile Include="Model\Mutations\VisualCodeVisitor.cs" />
     <Compile Include="Model\Mutations\VisualCodeVisitorBack.cs" />
     <Compile Include="Model\Mutations\VisualCodeVisitorBase.cs" />
+    <Compile Include="Model\StoringMutants\FileManager.cs" />
     <Compile Include="Model\StoringMutants\ModulesProvider.cs" />
-    <Compile Include="Model\CommonCompilerInfra.cs" />
+    <Compile Include="Model\ModuleSource.cs" />
     <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\Exceptions\TestingCancelledException.cs" />
@@ -269,8 +270,8 @@
     <Compile Include="Model\Mutations\MutantsTree\MutantGroup.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutationRootNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
-    <Compile Include="Model\StoringMutants\FileManager.cs" />
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
+    <Compile Include="Model\StoringMutants\WhiteCache.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />
     <Compile Include="Model\TestGeneration\GenerationInterface.cs" />

@@ -48,7 +48,7 @@
         {
             _log.Info("MutationTests.RunMutations configuring for " + oper + "...");
 
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -79,7 +79,7 @@
         {
         
 
-            var cci = new CommonCompilerInfra();
+            var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -150,7 +150,7 @@
         public static List<IModule> CreateModules(string code)
         {
             var path = CreateModule(code);
-            return CreateModules(path, new CommonCompilerInfra());
+            return CreateModules(path, new ModuleSource());
         }
 
         public static string CreateModule2(string code)
@@ -163,7 +163,7 @@
             List<AssemblyNode> assemblyNodes,  MutantsCache cache, int numberOfMutants)
         {
             _log.Info("Copying modules...");
-            var ccii = new CommonCompilerInfra();
+            var ccii = new ModuleSource();
             foreach (var assemblyNode in assemblyNodes)
             {
                 ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
@@ -190,7 +190,7 @@
             List<AssemblyNode> assemblyNodes, MutantsCache cache, int numberOfMutants)
         {
             _log.Info("Copying modules...");
-            var ccii = new CommonCompilerInfra();
+            var ccii = new ModuleSource();
             foreach (var assemblyNode in assemblyNodes)
             {
                 ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
@@ -212,7 +212,7 @@
 
 
         }
-        public static List<IModule> CreateModules(string filePath, CommonCompilerInfra cci)
+        public static List<IModule> CreateModules(string filePath, ModuleSource cci)
         {
             cci.AppendFromFile(filePath);
             _log.Info("Copying modules...");

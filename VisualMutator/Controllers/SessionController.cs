@@ -46,7 +46,7 @@
         private readonly ICodeVisualizer _codeVisualizer;
         private readonly SessionCreationController _scc;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
-        private readonly ICommonCompilerInfra _commonCompiler;
+        private readonly IModuleSource _commonCompiler;
 
         private int _allMutantsCount;
 
@@ -82,7 +82,7 @@
             IFactory<SessionCreationController> mutantsCreationFactory,
             IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
-            ICommonCompilerInfra commonCompiler)
+            IModuleSource commonCompiler)
         {
             MutantsCreationFactory = mutantsCreationFactory;
             OnlyMutantsCreationFactory = onlyMutantsCreationFactory;
@@ -156,7 +156,9 @@
                     SelectedTypes = allowedTypes,
                     Choices = choices,
                 };
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies.Select(_ => _.AssemblyPath).ToList());
+                _mutantsCache.WhiteCache.Initialize(choices.Assemblies.Select(_ => _.AssemblyPath).AsStrings().ToList());
+
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes);
 
                 ExecutedOperator oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
@@ -238,7 +240,9 @@
             _svc.Threading.ScheduleAsync(() =>
             {
                 var allowedTypes = choices.SelectedTypes.GetIdentifiers();
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes, choices.Assemblies.Select(_ => _.AssemblyPath).ToList());
+                _mutantsCache.WhiteCache.Initialize(choices.Assemblies.Select(_ => _.AssemblyPath).AsStrings().ToList());
+
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes );
 
                 _currentSession = new MutationTestingSession
                 {
