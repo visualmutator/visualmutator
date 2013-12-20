@@ -277,13 +277,14 @@
 
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
-                _testsContainer.CreateTestFilter(choices.SelectedTests);
+               
 
                 _testingProcessExtensionOptions.TestingProcessExtension
                     .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
                 _log.Info("Running tests for pure mutant...");
-                _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, storedMutantInfo, changelessMutant);
+                _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, 
+                    storedMutantInfo, changelessMutant, choices.SelectedTests);
                 return changelessMutant;
 
             },
@@ -406,7 +407,8 @@
                         .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
 
-                    _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, storedMutantInfo, mutant);
+                    _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, storedMutantInfo, 
+                        mutant, _currentSession.Choices.SelectedTests);
 
                     _testedMutants.Add(mutant);
 

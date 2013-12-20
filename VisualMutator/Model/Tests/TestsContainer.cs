@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Threading.Tasks;
     using Exceptions;
     using Mutations.MutantsTree;
     using Services;
@@ -21,14 +22,14 @@
     {
        // TestSession LoadTests(StoredMutantInfo mutant);
 
-        void RunTests(MutantTestSession mutantTestSession);
+        Task<List<TestNodeMethod>[]> RunTests(MutantTestSession mutantTestSession);
 
  
         void UnloadTests();
 
 
 
-        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant);
+        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant, ICollection<TestId> selectedTests);
 
         TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
 
@@ -152,7 +153,8 @@
             return session.TestNamespaces;
         }
 
-        public void RunTestsForMutant(MutantsTestingOptions options, StoredMutantInfo storedMutantInfo, Mutant mutant)
+        public void RunTestsForMutant(MutantsTestingOptions options, 
+            StoredMutantInfo storedMutantInfo, Mutant mutant, ICollection<TestId> selectedTests)
         {
             if (_allTestingCancelled)
             {
@@ -167,15 +169,18 @@
             IDisposable timoutDisposable = null;
             try
             {
-               
+                CreateTestFilter(selectedTests);
                 LoadTests(storedMutantInfo.AssembliesPaths, mutant.MutantTestSession);
 
                 testsLoaded = true;
 
+                
+
                 timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
                     .Subscribe(e => CancelCurrentTestRun());
 
-                RunTests(mutant.MutantTestSession);
+                Task<List<TestNodeMethod>[]> runTests = RunTests(mutant.MutantTestSession);
+                runTests.Wait();
 
                 timoutDisposable.Dispose();
 
@@ -304,14 +309,16 @@
 
 
 
-        public void RunTests(MutantTestSession mutantTestSession)
+        public Task<List<TestNodeMethod>[]> RunTests(MutantTestSession mutantTestSession)
         {
             mutantTestSession.TestsRootNode.State = TestNodeState.Running;
-
+            return Task.WhenAll(_testServices.Select(s => s.RunTests(mutantTestSession)));
+            
+            /*
             foreach (var service in _testServices)
             {
                 service.RunTests(mutantTestSession);
-            }
+            }*/
         }
 
 

@@ -30,6 +30,13 @@
     [TestFixture]
     public class TestContainerTests
     {
+        public TestContainerTests(ICollection<TestId> selectedTests)
+        {
+            _selectedTests = selectedTests;
+        }
+
+        private ICollection<TestId> _selectedTests;
+
         [SetUp]
         public void TestSetUp()
         {
@@ -92,7 +99,7 @@
             var storedMutantInfo = teco.StoreMutant(initTestEnvironment, changelessMutant);
 
             bool ddd = true;
-            teco.RunTestsForMutant(new MutantsTestingOptions(), storedMutantInfo, changelessMutant);
+            teco.RunTestsForMutant(new MutantsTestingOptions(), storedMutantInfo, changelessMutant, _selectedTests);
 
             Assert.That(ddd, Is.True.After(5000));
             Assert.IsNotNull(testNodeClasses);

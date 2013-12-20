@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
     using log4net;
     using Microsoft.Cci;
@@ -73,16 +74,16 @@
             return list;
         }
 
-        public List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession)
+        public Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession)
         {
             if (mutantTestSession.AssembliesWithTests.Any())//TODO: needed?
             {
                 XDocument results = _msTestWrapper.RunMsTest(mutantTestSession.AssembliesWithTests);
-                return ReadTestResults(results, mutantTestSession).ToList();
+                return null;//ReadTestResults(results, mutantTestSession).ToList();
             }
             else
             {
-                return new List<TestNodeMethod>();
+                return null;//new List<TestNodeMethod>();
             }
 
         }

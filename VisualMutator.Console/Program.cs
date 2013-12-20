@@ -98,13 +98,20 @@ namespace VisualMutator.Console
 
     class Program
     {
+        public Program(ICollection<TestId> selectedTests)
+        {
+            _selectedTests = selectedTests;
+        }
+
         static string _assemblyPath = @"D:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
         private static String file =
     @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
 
         private static String file2 =
           @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\MiscUtil\MiscUtil\bin\Debug\MiscUtil.dll";
-        
+
+        private static ICollection<TestId> _selectedTests;
+
         private static void Main(string[] args)
         {
             var list = new List<string>
@@ -160,7 +167,7 @@ namespace VisualMutator.Console
             var storedMutantInfo = teco.StoreMutant(initTestEnvironment, changelessMutant);
 
             bool ddd = true;
-            teco.RunTestsForMutant(new MutantsTestingOptions(), storedMutantInfo, changelessMutant);
+            teco.RunTestsForMutant(new MutantsTestingOptions(), storedMutantInfo, changelessMutant, _selectedTests);
 
             Assert.That(ddd, Is.True.After(5000));
             Assert.IsNotNull(testNodeClasses);

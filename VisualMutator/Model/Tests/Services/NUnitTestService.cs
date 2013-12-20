@@ -3,16 +3,19 @@
     #region
 
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
+    using System.Threading.Tasks;
     using Exceptions;
     using log4net;
     using NUnit.Core;
     using TestsTree;
     using UsefulTools.Core;
+    using UsefulTools.ExtensionMethods;
 
     #endregion
 
@@ -89,12 +92,63 @@
 
             return tests.ToList();
         }
+        public static IList<T> ConvertToListOf<T>(IList iList)
+        {
+            IList<T> result = new List<T>();
+            if (iList != null)
+            {
+                foreach (T value in iList)
+                {
+                    result.Add(value);
+                }
+            }
 
-        public List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession)
+            return result;
+        }
+        public Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession)
         {
 
             var list = new List<TestNodeMethod>();
-            using (var eventObj = new ManualResetEventSlim())
+
+            var sw = new Stopwatch();
+            sw.Start();
+            Task<TestResult> runTests = TestLoader.RunTests();
+            return runTests.ContinueWith(testResult =>
+            {
+                if(testResult.Exception != null)
+                {
+                    _log.Error(testResult.Exception);
+                    return null;
+                }
+                else
+                {
+                    TestLoader.Listener.TestFinished1.Subscribe(result =>
+                    {
+                        TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.FullName];
+                        node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
+                        node.Message = result.Message;
+                        list.Add(node);
+                    });
+                  /*  IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(testResult.Result.Results)
+                                 .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
+
+                    foreach (var result in selectManyRecursive)
+                    {
+                        if(mutantTestSession.TestMap.ContainsKey(result.Test.TestName.FullName))
+                        {
+                            TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.FullName];
+                            node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
+                            node.Message = result.Message;
+                            list.Add(node);
+                        }
+                        
+                    }*/
+                    sw.Stop();
+                    mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                    return list;
+                }
+            });
+            /*using (var eventObj = new ManualResetEventSlim())
             using (var job = new TestsRunJob(this))
             {
                 var sw = new Stopwatch();
@@ -118,8 +172,7 @@
                     throw new TestingCancelledException();
                 }
 
-            }
-            return list;
+            }*/
         }
 
         public void UnloadTests()
@@ -150,7 +203,7 @@
                         var m = new TestNodeMethod(c, testMethod.TestName.Name);
                         m.TestId = new NUnitTestId(testMethod.TestName);
                         c.Children.Add(m);
-                        mutantTestSession.TestMap.Add(testMethod.TestName.UniqueName, m);
+                        mutantTestSession.TestMap.Add(testMethod.TestName.FullName, m);
                     }
                    
                 }
@@ -284,9 +337,7 @@
             public IDisposable Subscribe(IObserver<TestResult> observer)
             {
                 _observer = observer;
-
                 _testFinished = _service.TestLoader.TestFinished.Subscribe(TestFinished);
-
                 _runFinished = _service.TestLoader.RunFinished.Subscribe(RunFinished, Error);
                 _service.TestLoader.RunTests();
                 return this;
@@ -294,14 +345,11 @@
 
             private void TestFinished(TestResult result)
             {
-
                 _observer.OnNext(result);
             } 
             private void Error(Exception result)
             {
-
                 _observer.OnError(result);
-                _observer.OnCompleted();
             }
 
             private void RunFinished(TestResult result)

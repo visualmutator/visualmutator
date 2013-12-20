@@ -29,16 +29,20 @@
         IObservable<ITest> TestLoaded { get; }
 
         IObservable<Exception> TestLoadFailed { get; }
-        NameFilter NameFilter { get; }
+        TestFilter NameFilter { get; }
 
         void LoadTests(IEnumerable<string> assemblies);
 
-        void RunTests();
+        Task<TestResult> RunTests();
 
         void UnloadProject();
 
         void Cancel();
         void CreateFilter(ICollection<TestName> names);
+         NUnitWrapper.CustomEventListener Listener
+        {
+            get;
+        }
     }
 
     public class NUnitWrapper : INUnitWrapper
@@ -66,9 +70,15 @@
         private IObservable<Exception> _testUnloadFailed;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private NameFilter _nameFilter;//nullable
+        private TestFilter _nameFilter;//nullable
+        private CustomEventListener listener;
 
-        public NameFilter NameFilter
+        public CustomEventListener Listener
+        {
+            get { return listener; }
+        }
+
+        public TestFilter NameFilter
         {
             get { return _nameFilter; }
         }
@@ -191,7 +201,10 @@
 
         public void CreateFilter(ICollection<TestName> names)
         {
-            NameFilter nameFilter = new NameFilter();
+            var nameFilter = new IDTestFilter();
+         //   IEnumerable<ITest> selectManyRecursive = ConvertToListOf<ITest>(_testRunner.Test.Tests)
+        //                .SelectManyRecursive(test => ConvertToListOf<ITest>(test.Tests));
+
             foreach (TestName name in names)
             {
                 nameFilter.Add(name);
@@ -211,7 +224,7 @@
 
             return result;
         }
-        public void RunTests()
+        public Task<TestResult> RunTests()
         {
            /* 
             Task<TestResult> task = Task.Run(() => _testRunner.Run(new NullListener(), _nameFilter, true, LoggingThreshold.All));
@@ -231,27 +244,40 @@
                     _runFinished.OnCompleted();
                 }
             });*/
-            CustomEventListener listener = new CustomEventListener();
-            listener.RunFinishedNormally.Subscribe(result =>
+            return Task.Run(() =>
             {
+                var taskCompletion = new TaskCompletionSource<TestResult>();
 
-            },
+
+                 listener = new CustomEventListener();
+                listener.RunFinishedNormally.Subscribe(result =>
+                {
+                    /*IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(result.Results)
+                               .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
+
+                    foreach (var t in selectManyRecursive)
+                    {
+                        _testFinished.OnNext(t);
+                    }
+                    _testFinished.OnCompleted();
+                    _runFinished.OnNext(result);
+                    _runFinished.OnCompleted();
+                    */
+                    taskCompletion.SetResult(result);
+                },
                 exc =>
                 {
                     _runFinished.OnError(exc);
+                    taskCompletion.TrySetException(exc);
                 });
-            TestResult testResult = _testRunner.Run(listener, _nameFilter, true, LoggingThreshold.All);
-            IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(testResult.Results)
-                       .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
 
-            foreach (var result in selectManyRecursive)
-            {
-                _testFinished.OnNext(result);
-            }
-            _testFinished.OnCompleted();
-            _runFinished.OnNext(testResult);
-            _runFinished.OnCompleted();
+              //  _nameFilter = new EmptyFilter();
+                _testRunner.BeginRun(listener, _nameFilter, true, LoggingThreshold.All);
 
+
+                return taskCompletion.Task;
+            });
+            
           //  TestResult testResult = ;
            // _testLoader.RunTests(_nameFilter);
             
@@ -294,68 +320,120 @@
                 return _testLoadFailed;
             }
         }
-
-        class CustomEventListener : EventListener
+        private class EmptyFilter : TestFilter
         {
+            public override bool Match(ITest test)
+            {
+                return true;
+            }
+
+            public override bool Pass(ITest test)
+            {
+                return true;
+            }
+        }
+        private class IDTestFilter : TestFilter
+        {
+           	private readonly ArrayList testNames = new ArrayList();
+
+		    public IDTestFilter() { }
+
+            public IDTestFilter(TestName testName)
+		    {
+			    testNames.Add( testName );
+		    }
+
+		    public void Add( TestName testName )
+		    {
+			    testNames.Add( testName );
+		    }
+            public override bool Match(ITest test)
+            {
+                foreach (TestName testName in testNames)
+                {
+                    if (test.TestName.FullName.Equals(testName.FullName))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        public class CustomEventListener : EventListener
+        {
+            private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
             public CustomEventListener()
             {
-            _runFinished = new Subject<TestResult>();
+                _runFinished = new Subject<TestResult>();
+                _testFinished = new ReplaySubject<TestResult>();
             }
-            private Subject<TestResult> _runFinished;
-            private Subject<Exception> _unhandled;
+            private readonly Subject<TestResult> _runFinished;
+            private readonly ReplaySubject <TestResult> _testFinished;
+  
 
             public IObservable<TestResult> RunFinishedNormally
             {
                 get { return _runFinished; }
             }
 
-
-            public IObservable<Exception> Unhandled
+            public ReplaySubject<TestResult> TestFinished1
             {
-                get { return _unhandled; }
+                get { return _testFinished; }
             }
+
 
             public void RunStarted(string name, int testCount)
             {
+                _log.Info("RunStarted: " + name);
             }
 
             public void RunFinished(TestResult result)
             {
+                _log.Info("Run finished.");
+                _testFinished.OnCompleted();
                 _runFinished.OnNext(result);
                 _runFinished.OnCompleted();
-                
             }
 
             public void RunFinished(Exception exception)
             {
+                _log.Error("Run finished with exception.");
+                _testFinished.OnError(exception);
                 _runFinished.OnError(exception);
-                _runFinished.OnCompleted();
             }
 
             public void TestStarted(TestName testName)
             {
+                _log.Info("TestStarted: " + testName.Name);
             }
 
             public void TestFinished(TestResult result)
             {
+                _log.Info("TestFinished: " + result.Name + " - " + result.IsSuccess);
+                _testFinished.OnNext(result);
             }
 
             public void SuiteStarted(TestName testName)
             {
+                _log.Info("SuiteStarted: " + testName.Name);
             }
 
             public void SuiteFinished(TestResult result)
             {
+                _log.Info("SuiteFinished: " + result.Name + " - " + result.IsSuccess);
             }
 
             public void UnhandledException(Exception exception)
             {
+                _log.Error("Test UnhandledException.", exception);
+                _testFinished.OnError(exception);
                 _runFinished.OnError(exception);
-                _runFinished.OnCompleted();
             }
 
             public void TestOutput(TestOutput testOutput)
             {
+               // _log.Info("SuiteFinished: " + result.Name + " - " + result.IsSuccess);
             }
         }
     }

@@ -5,6 +5,7 @@ namespace VisualMutator.Model.Tests.Services
     #region
 
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using TestsTree;
 
     #endregion
@@ -13,7 +14,7 @@ namespace VisualMutator.Model.Tests.Services
     {
         IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession);
 
-        List<TestNodeMethod> RunTests(MutantTestSession mutantTestSession);
+        Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession);
 
         void UnloadTests();
 
