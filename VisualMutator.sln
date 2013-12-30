@@ -15,6 +15,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.VSPackage", "VisualMutator.VSPackage\VisualMutator.VSPackage.csproj", "{BB64244A-C861-42A7-AE3D-6E4DDA9B2E7F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5794DB15-7ADA-4EBB-AB56-F608A1090FF4} = {5794DB15-7ADA-4EBB-AB56-F608A1090FF4}
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB} = {D7D38CB1-F383-491F-9C52-A767E763DBEB}
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A} = {3165A6BB-A176-44B3-8529-8A6C8F9ED58A}
 		{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598} = {ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}
 	EndProjectSection
 EndProject
@@ -45,6 +47,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Console", "Vi
 		{78D8E683-1282-4114-BEB8-A5784E885C02} = {78D8E683-1282-4114-BEB8-A5784E885C02}
 		{ED2443EA-AEFF-4EAF-8BED-4CFA8F721598} = {ED2443EA-AEFF-4EAF-8BED-4CFA8F721598}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.VSEditorAdornment", "VisualMutator.VSEditorAdornment\VisualMutator.VSEditorAdornment.csproj", "{D7D38CB1-F383-491F-9C52-A767E763DBEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorClassifier1", "EditorClassifier1\EditorClassifier1.csproj", "{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -168,6 +174,28 @@ Global
 		{D3C35E11-13E4-4A78-8222-39C30C12B52D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D3C35E11-13E4-4A78-8222-39C30C12B52D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D3C35E11-13E4-4A78-8222-39C30C12B52D}.Release|x86.ActiveCfg = Release|x86
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Debug|x86.Build.0 = Debug|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D7D38CB1-F383-491F-9C52-A767E763DBEB}.Release|x86.ActiveCfg = Release|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Debug|x86.Build.0 = Debug|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3165A6BB-A176-44B3-8529-8A6C8F9ED58A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

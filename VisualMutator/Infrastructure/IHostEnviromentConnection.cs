@@ -7,6 +7,7 @@ namespace VisualMutator.Infrastructure
     using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
+    using Model;
     using UsefulTools.Paths;
     using UsefulTools.Wpf;
 
@@ -34,5 +35,7 @@ namespace VisualMutator.Infrastructure
         string GetTempPath();
     
         IEnumerable<DirectoryPathAbsolute> GetProjectPaths();
+        void Test();
+        bool GetCurrentClassAndMethod(out ClassAndMethod classAndMethod);
     }
 }

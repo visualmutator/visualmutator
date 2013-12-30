@@ -50,26 +50,20 @@
         private readonly IMessageService _messageService;
         private readonly IDispatcherExecute _execute;
 
-        private RemoteTestRunner _testRunner;
+        private readonly RemoteTestRunner _testRunner;
       //  private TestLoader _testLoader;
 
-        private ISubject<ITest> _testLoaded;
+        private readonly ISubject<ITest> _testLoaded;
 
-        private ISubject<Exception> _testLoadFailed;
+        private readonly ISubject<Exception> _testLoadFailed;
 
-        private ISubject<TestResult> _runFinished;
+        private readonly ISubject<TestResult> _runFinished;
 
-        private ISubject<TestResult> _testFinished;
+        private readonly ISubject<TestResult> _testFinished;
 
-        private IObservable<Exception> _projectLoadFailed;
+     
 
-        private IObservable<Exception> _projectUnloadFailed;
-
-        private IObservable<Exception> _testReloadFailed;
-
-        private IObservable<Exception> _testUnloadFailed;
-
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private TestFilter _nameFilter;//nullable
         private CustomEventListener listener;
 

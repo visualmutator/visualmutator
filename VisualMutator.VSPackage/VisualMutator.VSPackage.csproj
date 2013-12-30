@@ -208,9 +208,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\GenericCmd.bmp" />
     <None Include="app.config" />
     <None Include="packages.config" />
-    <Resource Include="Resources\Images_24bit.bmp" />
     <Resource Include="Resources\Images_32bit.bmp" />
     <Content Include="PEVerify.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

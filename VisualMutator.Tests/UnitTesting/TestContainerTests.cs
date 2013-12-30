@@ -80,7 +80,7 @@
             FileManager fileManager = new FileManager(hostEnv.Object, new FileSystemService());
             MutantsFileManager mutantsFileManager = new MutantsFileManager(mutantCache, cci, fs);
 
-            mutantsContainer.Initialize(new MutantsCreationOptions(), new List<TypeIdentifier>(), list.Select(_ => _.ToFilePathAbs()).ToList());
+            mutantsContainer.Initialize(new MutantsCreationOptions(), new List<TypeIdentifier>());
 
 
             TestEnvironmentInfo initTestEnvironment = fileManager.InitTestEnvironment(null);

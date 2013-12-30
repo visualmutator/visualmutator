@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using Infrastructure;
     using log4net;
     using Model;
     using Model.Mutations.MutantsTree;
@@ -24,11 +25,8 @@
 
         private readonly MainViewModel _viewModel;
         private readonly IFactory<SessionController> _sessionControllerFactory;
+        private readonly IHostEnviromentConnection _host;
 
-
-        private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
-
-      
 
         private readonly CommonServices _svc;
 
@@ -40,14 +38,15 @@
         public MainController(
             MainViewModel viewModel,
             IFactory<SessionController> sessionControllerFactory,
-
+            IHostEnviromentConnection host,
            
             CommonServices svc)
         {
             _viewModel = viewModel;
             _sessionControllerFactory = sessionControllerFactory;
+            _host = host;
 
-     
+
             _svc = svc;
 
 
@@ -80,11 +79,18 @@
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-       
+
+
+            _viewModel.CommandTest = new SmartCommand(Test);
 
         }
 
-   
+        private void Test()
+        {
+            _host.Test();
+        }
+
+
         private void SetState(OperationsState state)
         {
             _svc.Threading.InvokeOnGui(() =>
@@ -261,13 +267,23 @@
             _currenSessionController = null;
             SetState(OperationsState.None);
         }
-
+       
         public MainViewModel ViewModel
         {
             get
             {
                 return _viewModel;
             }
+        }
+
+        public void RunMutationSessionForCurrentPosition()
+        {
+            ClassAndMethod classAndMethod;
+            if(_host.GetCurrentClassAndMethod(out classAndMethod))
+            {
+            
+            }
+            //throw new NotImplementedException();
         }
     }
 }

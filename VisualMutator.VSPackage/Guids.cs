@@ -18,5 +18,6 @@
 
         public static readonly Guid guidVisualMutator_VSPackageCmdSet =
             new Guid(guidVisualMutator_VSPackageCmdSetString);
+
     };
 }

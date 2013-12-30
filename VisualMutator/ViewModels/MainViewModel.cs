@@ -63,6 +63,19 @@
             }
         }
 
+        private SmartCommand _commandTest;
+
+        public SmartCommand CommandTest
+        {
+            get
+            {
+                return _commandTest;
+            }
+            set
+            {
+                SetAndRise(ref _commandTest, value, () => CommandTest);
+            }
+        }
         private SmartCommand _commandContinue;
 
         public SmartCommand CommandContinue

@@ -42,6 +42,7 @@
             withParams.Parameter.ShouldEqual(1);
             withParams.Module.ShouldNotBeNull();
         }
+
         public class TestModule : NinjectModule
         {
             public override void Load()

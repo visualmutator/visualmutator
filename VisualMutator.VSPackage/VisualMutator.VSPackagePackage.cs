@@ -12,6 +12,8 @@
     using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Ninject;
+    using VisualMutator.Controllers;
 
     #endregion
 
@@ -61,6 +63,12 @@
             
         }
 
+        private void CommandMutateAndTest(object sender, EventArgs e)
+        {
+            Trace.WriteLine("CommandMutateAndTest");
+            _bootstrapper.Kernel.Get<MainController>().RunMutationSessionForCurrentPosition();
+        }
+
         /// <summary>
         ///   This function is called when the user clicks the menu item that shows the 
         ///   tool window. See the Initialize method to see how the menu item is associated to 
@@ -103,6 +111,16 @@
                     GuidList.guidVisualMutator_VSPackageCmdSet, (int)PkgCmdIDList.cmdidVisualMutator);
                 var menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
+              //  VsMenus.
+             //   var ctxCommandID = new CommandID(
+             //      GuidList.guidVisualMutator_VSPackageCmdSet, (int)PkgCmdIDList.cmdidVisualMutatorCtx);
+             //   mcs.AddCommand(new OleMenuCommand(CommandMutateAndTest, ctxCommandID));
+                CommandID id = new CommandID(GuidList.guidVisualMutator_VSPackageCmdSet, PkgCmdIDList.cmdidMyCommand);
+                // Now create the OleMenuCommand object for this command. The EventHandler object is the
+                // function that will be called when the user will select the command.
+                OleMenuCommand command = new OleMenuCommand(CommandMutateAndTest, id);
+                // Add the command to the command service.
+                mcs.AddCommand(command);
             }
 
             try

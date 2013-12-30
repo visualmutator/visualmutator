@@ -60,58 +60,8 @@ namespace VisualMutator.Model.StoringMutants
         public ModuleSource GetWhiteModules()
         {
             return _whiteCache.Take();
-           /* ModuleSource item;
-            if(_whiteCache.TTake(out item, TimeSpan.FromMilliseconds(50)))
-            {
-                return item;
-            }
-            else
-            {
-                var moduleSource = new ModuleSource();
-                foreach (var assembliesPath in assembliesPaths)
-                {
-                    moduleSource.AppendFromFile(assembliesPath);
-                }
-                return 
-            }*/
+
         }
 
-/*
-        var results = new BlockingCollection<double>();
-        var watch = Stopwatch.StartNew();
-        List<Task> tasks = new List<Task>();
-
-        var consume = Task.Factory.StartNew(() => display(results));
-
-        for (int i = 2; i < 20; i++)
-        {
-            int j = i;
-            var compute = Task.Factory.StartNew(() =>
-            {
-                results.Add(SumRootN(j));
-            });
-            tasks.Add(compute);
-        }
-
-        Task.Factory.ContinueWhenAll(tasks.ToArray(),
-            result =>
-            {
-                results.CompleteAdding();
-                var time = watch.ElapsedMilliseconds;
-                label1.Content += time.ToString();
-            }, CancellationToken.None, TaskContinuationOptions.None, ui);
-    }
-
-    public void display(BlockingCollection<double> results)
-    {
-        foreach (var item in results.GetConsumingEnumerable())
-        {
-            double currentItem = item;
-            Task.Factory.StartNew(new Action(() =>
-                 textBlock1.Text += currentItem.ToString() + Environment.NewLine),
-            CancellationToken.None, TaskCreationOptions.None, ui);
-        }
-    }
-*/
     }
 }

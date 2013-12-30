@@ -64,6 +64,8 @@
                         Command="{Binding CommandOnlyCreateMutants}" />
                 <Button HorizontalAlignment="Right" Content="New session..."
                         Command="{Binding CommandCreateNewMutants}" />
+                <Button HorizontalAlignment="Right" Content="T"
+                        Command="{Binding CommandTest}" />
                 <!--<Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_stop_unpressed.png"

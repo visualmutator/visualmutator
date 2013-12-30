@@ -44,6 +44,12 @@
          must be a menu. -->
     <Groups>
 
+      <Group guid="guidVisualMutator_VSPackageCmdSet" id="MyEditorCtxGroup" priority="0x600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
+      </Group>
+      <Group guid="guidVisualMutator_VSPackageCmdSet" id="MyMenuGroup" priority="0x600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
+      </Group>
 
     </Groups>
     
@@ -59,6 +65,7 @@
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node or set it to <Icon guid="guidOfficeIcon" id="msotcidNoIcon" /> -->
 
+   
 
       <Button guid="guidVisualMutator_VSPackageCmdSet" id="cmdidVisualMutator" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
@@ -68,8 +75,13 @@
           <ButtonText>VisualMutator</ButtonText>
         </Strings>
       </Button>
-
-
+      <Button guid="guidVisualMutator_VSPackageCmdSet" id="cmdidMyCommand" priority="0x100" type="Button">
+        <Parent guid="guidVisualMutator_VSPackageCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="bmpPic2" />
+        <Strings>
+          <ButtonText>Mutate and Test...</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
    
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -85,7 +97,13 @@
  
   </Commands>
 
-
+  <CommandPlacements>
+   
+    <CommandPlacement guid="guidVisualMutator_VSPackageCmdSet" id="cmdidMyCommand" priority="0x100">
+      <Parent guid="guidVisualMutator_VSPackageCmdSet" id="MyEditorCtxGroup" />
+    </CommandPlacement>
+ 
+  </CommandPlacements>
 
 
 
@@ -98,10 +116,18 @@
 
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="cmdidVisualMutator" value="0x0101" />
+      <IDSymbol name="MyEditorCtxGroup" value="0x1013" />
+      <IDSymbol name="cmdidMyCommand" value="0x2001" />
     </GuidSymbol>
-    
-    
-    
+
+
+    <!-- This is the guid used to group the menu commands together
+    <GuidSymbol name="guidVisualMutator_VSPackageCtx" value="{c8e6118f-3385-4914-8789-81cff86a9852}">
+
+
+    </GuidSymbol>
+ -->
+
     <GuidSymbol name="guidImages" value="{b532a357-a8d3-4b65-9bc0-d935764858e3}">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
@@ -109,6 +135,7 @@
       <IDSymbol name="bmpPicX" value="4" />
       <IDSymbol name="bmpPicArrows" value="5" />
     </GuidSymbol>
+   
   </Symbols>
 
 </CommandTable>

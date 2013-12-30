@@ -29,6 +29,11 @@
 
         private IKernel _kernel;
 
+        public IKernel Kernel
+        {
+            get { return _kernel; }
+        }
+
         private static ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 

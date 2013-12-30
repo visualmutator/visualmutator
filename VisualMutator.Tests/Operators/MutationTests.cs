@@ -176,7 +176,7 @@
          
 
             var allowedTypes = new List<TypeIdentifier>();
-            container.Initialize(mutantsCreationOptions, allowedTypes, assemblyNodes.Select(_ => _.AssemblyPath).ToList());
+            container.Initialize(mutantsCreationOptions, allowedTypes);
 
             var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());
@@ -203,7 +203,7 @@
 
 
             var allowedTypes = new List<TypeIdentifier>();
-            container.Initialize(mutantsCreationOptions, allowedTypes, assemblyNodes.Select(_ => _.AssemblyPath).ToList());
+            container.Initialize(mutantsCreationOptions, allowedTypes);
 
             var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
                                                                           copiedModules, ProgressCounter.Inactive());

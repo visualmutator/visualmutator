@@ -40,7 +40,11 @@
         {
             get { return _whiteCache; }
         }
-
+        public MutantsCache(IMutantsContainer mutantsContainer)
+            : this(new WhiteCache(), mutantsContainer)
+        {
+            
+        }
         public MutantsCache(WhiteCache whiteCache,IMutantsContainer mutantsContainer)
         {
             _whiteCache = whiteCache;
