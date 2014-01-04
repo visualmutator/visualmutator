@@ -12,6 +12,7 @@
     using log4net;
     using Model;
     using Model.Decompilation;
+    using Model.Exceptions;
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.StoringMutants;
@@ -156,7 +157,7 @@
                     SelectedTypes = allowedTypes,
                     Choices = choices,
                 };
-                _mutantsCache.WhiteCache.Initialize(choices.Assemblies.Select(_ => _.AssemblyPath).AsStrings().ToList());
+                _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
                 _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes);
 
@@ -233,14 +234,21 @@
         public void RunMutationSession(MutationSessionChoices choices)
         {
             _sessionState = SessionState.Running;
-            
+
+           
+
             RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
 
             _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
+                if (choices.SelectedTests.Count == 0)
+                {
+                    throw new NoTestsSelectedException();
+                }
+
                 var allowedTypes = choices.SelectedTypes.GetIdentifiers();
-                _mutantsCache.WhiteCache.Initialize(choices.Assemblies.Select(_ => _.AssemblyPath).AsStrings().ToList());
+                _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
                 _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes );
 
@@ -425,6 +433,9 @@
                 catch (Exception e)
                 {
                     _log.Error(e);
+                    mutant.MutantTestSession.ErrorDescription = e.Message;
+                    mutant.MutantTestSession.ErrorMessage = e.Message;
+                    mutant.MutantTestSession.Exception = e;
                     mutant.State = MutantResultState.Error;
                 }
              

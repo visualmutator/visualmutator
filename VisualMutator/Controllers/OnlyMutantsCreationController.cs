@@ -73,6 +73,7 @@
                                 .Where(oper => (bool) oper.IsIncluded).Select(n => n.Operator).ToList(),
                             ProjectPaths = _viewModel.ProjectPaths.ToList(),
                             Assemblies = _viewModel.TypesTreeMutate.Assemblies,
+                            AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                             SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),
                             MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                             MutantsCreationFolderPath = _viewModel.MutantsFolderPath,

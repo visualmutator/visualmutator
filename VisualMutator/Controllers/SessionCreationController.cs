@@ -33,6 +33,7 @@
                     SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                         .Where(oper => (bool) oper.IsIncluded).Select(n => n.Operator).ToList(),
                     Assemblies = _viewModel.TypesTreeMutate.Assemblies,
+                    AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                     ProjectPaths = _viewModel.ProjectPaths.ToList(),
                     SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),
                     SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.Namespaces),

@@ -136,6 +136,7 @@
                             {
                                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
                             }
+                            _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.AsStrings().ToList();
                             _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
 
                             _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests);

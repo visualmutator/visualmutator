@@ -44,6 +44,7 @@
                 SetAndRise(ref _isExpanded, value, () => IsExpanded);
             }
         }
-        
+
+        public List<string> AssembliesPaths { get; set; }
     }
 }

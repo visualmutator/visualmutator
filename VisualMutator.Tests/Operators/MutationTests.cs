@@ -58,14 +58,13 @@
             IModule module = cci.AppendFromFile(filePath);
 
             original = new ModulesProvider(cci.Modules);
-            List<AssemblyNode> assemblyNodes = new AssemblyNode("", module) 
-                {AssemblyPath = new FilePathAbsolute(filePath)}.InList();
+            List<AssemblyNode> assemblyNodes = new AssemblyNode("", module).InList();
 
             cache.setDisabled(disableCache: false);
             diff = new CodeDifferenceCreator(cache, visualizer);
 
             container.DebugConfig = true;
-            var mutmods = CreateMutants(oper, container, assemblyNodes, cache, 100);
+            var mutmods = CreateMutants(oper, container, cci, cache, 100);
             mutants = mutmods.Select(m => m.Mutant).ToList();
 
         }
@@ -92,7 +91,6 @@
 
             List<AssemblyNode> assemblyNodes = new AssemblyNode("", module)
             {
-                AssemblyPath = new FilePathAbsolute(filePath)
             }.InList();
 
 
@@ -159,15 +157,10 @@
             return null;
         }
 
-        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container, 
-            List<AssemblyNode> assemblyNodes,  MutantsCache cache, int numberOfMutants)
+        public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container,
+            ModuleSource ccii, MutantsCache cache, int numberOfMutants)
         {
             _log.Info("Copying modules...");
-            var ccii = new ModuleSource();
-            foreach (var assemblyNode in assemblyNodes)
-            {
-                ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
-            }
             ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
@@ -187,14 +180,9 @@
     
         }
         public static IEnumerable<MutantGroup> CreateMutantsLight(IMutationOperator operatorr, MutantsContainer container,
-            List<AssemblyNode> assemblyNodes, MutantsCache cache, int numberOfMutants)
+            ModuleSource ccii, MutantsCache cache, int numberOfMutants)
         {
             _log.Info("Copying modules...");
-            var ccii = new ModuleSource();
-            foreach (var assemblyNode in assemblyNodes)
-            {
-                ccii.AppendFromFile(assemblyNode.AssemblyPath.ToString());
-            }
             ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {

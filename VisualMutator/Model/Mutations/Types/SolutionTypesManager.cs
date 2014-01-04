@@ -204,7 +204,6 @@
                     IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
                    
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
-                    assemblyNode.AssemblyPath = assemblyPath;
 
                     GroupTypes(assemblyNode, "", ChooseTypes(module, constraints).ToList());
 
@@ -235,7 +234,6 @@
                     IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
 
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
-                    assemblyNode.AssemblyPath = assemblyPath;
 
                     GroupTypes(assemblyNode, "", ChooseTypes(module, null).ToList());
 

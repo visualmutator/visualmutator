@@ -126,8 +126,7 @@
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="True" />
-                            <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown"
-                                         Handler="trv_PreviewMouseRightButtonDown" />
+                           
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
@@ -142,8 +141,10 @@
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="True" />
-
+                            <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown"
+                                         Handler="trv_PreviewMouseRightButtonDown" />
                         </Style>
+                        
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
 
@@ -152,7 +153,7 @@
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
                         <TextBlock Text="{Binding DisplayedText}" />
                     </DockPanel>
-
+                  
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>

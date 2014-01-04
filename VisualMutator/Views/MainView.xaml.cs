@@ -40,15 +40,16 @@
 
         private void trv_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            var item = ((TreeViewItem) sender);
             var mutant = (Mutant)((TreeViewItem)sender).DataContext;
-            ((TreeViewItem)sender).IsSelected = true;
+            item.IsSelected = true;
             if (mutant.State == MutantResultState.Error)
             {
-                ((TreeViewItem)sender).ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
+                item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
             }
             else
             {
-                ((TreeViewItem)sender).ContextMenu = null;
+                item.ContextMenu = null;
                 Tree.ContextMenu = null;
             }
         }

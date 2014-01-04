@@ -35,5 +35,6 @@ namespace VisualMutator.Model
         public MutantsTestingOptions MutantsTestingOptions { get; set; }
         public MutantsCreationOptions MutantsCreationOptions { get; set; }
         public ICollection<TestId> SelectedTests { get; set; }
+        public List<string> AssembliesPaths { get; set; }
     }
 }
