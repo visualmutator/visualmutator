@@ -4,15 +4,19 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Windows.Forms;
     using Exceptions;
     using Infrastructure;
     using log4net;
     using Microsoft.Cci;
+    using Microsoft.Cci.Immutable;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
+    using GenericTypeInstanceReference = Microsoft.Cci.MutableCodeModel.GenericTypeInstanceReference;
 
     #endregion
 
@@ -25,36 +29,35 @@
 
         bool IsAssemblyLoadError { get; set; }
 
-        IEnumerable<DirectoryPathAbsolute> ProjectPaths { get; }
-    }
 
+        IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
+            ClassAndMethod constraints, out List<ClassAndMethod> coveredTests);
+    }
+    public static class Helpers
+    {
+        public static string GetTypeFullName(this INamespaceTypeReference t)
+        {
+            var nsPart = TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None);
+            var typePart = t.Name.Value + (t.MangleName ? "`"+t.GenericParameterCount : "");
+            return nsPart + "." + typePart;
+        }
+    }
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IModuleSource _moduleSource;
 
-        private readonly IHostEnviromentConnection _hostEnviroment;
 
-        private readonly IEnumerable<DirectoryPathAbsolute> _projectPaths;
 
-        public IEnumerable<DirectoryPathAbsolute> ProjectPaths
-        {
-            get
-            {
-                return _projectPaths;
-            }
-        }
+  
 
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
-            IModuleSource moduleSource,
-            IHostEnviromentConnection hostEnviroment)
+            IModuleSource moduleSource)
         {
             _moduleSource = moduleSource;
-            _hostEnviroment = hostEnviroment;
 
-            _projectPaths = _hostEnviroment.GetProjectPaths();
         }
 
 
@@ -76,13 +79,126 @@
 
             return loadedAssemblies;
         }
+        public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
+            ClassAndMethod constraints, out List<ClassAndMethod> coveredTests)
+        {
 
-        private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
+            var loadedAssemblies = LoadAssemblies(paths, constraints);
+            var root = new RootNode();
+            root.Children.AddRange(loadedAssemblies);
+            root.IsIncluded = true;
+
+            coveredTests = FindCoveredTests(loadedAssemblies.Select(a => a.AssemblyDefinition).ToList(), 
+                constraints);
+
+            return loadedAssemblies;
+        }
+        class V : CodeVisitor
+        {
+            private readonly ClassAndMethod _constraints;
+            private readonly HashSet<IMethodDefinition> _foundTests;
+
+            public HashSet<IMethodDefinition> FoundTests
+            {
+                get { return _foundTests; }
+            }
+
+            public V(ClassAndMethod constraints)
+            {
+                _constraints = constraints;
+                _foundTests = new HashSet<IMethodDefinition>();
+            }
+
+            public override void Visit(IMethodDefinition method)
+            {
+                CurrentTestMethod = method.Attributes.Any(a =>
+                {
+                    var t = (INamespaceTypeReference) a.Type;
+                    var typeName = t.GetTypeFullName();
+                   bool isTest = typeName
+                    == "NUnit.Framework.TestAttribute";
+                   
+                    return isTest;
+                }) ? method : null;
+
+                var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
+               // def.Gen
+                if (def != null && def.GetTypeFullName() == _constraints.ClassName
+                    && method.Name.Value == _constraints.MethodName)
+                {
+                    if (CurrentTestMethod != null)
+                    {
+                        IsChoiceError = true;
+                    }
+                }
+            }
+
+            public bool IsChoiceError { get; set; }
+
+            public IMethodDefinition CurrentTestMethod { get; set; }
+
+            public override void Visit(IMethodCall methodCall)
+            {
+                base.Visit(methodCall);
+                var conainingType = methodCall.MethodToCall.ContainingType as INamespaceTypeReference;
+                var genericInstance = methodCall.MethodToCall.ContainingType as GenericTypeInstanceReference;
+                if(genericInstance != null)
+                {
+                    conainingType = genericInstance.ResolvedType
+                        .CastTo<GenericTypeInstance>().GenericType as INamespaceTypeReference;
+                }
+                if (CurrentTestMethod != null && conainingType != null )
+                {
+                    var res = conainingType.ResolvedType;
+                    
+                    if (res.GetTypeFullName() == _constraints.ClassName 
+                           && _constraints.MethodName == methodCall.MethodToCall.Name.Value)
+                    {
+                        _foundTests.Add(CurrentTestMethod);
+                    }
+                }
+            }
+        }
+        private List<ClassAndMethod> FindCoveredTests(IList<IModule> loadedAssemblies, ClassAndMethod constraints)
+        {
+            return (from m in loadedAssemblies.SelectMany(m =>
+            {
+                var visitor = new V(constraints);
+
+                var traverser = new CodeTraverser {PreorderVisitor = visitor};
+
+                traverser.Traverse(m);
+                if(visitor.IsChoiceError)
+                {
+                    throw new TestWasSelectedToMutateException();
+                }
+                return visitor.FoundTests;
+            })
+                let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
+                where t != null
+                select new ClassAndMethod(
+                    TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
+                     + "." + t.Name.Value, m.Name.Value)).ToList();
+            //.Where(m => m.ContainingTypeDefinition is INamespaceTypeDefinition)
+            //   .Select(m => m.ContainingTypeDefinition.CastTo<INamespaceTypeDefinition>().Name.Value+"."+
+            //   m.Name.Value).ToList();
+
+
+/*
+            loadedAssemblies.Select(a => a.AssemblyDefinition).SelectMany(m => m.GetAllTypes())
+                .AsParallel().SelectMany(t => t.Methods).
+            foreach (var loadedAssembly in loadedAssemblies.Select(a => a.AssemblyDefinition))
+            {
+                
+            }*/
+        }
+
+        private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
+            ClassAndMethod constraints)
         {
             var assemblyTreeNodes = new List<AssemblyNode>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
             {
-                
                 try
                 {
                     IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
@@ -90,7 +206,38 @@
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
                     assemblyNode.AssemblyPath = assemblyPath;
 
-                    GroupTypes(assemblyNode, "", ChooseTypes(module).ToList());
+                    GroupTypes(assemblyNode, "", ChooseTypes(module, constraints).ToList());
+
+                    
+                    assemblyTreeNodes.Add(assemblyNode);
+
+                }
+                catch (AssemblyReadException e)
+                {
+                    _log.Info("ReadAssembly failed. ", e);
+                    IsAssemblyLoadError = true;
+                }
+                catch (Exception e)
+                {
+                    _log.Info("ReadAssembly failed. ", e);
+                    IsAssemblyLoadError = true;
+                }
+            } 
+            return assemblyTreeNodes;
+        }
+        private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
+        {
+            var assemblyTreeNodes = new List<AssemblyNode>();
+            foreach (FilePathAbsolute assemblyPath in assembliesPaths)
+            {
+                try
+                {
+                    IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
+
+                    var assemblyNode = new AssemblyNode(module.Name.Value, module);
+                    assemblyNode.AssemblyPath = assemblyPath;
+
+                    GroupTypes(assemblyNode, "", ChooseTypes(module, null).ToList());
 
 
                     assemblyTreeNodes.Add(assemblyNode);
@@ -110,10 +257,11 @@
             return assemblyTreeNodes;
         }
         //TODO: nessessary?
-        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module)
+        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module, ClassAndMethod constraints)
         {
             return module.GetAllTypes()
                 .OfType<INamespaceTypeDefinition>()
+                .Where(t => constraints==null || t.GetTypeFullName() == constraints.ClassName)
                 .Where(t => t.Name.Value != "<Module>")
                 .Where(t => !t.Name.Value.StartsWith("<>"));
 

@@ -4,6 +4,7 @@
 
     using System.Diagnostics;
     using System.Windows;
+    using UsefulTools.ExtensionMethods;
     using UsefulTools.Wpf;
 
     #endregion
@@ -20,6 +21,14 @@
             get
             {
                 return (TestNodeClass)Parent;
+            }
+        }
+        public string ContainingClassFullName
+        {
+            get
+            {
+                var p  =(TestNodeClass)Parent;
+                return p.Parent.CastTo<TestNodeNamespace>().Name + "." + p.Name;
             }
         }
         private string _message;

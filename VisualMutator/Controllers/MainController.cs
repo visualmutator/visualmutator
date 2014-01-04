@@ -188,7 +188,30 @@
                 _currenSessionController.RunMutationSession(choices);
             }
         }
+        public void RunMutationSessionForCurrentPosition()
+        {
+            ClassAndMethod classAndMethod;
+            if (_host.GetCurrentClassAndMethod(out classAndMethod) && classAndMethod.MethodName != null)
+            {
+                _log.Info("Showing mutation session window.");
+                Clean();
+                _currenSessionController = _sessionControllerFactory.Create();
+                var mutantsCreationController = _currenSessionController.MutantsCreationFactory.Create();
+                mutantsCreationController.Run2(classAndMethod);
+                if (mutantsCreationController.HasResults)
+                {
+                    MutationSessionChoices choices = mutantsCreationController.Result;
 
+                    _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
+
+                    Subscribe(_currenSessionController);
+
+                    _log.Info("Starting mutation session...");
+                    _currenSessionController.RunMutationSession(choices);
+                }
+            }
+            //throw new NotImplementedException();
+        }
         public void OnlyCreateMutants()
         {
             Clean();
@@ -276,14 +299,6 @@
             }
         }
 
-        public void RunMutationSessionForCurrentPosition()
-        {
-            ClassAndMethod classAndMethod;
-            if(_host.GetCurrentClassAndMethod(out classAndMethod))
-            {
-            
-            }
-            //throw new NotImplementedException();
-        }
+       
     }
 }

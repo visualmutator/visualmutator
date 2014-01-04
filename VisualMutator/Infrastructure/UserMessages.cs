@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Infrastructure
 {
+    using System;
     using UsefulTools.ExtensionMethods;
 
     public static class UserMessages
@@ -58,6 +59,11 @@ public static string ErrorPretest_Cancelled()
     return
 @"Testing was cancelled due to timeout.
 Do you want to continue mutation session?";
+}
+public static string ErrorBadMethodSelected()
+{
+    return
+        @"Method you selected to mutate is a test. You must select a non-test method.";
 }
        
     }

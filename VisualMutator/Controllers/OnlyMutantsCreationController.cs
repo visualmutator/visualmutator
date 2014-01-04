@@ -71,7 +71,7 @@
                             SelectedOperators =
                                 _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                                 .Where(oper => (bool) oper.IsIncluded).Select(n => n.Operator).ToList(),
-                            ProjectPaths = _typesManager.ProjectPaths.ToList(),
+                            ProjectPaths = _viewModel.ProjectPaths.ToList(),
                             Assemblies = _viewModel.TypesTreeMutate.Assemblies,
                             SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),
                             MutantsCreationOptions = _viewModel.MutantsCreation.Options,

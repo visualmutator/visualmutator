@@ -9,6 +9,7 @@
     using System.Linq;
     using System.Reactive.Subjects;
     using System.Reflection;
+    using System.Text.RegularExpressions;
     using System.Windows.Forms;
     using EnvDTE;
     using EnvDTE80;
@@ -153,24 +154,47 @@
                 if (codeElementAtTextPoint2 != null)
                 {
                     var cam = new ClassAndMethod();
-                    cam.ClassName = codeElementAtTextPoint2.FullName;
+                    cam.ClassName = ConvertClassName(codeElementAtTextPoint2.FullName);
+
+
+
                     CodeElement codeElementAtTextPoint = GetCodeElementAtTextPoint(vsCMElement.vsCMElementFunction,
                   _dte.ActiveDocument.ProjectItem.FileCodeModel.CodeElements, objCursorTextPoint);
                     if (codeElementAtTextPoint != null)
                     {
 
-                        cam.MethodName = codeElementAtTextPoint.FullName;
+                        cam.MethodName = codeElementAtTextPoint.Name;
                        // var s = codeElementAtTextPoint.Children.
                     }
                     classAndMethod = cam;
-                    Trace.WriteLine(codeElementAtTextPoint2.FullName);
+                    Trace.WriteLine(codeElementAtTextPoint2.FullName + " converted to " + cam.ClassName);
                     return true;
                 }
-              
+                
             }
             return false;
            
         }
+
+        private string ConvertClassName(string className)
+        {
+            if(className.EndsWith(">"))
+            {
+                var r = new Regex(@"[\w\d]+<(\w+,?)+>");
+                Match match = r.Match(className);
+                if (match.Success)
+                {
+                    var capturesCount = match.Groups[1].Captures.Cast<Capture>().Count();
+                    return new Regex(@"<.+>").Replace(className, "") + "`" + capturesCount;
+                }
+                else
+                {
+                    return className;
+                }
+            }
+            return className;
+        }
+
         private CodeElement GetCodeElementAtTextPoint(vsCMElement eRequestedCodeElementKind, 
             CodeElements colCodeElements, TextPoint objTextPoint)
         {

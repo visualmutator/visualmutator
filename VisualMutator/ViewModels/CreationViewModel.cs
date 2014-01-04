@@ -2,7 +2,9 @@
 {
     #region
 
+    using System.Collections.Generic;
     using UsefulTools.Core;
+    using UsefulTools.Paths;
     using UsefulTools.Wpf;
 
     #endregion
@@ -24,7 +26,11 @@
             MutantsCreation = mutantsCreation;
 
         }
-
+        public List<DirectoryPathAbsolute> ProjectPaths
+        {
+            get;
+            set;
+        }
         private MutationsTreeViewModel _mutationsTree;
 
         public MutationsTreeViewModel MutationsTree

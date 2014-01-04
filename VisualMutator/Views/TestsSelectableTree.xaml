@@ -43,13 +43,13 @@
         <TreeView ItemsSource="{Binding Namespaces}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="False" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                 </Style>
             </TreeView.ItemContainerStyle>
         </TreeView>
 
         <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding Namespaces, Converter={Converters:EmptyToVisibleConverter}}" />
+                               Visibility="{Binding Namespaces, Converter={Converters:NullToVisibilityConverter}}" />
 
     </Grid>
 </UserControl>
