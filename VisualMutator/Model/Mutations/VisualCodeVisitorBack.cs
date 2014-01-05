@@ -9,6 +9,7 @@
     using System.Reflection;
     using log4net;
     using Microsoft.Cci;
+    using Model.Mutations;
     using UsefulTools.ExtensionMethods;
 
     #endregion
@@ -19,15 +20,15 @@
         private readonly ICollection<MutationTarget> _mutationTargets;//TODO: remove, its ambigius with base class field of the same name
         private readonly List<MutationTarget> _sharedTargets;
         //List of objects found in this model tree corresponding to mutation targets
-        private readonly List<Tuple<object, MutationTarget>> _targetAstObjects;
-        private readonly List<object> _sharedAstObjects;
+        private List<AstNode> _targetAstObjects;
+        private List<AstNode> _sharedAstObjects;
 
-        public List<object> SharedAstObjects
+        public List<AstNode> SharedAstObjects
         {
             get { return _sharedAstObjects; }
         }
 
-        public List<Tuple<object, MutationTarget>> TargetAstObjects
+        public List<AstNode> TargetAstObjects
         {
             get { return _targetAstObjects; }
         }
@@ -38,8 +39,8 @@
         {
             _mutationTargets = mutationTargets;
             _sharedTargets = sharedTargets;
-            _targetAstObjects = new List<Tuple<object, MutationTarget>>();
-            _sharedAstObjects = new List<object>();
+            _targetAstObjects = new List<AstNode>();
+            _sharedAstObjects = new List<AstNode>();
         }
 
 
@@ -47,42 +48,17 @@
         {
             base.Process(obj);
          //   _log.Debug("Process back: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " : " + obj.GetHashCode());
-            //Are we processing an object corresponding to any mutation target?
-            var target = _mutationTargets.SingleOrDefault(t => t.CounterValue == TreeObjectsCounter);
             
-        //    _log.Debug("Creating pair: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " <===> " + target);
-            if (target != null)
-            {
-                _targetAstObjects.Add(Tuple.Create(obj, target));
-            }
-            
-            if (_sharedTargets.Any(t => t.CounterValue == TreeObjectsCounter))
-            {
-                _sharedAstObjects.Add(obj);
-            }
+        
             return false;
         }
 
 
         public override void PostProcess()
         {
-            foreach (var mutationTarget in _mutationTargets)
-            {
-                if (mutationTarget.ModuleName == _traversedModule.Name.Value)
-                {
-                    //TODO: do better. now they can be null for changeless mutant
-                    if (mutationTarget.VariantObjectsIndices != null && AllAstObjects != null)
-                    {
-                        mutationTarget.Variant.AstObjects = mutationTarget.VariantObjectsIndices
-                        .MapValues((key, val) => AllAstObjects[val]);
-                        if (!AllAstObjects.ContainsKey(mutationTarget.MethodIndex))
-                        {
-                            Debugger.Break();
-                        }
-                        mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[mutationTarget.MethodIndex];
-                    }
-                }
-            }
+            _targetAstObjects = _mutationTargets.Select(Processor.PostProcessBack).ToList();
+            _sharedAstObjects = _sharedTargets.Select(Processor.PostProcessBack).ToList();
+           
         }
     }
 }

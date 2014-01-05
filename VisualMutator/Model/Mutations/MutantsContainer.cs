@@ -112,7 +112,7 @@
             var sw = new Stopwatch();
 
 
-            var operatorsWithTargets = new List<OperatorWithTargets>();
+            var operatorsWithTargets = new List<ExecutedOperator>();
             foreach (var oper in operators)
             {
                 var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
@@ -123,7 +123,6 @@
 
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
-                operatorsWithTargets.Add(operatorResult);
                 IEnumerable<MutationTarget> mutations = LimitMutationTargets(operatorResult.MutationTargets);
                 var groupedTargets = mutations.ToLookup(target => target.GroupName);
                 //subProgress.Initialize(targets.MutationTargets.Count);
@@ -140,15 +139,18 @@
                     group.UpdateDisplayedText();
                     //subProgress.Progress();
                 }
-
+                operatorsWithTargets.Add(executedOperator);
                 executedOperator.UpdateDisplayedText();
                 mutantsGroupedByOperators.Add(executedOperator);
-                executedOperator.Parent = root;
-                root.Children.Add(executedOperator);
+                //executedOperator.Parent = root;
+                //root.Children.Add(executedOperator);
 
                 percentCompleted.Progress();
             }
-       
+
+           // var classes = operatorsWithTargets.
+
+
             root.State = MutantResultState.Untested;
 
             return mutantsGroupedByOperators;

@@ -1,13 +1,18 @@
 ﻿namespace VisualMutator.Extensibility
 {
     using System.Collections.Generic;
+    using Model.Mutations;
 
     public class MutationVariant
     {
         private readonly string _signature;
         private readonly string _additionalInfo;
         private IDictionary<string, object> _astObjects;
-
+        public IDictionary<string, AstDescriptor> ObjectsIndices
+        {
+            get;
+            set;
+        }
         public string Signature
         {
             get { return _signature; }

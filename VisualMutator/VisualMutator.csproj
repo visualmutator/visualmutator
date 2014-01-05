@@ -248,6 +248,11 @@
     <Compile Include="Model\ClassAndMethod.cs" />
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
+    <Compile Include="Model\Mutations\AstNode.cs" />
+    <Compile Include="Model\Mutations\AstProcessor.cs" />
+    <Compile Include="Model\Mutations\HighestVisitor.cs" />
+    <Compile Include="Model\Mutations\MutationTarget.cs" />
+    <Compile Include="Model\Mutations\ProcessingContext.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriter.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriterBase.cs" />
     <Compile Include="Model\Mutations\VisualCodeTraverser.cs" />

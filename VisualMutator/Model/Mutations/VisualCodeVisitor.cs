@@ -9,6 +9,7 @@
     using System.Reflection;
     using log4net;
     using Microsoft.Cci;
+    using Model.Mutations;
     using UsefulTools.ExtensionMethods;
 
     #endregion
@@ -16,16 +17,24 @@
     public class VisualCodeVisitor : VisualCodeVisitorBase, IVisualCodeVisitor
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        protected int TreeObjectsCounter { get; set; }
-        private object _currentObj;
-        protected readonly IDictionary<object, int> AllAstIndices;
-        protected readonly IDictionary<int, object> AllAstObjects; 
+
+       
+       
+
         private readonly List<MutationTarget> _mutationTargets;
         private readonly List<MutationTarget> _sharedTargets;
-        private IMethodDefinition _currentMethod;
+        //private IMethodDefinition _currentMethod;
         private readonly AstFormatter _formatter;
         protected IModule _traversedModule;
         private int groupCounter;
+        private IMethodDefinition _currentMethodObj;
+        private readonly AstProcessor _processor;
+
+        public AstProcessor Processor
+        {
+            get { return _processor; }
+        }
+
         public AstFormatter Formatter
         {
             get { return _formatter; }
@@ -34,35 +43,38 @@
         public VisualCodeVisitor(IOperatorCodeVisitor visitor, IModule module):base(visitor)
         {
             visitor.Parent = this;
-            _traversedModule = module;
+            _processor = new AstProcessor(module);
+            
             _mutationTargets = new List<MutationTarget>();
             _sharedTargets = new List<MutationTarget>();
-            AllAstIndices = new Dictionary<object, int>();
-            AllAstObjects = new Dictionary<int, object>();
+           
             _formatter = new AstFormatter();
         }
         // Stores information about object in code model tree
         // All objects are processed. Any object can be processed more than once if is in class hierarchy
         protected override bool Process(object obj)
         {
-            TreeObjectsCounter++;
-            _currentObj = obj;
-            if (!AllAstIndices.ContainsKey(obj))
-            {
-                if (obj is IMethodDefinition)
-                {
-                //    Debugger.Break();
-                }
-                AllAstIndices.Add(obj, TreeObjectsCounter);
-                AllAstObjects.Add(TreeObjectsCounter, obj);
-            }
+            _processor.Process(obj);
+           
             visitor.VisitAny(obj);
             return true;
         }
+        public void MethodEnter(IMethodDefinition method)
+        {
+            _processor.MethodEnter(method);
+            _currentMethodObj = method;
+        }
 
+        public void MethodExit(IMethodDefinition method)
+        {
+            _processor.MethodExit(method);
+            _currentMethodObj = null;
+        }
+
+       
         public void MarkMutationTarget<T>(T obj, IList<MutationVariant> variants )
         {
-            if (!ReferenceEquals(_currentObj, obj))
+            if (!_processor.IsCurrentlyProcessed(obj))
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
@@ -73,22 +85,17 @@
                 var mutationTarget = new MutationTarget(mutationVariant)
                 {
                     Name = mutationVariant.Signature,
-                    CounterValue = TreeObjectsCounter,
-                    CallTypeName = typeof(T).Name,
-                    ModuleName = _traversedModule.Name.Value,
+                    ProcessingContext = _processor.CreateProcessingContext<T>(),
                     GroupName = groupname,
                 };
 
-                if (_currentMethod != null)
+                if (mutationTarget.ProcessingContext.Method != null)
                 {
-                    mutationTarget.MethodRaw = _currentMethod;
+                    mutationTarget.MethodRaw = (IMethodDefinition) mutationTarget.ProcessingContext.Method.Object;
                 }
-
+                
                 _mutationTargets.Add(mutationTarget);
             }
-            //new Lookup<>
-            
-           // _mutationTargets.Add(Tuple.Create(groupname, targets));
         }
 
 
@@ -96,45 +103,11 @@
         {
             foreach (var mutationTarget in _mutationTargets)
             {
-                //just unspecialize all stored objects
-                mutationTarget.Variant.AstObjects = mutationTarget.Variant.AstObjects
-                    .ToDictionary(pair => pair.Key, pair => Unspecialize(pair.Value));
-
-                if (mutationTarget.Variant.AstObjects.Values.Any(v => !AllAstIndices.ContainsKey(v)))
-                {
-                    Debugger.Break();
-                }
-                //translate objects to their indices that identify them
-                mutationTarget.VariantObjectsIndices = mutationTarget.Variant
-                    .AstObjects.MapValues((key, val) => AllAstIndices[val]);
-                mutationTarget.MethodIndex = AllAstIndices[mutationTarget.MethodRaw];
+                _processor.PostProcess(mutationTarget);
             }
         }
 
-        private object Unspecialize(object value)
-        {
-            var methodDefinition = value as IMethodDefinition;
-            if(methodDefinition != null)
-            {
-                return MemberHelper.UninstantiateAndUnspecialize(methodDefinition);
-            }
-            var fieldDefinition = value as IFieldDefinition;
-            if (fieldDefinition != null)
-            {
-                return MemberHelper.Unspecialize(fieldDefinition);
-            }
-            var eventDefinition = value as IEventDefinition;
-            if (eventDefinition != null)
-            {
-                return MemberHelper.Unspecialize(eventDefinition);
-            }
-            var fieldReference = value as IFieldReference;
-            if (fieldReference != null)
-            {
-                return MemberHelper.Unspecialize(fieldReference);
-            }
-            return value;
-        }
+       
 
         public void MarkSharedTarget<T>(T o)
         {
@@ -142,30 +115,20 @@
                 new MutationVariant("", new Dictionary<string, object>()))
                                  {
                                      Name = o.GetType().Name, 
-                                     CounterValue = TreeObjectsCounter,
-                                     CallTypeName = "",
+                                     ProcessingContext = _processor.CreateProcessingContext<T>(),
                                  };
 
             _sharedTargets.Add(mutationTarget);
         }
 
-        public void MethodEnter(IMethodDefinition method)
-        {
-            _currentMethod = method;
-        }
-
-        public void MethodExit(IMethodDefinition method)
-        {
-            _currentMethod = null;
-        }
-
+     
 
 
         public IMethodDefinition CurrentMethod
         {
             get
             {
-                return _currentMethod;
+                return _currentMethodObj;
             }
         }
         public List<MutationTarget> MutationTargets

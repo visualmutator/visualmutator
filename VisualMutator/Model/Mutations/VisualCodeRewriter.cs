@@ -23,12 +23,12 @@
         /// <summary>
         /// Collection of objects to be processed. Contains only objects that were not processed yet.
         /// </summary>
-        private List<Tuple<object, MutationTarget>> _capturedASTObjects;
+        private List<AstNode> _capturedASTObjects;
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly List<object> _sharedASTObjects;
+        private readonly List<AstNode> _sharedASTObjects;
         private readonly IList<TypeIdentifier> _allowedTypes;
        
         private readonly IOperatorCodeRewriter _rewriter;
@@ -40,8 +40,8 @@
         }
 
         public VisualCodeRewriter(IMetadataHost host, 
-                                List<Tuple<object, MutationTarget>> capturedAstObjects, 
-                                List<object> sharedAstObjects, 
+                                List<AstNode> capturedAstObjects,
+                                List<AstNode> sharedAstObjects, 
                                 IList<TypeIdentifier> allowedTypes, 
                                 IOperatorCodeRewriter rewriter)
             : base(host, rewriter)
@@ -66,18 +66,18 @@
         {
             string typeName = typeof(T).Name;
             //We are checking if it is the same object (of course) and if 
-            var newList = _capturedASTObjects.WhereNot(t => t.Item1 == obj).ToList();
+            var newList = _capturedASTObjects.WhereNot(t => t.Object == obj).ToList();
             if (newList.Count < _capturedASTObjects.Count)
             {
                 _log.Debug("Found object: " + Formatter.Format(obj));
             }
-            newList = _capturedASTObjects.WhereNot(t => t.Item1 == obj && t.Item2.CallTypeName == typeName).ToList();
+            newList = _capturedASTObjects.WhereNot(t => t.Object == obj && t.Context.CallTypeName == typeName).ToList();
             if (newList.Count < _capturedASTObjects.Count)
             {
                 _capturedASTObjects = newList;
                 return true;
             }
-            return _sharedASTObjects.Contains(obj);
+            return _sharedASTObjects.Any(x => x.Object == obj);
        
         }
 

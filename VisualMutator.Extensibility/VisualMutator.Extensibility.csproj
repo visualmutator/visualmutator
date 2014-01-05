@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
+    <Compile Include="AstDescriptor.cs" />
     <Compile Include="AstFormatter.cs" />
     <Compile Include="InvokInfo.cs" />
     <Compile Include="MutationVariant.cs" />
@@ -163,7 +164,6 @@
     <Compile Include="MethodIdentifier.cs" />
     <Compile Include="Interfaces\IMutationOperator.cs" />
     <Compile Include="Interfaces\IOperatorsPackage.cs" />
-    <Compile Include="MutationTarget.cs" />
     <Compile Include="Traversing\OperatorCodeRewriter.cs" />
     <Compile Include="Traversing\OperatorCodeVisitor.cs" />
     <Compile Include="OperatorInfo.cs" />
