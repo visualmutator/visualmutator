@@ -11,18 +11,20 @@
     using Extensibility;
     using log4net;
     using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
     using MutantsTree;
     using Operators;
     using Types;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
+    using Assembly = Microsoft.Cci.MutableCodeModel.Assembly;
 
     #endregion
 
     public interface IMutantsContainer
     {
-        void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes);
+        void Initialize(MutantsCreationOptions options, MutationFilter filter);
 
        
         Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator);
@@ -31,10 +33,9 @@
 
         ModulesProvider ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, ModuleSource moduleSource);
 
-        MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies, IList<TypeIdentifier> toList);
+        MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies);
 
-        List<ExecutedOperator> InitMutantsForOperators(ICollection<IMutationOperator> operators,
-                                                                           ICollection<TypeIdentifier> allowedTypes, ModulesProvider originalModules, ProgressCounter percentCompleted);
+        List<ExecutedOperator> InitMutantsForOperators(ICollection<IMutationOperator> operators, ModulesProvider originalModules, ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -51,8 +52,8 @@
         }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IList<TypeIdentifier> _allowedTypes;
         private MutantsCreationOptions _options;
+        private MutationFilter _filter;
 
         public MutantsContainer(IModuleSource cci, 
             IOperatorUtils operatorUtils
@@ -64,10 +65,10 @@
 
         }
 
-        public void Initialize(MutantsCreationOptions options, IList<TypeIdentifier> allowedTypes)
+        public void Initialize(MutantsCreationOptions options, MutationFilter filter)
         {
             _options = options;
-            _allowedTypes = allowedTypes;
+            _filter = filter;
         }
 
         public Mutant CreateEquivalentMutant(out ExecutedOperator executedOperator)
@@ -97,7 +98,7 @@
 
 
         public List<ExecutedOperator> InitMutantsForOperators(ICollection<IMutationOperator> operators,
-            ICollection<TypeIdentifier> allowedTypes, ModulesProvider originalModules, ProgressCounter percentCompleted)
+            ModulesProvider originalModules, ProgressCounter percentCompleted)
         {
             var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
@@ -119,7 +120,7 @@
 
                 sw.Restart();
 
-                OperatorWithTargets operatorResult = FindTargets(oper, originalModules.Assemblies, allowedTypes.ToList());
+                OperatorWithTargets operatorResult = FindTargets(oper, originalModules.Assemblies);
 
                 executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
 
@@ -166,8 +167,7 @@
         }
 
 
-        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules, 
-            IList<TypeIdentifier> allowedTypes)
+        public OperatorWithTargets FindTargets(IMutationOperator mutOperator, IList<IModule> modules)
         {
             _log.Info("Finding targets for mutation operator: " + mutOperator.Info);
 
@@ -184,8 +184,8 @@
                 foreach (var module in modules)
                 {
                     var visitor = new VisualCodeVisitor(operatorVisitor, module);
- 
-                    var traverser = new VisualCodeTraverser(allowedTypes, visitor);
+
+                    var traverser = new VisualCodeTraverser(_filter, visitor);
                   
                     traverser.Traverse(module);
                     visitor.PostProcess();
@@ -218,26 +218,27 @@
 
         }
 
-        public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, ModuleSource moduleSource)
+        public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
+            ModuleSource moduleSource)
         {
-            IList<TypeIdentifier> allowedTypes = _allowedTypes;
             try
             {
-                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. Allowed types: " + allowedTypes.Count);
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
               //  var cci = new ModuleSource();
-                var mutatedModules = new List<IModule>();
+                var mutatedModules = new List<Assembly>();
+                var oldVersions = new Dictionary<Version, Version>();
                 foreach (var module in moduleSource.Modules)
                 {
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
                         mutant.CommonTargets, module);
-                    var traverser2 = new VisualCodeTraverser(allowedTypes, visitorBack);
+                    var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
                     traverser2.Traverse(module);
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutant.ExecutedOperator.Operator.CreateRewriter();
 
-                    var rewriter = new VisualCodeRewriter(_cci.Host, visitorBack.TargetAstObjects, 
-                        visitorBack.SharedAstObjects, allowedTypes, operatorCodeRewriter);
+                    var rewriter = new VisualCodeRewriter(_cci.Host, visitorBack.TargetAstObjects,
+                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
@@ -249,10 +250,27 @@
 
                     operatorCodeRewriter.Initialize();
 
-                    IModule rewrittenModule = rewriter.Rewrite(module);
+                    Assembly rewrittenModule = (Assembly) rewriter.Rewrite(module);
+                    var oldver = rewrittenModule.Version;
+                    
+                  //  rewrittenModule.Version = new Version(rewrittenModule.Version.Major, rewrittenModule.Version.Minor,
+                  //      rewrittenModule.Version.Build, new Random().Next(int.MaxValue));
                     mutatedModules.Add(rewrittenModule);
+                 //   oldVersions.Add(oldver, rewrittenModule.Version);
                 }
-                return new ModulesProvider(mutatedModules);
+              /*  foreach (var m in mutatedModules)
+                {
+                    foreach (AssemblyReference refe in m.AssemblyReferences)
+                    {
+                        if(oldVersions.ContainsKey(refe.Version))
+                        {
+                            refe.Version = oldVersions[refe.Version];
+                        }
+                    }
+                    var s = m.AssemblyReferences.Select(a => a.AssemblyIdentity.ToString());
+                    _log.Debug(s);
+                }*/
+                return new ModulesProvider(mutatedModules.Cast<IModule>().ToList());
             }
             catch (Exception e)
             {

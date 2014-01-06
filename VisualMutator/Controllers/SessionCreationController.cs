@@ -35,7 +35,7 @@
                     Assemblies = _viewModel.TypesTreeMutate.Assemblies,
                     AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                     ProjectPaths = _viewModel.ProjectPaths.ToList(),
-                    SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),
+                    Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                     SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.Namespaces),
                     MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                     MutantsTestingOptions = _viewModel.MutantsTesting.Options,

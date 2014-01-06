@@ -89,6 +89,7 @@
         {
             bool loadError;
             var originalFilesList = _fileManager.CopyOriginalFiles(out loadError);
+            var originalFilesListForTests = _fileManager.CopyOriginalFiles(out loadError);
             if (loadError)
             {
                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
@@ -105,22 +106,26 @@
             var t = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList, classAndMethod,
                 out coveredTests).CastTo<object>());
             var task = Task.Run(() => _testsContainer.LoadTests(
-                originalFilesList.AsStrings()).ToList().CastTo<object>());
+                originalFilesListForTests.AsStrings()).ToList().CastTo<object>());
 
             Task.WhenAll(t, task).ContinueWith( 
                 (Task<object[]> result) =>
                 {
                     if(result.Exception!= null)
                     {
-                        if(result.Exception.Flatten().InnerException is TestWasSelectedToMutateException)
+                        _svc.Threading.PostOnGui(() =>
                         {
-                            _svc.Logging.ShowError(UserMessages.ErrorBadMethodSelected(), _viewModel.View);
-                        }
-                        else
-                        {
-                            _svc.Logging.ShowError(result.Exception, _viewModel.View);
-                        }
-                        _viewModel.Close();
+                            if (result.Exception.Flatten().InnerException is TestWasSelectedToMutateException)
+                            {
+                                _svc.Logging.ShowError(UserMessages.ErrorBadMethodSelected(), _viewModel.View);
+                            }
+                            else
+                            {
+                                _svc.Logging.ShowError(result.Exception, _viewModel.View);
+                            }
+                            _viewModel.Close();
+                        });
+                        
                     }
                     else
                     {

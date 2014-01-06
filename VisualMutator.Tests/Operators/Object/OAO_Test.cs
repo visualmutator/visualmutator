@@ -34,7 +34,7 @@
 
         #endregion
 
-     String _assemblyPath = @"D:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
+    // String _assemblyPath = @"D:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa\bin\Debug\Dsa.dll";
         [Test]
         public void MutationSuccess()
         {
@@ -57,11 +57,11 @@ namespace Ns
        //     new Conditional().;
         //    MutationTests.DebugTraverse(code);
            
-            
+           // MutationTests.DsaPath
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutationsFromFile(_assemblyPath, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
+            MutationTests.RunMutationsFromFile(code, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
 
          
 

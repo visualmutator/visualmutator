@@ -29,6 +29,8 @@
         /// 
         /// </summary>
         private readonly List<AstNode> _sharedASTObjects;
+
+        private readonly MutationFilter _filter;
         private readonly IList<TypeIdentifier> _allowedTypes;
        
         private readonly IOperatorCodeRewriter _rewriter;
@@ -42,13 +44,13 @@
         public VisualCodeRewriter(IMetadataHost host, 
                                 List<AstNode> capturedAstObjects,
                                 List<AstNode> sharedAstObjects, 
-                                IList<TypeIdentifier> allowedTypes, 
+                                MutationFilter filter, 
                                 IOperatorCodeRewriter rewriter)
             : base(host, rewriter)
         {
             _capturedASTObjects = capturedAstObjects;
             _sharedASTObjects = sharedAstObjects;
-            _allowedTypes = allowedTypes;
+            _filter = filter;
             _rewriter = rewriter;
         //    _rewriter.Parent = this;
             _formatter = new AstFormatter();
@@ -88,7 +90,7 @@
         public override void RewriteChildren(NamespaceTypeDefinition namespaceTypeDefinition)
         {
 
-            if (_allowedTypes.Count == 0 || _allowedTypes.Contains(new TypeIdentifier(namespaceTypeDefinition)))
+            if (_filter.Matches(namespaceTypeDefinition))
             {
                 base.RewriteChildren(namespaceTypeDefinition);
             }

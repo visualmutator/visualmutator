@@ -56,8 +56,12 @@
 
         public override void PostProcess()
         {
-            _targetAstObjects = _mutationTargets.Select(Processor.PostProcessBack).ToList();
-            _sharedAstObjects = _sharedTargets.Select(Processor.PostProcessBack).ToList();
+            _targetAstObjects = _mutationTargets
+                .Where(t => t.ProcessingContext != null && t.ProcessingContext.ModuleName == Processor.ModuleName)
+                .Select(Processor.PostProcessBack).ToList();
+            _sharedAstObjects = _sharedTargets
+                .Where(t => t.ProcessingContext != null && t.ProcessingContext.ModuleName == Processor.ModuleName)
+                .Select(Processor.PostProcessBack).ToList();
            
         }
     }

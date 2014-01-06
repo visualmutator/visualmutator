@@ -9,6 +9,7 @@
     using System.Reflection;
     using System.Windows.Forms;
     using Exceptions;
+    using Extensibility;
     using Infrastructure;
     using log4net;
     using Microsoft.Cci;
@@ -25,13 +26,14 @@
 
         IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths);
 
-        LoadedTypes GetIncludedTypes(IEnumerable<AssemblyNode> assemblies);
-
+     
         bool IsAssemblyLoadError { get; set; }
 
 
         IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
             ClassAndMethod constraints, out List<ClassAndMethod> coveredTests);
+
+        MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies);
     }
     public static class Helpers
     {
@@ -60,14 +62,16 @@
 
         }
 
-
-        public LoadedTypes GetIncludedTypes(IEnumerable<AssemblyNode> assemblies)
+        public MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies)
         {
-            var types = assemblies
-                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly:true)
-                .Cast<TypeNode>().Select(type=>type.TypeDefinition).ToList();
-            return new LoadedTypes(types);
+            var methods = assemblies
+                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
+                .Cast<MethodNode>().Select(type => type.MethodDefinition).ToList();
+            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
+       
+
+     
        
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths)
         {
@@ -205,7 +209,7 @@
                    
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
-                    GroupTypes(assemblyNode, "", ChooseTypes(module, constraints).ToList());
+                    GroupTypes(assemblyNode, "", ChooseTypes(module, constraints).ToList(), constraints);
 
                     
                     assemblyTreeNodes.Add(assemblyNode);
@@ -213,12 +217,12 @@
                 }
                 catch (AssemblyReadException e)
                 {
-                    _log.Info("ReadAssembly failed. ", e);
+                    _log.Error("ReadAssembly failed. ", e);
                     IsAssemblyLoadError = true;
                 }
                 catch (Exception e)
                 {
-                    _log.Info("ReadAssembly failed. ", e);
+                    _log.Error("ReadAssembly failed. ", e);
                     IsAssemblyLoadError = true;
                 }
             } 
@@ -235,7 +239,7 @@
 
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
-                    GroupTypes(assemblyNode, "", ChooseTypes(module, null).ToList());
+                    GroupTypes(assemblyNode, "", ChooseTypes(module, null).ToList() );
 
 
                     assemblyTreeNodes.Add(assemblyNode);
@@ -243,12 +247,12 @@
                 }
                 catch (AssemblyReadException e)
                 {
-                    _log.Info("ReadAssembly failed. ", e);
+                    _log.Error("ReadAssembly failed. ", e);
                     IsAssemblyLoadError = true;
                 }
                 catch (Exception e)
                 {
-                    _log.Info("ReadAssembly failed. ", e);
+                    _log.Error("ReadAssembly failed. ", e);
                     IsAssemblyLoadError = true;
                 }
             }
@@ -265,7 +269,8 @@
 
         }
 
-        public void GroupTypes(CheckedNode parent, string currentNamespace, ICollection<INamespaceTypeDefinition> types)
+        public void GroupTypes(CheckedNode parent, string currentNamespace, ICollection<INamespaceTypeDefinition> types,
+            ClassAndMethod constraints = null)
         {
             var groupsByNamespaces = types
                 .Where(t => t.ContainingNamespace.Name.Value != currentNamespace)
@@ -283,20 +288,28 @@
             {
                 var singleGroup = groupsByNamespaces.Single();
                 parent.Name = ConcatNamespace(parent.Name, singleGroup.Key);
-                GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup.ToList());
+                GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup.ToList(), constraints);
             }
             else
             {
                 foreach (var typesGroup in groupsByNamespaces)
                 {
                     var node = new TypeNamespaceNode(parent, typesGroup.Key);
-                    GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup.ToList());
+                    GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup.ToList(), constraints);
                     parent.Children.Add(node);
                 }
 
                 foreach (INamespaceTypeDefinition typeDefinition in leafTypes)
                 {
-                    parent.Children.Add(new TypeNode(parent, typeDefinition.Name.Value, typeDefinition));
+                    var type = new TypeNode(parent, typeDefinition.Name.Value, typeDefinition);
+                    foreach (var method in typeDefinition.Methods)
+                    {
+                        if (constraints == null || constraints.MethodName == method.Name.Value)
+                        {
+                            type.Children.Add(new MethodNode(type, method.Name.Value, method));
+                        }
+                    }
+                    parent.Children.Add(type);
                   
                 }
             }

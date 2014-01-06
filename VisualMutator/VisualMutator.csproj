@@ -162,17 +162,34 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.Extensions.NamedScope.3.0.0.5\lib\net45-full\Ninject.Extensions.NamedScope.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core">
-      <HintPath>..\packages\NUnit-core-2.6.2\nunit.core.dll</HintPath>
+    <Reference Include="nunit">
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.exe</HintPath>
     </Reference>
-    <Reference Include="nunit.core.interfaces">
-      <HintPath>..\packages\NUnit-core-2.6.2\nunit.core.interfaces.dll</HintPath>
+    <Reference Include="nunit-agent, Version=2.6.3.13283, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit-agent.exe</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit-console">
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit-console.exe</HintPath>
     </Reference>
-    <Reference Include="nunit.util">
-      <HintPath>..\packages\NUnit-core-2.6.2\nunit.util.dll</HintPath>
+    <Reference Include="nunit-console-runner">
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\lib\nunit-console-runner.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core, Version=2.6.2.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces, Version=2.6.2.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.core.interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util, Version=2.6.2.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.util.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -251,6 +268,7 @@
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />
+    <Compile Include="Model\Mutations\MutationFilter.cs" />
     <Compile Include="Model\Mutations\MutationTarget.cs" />
     <Compile Include="Model\Mutations\ProcessingContext.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriter.cs" />
@@ -288,6 +306,7 @@
     <Compile Include="Model\Tests\Custom\DefaultTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\ITestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\TestingProcessExtensionOptions.cs" />
+    <Compile Include="Model\Tests\MyTestResult.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />

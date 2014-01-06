@@ -14,8 +14,8 @@
         protected readonly IList<AstNode> AllNodes;
         private AstNode _currentNode;
         private AstNode _currentMethod;
-        private AstDescriptor _currentType;
-        private IModule _traversedModule;
+        private AstNode _currentType;
+        private readonly IModule _traversedModule;
         protected int TreeObjectsCounter { get; set; }
 
         public AstProcessor(IModule module)
@@ -36,9 +36,10 @@
             if (!AllAstIndices.ContainsKey(obj))
             {
                 AllAstIndices.Add(obj, GetDescriptorForCurrent());
-                AllAstObjects.Add(GetDescriptorForCurrent(), obj);
-                AllNodes.Add(_currentNode);
+               
             }
+            AllAstObjects.Add(GetDescriptorForCurrent(), obj);
+            AllNodes.Add(_currentNode);
         }
         public void MethodEnter(IMethodDefinition method)
         {
@@ -49,7 +50,15 @@
         {
             _currentMethod = null;
         }
+        public void TypeEnter(INamespaceTypeDefinition namespaceTypeDefinition)
+        {
+            _currentType = new AstNode(_currentNode.Context, namespaceTypeDefinition);
+        }
 
+        public void TypeExit(INamespaceTypeDefinition namespaceTypeDefinition)
+        {
+            _currentType = null;
+        }
         public AstDescriptor GetDescriptorForCurrent()
         {
             return _currentNode.Context.Descriptor;
@@ -69,11 +78,23 @@
 
         public AstNode PostProcessBack(MutationTarget mutationTarget)
         {
+            if( mutationTarget.ProcessingContext.ModuleName != _traversedModule.Name.Value)
+            {
+                return null;
+            }
             //Are we processing an object corresponding to any mutation target?
         //    var target = _mutationTargets.SingleOrDefault(t => t.CounterValue == TreeObjectsCounter);
-
-            var node = new AstNode(mutationTarget.ProcessingContext, 
-                AllAstObjects[mutationTarget.ProcessingContext.Descriptor]);
+            AstNode node;
+            if(mutationTarget.ProcessingContext != null)
+            {
+                node = new AstNode(mutationTarget.ProcessingContext,
+                    AllAstObjects[mutationTarget.ProcessingContext.Descriptor]);
+            }
+            else
+            {
+                node = new AstNode(new ProcessingContext(), new AstDescriptor());
+            }
+            
             //    _log.Debug("Creating pair: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " <===> " + target);
          /*   if (target != null)
             {
@@ -85,7 +106,7 @@
                 _sharedAstObjects.Add(obj);
             }
               */
-            if (mutationTarget.ProcessingContext.ModuleName == _traversedModule.Name.Value)
+            if (mutationTarget.ProcessingContext != null && mutationTarget.ProcessingContext.ModuleName == _traversedModule.Name.Value)
             {
                 //TODO: do better. now they can be null for changeless mutant
                 if (mutationTarget.Variant.ObjectsIndices != null && AllAstObjects != null)
@@ -93,12 +114,19 @@
                     mutationTarget.Variant.AstObjects = mutationTarget.Variant.ObjectsIndices
                     .MapValues((key, val) => AllAstObjects[val]);
                     
-                    mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[new AstDescriptor(mutationTarget.MethodIndex)];
+                    mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[
+                        mutationTarget.ProcessingContext.Method.Context.Descriptor];
                 }
             }
               return node;
         }
-
+        public string ModuleName
+        {
+            get
+            {
+                return _traversedModule.Name.Value;
+            }
+        }
         private object Unspecialize(object value)
         {
             var methodDefinition = value as IMethodDefinition;
@@ -128,13 +156,14 @@
         {
             return new ProcessingContext()
                    {
-                       Descriptor = GetDescriptorForCurrent(),
+                       Descriptor = new AstDescriptor(TreeObjectsCounter),
                        Method = _currentMethod,
                        Type = _currentType,
                        CallTypeName = typeof(T).Name,
                        ModuleName = _traversedModule.Name.Value,
-                    
                    };
         }
+
+       
     }
 }

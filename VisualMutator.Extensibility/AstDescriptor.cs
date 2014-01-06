@@ -35,5 +35,10 @@
         {
             return !Equals(left, right);
         }
+
+        public override string ToString()
+        {
+            return string.Format("Index: {0}", _index);
+        }
     }
 }

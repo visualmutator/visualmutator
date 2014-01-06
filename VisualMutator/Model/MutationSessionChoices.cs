@@ -6,8 +6,8 @@ namespace VisualMutator.Model
     using System.Collections.ObjectModel;
     using Extensibility;
     using Microsoft.Cci;
+    using Mutations;
     using Mutations.Types;
-    using NUnit.Framework.Constraints;
     using Tests;
     using UsefulTools.Paths;
 
@@ -20,16 +20,18 @@ namespace VisualMutator.Model
         SelectedOperators = new List<IMutationOperator>();
             Assemblies = new List<AssemblyNode>();
             ProjectPaths = new List<DirectoryPathAbsolute>();
-            SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>());
+           // SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>());
             MutantsTestingOptions= new MutantsTestingOptions();
             MutantsCreationOptions= new MutantsCreationOptions();
             SelectedTests = new Collection<TestId>();
+            Filter = MutationFilter.AllowAll();
         }
 
         public IList<IMutationOperator> SelectedOperators { get; set; }
         public IList<AssemblyNode> Assemblies { get; set; }
         public IList<DirectoryPathAbsolute> ProjectPaths { get; set; }
-        public LoadedTypes SelectedTypes { get; set; }
+        //public LoadedTypes SelectedTypes { get; set; }
+        public MutationFilter Filter { get; set; }
         //only valid when creating mutants on disk
         public string MutantsCreationFolderPath { get; set; }
         public MutantsTestingOptions MutantsTestingOptions { get; set; }

@@ -149,23 +149,23 @@
 
             _svc.Threading.ScheduleAsync(() =>
             {
-                var allowedTypes = choices.SelectedTypes.GetIdentifiers();
 
                 _currentSession = new MutationTestingSession
                 {
                     OriginalAssemblies = choices.Assemblies,
-                    SelectedTypes = allowedTypes,
+                    Filter = choices.Filter,
                     Choices = choices,
                 };
                 _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes);
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, choices.Filter);
 
                 ExecutedOperator oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-                StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+                StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment,
+                    changelessMutant);
                
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
@@ -247,15 +247,14 @@
                     throw new NoTestsSelectedException();
                 }
 
-                var allowedTypes = choices.SelectedTypes.GetIdentifiers();
                 _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, allowedTypes );
+                _mutantsContainer.Initialize(choices.MutantsCreationOptions, choices.Filter);
 
                 _currentSession = new MutationTestingSession
                 {
                     OriginalAssemblies = choices.Assemblies,
-                    SelectedTypes = allowedTypes,
+                    Filter = choices.Filter,
                     Choices = choices,
                 };
 
@@ -360,8 +359,10 @@
             _svc.Threading.ScheduleAsync(
             () =>
             {
-                var executedOperators = _mutantsContainer.InitMutantsForOperators(_currentSession.Choices.SelectedOperators,
-                    _currentSession.SelectedTypes, new ModulesProvider(_currentSession.OriginalAssemblies.Select(_ => _.AssemblyDefinition).ToList()), counter);
+                var executedOperators = _mutantsContainer.InitMutantsForOperators(
+                    _currentSession.Choices.SelectedOperators,
+                     new ModulesProvider(_currentSession.OriginalAssemblies
+                         .Select(_ => _.AssemblyDefinition).ToList()), counter);
                 _currentSession.MutantsGroupedByOperators = executedOperators;
             },
             () =>
@@ -408,6 +409,8 @@
 
                 try
                 {
+                    //todo:
+                    _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
                     var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
 
                     if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)

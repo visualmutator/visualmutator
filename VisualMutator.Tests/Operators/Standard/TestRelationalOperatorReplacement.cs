@@ -171,18 +171,11 @@ namespace Ns
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
-            List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
-            {
-                new AssemblyNode("", cci.AppendFromFile(MutationTests.DsaPath))
-                {
-                    AssemblyPath = new FilePathAbsolute(MutationTests.DsaPath)
-                },
-            };
-            var original = new ModulesProvider(cci.Modules);
+            cci.AppendFromFile(MutationTests.DsaPath);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
+            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, cci, cache, 500).ToList();
 
             var groupsBad = groups
                 .Where(g => g.Mutants.Select(m => m.ToString()).Distinct().Count() != g.Mutants.Count()).ToList();
@@ -211,7 +204,7 @@ namespace Ns
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, assemblyNodes, cache, 500).ToList();
+            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, cci, cache, 500).ToList();
             var mutants = groups.SelectMany(g=>g.Mutants).ToList();
 
             foreach (Mutant mutant in mutants)

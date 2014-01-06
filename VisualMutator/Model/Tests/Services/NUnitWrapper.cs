@@ -5,9 +5,11 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Security.AccessControl;
+    using System.Threading;
     using System.Threading.Tasks;
     using log4net;
     using NUnit.Core;
@@ -16,6 +18,7 @@
     using NUnit.Util;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
     using UsefulTools.Threading;
 
     #endregion
@@ -50,7 +53,7 @@
         private readonly IMessageService _messageService;
         private readonly IDispatcherExecute _execute;
 
-        private readonly RemoteTestRunner _testRunner;
+        private TestRunner _testRunner;
       //  private TestLoader _testLoader;
 
         private readonly ISubject<ITest> _testLoaded;
@@ -65,11 +68,11 @@
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private TestFilter _nameFilter;//nullable
-        private CustomEventListener listener;
+        private MyRecordingListener listener;
 
         public CustomEventListener Listener
         {
-            get { return listener; }
+            get { return null; }
         }
 
         public TestFilter NameFilter
@@ -85,18 +88,18 @@
             InternalTrace.Initialize("nunit-visual-mutator.log", InternalTraceLevel.Verbose);
          
             CoreExtensions.Host.InitializeService();
-//            ServiceManager.Services.AddService(new SettingsService());
-//            ServiceManager.Services.AddService(new DomainManager());
-//            ServiceManager.Services.AddService(new RecentFilesService());
-//            ServiceManager.Services.AddService(new ProjectService());
-//            ServiceManager.Services.AddService(new AddinRegistry());
-//            ServiceManager.Services.AddService(new AddinManager());
-//            ServiceManager.Services.AddService(new TestAgency());
+            ServiceManager.Services.AddService(new SettingsService());
+            ServiceManager.Services.AddService(new DomainManager());
+            ServiceManager.Services.AddService(new RecentFilesService());
+            ServiceManager.Services.AddService(new ProjectService());
+            ServiceManager.Services.AddService(new AddinRegistry());
+            ServiceManager.Services.AddService(new AddinManager());
+            ServiceManager.Services.AddService(new TestAgency());
 
            // _testLoader = new TestLoader();
-            _testRunner = new RemoteTestRunner();
+            _testRunner = new TestDomain();
             _testRunner.Unload();
-
+            
             /*
             _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")
                // .Where(e => e.EventArgs.Test != null)
@@ -145,8 +148,8 @@
 
             _testLoadFailed = new Subject<Exception>();
             _testLoaded = new Subject<ITest>();
-            _runFinished = new Subject<TestResult>();
-            _testFinished = new Subject<TestResult>();
+            _runFinished = new ReplaySubject<TestResult>();
+            _testFinished = new ReplaySubject<TestResult>();
         }
 
         private void HandleException(Exception e)
@@ -159,6 +162,9 @@
 
             try
             {
+                //Assembly.
+               // _testRunner = new TestDomain();
+
                 var package = new TestPackage("", assemblies.ToList());
                 package.Settings["RuntimeFramework"] = new RuntimeFramework(RuntimeType.Net, Environment.Version);
                 package.Settings["UseThreadedRunner"] = false;
@@ -243,32 +249,54 @@
                 var taskCompletion = new TaskCompletionSource<TestResult>();
 
 
-                 listener = new CustomEventListener();
-                listener.RunFinishedNormally.Subscribe(result =>
-                {
-                    /*IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(result.Results)
-                               .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
+                 listener = new MyRecordingListener();
 
-                    foreach (var t in selectManyRecursive)
+
+                 /*   listener.RunFinishedNormally.Subscribe(result =>
                     {
-                        _testFinished.OnNext(t);
-                    }
-                    _testFinished.OnCompleted();
-                    _runFinished.OnNext(result);
-                    _runFinished.OnCompleted();
+                        IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(result.Results)
+                                   .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
+
+                        foreach (var t in selectManyRecursive)
+                        {
+                            _testFinished.OnNext(t);
+                        }
+                        _testFinished.OnCompleted();
+                        _runFinished.OnNext(result);
+                        _runFinished.OnCompleted();
+                    
+                        taskCompletion.SetResult(result);
+                    },
+                    exc =>
+                    {
+                        _runFinished.OnError(exc);
+                        taskCompletion.TrySetException(exc);
+                    });
                     */
-                    taskCompletion.SetResult(result);
-                },
-                exc =>
-                {
-                    _runFinished.OnError(exc);
-                    taskCompletion.TrySetException(exc);
-                });
-
-              //  _nameFilter = new EmptyFilter();
+                 //  _nameFilter = new EmptyFilter();
                 _testRunner.BeginRun(listener, _nameFilter, true, LoggingThreshold.All);
+                new Thread(() =>
+                {
+                    TestDomain d = (TestDomain) _testRunner;
+                    d.Wait();
+                    if(_testRunner.TestResult.Results != null)
+                    {
+                        var leafs = _testRunner.TestResult.Results.Cast<TestResult>()
+                            .SelectManyRecursive(t => t.Results == null ? new List<TestResult>() :
+                                t.Results.Cast<TestResult>(), leafsOnly: true);
+                        foreach (var t in leafs)
+                        {
+                            _testFinished.OnNext(t);
+                        }
+                        _testFinished.OnCompleted();
+                        _runFinished.OnNext(_testRunner.TestResult);
+                        _runFinished.OnCompleted();
+                    }
+                    taskCompletion.SetResult(null);
 
-
+                }).Start();
+             //    Task.Run();
+                
                 return taskCompletion.Task;
             });
             
@@ -279,8 +307,43 @@
 
         public void UnloadProject()
         {
+            FilePathAbsolute path = null;
+            if (_testRunner.Test != null)
+            {
+                TestAssemblyInfo firstOrDefault = _testRunner.AssemblyInfo.Cast<TestAssemblyInfo>().FirstOrDefault();
+                if(firstOrDefault != null)
+                {
+                    try
+                    {
+                        path = new FilePathAbsolute(firstOrDefault.Name);
+
+                        
+                            
+                            
+                    }
+                    catch (Exception e)
+                    {
+                        _log.Warn(e);
+                        //Console.WriteLine(e);
+                    }
+
+                }
+            }
             _testRunner.Unload();
-           // _testLoader.UnloadProject();
+            _testRunner.Dispose();
+            try
+            {
+                if (path != null)
+                {
+                    Directory.Delete(path.ParentDirectoryPath.ToString(), recursive: true);
+                }
+            }
+            catch (Exception e)
+            {
+                _log.Warn(e);
+            }
+           // _testLoader.UnloadProject()
+            ;
         }
 
         public IObservable<TestResult> RunFinished
@@ -326,6 +389,7 @@
                 return true;
             }
         }
+        [Serializable]
         private class IDTestFilter : TestFilter
         {
            	private readonly ArrayList testNames = new ArrayList();
@@ -353,6 +417,7 @@
                 return false;
             }
         }
+
 
         public class CustomEventListener : EventListener
         {
@@ -430,5 +495,55 @@
                // _log.Info("SuiteFinished: " + result.Name + " - " + result.IsSuccess);
             }
         }
+
+        [Serializable]
+        public class MyRecordingListener : EventListener
+        {
+         
+            public List<TestResult> finishedTests = new List<TestResult>();
+
+            public List<TestResult> FinishedTests
+            {
+                get { return finishedTests; }
+            }
+
+            public void RunStarted(string name, int testCount)
+            {
+            }
+
+            public void RunFinished(NUnit.Core.TestResult result)
+            {
+            }
+
+            public void RunFinished(Exception exception)
+            {
+            }
+
+            public void TestStarted(TestName testName)
+            {
+            }
+
+            public void TestFinished(TestResult result)
+            {
+                finishedTests.Add(result);
+            }
+
+            public void SuiteStarted(TestName suiteName)
+            {
+            }
+
+            public void SuiteFinished(TestResult result)
+            {
+            }
+
+            public void UnhandledException(Exception exception)
+            {
+            }
+
+            public void TestOutput(TestOutput testOutput)
+            {
+            }
+        }
+
     }
 }

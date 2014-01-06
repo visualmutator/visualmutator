@@ -14,7 +14,7 @@
         public void MarkMutationTarget<T>(T obj)
         {
 
-            Parent.MarkMutationTarget(obj, new List<MutationVariant>());
+            Parent.MarkMutationTarget(obj, new List<MutationVariant>(){new MutationVariant()});
         }
 
         public void MarkMutationTarget<T>(T obj, List<string> passesInfo, string groupInfo = "")

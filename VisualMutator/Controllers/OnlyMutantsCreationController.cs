@@ -74,7 +74,7 @@
                             ProjectPaths = _viewModel.ProjectPaths.ToList(),
                             Assemblies = _viewModel.TypesTreeMutate.Assemblies,
                             AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
-                            SelectedTypes = _typesManager.GetIncludedTypes(_viewModel.TypesTreeMutate.Assemblies),
+                            Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                             MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                             MutantsCreationFolderPath = _viewModel.MutantsFolderPath,
                         };

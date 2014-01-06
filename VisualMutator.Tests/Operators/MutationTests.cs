@@ -54,7 +54,7 @@
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
-
+            cache.WhiteCache.Initialize(new[]{filePath});
             IModule module = cci.AppendFromFile(filePath);
 
             original = new ModulesProvider(cci.Modules);
@@ -84,7 +84,7 @@
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
-
+            cache.WhiteCache.Initialize(new[] { filePath });
             IModule module = cci.AppendFromFile(filePath);
 
             var original = new ModulesProvider(cci.Modules);
@@ -168,10 +168,9 @@
             };
          
 
-            var allowedTypes = new List<TypeIdentifier>();
-            container.Initialize(mutantsCreationOptions, allowedTypes);
+            container.Initialize(mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
+            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), 
                                                                           copiedModules, ProgressCounter.Inactive());
 
             return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants)
@@ -190,10 +189,9 @@
             };
 
 
-            var allowedTypes = new List<TypeIdentifier>();
-            container.Initialize(mutantsCreationOptions, allowedTypes);
+            container.Initialize(mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), new List<TypeIdentifier>(),
+            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), 
                                                                           copiedModules, ProgressCounter.Inactive());
             return executedOperators.Single().MutantGroups;
            

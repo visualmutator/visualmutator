@@ -25,7 +25,6 @@
         private readonly List<MutationTarget> _sharedTargets;
         //private IMethodDefinition _currentMethod;
         private readonly AstFormatter _formatter;
-        protected IModule _traversedModule;
         private int groupCounter;
         private IMethodDefinition _currentMethodObj;
         private readonly AstProcessor _processor;
@@ -39,7 +38,7 @@
         {
             get { return _formatter; }
         }
-
+       
         public VisualCodeVisitor(IOperatorCodeVisitor visitor, IModule module):base(visitor)
         {
             visitor.Parent = this;
@@ -70,8 +69,14 @@
             _processor.MethodExit(method);
             _currentMethodObj = null;
         }
-
-       
+        public void TypeEnter(INamespaceTypeDefinition namespaceTypeDefinition)
+        {
+            _processor.TypeEnter(namespaceTypeDefinition);
+        }
+        public void TypeExit(INamespaceTypeDefinition namespaceTypeDefinition)
+        {
+            _processor.TypeExit(namespaceTypeDefinition);
+        }
         public void MarkMutationTarget<T>(T obj, IList<MutationVariant> variants )
         {
             if (!_processor.IsCurrentlyProcessed(obj))

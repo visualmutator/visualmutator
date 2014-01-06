@@ -29,7 +29,16 @@
 
             </HierarchicalDataTemplate>
 
-            <DataTemplate DataType="{x:Type Types:TypeNode}">
+            <HierarchicalDataTemplate DataType="{x:Type Types:TypeNode}" ItemsSource="{Binding Path=Children}">
+                <DockPanel>
+                    <Image Source="Resources/type.png" />
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
+                    <TextBlock Text="{Binding Name}" />
+                </DockPanel>
+
+            </HierarchicalDataTemplate>
+            
+            <DataTemplate DataType="{x:Type Types:MethodNode}">
                 <DockPanel>
                     <Image Source="Resources/type.png" />
                     <CheckBox IsChecked="{Binding IsIncluded}" />

@@ -66,7 +66,6 @@ namespace Ns
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
-               
             }
 
 

@@ -27,6 +27,8 @@
 
         private bool _currentRunCancelled;
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private IDisposable _subscription;
+        private IDisposable _subscriptionRun;
 
 
         public NUnitTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
@@ -110,9 +112,13 @@
 
             var list = new List<TestNodeMethod>();
 
+           
+
             var sw = new Stopwatch();
             sw.Start();
             Task<TestResult> runTests = TestLoader.RunTests();
+
+
             return runTests.ContinueWith(testResult =>
             {
                 if(testResult.Exception != null)
@@ -122,27 +128,37 @@
                 }
                 else
                 {
-                    TestLoader.Listener.TestFinished1.Subscribe(result =>
+                    _subscription = TestLoader.TestFinished.Subscribe(result =>
                     {
                         TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.FullName];
                         node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
-                        node.Message = result.Message;
+                        node.Message = result.Message + "\n" + result.StackTrace;
                         list.Add(node);
-                    });
-                  /*  IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(testResult.Result.Results)
-                                 .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
-
-                    foreach (var result in selectManyRecursive)
+                    }, () =>
                     {
-                        if(mutantTestSession.TestMap.ContainsKey(result.Test.TestName.FullName))
-                        {
-                            TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.FullName];
-                            node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
-                            node.Message = result.Message;
-                            list.Add(node);
-                        }
+
                         
-                    }*/
+                    });
+                  //  _subscription.Dispose();
+                    /*  _subscriptionRun = TestLoader.RunFinished.Subscribe(result =>
+                     {
+                         _subscription.Dispose();
+                         _subscriptionRun.Dispose();
+                     });
+                    IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(testResult.Result.Results)
+                                  .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
+
+                     foreach (var result in selectManyRecursive)
+                     {
+                         if(mutantTestSession.TestMap.ContainsKey(result.Test.TestName.FullName))
+                         {
+                             TestNodeMethod node = mutantTestSession.TestMap[result.Test.TestName.FullName];
+                             node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
+                             node.Message = result.Message;
+                             list.Add(node);
+                         }
+                        
+                     }*/
                     sw.Stop();
                     mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
                     return list;
