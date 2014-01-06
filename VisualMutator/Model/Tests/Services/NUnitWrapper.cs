@@ -288,9 +288,9 @@
                         {
                             _testFinished.OnNext(t);
                         }
-                        _testFinished.OnCompleted();
+                       // _testFinished.OnCompleted();
                         _runFinished.OnNext(_testRunner.TestResult);
-                        _runFinished.OnCompleted();
+                       // _runFinished.OnCompleted();
                     }
                     taskCompletion.SetResult(null);
 

@@ -139,7 +139,7 @@
 
                         
                     });
-                  //  _subscription.Dispose();
+                    _subscription.Dispose();
                     /*  _subscriptionRun = TestLoader.RunFinished.Subscribe(result =>
                      {
                          _subscription.Dispose();
