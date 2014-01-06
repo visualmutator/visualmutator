@@ -66,7 +66,7 @@
         {
             var methods = assemblies
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
-                .Cast<MethodNode>().Select(type => type.MethodDefinition).ToList();
+                .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
             return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
        
@@ -198,7 +198,7 @@
         }
 
         private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
-            ClassAndMethod constraints)
+            ClassAndMethod constraints = null)
         {
             var assemblyTreeNodes = new List<AssemblyNode>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
@@ -228,38 +228,9 @@
             } 
             return assemblyTreeNodes;
         }
-        private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
-        {
-            var assemblyTreeNodes = new List<AssemblyNode>();
-            foreach (FilePathAbsolute assemblyPath in assembliesPaths)
-            {
-                try
-                {
-                    IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
-
-                    var assemblyNode = new AssemblyNode(module.Name.Value, module);
-
-                    GroupTypes(assemblyNode, "", ChooseTypes(module, null).ToList() );
-
-
-                    assemblyTreeNodes.Add(assemblyNode);
-
-                }
-                catch (AssemblyReadException e)
-                {
-                    _log.Error("ReadAssembly failed. ", e);
-                    IsAssemblyLoadError = true;
-                }
-                catch (Exception e)
-                {
-                    _log.Error("ReadAssembly failed. ", e);
-                    IsAssemblyLoadError = true;
-                }
-            }
-            return assemblyTreeNodes;
-        }
+    
         //TODO: nessessary?
-        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module, ClassAndMethod constraints)
+        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module, ClassAndMethod constraints = null)
         {
             return module.GetAllTypes()
                 .OfType<INamespaceTypeDefinition>()

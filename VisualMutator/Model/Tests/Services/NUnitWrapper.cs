@@ -195,7 +195,10 @@
 
         public void Cancel()
         {
-            _testRunner.CancelRun();
+            if (_testRunner.Running)
+            {
+                _testRunner.CancelRun();
+            }
            // _testLoader.CancelTestRun();
         }
 

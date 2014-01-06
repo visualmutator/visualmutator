@@ -78,9 +78,6 @@
                 _viewModel.OperationsState == OperationsState.Finished)
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
-
-
-
             _viewModel.CommandTest = new SmartCommand(Test);
 
         }
@@ -222,17 +219,8 @@
             if (onlyMutantsController.HasResults)
             {
                 MutationSessionChoices choices = onlyMutantsController.Result;
-
-                
-
                 _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
-                
-
-                
                 Subscribe(_currenSessionController);
-
-
-              
 
                 _currenSessionController.OnlyCreateMutants(choices);
             }
@@ -278,8 +266,10 @@
         private void Clean()
         {
             _viewModel.Clean();
-
-          //  _mutantDetailsController.Clean();
+            if (_currenSessionController != null)
+            {
+                _currenSessionController.MutantDetailsController.Clean();
+            }
             if (_subscriptions!=null)
             {
                 foreach (var subscription in _subscriptions)

@@ -30,7 +30,6 @@
             MutationScore = "";
             OperationsState = OperationsState.None;
             OperationsStateDescription = "";
-           
         }
 
         private OperationsState _operationsState;

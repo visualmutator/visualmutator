@@ -215,10 +215,12 @@
 
             bool loadError;
             var originalFilesList = _fileManager.CopyOriginalFiles(out loadError);
+            var originalFilesListForTests = _fileManager.CopyOriginalFiles(out loadError);
             if (loadError)
             {
                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
             }
+            _viewModel.ProjectPaths = _hostEnviroment.GetProjectPaths().ToList();
 
             _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
                 packages => _viewModel.MutationsTree.MutationPackages 
@@ -228,14 +230,14 @@
                 assemblies =>
                 {
                     _viewModel.TypesTreeMutate.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
-
+                    _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.AsStrings().ToList();
                     if (_typesManager.IsAssemblyLoadError)
                     {
                         _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(),  _viewModel.View);
                     }
                 });
             _svc.Threading.ScheduleAsync(() => _testsContainer.LoadTests(
-                originalFilesList.AsStrings()),
+                originalFilesListForTests.AsStrings()),
                tests =>
                {
                    _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests.ToList());
