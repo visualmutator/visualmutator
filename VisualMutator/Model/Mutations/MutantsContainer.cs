@@ -15,6 +15,7 @@
     using MutantsTree;
     using Operators;
     using Types;
+    using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
@@ -189,6 +190,10 @@
                   
                     traverser.Traverse(module);
                     visitor.PostProcess();
+
+
+                  //  var assemblyNode = BuildMutantsTree(module, visitor.MutationTargets, visitor.SharedTargets);
+
                     mergedTargets.AddRange(visitor.MutationTargets);
                     commonTargets.AddRange(visitor.SharedTargets);
                 }
@@ -215,6 +220,62 @@
                 }
             }
             
+
+        }
+
+        private AssemblyNode BuildMutantsTree(IModule module, List<MutationTarget> mutationTargets, List<MutationTarget> sharedTargets)
+        {
+
+            int[] id = { 1 };
+            Func<int> genId = () => id[0]++;
+
+
+            var assemblyNode = new AssemblyNode(module.Name.Value, module);
+
+
+            System.Action<CheckedNode, List<MutationTarget>> typeNodeCreator = (parent, targets) =>
+                {
+
+                    foreach (var byTypeGrouping in targets.GroupBy(t => t.TypeName))
+                    {
+                        var type = new TypeNode(parent, byTypeGrouping.Key);
+                        parent.Children.Add(type);
+
+                        var groupedByMethodTargets = byTypeGrouping.GroupBy(target => target.MethodRaw.Name.Value);
+                        foreach (var byMethodGrouping in groupedByMethodTargets.OrderBy(g => g.Key))
+                        {
+                            var md = byMethodGrouping.First().MethodRaw;
+                            var method = new MethodNode(type, md.Name.Value, md, true);
+                            type.Children.Add(method);
+
+                            var groupedTargets = byMethodGrouping.GroupBy(target => target.GroupName);
+                            foreach (var byGroupGrouping in groupedTargets.OrderBy(g => g.Key))
+                            {
+                                var group = new MutantGroup(byGroupGrouping.Key, method);
+                                method.Children.Add(group);
+                                foreach (var mutationTarget in byGroupGrouping)
+                                {
+                                    var mutant = new Mutant(genId().ToString(), group, mutationTarget, sharedTargets);
+                                    group.Children.Add(mutant);
+
+                                }
+                                group.UpdateDisplayedText();
+                            }
+                        }
+                        
+
+                    }
+                    
+                };
+            Func<MutationTarget, string> namespaceExtractor = target => target.NamespaceName;
+            Func<MutationTarget, string> nameExtractor = target => target.TypeName;
+
+            new NamespaceGrouper().
+                GroupTypes2(assemblyNode, "", namespaceExtractor, nameExtractor, typeNodeCreator, mutationTargets);
+
+
+            return assemblyNode;
+
 
         }
 

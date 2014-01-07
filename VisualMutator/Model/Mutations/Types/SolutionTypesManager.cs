@@ -97,72 +97,7 @@
 
             return loadedAssemblies;
         }
-        class V : CodeVisitor
-        {
-            private readonly ClassAndMethod _constraints;
-            private readonly HashSet<IMethodDefinition> _foundTests;
-
-            public HashSet<IMethodDefinition> FoundTests
-            {
-                get { return _foundTests; }
-            }
-
-            public V(ClassAndMethod constraints)
-            {
-                _constraints = constraints;
-                _foundTests = new HashSet<IMethodDefinition>();
-            }
-
-            public override void Visit(IMethodDefinition method)
-            {
-                CurrentTestMethod = method.Attributes.Any(a =>
-                {
-                    var t = (INamespaceTypeReference) a.Type;
-                    var typeName = t.GetTypeFullName();
-                   bool isTest = typeName
-                    == "NUnit.Framework.TestAttribute";
-                   
-                    return isTest;
-                }) ? method : null;
-
-                var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
-               // def.Gen
-                if (def != null && def.GetTypeFullName() == _constraints.ClassName
-                    && method.Name.Value == _constraints.MethodName)
-                {
-                    if (CurrentTestMethod != null)
-                    {
-                        IsChoiceError = true;
-                    }
-                }
-            }
-
-            public bool IsChoiceError { get; set; }
-
-            public IMethodDefinition CurrentTestMethod { get; set; }
-
-            public override void Visit(IMethodCall methodCall)
-            {
-                base.Visit(methodCall);
-                var conainingType = methodCall.MethodToCall.ContainingType as INamespaceTypeReference;
-                var genericInstance = methodCall.MethodToCall.ContainingType as GenericTypeInstanceReference;
-                if(genericInstance != null)
-                {
-                    conainingType = genericInstance.ResolvedType
-                        .CastTo<GenericTypeInstance>().GenericType as INamespaceTypeReference;
-                }
-                if (CurrentTestMethod != null && conainingType != null )
-                {
-                    var res = conainingType.ResolvedType;
-                    
-                    if (res.GetTypeFullName() == _constraints.ClassName 
-                           && _constraints.MethodName == methodCall.MethodToCall.Name.Value)
-                    {
-                        _foundTests.Add(CurrentTestMethod);
-                    }
-                }
-            }
-        }
+      
         private List<ClassAndMethod> FindCoveredTests(IList<IModule> loadedAssemblies, ClassAndMethod constraints)
         {
             return (from m in loadedAssemblies.SelectMany(m =>
@@ -183,18 +118,7 @@
                 select new ClassAndMethod(
                     TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
                      + "." + t.Name.Value, m.Name.Value)).ToList();
-            //.Where(m => m.ContainingTypeDefinition is INamespaceTypeDefinition)
-            //   .Select(m => m.ContainingTypeDefinition.CastTo<INamespaceTypeDefinition>().Name.Value+"."+
-            //   m.Name.Value).ToList();
-
-
-/*
-            loadedAssemblies.Select(a => a.AssemblyDefinition).SelectMany(m => m.GetAllTypes())
-                .AsParallel().SelectMany(t => t.Methods).
-            foreach (var loadedAssembly in loadedAssemblies.Select(a => a.AssemblyDefinition))
-            {
-                
-            }*/
+ 
         }
 
         private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
@@ -209,7 +133,30 @@
                    
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
-                    GroupTypes(assemblyNode, "", ChooseTypes(module, constraints).ToList(), constraints);
+                    System.Action<CheckedNode, List<INamespaceTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
+                    {
+                        foreach (INamespaceTypeDefinition typeDefinition in leafTypes)
+                        {
+                            var type = new TypeNode(parent, typeDefinition.Name.Value);
+                            foreach (var method in typeDefinition.Methods)
+                            {
+                                if (constraints == null || constraints.MethodName == method.Name.Value)
+                                {
+                                    type.Children.Add(new MethodNode(type, method.Name.Value, method, false));
+                                }
+                            }
+
+                            parent.Children.Add(type);
+
+                        }
+                    };
+                    Func<INamespaceTypeDefinition, string> namespaceExtractor = typeDef => 
+                        typeDef.ContainingUnitNamespace.Name.Value;
+                    Func<INamespaceTypeDefinition, string> nameExtractor = typeDef =>
+                       typeDef.Name.Value;
+                    new NamespaceGrouper().
+                        GroupTypes2(assemblyNode, "", namespaceExtractor, nameExtractor, typeNodeCreator,
+                            ChooseTypes(module, constraints).ToList());
 
                     
                     assemblyTreeNodes.Add(assemblyNode);
@@ -240,72 +187,83 @@
 
         }
 
-        public void GroupTypes(CheckedNode parent, string currentNamespace, ICollection<INamespaceTypeDefinition> types,
-            ClassAndMethod constraints = null)
+        class V : CodeVisitor
         {
-            var groupsByNamespaces = types
-                .Where(t => t.ContainingNamespace.Name.Value != currentNamespace)
-                .OrderBy(t => t.ContainingNamespace.Name.Value)
-                .GroupBy(t => ExtractNextNamespacePart(t.ContainingNamespace.Name.Value, currentNamespace))
-                .ToList();
+            private readonly ClassAndMethod _constraints;
+            private readonly HashSet<IMethodDefinition> _foundTests;
 
-            var leafTypes = types
-                .Where(t => t.ContainingNamespace.Name.Value == currentNamespace)
-                .OrderBy(t => t.Name.Value)
-                .ToList();
-
-            // Maybe we can merge namespace nodes:
-            if (currentNamespace != "" && groupsByNamespaces.Count == 1 && !leafTypes.Any())
+            public HashSet<IMethodDefinition> FoundTests
             {
-                var singleGroup = groupsByNamespaces.Single();
-                parent.Name = ConcatNamespace(parent.Name, singleGroup.Key);
-                GroupTypes(parent, ConcatNamespace(currentNamespace, singleGroup.Key), singleGroup.ToList(), constraints);
-            }
-            else
-            {
-                foreach (var typesGroup in groupsByNamespaces)
+                get
                 {
-                    var node = new TypeNamespaceNode(parent, typesGroup.Key);
-                    GroupTypes(node, ConcatNamespace(currentNamespace, typesGroup.Key), typesGroup.ToList(), constraints);
-                    parent.Children.Add(node);
+                    return _foundTests;
                 }
+            }
 
-                foreach (INamespaceTypeDefinition typeDefinition in leafTypes)
+            public V(ClassAndMethod constraints)
+            {
+                _constraints = constraints;
+                _foundTests = new HashSet<IMethodDefinition>();
+            }
+
+            public override void Visit(IMethodDefinition method)
+            {
+                CurrentTestMethod = method.Attributes.Any(a =>
                 {
-                    var type = new TypeNode(parent, typeDefinition.Name.Value, typeDefinition);
-                    foreach (var method in typeDefinition.Methods)
+                    var t = (INamespaceTypeReference)a.Type;
+                    var typeName = t.GetTypeFullName();
+                    bool isTest = typeName
+                     == "NUnit.Framework.TestAttribute";
+
+                    return isTest;
+                }) ? method : null;
+
+                var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
+                // def.Gen
+                if (def != null && def.GetTypeFullName() == _constraints.ClassName
+                    && method.Name.Value == _constraints.MethodName)
+                {
+                    if (CurrentTestMethod != null)
                     {
-                        if (constraints == null || constraints.MethodName == method.Name.Value)
-                        {
-                            type.Children.Add(new MethodNode(type, method.Name.Value, method));
-                        }
+                        IsChoiceError = true;
                     }
-                    parent.Children.Add(type);
-                  
+                }
+            }
+
+            public bool IsChoiceError
+            {
+                get;
+                set;
+            }
+
+            public IMethodDefinition CurrentTestMethod
+            {
+                get;
+                set;
+            }
+
+            public override void Visit(IMethodCall methodCall)
+            {
+                base.Visit(methodCall);
+                var conainingType = methodCall.MethodToCall.ContainingType as INamespaceTypeReference;
+                var genericInstance = methodCall.MethodToCall.ContainingType as GenericTypeInstanceReference;
+                if (genericInstance != null)
+                {
+                    conainingType = genericInstance.ResolvedType
+                        .CastTo<GenericTypeInstance>().GenericType as INamespaceTypeReference;
+                }
+                if (CurrentTestMethod != null && conainingType != null)
+                {
+                    var res = conainingType.ResolvedType;
+
+                    if (res.GetTypeFullName() == _constraints.ClassName
+                           && _constraints.MethodName == methodCall.MethodToCall.Name.Value)
+                    {
+                        _foundTests.Add(CurrentTestMethod);
+                    }
                 }
             }
         }
-
-        public string ConcatNamespace(string one, string two)
-        {
-            return one == "" ? two : one + "." + two;
-        }
-
-        public string ExtractNextNamespacePart(string extractFrom, string namespaceName)
-        {
-            if (!extractFrom.StartsWith(namespaceName))
-            {
-                throw new ArgumentException("extractFrom");
-            }
-
-            if (namespaceName != "")
-            {
-                extractFrom = extractFrom.Remove(
-                    0, namespaceName.Length + 1);
-            }
-
-            int index = extractFrom.IndexOf('.');
-            return index != -1 ? extractFrom.Remove(extractFrom.IndexOf('.')) : extractFrom;
-        }
+       
     }
 }

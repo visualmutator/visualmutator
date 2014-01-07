@@ -73,6 +73,15 @@
             //translate objects to their indices that identify them
             mutationTarget.Variant.ObjectsIndices = mutationTarget.Variant
                 .AstObjects.MapValues((key, val) => AllAstIndices[val]);
+
+            if (mutationTarget.ProcessingContext != null &&
+                mutationTarget.ProcessingContext.ModuleName == _traversedModule.Name.Value)
+            {
+                var type = (INamespaceTypeDefinition) AllAstObjects[
+                    mutationTarget.ProcessingContext.Type.Context.Descriptor];
+                mutationTarget.NamespaceName = type.ContainingUnitNamespace.Name.Value;
+                mutationTarget.TypeName = type.Name.Value;
+            }
             //REMOVE: mutationTarget.MethodIndex = AllAstIndices[mutationTarget.MethodRaw];
         }
 
@@ -116,6 +125,8 @@
                     
                     mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[
                         mutationTarget.ProcessingContext.Method.Context.Descriptor];
+
+                  
                 }
             }
               return node;

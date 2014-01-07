@@ -35,6 +35,8 @@
         public IMethodDefinition MethodMutated { get; set; }
 
         public string GroupName { get; set; }
+        public string NamespaceName { get; set; }
+        public string TypeName { get; set; }
 
         public override string ToString()
         {

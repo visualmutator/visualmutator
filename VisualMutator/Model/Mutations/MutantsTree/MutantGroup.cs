@@ -4,6 +4,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
     using System.Collections.Generic;
     using System.Linq;
+    using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
 
     #endregion
@@ -12,7 +13,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
     {
        
 
-        public MutantGroup(string name, ExecutedOperator parent)
+        public MutantGroup(string name, CheckedNode parent)
             : base( name, true)
         {
             Parent = parent;

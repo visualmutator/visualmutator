@@ -3,6 +3,7 @@
     #region
 
     using Microsoft.Cci;
+    using MutantsTree;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Paths;
 
@@ -45,33 +46,24 @@
     }
 
 
-    public class TypeNode : CheckedNode
+    public class TypeNode : MutationNode
     {
-        private readonly INamespaceTypeDefinition _typeDefinition;
 
-        public TypeNode(CheckedNode parent, string name, INamespaceTypeDefinition typeDefinition)
-            : base( name)
+        public TypeNode(CheckedNode parent, string name)
+            : base( name, true)
         {
-            _typeDefinition = typeDefinition;
             Parent = parent;
         }
 
-        public INamespaceTypeDefinition TypeDefinition
-        {
-            get
-            {
-                return _typeDefinition;
-            }
-        }
+      
     }
 
-    public class MethodNode : CheckedNode
+    public class MethodNode : MutationNode
     {
         private readonly IMethodDefinition _methodDefinition;
-        private readonly INamespaceTypeDefinition _typeDefinition;
 
-        public MethodNode(CheckedNode parent, string name, IMethodDefinition methodDefinition)
-            : base(name, hasChildren: false)
+        public MethodNode(CheckedNode parent, string name, IMethodDefinition methodDefinition, bool hasChildren)
+            : base(name, hasChildren)
         {
             _methodDefinition = methodDefinition;
             Parent = parent;
