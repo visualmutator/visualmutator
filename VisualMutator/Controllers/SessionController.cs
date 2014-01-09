@@ -15,11 +15,13 @@
     using Model.Exceptions;
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
+    using Model.Mutations.Types;
     using Model.StoringMutants;
     using Model.Tests;
     using Model.Tests.Custom;
     using Model.Tests.TestsTree;
     using Model.Verification;
+    using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
     using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
@@ -160,7 +162,7 @@
 
                 _mutantsContainer.Initialize(choices.MutantsCreationOptions, choices.Filter);
 
-                ExecutedOperator oper;
+                AssemblyNode oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
@@ -207,7 +209,7 @@
                 //        StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
 
                 _mutantsFileManager.WriteMutantsToDisk(_currentSession.Choices.MutantsCreationFolderPath,
-                        _currentSession.MutantsGroupedByOperators, verify,counter);
+                        _currentSession.MutantsGrouped, verify,counter);
 
 
                 XDocument results = _xmlResultsGenerator.GenerateResults(_currentSession, includeDetailedTestResults: false, 
@@ -262,15 +264,15 @@
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
               
                 _log.Info("Creating pure mutant for initial checks...");
-                ExecutedOperator execOperator;
-                Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out execOperator);
+                AssemblyNode assemblyNode;
+                Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out assemblyNode);
                 
 
                 _svc.Threading.InvokeOnGui(() =>
                     {
                         _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
                         {
-                            MutantsGroupedByOperators = execOperator.InList(),
+                            MutantsGrouped = assemblyNode.InList(),
                         });
 
                     });
@@ -363,13 +365,13 @@
                     _currentSession.Choices.SelectedOperators,
                      new ModulesProvider(_currentSession.OriginalAssemblies
                          .Select(_ => _.AssemblyDefinition).ToList()), counter);
-                _currentSession.MutantsGroupedByOperators = executedOperators;
+                _currentSession.MutantsGrouped = executedOperators;
             },
             () =>
             {
                 _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
                 {
-                    MutantsGroupedByOperators = _currentSession.MutantsGroupedByOperators,
+                    MutantsGrouped = _currentSession.MutantsGrouped,
                 });
 
                 continuation();
@@ -378,8 +380,8 @@
 
         public void RunTests()
         {
-            _mutantsToTest = new Queue<Mutant>(_currentSession.MutantsGroupedByOperators
-                .SelectMany(op => op.MutantGroups).SelectMany(g => g.Mutants));
+            _mutantsToTest = new Queue<Mutant>(_currentSession.MutantsGrouped.Cast<CheckedNode>()
+                .SelectManyRecursive(m => m.Children, leafsOnly:true).OfType<Mutant>());
             _allMutantsCount = _mutantsToTest.Count;
             _testedMutants = new List<Mutant>();
          
@@ -561,7 +563,7 @@
         {
         }
 
-        public IList<ExecutedOperator> MutantsGroupedByOperators { get; set; }
+        public IList<AssemblyNode> MutantsGrouped { get; set; }
     }
 
     internal enum RequestedHaltState

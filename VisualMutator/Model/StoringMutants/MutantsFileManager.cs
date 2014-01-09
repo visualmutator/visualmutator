@@ -11,6 +11,7 @@
     using log4net;
     using Microsoft.Cci;
     using Mutations.MutantsTree;
+    using Mutations.Types;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.FileSystem;
@@ -22,7 +23,7 @@
     {
 
 
-        void WriteMutantsToDisk(string rootFolder, IList<ExecutedOperator> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
+        void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
         StoredMutantInfo StoreMutant(string directory, Mutant mutant);
 
     }
@@ -56,9 +57,7 @@
         }
 
 
-        public void WriteMutantsToDisk(string rootFolder, 
-            IList<ExecutedOperator> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, 
-            ProgressCounter onSavingProgress)
+        public void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress)
         {
 
            

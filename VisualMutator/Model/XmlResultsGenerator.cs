@@ -31,7 +31,7 @@
             bool includeDetailedTestResults,
             bool includeCodeDifferenceListings)
         {
-            List<Mutant> mutants = session.MutantsGroupedByOperators.SelectMany(op => op.MutantGroups.SelectMany(m => m.Mutants)).ToList();
+            List<Mutant> mutants = session.MutantsGrouped.SelectMany(op => op.MutantGroups.SelectMany(m => m.Mutants)).ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
@@ -44,17 +44,17 @@
                 new XAttribute("WithError", mutantsWithErrors.Count),
                 new XAttribute("TotalSizeKilobytes", -1),//mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
                 new XAttribute("AverageSizeKilobytes", -1),//mutants.AverageOrZero(mut => mut.StoredAssemblies.SizeInKilobytes())),
-                new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGroupedByOperators
+                new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGrouped
                     .Sum(oper => oper.FindTargetsTimeMiliseconds)),
-                new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGroupedByOperators
+                new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGrouped
                     .Sum(oper => oper.MutationTimeMiliseconds)),
-                new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGroupedByOperators
+                new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGrouped
                     .AverageOrZero(oper => oper.MutationTimeMiliseconds)),
                 new XAttribute("TotalTestingTimeMiliseconds", testedMutants
                     .Sum(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 new XAttribute("AverageTestingTimeMiliseconds", testedMutants
                     .AverageOrZero(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
-                from oper in session.MutantsGroupedByOperators
+                from oper in session.MutantsGrouped
                 select new XElement("Operator",
                     new XAttribute("Identificator", oper.Identificator),
                     new XAttribute("Name", oper.Name),
@@ -98,7 +98,7 @@
                 optionalElements.Add(CreateDetailedTestingResults(mutants));
             }
 
-            long totalTimeMs = session.MutantsGroupedByOperators.Sum(oper => oper.MutationTimeMiliseconds)
+            long totalTimeMs = session.MutantsGrouped.Sum(oper => oper.MutationTimeMiliseconds)
                             + mutants.Sum(m => m.MutantTestSession.TestingTimeMiliseconds);
             return
                 new XDocument(

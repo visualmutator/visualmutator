@@ -140,7 +140,7 @@
 
                 sessionController.SessionEventsObservable
                  .OfType<MutationFinishedEventArgs>()
-                 .Subscribe(args => _viewModel.Operators.ReplaceRange(args.MutantsGroupedByOperators)),
+                 .Subscribe(args => _viewModel.Operators.ReplaceRange(args.MutantsGrouped)),
 
                 sessionController.SessionEventsObservable
                  .OfType<TestingProgressEventArgs>()

@@ -82,7 +82,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
              .GetResult();
 
 
-            DisplayedText = "#{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
+            DisplayedText = "{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
         }
         private int _numberOfFailedTests;
 

@@ -141,7 +141,7 @@
 
 
 
-            var visitor = new VisualCodeVisitor(operatorVisitor, copiedModules.Assemblies.Single());
+            var visitor = new VisualCodeVisitor("", operatorVisitor, copiedModules.Assemblies.Single());
 
             var traverser = new VisualCodeTraverser(MutationFilter.AllowAll(), visitor);
 
@@ -153,7 +153,7 @@
             commonTargets.AddRange(visitor.SharedTargets);
 
             var visitorBack = new VisualCodeVisitorBack(visitor.MutationTargets, new List<MutationTarget>(), 
-                copiedModules.Assemblies.Single());
+                copiedModules.Assemblies.Single(),"");
             var traverser2 = new VisualCodeTraverser(MutationFilter.AllowAll(), visitorBack);
             traverser2.Traverse(copiedModules.Assemblies.Single());
             visitorBack.PostProcess();

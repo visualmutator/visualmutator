@@ -5,7 +5,7 @@
 
     public class HighestVisitor : VisualCodeVisitor
     {
-        public HighestVisitor(IOperatorCodeVisitor visitor, IModule module) : base(visitor, module)
+        public HighestVisitor(IOperatorCodeVisitor visitor, IModule module, string id) : base(id, visitor, module)
         {
 
         }

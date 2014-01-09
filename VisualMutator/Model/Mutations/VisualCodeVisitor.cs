@@ -29,6 +29,10 @@
         private IMethodDefinition _currentMethodObj;
         private readonly AstProcessor _processor;
 
+        private int[] id = { 1 };
+        private string _operatorId;
+
+
         public AstProcessor Processor
         {
             get { return _processor; }
@@ -39,11 +43,11 @@
             get { return _formatter; }
         }
        
-        public VisualCodeVisitor(IOperatorCodeVisitor visitor, IModule module):base(visitor)
+        public VisualCodeVisitor(string operatorId, IOperatorCodeVisitor visitor, IModule module):base(visitor)
         {
             visitor.Parent = this;
             _processor = new AstProcessor(module);
-            
+            _operatorId = operatorId;
             _mutationTargets = new List<MutationTarget>();
             _sharedTargets = new List<MutationTarget>();
            
@@ -79,6 +83,7 @@
         }
         public void MarkMutationTarget<T>(T obj, IList<MutationVariant> variants )
         {
+            Func<int> genId = () => id[0]++;
             if (!_processor.IsCurrentlyProcessed(obj))
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
@@ -89,6 +94,8 @@
             {
                 var mutationTarget = new MutationTarget(mutationVariant)
                 {
+
+                    Id = _operatorId+"#" + genId(), 
                     Name = mutationVariant.Signature,
                     ProcessingContext = _processor.CreateProcessingContext<T>(),
                     GroupName = groupname,

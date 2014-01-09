@@ -33,9 +33,8 @@
             get { return _targetAstObjects; }
         }
 
-        public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, 
-            List<MutationTarget> sharedTargets, IModule module)
-            : base(new OperatorCodeVisitor(), module)
+        public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, List<MutationTarget> sharedTargets, IModule module, string id)
+            : base(id, new OperatorCodeVisitor(), module)
         {
             _mutationTargets = mutationTargets;
             _sharedTargets = sharedTargets;
