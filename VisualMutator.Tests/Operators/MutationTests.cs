@@ -170,10 +170,10 @@
 
             container.Initialize(mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), 
+            var assemblyNodes = container.InitMutantsForOperators(operatorr.InList(), 
                                                                           copiedModules, ProgressCounter.Inactive());
 
-            return executedOperators.Single().MutantGroups.SelectMany(g=>g.Mutants)
+            return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children, leafsOnly:true).Cast<Mutant>()
                 .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
 
     
@@ -191,10 +191,10 @@
 
             container.Initialize(mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var executedOperators = container.InitMutantsForOperators(operatorr.InList(), 
+            var assemblyNodes = container.InitMutantsForOperators(operatorr.InList(), 
                                                                           copiedModules, ProgressCounter.Inactive());
-            return executedOperators.Single().MutantGroups;
-           
+            return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children).OfType<MutantGroup>();
+
 
 
         }

@@ -23,18 +23,16 @@
     {
         private readonly INUnitWrapper _nUnitWrapper;
 
-        private readonly IMessageService _messageService;
 
-        private bool _currentRunCancelled;
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IDisposable _subscription;
         private IDisposable _subscriptionRun;
+        private bool _currentRunCancelled;
 
 
         public NUnitTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
         {
             _nUnitWrapper = nUnitWrapper;
-            _messageService = messageService;
 
         }
 

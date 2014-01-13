@@ -9,7 +9,9 @@
     using Decompilation;
     using Decompilation.CodeDifference;
     using Mutations.MutantsTree;
+    using Mutations.Types;
     using Tests.TestsTree;
+    using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Switches;
 
@@ -31,7 +33,8 @@
             bool includeDetailedTestResults,
             bool includeCodeDifferenceListings)
         {
-            List<Mutant> mutants = session.MutantsGrouped.SelectMany(op => op.MutantGroups.SelectMany(m => m.Mutants)).ToList();
+            List<Mutant> mutants = session.MutantsGrouped.Cast<CheckedNode>()
+                .SelectManyRecursive(n => n.Children, leafsOnly:true).Cast<Mutant>().ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
@@ -44,41 +47,49 @@
                 new XAttribute("WithError", mutantsWithErrors.Count),
                 new XAttribute("TotalSizeKilobytes", -1),//mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
                 new XAttribute("AverageSizeKilobytes", -1),//mutants.AverageOrZero(mut => mut.StoredAssemblies.SizeInKilobytes())),
-                new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGrouped
-                    .Sum(oper => oper.FindTargetsTimeMiliseconds)),
-                new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGrouped
-                    .Sum(oper => oper.MutationTimeMiliseconds)),
-                new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGrouped
-                    .AverageOrZero(oper => oper.MutationTimeMiliseconds)),
+              //  new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGrouped
+             //       .Sum(oper => oper.FindTargetsTimeMiliseconds)),
+               // new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGrouped
+               //     .Sum(oper => oper.MutationTimeMiliseconds)),
+              //  new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGrouped
+              //      .AverageOrZero(oper => oper.MutationTimeMiliseconds)),
                 new XAttribute("TotalTestingTimeMiliseconds", testedMutants
                     .Sum(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 new XAttribute("AverageTestingTimeMiliseconds", testedMutants
                     .AverageOrZero(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
-                from oper in session.MutantsGrouped
-                select new XElement("Operator",
-                    new XAttribute("Identificator", oper.Identificator),
-                    new XAttribute("Name", oper.Name),
-                    new XAttribute("NumberOfMutants", oper.Children.Count),
-                    new XAttribute("NumberOfKilledMutants", oper.MutantGroups.SelectMany(m=>m.Mutants).Count(m=>m.State == MutantResultState.Killed)),
-                    new XAttribute("NumberOfLiveMutants", oper.MutantGroups.SelectMany(m => m.Mutants).Count(m => m.State == MutantResultState.Live)),
-                    new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),
-                    new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
-                    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
-                        oper.MutationTimeMiliseconds / oper.Children.Count),
-                    from mutGroup in oper.MutantGroups
-                    select new XElement("MutantGroup",
-                        new XAttribute("Name", mutGroup.Name),
-                        from mutant in mutGroup.Mutants
-                        select new XElement("Mutant",
-                            new XAttribute("Id", mutant.Id),
-                            new XAttribute("Description", mutant.Description),
-                            //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
-                            new XAttribute("State", mutant.State.ToString()
-                            ),
-                            new XElement("ErrorInfo",
-                                 new XElement("Description", mutant.MutantTestSession.ErrorDescription),
-                                 new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
-                                 ).InArrayIf(mutant.State == MutantResultState.Error)
+                from assemblyNode in session.MutantsGrouped
+                select new XElement("Assembly",
+                  //  new XAttribute("Identificator", oper.Identificator),
+                    new XAttribute("Name", assemblyNode.Name),
+                   // new XAttribute("NumberOfMutants", oper.Children.Count),
+                  //  new XAttribute("NumberOfKilledMutants", oper.MutantGroups.SelectMany(m=>m.Mutants).Count(m=>m.State == MutantResultState.Killed)),
+                  //  new XAttribute("NumberOfLiveMutants", oper.MutantGroups.SelectMany(m => m.Mutants).Count(m => m.State == MutantResultState.Live)),
+                  //  new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),
+                //    new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
+                //    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
+                 //       oper.MutationTimeMiliseconds / oper.Children.Count),
+                    from type in assemblyNode.Children.SelectManyRecursive(n => n.Children).OfType<TypeNode>()
+                    select new XElement("Type",
+                        new XAttribute("Name", type.Name),
+                            from method in type.Children.Cast<MethodNode>()
+                            select new XElement("Method",
+                            new XAttribute("Name", method.Name),
+                            from mutGroup in method.Children.Cast<MutantGroup>()
+                            select new XElement("MutantGroup",
+                                new XAttribute("Name", mutGroup.Name),
+                                from mutant in mutGroup.Mutants
+                                select new XElement("Mutant",
+                                    new XAttribute("Id", mutant.Id),
+                                    new XAttribute("Description", mutant.Description),
+                                    //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
+                                    new XAttribute("State", mutant.State.ToString()
+                                    ),
+                                    new XElement("ErrorInfo",
+                                            new XElement("Description", mutant.MutantTestSession.ErrorDescription),
+                                            new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
+                                            ).InArrayIf(mutant.State == MutantResultState.Error)
+                                    )
+                                )
                             )
                         )
                     )
@@ -98,8 +109,8 @@
                 optionalElements.Add(CreateDetailedTestingResults(mutants));
             }
 
-            long totalTimeMs = session.MutantsGrouped.Sum(oper => oper.MutationTimeMiliseconds)
-                            + mutants.Sum(m => m.MutantTestSession.TestingTimeMiliseconds);
+            long totalTimeMs = 0;//session.MutantsGrouped.Sum(oper => oper.MutationTimeMiliseconds)
+                         //   + mutants.Sum(m => m.MutantTestSession.TestingTimeMiliseconds);
             return
                 new XDocument(
                     new XElement("MutationTestingSession",

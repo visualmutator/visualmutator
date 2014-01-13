@@ -8,7 +8,9 @@
              xmlns:Controllers="clr-namespace:VisualMutator.Controllers"
              xmlns:Views="clr-namespace:VisualMutator.Views"
              xmlns:Controls="clr-namespace:VisualMutator.Views.Controls"
-             xmlns:MutantsTree="clr-namespace:VisualMutator.Model.Mutations.MutantsTree" mc:Ignorable="d"
+             xmlns:MutantsTree="clr-namespace:VisualMutator.Model.Mutations.MutantsTree"
+             xmlns:types="clr-namespace:VisualMutator.Model.Mutations.Types"
+             mc:Ignorable="d"
              d:DesignHeight="488" d:DesignWidth="544" Visibility="Hidden">
 
     <UserControl.Resources>
@@ -107,7 +109,7 @@
         </Grid>
 
 
-        <TreeView Grid.Row="1" Name="Tree" ItemsSource="{Binding Operators}"
+        <TreeView Grid.Row="1" Name="Tree" ItemsSource="{Binding MutantAssemblies}"
                   SelectedItemChanged="TreeView_SelectedItemChanged">
 
             <TreeView.Resources>
@@ -116,21 +118,58 @@
 
                 </ContextMenu>
 
-                <HierarchicalDataTemplate DataType="{x:Type MutantsTree:ExecutedOperator}"
+                <HierarchicalDataTemplate DataType="{x:Type types:AssemblyNode}"
                                           ItemsSource="{Binding Children}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
-
-                        <TextBlock Text="{Binding DisplayedText}" />
+                        <TextBlock Text="{Binding Name}" />
                     </DockPanel>
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="True" />
-                           
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
 
+                <HierarchicalDataTemplate DataType="{x:Type types:TypeNamespaceNode}"
+                                          ItemsSource="{Binding Children}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
+                        <TextBlock Text="{Binding Name}" />
+                    </DockPanel>
+                    <HierarchicalDataTemplate.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </HierarchicalDataTemplate.ItemContainerStyle>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate DataType="{x:Type types:TypeNode}"
+                                          ItemsSource="{Binding Children}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
+                        <TextBlock Text="{Binding Name}" />
+                    </DockPanel>
+                    <HierarchicalDataTemplate.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </HierarchicalDataTemplate.ItemContainerStyle>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate DataType="{x:Type types:MethodNode}"
+                                          ItemsSource="{Binding Children}">
+                    <DockPanel>
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
+                        <TextBlock Text="{Binding Name}" />
+                    </DockPanel>
+                    <HierarchicalDataTemplate.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </HierarchicalDataTemplate.ItemContainerStyle>
+                </HierarchicalDataTemplate>
+                
                 <HierarchicalDataTemplate DataType="{x:Type MutantsTree:MutantGroup}"
                                           ItemsSource="{Binding Children}">
                     <DockPanel>

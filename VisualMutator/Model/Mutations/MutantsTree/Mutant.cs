@@ -15,14 +15,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
         private readonly string _id;
 
         private readonly MutationTarget _mutationTarget;
-        private readonly List<MutationTarget> _commonTargets;
-
-        public List<MutationTarget> CommonTargets
-        {
-            get { return _commonTargets; }
-        }
-
-     
+       
         public MutationTarget MutationTarget
         {
             get
@@ -30,19 +23,12 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 return _mutationTarget;
             }
         }
-        public ExecutedOperator ExecutedOperator
-        {
-            get
-            {
-                return Parent.CastTo<MutantGroup>().Parent.CastTo<ExecutedOperator>();
-            }
-        }
-        public Mutant(string id, MutantGroup parent, MutationTarget mutationTarget, List<MutationTarget> commonTargets)
+     
+        public Mutant(string id, MutantGroup parent, MutationTarget mutationTarget)
             : base( "Mutant", false)
         {
             _id = id;
             _mutationTarget = mutationTarget;
-            _commonTargets = commonTargets;
 
             _mutantTestSession  = new MutantTestSession();
 

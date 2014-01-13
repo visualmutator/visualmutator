@@ -8,7 +8,7 @@
     using UsefulTools.Paths;
 
     #endregion
-    public class AssemblyNode : CheckedNode
+    public class AssemblyNode : MutationNode
     {
         private IModule _assemblyDefinition;
 
@@ -34,7 +34,7 @@
         }
     }
 
-    public class TypeNamespaceNode : CheckedNode
+    public class TypeNamespaceNode : MutationNode
     {
 
         public TypeNamespaceNode(CheckedNode parent, string name)

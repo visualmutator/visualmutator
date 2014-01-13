@@ -94,11 +94,11 @@
             {
                 var mutationTarget = new MutationTarget(mutationVariant)
                 {
-
                     Id = _operatorId+"#" + genId(), 
                     Name = mutationVariant.Signature,
                     ProcessingContext = _processor.CreateProcessingContext<T>(),
                     GroupName = groupname,
+                    OperatorId = _operatorId,
                 };
 
                 if (mutationTarget.ProcessingContext.Method != null)

@@ -11,6 +11,7 @@
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
+    using Model.Mutations.Types;
     using Model.StoringMutants;
     using Model.Tests;
     using Model.Tests.Services;
@@ -85,7 +86,7 @@
 
             TestEnvironmentInfo initTestEnvironment = fileManager.InitTestEnvironment(null);
 
-            ExecutedOperator execOperator;
+            AssemblyNode execOperator;
             Mutant changelessMutant = mutantsContainer.CreateEquivalentMutant(out execOperator);
 
 

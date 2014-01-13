@@ -133,7 +133,7 @@
                    
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
-                    System.Action<CheckedNode, List<INamespaceTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
+                    System.Action<CheckedNode, ICollection<INamespaceTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
                     {
                         foreach (INamespaceTypeDefinition typeDefinition in leafTypes)
                         {

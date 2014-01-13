@@ -160,7 +160,8 @@
                 };
                 _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, choices.Filter);
+                _mutantsContainer.Initialize(choices.SelectedOperators, 
+                    choices.MutantsCreationOptions, choices.Filter);
 
                 AssemblyNode oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
@@ -251,7 +252,8 @@
 
                 _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
-                _mutantsContainer.Initialize(choices.MutantsCreationOptions, choices.Filter);
+                _mutantsContainer.Initialize(choices.SelectedOperators, 
+                    choices.MutantsCreationOptions, choices.Filter);
 
                 _currentSession = new MutationTestingSession
                 {
@@ -362,7 +364,7 @@
             () =>
             {
                 var executedOperators = _mutantsContainer.InitMutantsForOperators(
-                    _currentSession.Choices.SelectedOperators,
+                    
                      new ModulesProvider(_currentSession.OriginalAssemblies
                          .Select(_ => _.AssemblyDefinition).ToList()), counter);
                 _currentSession.MutantsGrouped = executedOperators;

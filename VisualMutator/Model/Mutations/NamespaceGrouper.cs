@@ -31,7 +31,7 @@
         }
         public void GroupTypes2<T>(CheckedNode parent, string currentNamespace,
            Func<T, string> namespaceExtractor, Func<T, string> nameExtractor,
-           System.Action<CheckedNode, List<T>> typeNodeCreator, ICollection<T> types)
+           System.Action<CheckedNode, ICollection<T>> typeNodeCreator, ICollection<T> types)
         {
             var groupsByNamespaces = types
                 .Where(t => namespaceExtractor(t) != currentNamespace)

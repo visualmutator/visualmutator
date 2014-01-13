@@ -5,6 +5,7 @@
     using System.Windows;
     using Controllers;
     using Model.Mutations.MutantsTree;
+    using Model.Mutations.Types;
     using UsefulTools.Core;
     using UsefulTools.Wpf;
     using Views;
@@ -17,14 +18,14 @@
             : base(view)
         {
 
-            Operators = new NotifyingCollection<ExecutedOperator>();
+            MutantAssemblies = new NotifyingCollection<AssemblyNode>();
 
 
         }
 
         public void Clean()
         {
-            Operators.Clear();
+            MutantAssemblies.Clear();
             SelectedMutationTreeItem = null;
             MutantsRatio = "";
             MutationScore = "";
@@ -128,17 +129,17 @@
                 SetAndRise(ref _commandPause, value, () => CommandPause);
             }
         }
-        private NotifyingCollection<ExecutedOperator> _operators;
+        private NotifyingCollection<AssemblyNode> _mutantAssemblies;
 
-        public NotifyingCollection<ExecutedOperator> Operators
+        public NotifyingCollection<AssemblyNode> MutantAssemblies
         {
             get
             {
-                return _operators;
+                return _mutantAssemblies;
             }
             set
             {
-                SetAndRise(ref _operators, value, () => Operators);
+                SetAndRise(ref _mutantAssemblies, value, () => MutantAssemblies);
             }
         }
 

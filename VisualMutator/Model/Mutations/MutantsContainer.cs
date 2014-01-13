@@ -25,18 +25,17 @@
 
     public interface IMutantsContainer
     {
-        void Initialize(MutantsCreationOptions options, MutationFilter filter);
+        void Initialize(ICollection<IMutationOperator> operators, MutantsCreationOptions options, MutationFilter filter);
 
        
-        Mutant CreateEquivalentMutant(out AssemblyNode executedOperator);
+        Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode);
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
         ModulesProvider ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, ModuleSource moduleSource);
 
-        MutantsContainer.OperatorWithTargets FindTargets(IMutationOperator oper, IList<IModule> assemblies);
 
-        IList<AssemblyNode> InitMutantsForOperators(ICollection<IMutationOperator> operators, ModulesProvider originalModules, ProgressCounter percentCompleted);
+        IList<AssemblyNode> InitMutantsForOperators(ModulesProvider originalModules, ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -55,6 +54,8 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private MutantsCreationOptions _options;
         private MutationFilter _filter;
+        private ICollection<IMutationOperator> _mutOperators;
+        private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutantsContainer(IModuleSource cci, 
             IOperatorUtils operatorUtils
@@ -66,27 +67,34 @@
 
         }
 
-        public void Initialize(MutantsCreationOptions options, MutationFilter filter)
+        public void Initialize(ICollection<IMutationOperator> mutOperators, MutantsCreationOptions options, MutationFilter filter)
         {
             _options = options;
             _filter = filter;
+            _mutOperators = mutOperators;
         }
 
-        public Mutant CreateEquivalentMutant(out AssemblyNode executedOperator)
+        public Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode)
         {
             var op = new IdentityOperator();
-          
-            executedOperator = new ExecutedOperator("E", "Equivalency operator", op);
-            var group = new MutantGroup("Testing original program", executedOperator);
+            _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
+            assemblyNode = new AssemblyNode("All modules",null);
+            var nsNode = new TypeNamespaceNode(assemblyNode, "All");
+            assemblyNode.Children.Add(nsNode);
+            var typeNode = new TypeNode(nsNode, "All");
+            nsNode.Children.Add(typeNode);
+            var methodNode = new MethodNode(typeNode, "All", null, true);
+            typeNode.Children.Add(methodNode);
+            var group = new MutantGroup("Testing original program", methodNode);
             var target = new MutationTarget(new MutationVariant())
                          {
                              Name = "Original program",
                          };
-            var mutant = new Mutant("0", group, target, new List<MutationTarget>());
+            var mutant = new Mutant("0", group, target);
            
             group.Children.Add(mutant);
-            executedOperator.Children.Add(group);
-            executedOperator.UpdateDisplayedText();
+            methodNode.Children.Add(group);
+            //assemblyNode.UpdateDisplayedText();
             group.UpdateDisplayedText();
             mutant.UpdateDisplayedText();
             return mutant;
@@ -98,7 +106,7 @@
         }
 
 
-        public IList<AssemblyNode> InitMutantsForOperators(ICollection<IMutationOperator> operators,
+        public IList<AssemblyNode> InitMutantsForOperators(
             ModulesProvider originalModules, ProgressCounter percentCompleted)
         {
             var mutantsGroupedByOperators = new List<ExecutedOperator>();
@@ -108,45 +116,19 @@
             Func<int> genId = () => id[0]++;
 
 
-            percentCompleted.Initialize(operators.Count);
+            percentCompleted.Initialize(_mutOperators.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
-
-            var operatorsWithTargets = new List<ExecutedOperator>();
-            foreach (var oper in operators)
+            var assNodes = new List<AssemblyNode>();
+            foreach (var module in originalModules.Assemblies)
             {
-                //var executedOperator = new ExecutedOperator(oper.Info.Id, oper.Info.Name, oper);
 
                 sw.Restart();
 
-                IList<AssemblyNode> assemblyNodes = FindTargets(oper, originalModules.Assemblies);
-           //     root.Children.AddRange(assemblyNodes);
-                //executedOperator.FindTargetsTimeMiliseconds = sw.ElapsedMilliseconds;
-                /*
-                
-                var groupedTargets = mutations.ToLookup(target => target.GroupName);
-                //subProgress.Initialize(targets.MutationTargets.Count);
-                foreach (var grouping in groupedTargets.OrderBy(g => g.Key))
-                {
-                    var group = new MutantGroup(grouping.Key, executedOperator);
-                    foreach (var mutationTarget in grouping)
-                    {
-                        var mutant = new Mutant(genId().ToString(), group, mutationTarget, operatorResult.CommonTargets);
-                        group.Children.Add(mutant);
-
-                    }
-                    executedOperator.Children.Add(group);
-                    group.UpdateDisplayedText();
-                    //subProgress.Progress();
-                }
-                operatorsWithTargets.Add(executedOperator);
-                //executedOperator.UpdateDisplayedText();
-                mutantsGroupedByOperators.Add(executedOperator);
-                //executedOperator.Parent = root;
-                //root.Children.Add(executedOperator);
-                */
+                AssemblyNode assemblyNode = FindTargets(module);
+                assNodes.Add(assemblyNode);
                 percentCompleted.Progress();
             }
 
@@ -155,7 +137,7 @@
 
             root.State = MutantResultState.Untested;
 
-            return assemblyNodes;
+            return assNodes;
         }
 
         private IList<MutationTarget> LimitMutationTargets(IEnumerable<MutationTarget> targets)
@@ -168,64 +150,64 @@
         }
 
 
-        public IList<AssemblyNode> FindTargets(IMutationOperator mutOperator, IList<IModule> modules)
+        public AssemblyNode FindTargets(IModule module)
         {
-            _log.Info("Finding targets for mutation operator: " + mutOperator.Info);
+            _log.Info("Finding targets for module: " + module.Name.Value);
 
-            try
+            var mergedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
+            _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
+            foreach (var mutationOperator in _mutOperators)
             {
-                var assemblyNodes = new List<AssemblyNode>();
-                var ded = mutOperator.CreateVisitor();
-                IOperatorCodeVisitor operatorVisitor = ded;
-                operatorVisitor.Host = _cci.Host;
-                operatorVisitor.OperatorUtils = _operatorUtils;
-                operatorVisitor.Initialize();
-                var mergedTargets = new List<MutationTarget>();
-                foreach (var module in modules)
+                try
                 {
-                    var visitor = new VisualCodeVisitor(mutOperator.Info.Id, operatorVisitor, module);
+                    var ded = mutationOperator.CreateVisitor();
+                    IOperatorCodeVisitor operatorVisitor = ded;
+                    operatorVisitor.Host = _cci.Host;
+                    operatorVisitor.OperatorUtils = _operatorUtils;
+                    operatorVisitor.Initialize();
+
+                    var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module);
 
                     var traverser = new VisualCodeTraverser(_filter, visitor);
-                  
+
                     traverser.Traverse(module);
                     visitor.PostProcess();
 
                     IEnumerable<MutationTarget> mutations = LimitMutationTargets(visitor.MutationTargets);
-                    var assemblyNode = BuildMutantsTree(module, mutations.ToList(), visitor.SharedTargets);
 
-                    assemblyNodes.Add(assemblyNode);
 
+                    mergedTargets.Add(mutationOperator, new HashSet<MutationTarget>(mutations));
+                    _sharedTargets.Add(mutationOperator, new HashSet<MutationTarget>(visitor.SharedTargets));
+                    
                 }
-
-                _log.Info("Found total of: " + mergedTargets.Count() + " mutation targets.");
-                return assemblyNodes;
-
-            }
-            catch (Exception e)
-            {
-                if (!DebugConfig)
+                catch (Exception e)
                 {
-                    throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutOperator.Info.Name), e);
-                }
-                else
-                {
-                    throw;
+                    if (!DebugConfig)
+                    {
+                        throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutationOperator.Info.Name), e);
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
+            var assemblyNode = BuildMutantsTree(module, mergedTargets);
+                
+            _log.Info("Found total of: " + mergedTargets.Count() + " mutation targets.");
+            return assemblyNode;
+
             
 
         }
 
-        private AssemblyNode BuildMutantsTree(IModule module, List<MutationTarget> mutationTargets, List<MutationTarget> sharedTargets)
+        private AssemblyNode BuildMutantsTree(IModule module, 
+            MultiDictionary<IMutationOperator, MutationTarget> mutationTargets)
         {
-
-
-
 
             var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
-
-            System.Action<CheckedNode, List<MutationTarget>> typeNodeCreator = (parent, targets) =>
+            System.Action<CheckedNode, ICollection<MutationTarget>> typeNodeCreator = (parent, targets) =>
                 {
 
                     foreach (var byTypeGrouping in targets.GroupBy(t => t.TypeName))
@@ -247,7 +229,7 @@
                                 method.Children.Add(group);
                                 foreach (var mutationTarget in byGroupGrouping)
                                 {
-                                    var mutant = new Mutant(mutationTarget.Id, group, mutationTarget, sharedTargets);
+                                    var mutant = new Mutant(mutationTarget.Id, group, mutationTarget);
                                     group.Children.Add(mutant);
 
                                 }
@@ -263,7 +245,8 @@
             Func<MutationTarget, string> nameExtractor = target => target.TypeName;
 
             new NamespaceGrouper().
-                GroupTypes2(assemblyNode, "", namespaceExtractor, nameExtractor, typeNodeCreator, mutationTargets);
+                GroupTypes2(assemblyNode, "", namespaceExtractor, nameExtractor, typeNodeCreator, 
+                    mutationTargets.Values.SelectMany(a=>a).ToList());
 
 
             return assemblyNode;
@@ -274,6 +257,9 @@
         public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
             ModuleSource moduleSource)
         {
+            IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null? new IdentityOperator() : 
+                _mutOperators.Single(m => mutant.MutationTarget.OperatorId == m.Info.Id);
+                
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
@@ -284,11 +270,12 @@
                 {
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                        mutant.CommonTargets, module, mutant.ExecutedOperator.Operator.Info.Id);
+                         _sharedTargets.GetValues(mutationOperator, returnEmptySet: true), 
+                         module, mutationOperator.Info.Id);
                     var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
                     traverser2.Traverse(module);
                     visitorBack.PostProcess();
-                    var operatorCodeRewriter = mutant.ExecutedOperator.Operator.CreateRewriter();
+                    var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
                     var rewriter = new VisualCodeRewriter(_cci.Host, visitorBack.TargetAstObjects,
                         visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
@@ -311,25 +298,13 @@
                     mutatedModules.Add(rewrittenModule);
                  //   oldVersions.Add(oldver, rewrittenModule.Version);
                 }
-              /*  foreach (var m in mutatedModules)
-                {
-                    foreach (AssemblyReference refe in m.AssemblyReferences)
-                    {
-                        if(oldVersions.ContainsKey(refe.Version))
-                        {
-                            refe.Version = oldVersions[refe.Version];
-                        }
-                    }
-                    var s = m.AssemblyReferences.Select(a => a.AssemblyIdentity.ToString());
-                    _log.Debug(s);
-                }*/
                 return new ModulesProvider(mutatedModules.Cast<IModule>().ToList());
             }
             catch (Exception e)
             {
                 if (!DebugConfig)
                 {
-                    throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutant.ExecutedOperator.Operator.Info.Name), e);
+                    throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutationOperator.Info.Name), e);
                 }
                 else
                 {

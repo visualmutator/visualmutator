@@ -57,7 +57,8 @@
         }
 
 
-        public void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress)
+        public void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, 
+            System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress)
         {
 
            
@@ -65,14 +66,14 @@
 
             onSavingProgress.Initialize(mutantsInOperators.Select(oper => oper.Children)
                 .Sum(ch => ch.Count), ProgressMode.Before);
-         
-            foreach (ExecutedOperator oper in mutantsInOperators)
+
+            foreach (AssemblyNode assembly in mutantsInOperators)
             {
-                string subFolder = Path.Combine(rootFolder, oper.Identificator.RemoveInvalidPathCharacters());
+                string subFolder = Path.Combine(rootFolder, assembly.Name.RemoveInvalidPathCharacters());
                 
                 _fs.Directory.CreateDirectory(subFolder);
                 //TODO: to subfolders by group
-                foreach (Mutant mutant in oper.MutantGroups.SelectMany(g=>g.Mutants))
+                foreach (Mutant mutant in assembly.Children.SelectManyRecursive(g => g.Children, leafsOnly:true) )
                 {
                     onSavingProgress.Progress();
 
