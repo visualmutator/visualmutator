@@ -9,6 +9,7 @@
 
     public abstract class MutationNode : StateNode<MutantResultState>
     {
+        private bool _isExpanded;
 
         protected MutationNode(string name, bool hasChildren)
             : base( name, hasChildren, 
@@ -26,8 +27,18 @@
         {
      
         }
-
-
+        public bool IsExpanded
+        {
+            get
+            {
+                return _isExpanded;
+            }
+            set
+            {
+                SetAndRise(ref _isExpanded, value, () => _isExpanded);
+            }
+        }
+        
     
     }
 }

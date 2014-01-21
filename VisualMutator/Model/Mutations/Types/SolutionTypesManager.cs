@@ -92,8 +92,15 @@
             root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;
 
-            coveredTests = FindCoveredTests(loadedAssemblies.Select(a => a.AssemblyDefinition).ToList(), 
-                constraints);
+            if (constraints != null)
+            {
+                coveredTests = FindCoveredTests(loadedAssemblies.Select(a => a.AssemblyDefinition).ToList(),
+                    constraints);
+            }
+            else
+            {
+                coveredTests = null;
+            }
 
             return loadedAssemblies;
         }

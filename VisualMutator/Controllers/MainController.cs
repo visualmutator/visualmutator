@@ -194,7 +194,7 @@
                 Clean();
                 _currenSessionController = _sessionControllerFactory.Create();
                 var mutantsCreationController = _currenSessionController.MutantsCreationFactory.Create();
-                mutantsCreationController.Run2(classAndMethod);
+                mutantsCreationController.Run(classAndMethod);
                 if (mutantsCreationController.HasResults)
                 {
                     MutationSessionChoices choices = mutantsCreationController.Result;

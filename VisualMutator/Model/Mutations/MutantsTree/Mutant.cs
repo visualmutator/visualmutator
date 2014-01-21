@@ -33,6 +33,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             _mutantTestSession  = new MutantTestSession();
 
             Parent = parent;
+            UpdateDisplayedText();
         }
 
         public string Id

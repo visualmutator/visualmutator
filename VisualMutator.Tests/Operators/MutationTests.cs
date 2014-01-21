@@ -76,7 +76,6 @@
 
         public static  void DebugTraverseFile(string filePath)
         {
-        
 
             var cci = new ModuleSource();
             var utils = new OperatorUtils(cci);
@@ -166,17 +165,12 @@
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
             };
-         
+            container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            container.Initialize(mutantsCreationOptions, MutationFilter.AllowAll());
-
-            var assemblyNodes = container.InitMutantsForOperators(operatorr.InList(), 
-                                                                          copiedModules, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators(copiedModules, ProgressCounter.Inactive());
 
             return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children, leafsOnly:true).Cast<Mutant>()
                 .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
-
-    
         }
         public static IEnumerable<MutantGroup> CreateMutantsLight(IMutationOperator operatorr, MutantsContainer container,
             ModuleSource ccii, MutantsCache cache, int numberOfMutants)
@@ -188,14 +182,10 @@
                 MaxNumerOfMutantPerOperator = numberOfMutants,
             };
 
+            container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            container.Initialize(mutantsCreationOptions, MutationFilter.AllowAll());
-
-            var assemblyNodes = container.InitMutantsForOperators(operatorr.InList(), 
-                                                                          copiedModules, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators(copiedModules, ProgressCounter.Inactive());
             return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children).OfType<MutantGroup>();
-
-
 
         }
         public static List<IModule> CreateModules(string filePath, ModuleSource cci)
@@ -203,8 +193,6 @@
             cci.AppendFromFile(filePath);
             _log.Info("Copying modules...");
             List<IModule> copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
-
-
             return copiedModules;
         }
     }

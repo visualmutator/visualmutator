@@ -20,7 +20,8 @@
     <Grid d:DataContext="{d:DesignInstance ViewModels1:MutantDetailsViewModel}">
 
         <TextBlock Grid.Row="0" Text="Tests for selected mutant:" />
-        <TabControl SelectionChanged="tabControl_SelectionChanged">
+        <TabControl SelectionChanged="tabControl_SelectionChanged" 
+                    SelectedIndex="{Binding SelectedIndex}">
             <TabItem Header="Tests">
                 <Views:TestsTree />
 

@@ -16,7 +16,7 @@
             : base(view)
         {
             //_namespaces = new ReadOnlyCollection<TestNodeNamespace>(new List<TestNodeNamespace>());
-            IsExpanded = true;
+            
         }
 
         private ReadOnlyCollection<TestNodeNamespace> _namespaces;
@@ -32,18 +32,6 @@
                 SetAndRise(ref _namespaces, value, () => Namespaces);
             }
         }
-        private bool _isExpanded;
-
-        public bool IsExpanded
-        {
-            get
-            {
-                return _isExpanded;
-            }
-            set
-            {
-                SetAndRise(ref _isExpanded, value, () => IsExpanded);
-            }
-        }
+        
     }
 }

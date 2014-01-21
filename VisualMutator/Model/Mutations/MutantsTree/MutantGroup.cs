@@ -17,6 +17,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             : base( name, true)
         {
             Parent = parent;
+            UpdateDisplayedText();
         }
 
         public IEnumerable<Mutant> Mutants
@@ -46,19 +47,19 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
-            UpdateDisplayedText();
             base.SetState(value, updateChildren, updateParent);
+            UpdateDisplayedText();
         }
 
         public void UpdateDisplayedText()
         {
-            DisplayedText = "Mutation group: {0} - Mutants: {1}"
-                    .Formatted(Name, Children.Count);
+            DisplayedText = "Mutation group: {0}"
+                    .Formatted(Name);
         }
         public override string ToString()
         {
-            return "Mutation group: {0} - Mutants: {1}"
-                    .Formatted(Name, Children.Count);
+            return "Mutation group: {0}"
+                    .Formatted(Name);
         }
     }
 }

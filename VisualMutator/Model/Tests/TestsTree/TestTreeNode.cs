@@ -131,5 +131,21 @@
         {
             Name += "!";
         }
+
+
+        private bool _isExpanded;
+
+        public bool IsExpanded
+        {
+            get
+            {
+                return _isExpanded;
+            }
+            set
+            {
+                SetAndRise(ref _isExpanded, value, () => IsExpanded);
+            }
+        }
+
     }
 }

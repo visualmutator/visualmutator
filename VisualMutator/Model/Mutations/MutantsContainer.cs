@@ -67,7 +67,8 @@
 
         }
 
-        public void Initialize(ICollection<IMutationOperator> mutOperators, MutantsCreationOptions options, MutationFilter filter)
+        public void Initialize(ICollection<IMutationOperator> mutOperators, 
+            MutantsCreationOptions options, MutationFilter filter)
         {
             _options = options;
             _filter = filter;
@@ -79,11 +80,11 @@
             var op = new IdentityOperator();
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
             assemblyNode = new AssemblyNode("All modules",null);
-            var nsNode = new TypeNamespaceNode(assemblyNode, "All");
+            var nsNode = new TypeNamespaceNode(assemblyNode, "");
             assemblyNode.Children.Add(nsNode);
-            var typeNode = new TypeNode(nsNode, "All");
+            var typeNode = new TypeNode(nsNode, "");
             nsNode.Children.Add(typeNode);
-            var methodNode = new MethodNode(typeNode, "All", null, true);
+            var methodNode = new MethodNode(typeNode, "", null, true);
             typeNode.Children.Add(methodNode);
             var group = new MutantGroup("Testing original program", methodNode);
             var target = new MutationTarget(new MutationVariant())
@@ -96,7 +97,7 @@
             methodNode.Children.Add(group);
             //assemblyNode.UpdateDisplayedText();
             group.UpdateDisplayedText();
-            mutant.UpdateDisplayedText();
+            
             return mutant;
         }
 

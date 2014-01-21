@@ -21,6 +21,9 @@ namespace VisualMutator.ViewModels
             CodeLanguages = new NotifyingCollection<CodeLanguage> { CodeLanguage.CSharp, CodeLanguage.IL };
 
             SelectedLanguage = CodeLanguage.CSharp;
+
+          //  SelectedTabHeader = "Code";
+            SelectedIndex = 1;
         }
 
 
@@ -66,7 +69,19 @@ namespace VisualMutator.ViewModels
                 SetAndRise(ref _selectedTabHeader, value, () => SelectedTabHeader);
             }
         }
+        private int _selectedIndex;
 
+        public int SelectedIndex
+        {
+            get
+            {
+                return _selectedIndex;
+            }
+            set
+            {
+                SetAndRise(ref _selectedIndex, value, () => SelectedIndex);
+            }
+        }
         private bool _isCodeLoading;
 
         public bool IsCodeLoading
