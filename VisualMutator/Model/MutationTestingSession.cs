@@ -25,6 +25,11 @@
 
         public MutationTestingSession()
         {
+            MutantsGrouped = new List<AssemblyNode>();
+            TestEnvironment = new TestEnvironmentInfo("");
+            Filter = MutationFilter.AllowAll();
+            OriginalAssemblies = new List<AssemblyNode>();
+            Choices = new MutationSessionChoices();
         }
 
         public IList<AssemblyNode> MutantsGrouped { get; set; }

@@ -36,7 +36,7 @@
 
        
         [Test]
-        public void MutationSuccess()
+        public void ShouldMutateSubstraction()
         {
             const string code =
                 @"using System;
@@ -59,6 +59,39 @@ namespace Ns
             foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
+                                                                                     original);
+                Console.WriteLine(codeWithDifference.Code);
+
+                codeWithDifference.LineChanges.Count.ShouldEqual(2);
+            }
+
+            mutants.Count.ShouldEqual(12);
+        }
+        [Test]
+        public void ShouldMutateDecrementation()
+        {
+            const string code =
+                @"using System;
+namespace Ns
+{
+    public class Test
+    {
+        public int Method1(int a, int b)
+        {
+            a--;
+            return a;
+        }
+    }
+}";
+
+            List<Mutant> mutants;
+            ModulesProvider original;
+            CodeDifferenceCreator diff;
+            MutationTests.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out original, out diff);
+
+            foreach (Mutant mutant in mutants)
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.IL, mutant,
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
 

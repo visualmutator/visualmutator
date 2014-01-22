@@ -12,6 +12,7 @@
     using Mutations.Types;
     using Tests.TestsTree;
     using UsefulTools.CheckboxedTree;
+    using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Switches;
 
@@ -68,9 +69,12 @@
                 //    new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
                 //    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
                  //       oper.MutationTimeMiliseconds / oper.Children.Count),
-                    from type in assemblyNode.Children.SelectManyRecursive(n => n.Children).OfType<TypeNode>()
+                    from type in assemblyNode.Children.SelectManyRecursive(
+                        n => n.Children?? new NotifyingCollection<CheckedNode>())
+                        .OfType<TypeNode>()
                     select new XElement("Type",
                         new XAttribute("Name", type.Name),
+                        new XAttribute("Namespace", type.Namespace),
                             from method in type.Children.Cast<MethodNode>()
                             select new XElement("Method",
                             new XAttribute("Name", method.Name),

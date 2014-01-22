@@ -81,7 +81,8 @@
             FileManager fileManager = new FileManager(hostEnv.Object, new FileSystemService());
             MutantsFileManager mutantsFileManager = new MutantsFileManager(mutantCache, cci, fs);
 
-            mutantsContainer.Initialize(new MutantsCreationOptions(), MutationFilter.AllowAll());
+            mutantsContainer.Initialize(new List<IMutationOperator>(), 
+                new MutantsCreationOptions(), MutationFilter.AllowAll());
 
 
             TestEnvironmentInfo initTestEnvironment = fileManager.InitTestEnvironment(null);

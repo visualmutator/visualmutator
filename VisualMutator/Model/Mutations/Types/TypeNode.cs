@@ -2,9 +2,11 @@
 {
     #region
 
+    using System.Text;
     using Microsoft.Cci;
     using MutantsTree;
     using UsefulTools.CheckboxedTree;
+    using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
 
     #endregion
@@ -55,7 +57,21 @@
             Parent = parent;
         }
 
-      
+
+        public string Namespace
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                MutationNode node = this;
+                while (node.Parent != null)
+                {
+                    sb.Append(node.Name);
+                    node = (MutationNode) node.Parent;
+                }
+                return sb.ToString();
+            }
+        }
     }
 
     public class MethodNode : MutationNode
