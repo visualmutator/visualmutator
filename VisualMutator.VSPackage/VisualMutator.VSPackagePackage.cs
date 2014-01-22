@@ -38,7 +38,7 @@
     // This attribute registers a tool window exposed by this package.
     [ProvideToolWindow(typeof(MyToolWindow))]
     [Guid(GuidList.guidVisualMutator_VSPackagePkgString)]
-    [ProvideBindingPath]
+    [Infrastructure.ProvideBindingPath]
     public sealed class VisualMutator_VSPackagePackage : Package
     {
         public static object MainControl;
