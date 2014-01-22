@@ -264,7 +264,8 @@
 
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-              
+
+                _mutantDetailsController.Initialize(choices.Assemblies);
                 _log.Info("Creating pure mutant for initial checks...");
                 AssemblyNode assemblyNode;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out assemblyNode);
@@ -548,7 +549,7 @@
 
         public void LoadDetails(Mutant mutant)
         {
-            _mutantDetailsController.LoadDetails(mutant, Session);
+            _mutantDetailsController.LoadDetails(mutant);
         }
 
         public void SaveResults()

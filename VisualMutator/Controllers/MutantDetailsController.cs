@@ -3,12 +3,14 @@
     #region
 
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
+    using Model.Mutations.Types;
     using UsefulTools.Switches;
     using UsefulTools.Wpf;
     using ViewModels;
@@ -20,7 +22,7 @@
         private readonly MutantDetailsViewModel _viewModel;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private Mutant _currentMutant;
-        private MutationTestingSession _session;
+        private IList<AssemblyNode> _originalAssemblies;
 
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
@@ -37,9 +39,13 @@
             _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
 
         }
-        public void LoadDetails(Mutant mutant, MutationTestingSession session)
+        public void Initialize(IList<AssemblyNode> assemblies)
         {
-            _session = session;
+            _originalAssemblies = assemblies;
+        }
+
+        public void LoadDetails(Mutant mutant)
+        {
             _currentMutant = mutant;
 
             LoadData(_viewModel.SelectedTabHeader);
@@ -61,11 +67,11 @@
             _viewModel.ClearCode();
 
             var mutant = _currentMutant;
-            var assemblies = _session.OriginalAssemblies;
 
             if(mutant != null)
             {
-                var modules = new ModulesProvider(assemblies.Select(_ => _.AssemblyDefinition).ToList());
+                var modules = new ModulesProvider(_originalAssemblies
+                    .Select(_ => _.AssemblyDefinition).ToList());
                 CodeWithDifference diff = await Task.Run(
                     () => _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
                     mutant, modules));
@@ -115,5 +121,7 @@
             _viewModel.ClearCode();
 
         }
+
+       
     }
 }

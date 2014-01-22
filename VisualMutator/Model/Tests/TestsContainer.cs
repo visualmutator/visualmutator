@@ -229,7 +229,7 @@
             mutant.MutantTestSession.ErrorMessage = e.Message;
             mutant.MutantTestSession.Exception = e;
             mutant.State = MutantResultState.Error;
-            _log.Info("Set mutant " + mutant.Id + " error: " + mutant.State + " message: " + e.Message);
+            _log.Error("Set mutant " + mutant.Id + " error: " + mutant.State + " message: " + e.Message);
         }
         private void ResolveMutantState(Mutant mutant)
         {

@@ -33,7 +33,7 @@
         private void MenuItemMessage_Click(object sender, RoutedEventArgs e)
         {
 
-            string message = ((Mutant)Tree.SelectedItem).MutantTestSession.ErrorMessage;
+            string message = ((Mutant)Tree.SelectedItem).MutantTestSession.Exception.ToString();
             MessageBox.Show(message);
         }
 
