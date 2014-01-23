@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Tests.Operators
+﻿namespace VisualMutator.Tests.Operators.Standard
 {
     #region
 
@@ -13,11 +13,12 @@
     using Model.Mutations.MutantsTree;
     using NUnit.Framework;
     using OperatorsStandard;
+    using SoftwareApproach.TestingExtensions;
 
     #endregion
 
     [TestFixture]
-    public class TestLogicalConnectorReplacement
+    public class LOR_Test
     {
         #region Setup/Teardown
 
@@ -34,6 +35,36 @@
         #endregion
 
         [Test]
+        public void MutationFail()
+        {
+            const string code =
+                @"using System;
+namespace Ns
+{
+    public class Test
+    {
+        public int Method1(int a, int b)
+        {
+            int result = a;
+            int r2 = result & b;
+            int r3 = result | b;
+             r3 = ~r3;
+            return r3;
+        }
+    }
+}";
+
+            List<Mutant> mutants;
+            ModulesProvider original;
+            CodeDifferenceCreator diff;
+            MutationTests.RunMutations(code, new LOR_LogicalOperatorReplacement(), 
+                out mutants, out original, out diff);
+
+
+            mutants.Count.ShouldEqual(3);
+        }
+
+        [Test]
         public void MutationSuccess()
         {
             const string code =
@@ -42,33 +73,34 @@ namespace Ns
 {
     public class Test
     {
-        public bool Method1(bool a, bool b)
+        public int Method1(int a, int b)
         {
-
-            bool result=false;
-            bool result2=false;
-            result = a && b;
-            result2 = a || b;
-            return result && result2;
+            int result = 0;
+            result = a + b;
+            result = a - b;
+            result = a * b;
+            result = a / b;
+            result = a % b;
+            return result;
         }
     }
 }";
-       //     new Conditional().;
-            MutationTests.DebugTraverse(code);
+
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
-
-            
+            MutationTests.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
                 CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
                                                                                      original);
                 Console.WriteLine(codeWithDifference.Code);
-             //   Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
+
+                codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
+
+            mutants.Count.ShouldEqual(30);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Tests.Operators
+﻿namespace VisualMutator.Tests.Operators.Object
 {
     #region
 
@@ -61,7 +61,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutationsFromFile(code, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
 
          
 

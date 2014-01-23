@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Tests.Operators.Object
+﻿namespace VisualMutator.Tests.Operators.Standard
 {
     #region
 
@@ -12,13 +12,12 @@
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
     using NUnit.Framework;
-    using OperatorsObject.Operators;
-    using SoftwareApproach.TestingExtensions;
+    using OperatorsStandard;
 
     #endregion
 
     [TestFixture]
-    public class DMC_Test
+    public class LCR_Test
     {
         #region Setup/Teardown
 
@@ -43,30 +42,25 @@ namespace Ns
 {
     public class Test
     {
-        public delegate void Del(string s); 
-        public void Method2(string s)
-        {
-        }
-        public void Method3(string s)
-        {
-        }
         public bool Method1(bool a, bool b)
         {
-            Del s = Method2;
-            return true;
+
+            bool result=false;
+            bool result2=false;
+            result = a && b;
+            result2 = a || b;
+            return result && result2;
         }
     }
 }";
        //     new Conditional().;
             MutationTests.DebugTraverse(code);
-           
-            
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new DMC_DelegatedMethodChange(), out mutants, out original, out diff);
+            MutationTests.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
 
-            mutants.Count.ShouldEqual(1);
+            
 
             foreach (Mutant mutant in mutants)
             {

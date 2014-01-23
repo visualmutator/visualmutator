@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Tests.Operators
+﻿namespace VisualMutator.Tests.Operators.Object
 {
     #region
 

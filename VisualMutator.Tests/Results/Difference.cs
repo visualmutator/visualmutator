@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Tests
+﻿namespace VisualMutator.Tests.Results
 {
     #region
 

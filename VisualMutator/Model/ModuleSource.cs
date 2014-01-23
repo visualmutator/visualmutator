@@ -95,6 +95,7 @@
 
         public ModuleInfo DecompileFile(string filePath)
         {
+            _log.Info("Decompiling file: " + filePath);
             IModule module = _host.LoadUnitFrom(filePath) as IModule;
             if (module == null || module == Dummy.Module || module == Dummy.Assembly)
             {

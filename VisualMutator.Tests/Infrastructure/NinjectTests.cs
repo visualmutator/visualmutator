@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Tests.Mutations
+﻿namespace VisualMutator.Tests.Infrastructure
 {
     #region
 

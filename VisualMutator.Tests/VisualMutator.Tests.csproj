@@ -203,6 +203,7 @@
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Mutations\TestSelectionTests.cs" />
     <Compile Include="Operators\CciAssumptions.cs" />
+    <Compile Include="Operators\Standard\LOR_Test.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
@@ -222,7 +223,7 @@
     <Compile Include="Operators\Object\TestNullInsertion.cs" />
     <Compile Include="Operators\Object\Test_EMM.cs" />
     <Compile Include="Operators\Object\DMC_Test.cs" />
-    <Compile Include="Operators\Standard\TestLogicalConnectorReplacement.cs" />
+    <Compile Include="Operators\Standard\LCR_Test.cs" />
     <Compile Include="Operators\Standard\TestUnaryOperatorInsertion.cs" />
     <Compile Include="Operators\Object\EHR_Test.cs" />
     <Compile Include="Operators\Standard\ABS_Test.cs" />
