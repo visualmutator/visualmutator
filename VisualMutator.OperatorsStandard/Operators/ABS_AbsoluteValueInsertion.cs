@@ -43,14 +43,28 @@
                 //TODO:other types
                 if (operation.Type.TypeCode == PrimitiveTypeCode.Int32)
                 {
-                    List<string> passes = new List<string>
+                    List<string> passes = new List<string>();
+                    var con = operation as CompileTimeConstant;
+                    if(con != null && con.Value != null)
                     {
-                        "Abs",
-                        "NegAbs",
-                        "FailOnZero"
-                    }.ToList();
-
-                    MarkMutationTarget(operation, passes);
+                        int value = (int) con.Value;
+                        if (value == 0)
+                        {
+                            passes.Add("FailOnZero");
+                        }
+                        else if (value < 0)
+                        {
+                            passes.Add("Abs");
+                        }
+                        else if (value > 0)
+                        {
+                            passes.Add("NegAbs");
+                        }
+                    }
+                    if (passes.Count > 0)
+                    {
+                        MarkMutationTarget(operation, passes);
+                    }
                 }
 
             }

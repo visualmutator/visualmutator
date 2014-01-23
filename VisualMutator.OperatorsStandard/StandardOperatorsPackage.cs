@@ -22,6 +22,7 @@
                 new ABS_AbsoluteValueInsertion(),
                 new SOR_ShiftOperatorReplacement(), 
                 new UOI_UnaryOperatorInsertion(), 
+                new LCR_LogicalConnectorReplacement(), 
                 new LOR_LogicalOperatorReplacement(), 
                 new ROR_RelationalOperatorReplacement(), 
 

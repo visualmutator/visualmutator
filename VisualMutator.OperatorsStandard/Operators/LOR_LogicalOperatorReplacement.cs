@@ -70,7 +70,6 @@ namespace VisualMutator.OperatorsStandard
                     .Case("OnesComplementRight", new OnesComplement{Operand = operation.RightOperand})
                     .GetResult();
 
-
                 replacement.Type = operation.Type;
                 var binary = replacement as BinaryOperation;
                 if (binary != null)
