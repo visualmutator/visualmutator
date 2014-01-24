@@ -117,7 +117,7 @@
             Func<int> genId = () => id[0]++;
 
 
-            percentCompleted.Initialize(_mutOperators.Count);
+            percentCompleted.Initialize(originalModules.Assemblies.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
@@ -292,8 +292,8 @@
                     operatorCodeRewriter.Initialize();
 
                     Assembly rewrittenModule = (Assembly) rewriter.Rewrite(module);
-                    var oldver = rewrittenModule.Version;
-                    
+
+                    rewriter.CheckForUnfoundObjects();
                   //  rewrittenModule.Version = new Version(rewrittenModule.Version.Major, rewrittenModule.Version.Minor,
                   //      rewrittenModule.Version.Build, new Random().Next(int.MaxValue));
                     mutatedModules.Add(rewrittenModule);

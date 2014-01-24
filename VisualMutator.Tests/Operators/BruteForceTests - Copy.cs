@@ -10,7 +10,7 @@
     #endregion
 
     [TestFixture]
-    public class BruteForceTests
+    public class IntegrationTests
     {
   
 
@@ -50,8 +50,7 @@ namespace Ns
         [Test]
         public void MutationSuccess()
         {
-           // var m = MutationTestsHelper.CreateModules(code);
-          //      Assert.Pass();
+           
         }
      
     }

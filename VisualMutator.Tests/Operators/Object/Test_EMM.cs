@@ -122,7 +122,7 @@
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
-            cci.AppendFromFile(MutationTests.DsaPath);
+            cci.AppendFromFile(MutationTestsHelper.DsaPath);
 
             var original = new ModulesProvider(cci.Modules);
             ModulesProvider copiedModules = new ModulesProvider(
@@ -184,20 +184,20 @@
             var cache = new MutantsCache(container);
             List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
             {
-                new AssemblyNode("", cci.AppendFromFile(MutationTests.DsaPath))
+                new AssemblyNode("", cci.AppendFromFile(MutationTestsHelper.DsaPath))
                 {
-                    AssemblyPath = new FilePathAbsolute(MutationTests.DsaPath)
+                    AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaPath)
                 },
-                new AssemblyNode("", cci.AppendFromFile(MutationTests.DsaTestsPath))
+                new AssemblyNode("", cci.AppendFromFile(MutationTestsHelper.DsaTestsPath))
                 {
-                    AssemblyPath = new FilePathAbsolute(MutationTests.DsaTestsPath)
+                    AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaTestsPath)
                 }
             };
             var original = new ModulesProvider(cci.Modules);
             cache.setDisabled(disableCache: true);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            var mutmods = MutationTests.CreateMutants(oper, container, cci, cache, 1);
+            var mutmods = MutationTestsHelper.CreateMutants(oper, container, cci, cache, 1);
             var mutants = mutmods.Select(m => m.Mutant).ToList();
 
             //LONG:
@@ -235,7 +235,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -272,7 +272,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -309,7 +309,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

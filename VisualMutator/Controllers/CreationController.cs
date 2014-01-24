@@ -120,6 +120,10 @@
                             {
                                 _svc.Logging.ShowError(UserMessages.ErrorBadMethodSelected(), _viewModel.View);
                             }
+                            else if (result.Exception.Flatten().InnerException is StrongNameSignedAssemblyException)
+                            {
+                                _svc.Logging.ShowError(UserMessages.ErrorStrongNameSignedAssembly(), _viewModel.View);
+                            }
                             else
                             {
                                 _svc.Logging.ShowError(result.Exception, _viewModel.View);
@@ -133,7 +137,7 @@
                         var tests = (IList<TestNodeNamespace>)result.Result[1];
 
                         assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
-
+                        
                         SelectOnlyCovered(tests, coveredTests);
                         _svc.Threading.PostOnGui(() =>
                         {
@@ -143,39 +147,30 @@
                             }
                             _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.AsStrings().ToList();
 
-                            var allTypeTreeNodes = assemblies
-                                .Cast<CheckedNode>()
-                                .SelectManyRecursive(n => n.Children??new NotifyingCollection<CheckedNode>(),
-                                n => n.IsIncluded == null || n.IsIncluded == true)
-                                .Cast<MutationNode>();
-                            foreach (var typeTreeNode in allTypeTreeNodes)
+                            if(classAndMethod != null)
                             {
-                                typeTreeNode.IsExpanded = true;
-//                                MutationNode node = methodNode;
-//                                while (node.Parent != null)
-//                                {
-//                                    node.Parent.CastTo<MutationNode>().IsExpanded = true;
-//                                    node = (MutationNode) node.Parent;
-//                                }
-                            }
+                                var allTypeTreeNodes = assemblies
+                                    .Cast<CheckedNode>()
+                                    .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                                    n => n.IsIncluded == null || n.IsIncluded == true)
+                                    .Cast<MutationNode>();
+                                foreach (var typeTreeNode in allTypeTreeNodes)
+                                {
+                                    typeTreeNode.IsExpanded = true;
+                                }
 
-                            var allTests = tests
-                                .Cast<CheckedNode>()
-                                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
-                                n => n.IsIncluded == null || n.IsIncluded == true)
-                                .Cast<TestTreeNode>();
-                            foreach (var testNode in allTests)
-                            {
-                                testNode.IsExpanded = true;
-//                                TestTreeNode node = testNode;
-//                                while (node.Parent != null)
-//                                {
-//                                    node.Parent.CastTo<TestTreeNode>().IsExpanded = true;
-//                                    node = (TestTreeNode)node.Parent;
-//                                }
+                                var allTests = tests
+                                    .Cast<CheckedNode>()
+                                    .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                                    n => n.IsIncluded == null || n.IsIncluded == true)
+                                    .Cast<TestTreeNode>();
+                                foreach (var testNode in allTests)
+                                {
+                                    testNode.IsExpanded = true;
+                                }
                             }
+                            
                             _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
-
                             _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests);
 
                         });

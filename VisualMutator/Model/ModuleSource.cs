@@ -30,6 +30,7 @@
         void WriteToFile(IModule module, string filePath);
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
+        List<ModuleSource.ModuleInfo> ModulesInfo { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
         ModuleSource.ModuleInfo FindModuleInfo(IModule module);
         ModuleSource.ModuleInfo DecompileCopy(IModule module);
@@ -58,7 +59,13 @@
         {
             get { return _moduleInfoList.Select(_ => _.Module).ToList(); }
         }
-
+        public List<ModuleInfo> ModulesInfo
+        {
+            get
+            {
+                return _moduleInfoList;
+            }
+        }
         public ModuleSource()
         {
             _host = new PeReader.DefaultHost();

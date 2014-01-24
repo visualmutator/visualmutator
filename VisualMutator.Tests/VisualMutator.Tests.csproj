@@ -202,12 +202,14 @@
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Mutations\TestSelectionTests.cs" />
+    <Compile Include="Operators\BruteForceTests - Copy.cs" />
     <Compile Include="Operators\CciAssumptions.cs" />
+    <Compile Include="Operators\Object\IntegrationTests.cs" />
     <Compile Include="Operators\Standard\LOR_Test.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
-    <Compile Include="Operators\MutationTests.cs" />
+    <Compile Include="Operators\MutationTestsHelper.cs" />
     <Compile Include="Operators\BruteForceTests.cs" />
     <Compile Include="Operators\Object\EHC_Test.cs" />
     <Compile Include="Operators\Object\OAN_Test.cs" />

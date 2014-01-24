@@ -13,7 +13,6 @@
     using log4net;
  
 
-    // using OpCodes = Mono.Cecil.Cil.OpCodes;
 
     public class RFI_ReferencingFaultInsertion : IMutationOperator
     {

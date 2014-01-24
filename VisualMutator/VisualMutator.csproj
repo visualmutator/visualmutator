@@ -247,6 +247,7 @@
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Model\ClassAndMethod.cs" />
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
+    <Compile Include="Model\Exceptions\StrongNameSignedAssemblyException.cs" />
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="Model\Mutations\VisualCodeVisitorBack.cs" />
     <Compile Include="Model\Mutations\VisualCodeVisitorBase.cs" />
     <Compile Include="Model\StoringMutants\FileManager.cs" />
+    <Compile Include="Model\StoringMutants\IWhiteCache.cs" />
     <Compile Include="Model\StoringMutants\ModulesProvider.cs" />
     <Compile Include="Model\ModuleSource.cs" />
     <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />
@@ -281,6 +283,7 @@
     <Compile Include="Model\Mutations\MutantsTree\MutationRootNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
     <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
+    <Compile Include="Model\StoringMutants\DisabledWhiteCache.cs" />
     <Compile Include="Model\StoringMutants\WhiteCache.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />

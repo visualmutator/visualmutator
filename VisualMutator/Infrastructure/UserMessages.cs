@@ -65,6 +65,11 @@ public static string ErrorBadMethodSelected()
     return
         @"Method you selected to mutate is a test. You must select a non-test method.";
 }
-       
+
+        public static string ErrorStrongNameSignedAssembly()
+        {
+            return
+                    @"One of the assemblies is strong name signed. This will not allow to run any code in mutated assemblies. Please disable the assembly signing in project properties.";
+        }
     }
 }

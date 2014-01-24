@@ -18,12 +18,15 @@
         void setDisabled( bool disableCache = false);
 
         ModulesProvider GetMutatedModules(Mutant mutant);
-        WhiteCache WhiteCache { get; }
+        IWhiteCache WhiteCache
+        {
+            get;
+        }
     }
 
     public class MutantsCache : IMutantsCache
     {
-        private readonly WhiteCache _whiteCache;
+        private readonly IWhiteCache _whiteCache;
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly MemoryCache _cache;
@@ -36,16 +39,17 @@
         private bool _disableCache;
 
         //private IDictionary<Mutant, IList<IModule>> 
-        public WhiteCache WhiteCache
+        public IWhiteCache WhiteCache
         {
             get { return _whiteCache; }
         }
+
         public MutantsCache(IMutantsContainer mutantsContainer)
-            : this(new WhiteCache(), mutantsContainer)
+            : this(new DisabledWhiteCache(), mutantsContainer)
         {
-            
         }
-        public MutantsCache(WhiteCache whiteCache,IMutantsContainer mutantsContainer)
+
+        public MutantsCache(IWhiteCache whiteCache,IMutantsContainer mutantsContainer)
         {
             _whiteCache = whiteCache;
             _mutantsContainer = mutantsContainer;

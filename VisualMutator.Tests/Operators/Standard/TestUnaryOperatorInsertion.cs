@@ -4,6 +4,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using log4net.Appender;
     using log4net.Config;
     using log4net.Layout;
@@ -14,6 +15,7 @@
     using NUnit.Framework;
     using OperatorsStandard;
     using SoftwareApproach.TestingExtensions;
+    using UsefulTools.ExtensionMethods;
 
     #endregion
 
@@ -56,7 +58,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
 
             mutants.Count.ShouldEqual(0);
@@ -82,7 +84,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -94,6 +96,49 @@ namespace Ns
             }
 
             mutants.Count.ShouldEqual(3);
+        }
+        [Test]
+        public void MutationSuccessInc()
+        {
+            const string code =
+                @"using System;
+namespace Ns
+{
+    public class Test
+    {
+        public int Method1(int a, int b)
+        {
+            //a++;
+            return b;
+        }
+    }
+}";
+            /*
+            var cci = new ModuleSource();
+            cci.AppendFromFile(MutationTestsHelper.CreateModule(code));
+            ModulesProvider original = new ModulesProvider(
+                new ModuleSource().AppendFromFile(MutationTestsHelper.CreateModule(code)).InList());
+            CodeDifferenceCreator diff;
+            IList<Mutant> mutants = MutationTestsHelper.CreateMutantsLight(new UOI_UnaryOperatorInsertion(), cci, 
+                100, out diff);
+            var tar = mutants.Skip(1).Take(1).Single().MutationTarget;
+            Console.WriteLine(tar);*/
+            MutationTestsHelper.DebugTraverse(code);
+            List<Mutant> mutants;
+            ModulesProvider original;
+            CodeDifferenceCreator diff;
+            MutationTestsHelper.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out original, out diff);
+
+            foreach (Mutant mutant in mutants)//.Skip(1).Take(1))
+            {
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.IL, mutant,
+                                                                                     original);
+                Console.WriteLine(codeWithDifference.Code);
+
+                //codeWithDifference.LineChanges.Count.ShouldEqual(2);
+            }
+
+            mutants.Count.ShouldEqual(1);
         }
     }
 }

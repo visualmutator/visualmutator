@@ -22,7 +22,6 @@
                 return new OperatorInfo("UOI", "Unary Operator Insertion", "");
             }
         }
-
      
         public class UOIVisitor : OperatorCodeVisitor
         {

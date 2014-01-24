@@ -53,7 +53,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -85,7 +85,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 1);
             Assert.AreEqual(mutants[0].MutationTarget.Variant.Signature, "Right");
@@ -118,7 +118,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -146,7 +146,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -174,7 +174,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -211,7 +211,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

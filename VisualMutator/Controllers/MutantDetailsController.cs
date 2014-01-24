@@ -23,6 +23,8 @@
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private Mutant _currentMutant;
         private IList<AssemblyNode> _originalAssemblies;
+        private IDisposable _langObs;
+        private IDisposable _tabObs;
 
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
@@ -32,16 +34,17 @@
             _codeDifferenceCreator = codeDifferenceCreator;
 
 
-            _viewModel.RegisterPropertyChanged(_=>_.SelectedTabHeader)
-                .Where(header => _currentMutant != null)
-                .Subscribe(LoadData);
-
-            _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
+            
 
         }
         public void Initialize(IList<AssemblyNode> assemblies)
         {
             _originalAssemblies = assemblies;
+            _tabObs = _viewModel.RegisterPropertyChanged(_ => _.SelectedTabHeader)
+                .Where(header => _currentMutant != null)
+                .Subscribe(LoadData);
+
+            _langObs = _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
         }
 
         public void LoadDetails(Mutant mutant)
@@ -119,6 +122,8 @@
             _viewModel.TestNamespaces.Clear();
             _viewModel.SelectedLanguage = CodeLanguage.CSharp;
             _viewModel.ClearCode();
+            _langObs.Dispose();
+            _tabObs.Dispose();
 
         }
 

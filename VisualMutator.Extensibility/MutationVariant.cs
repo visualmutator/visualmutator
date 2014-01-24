@@ -49,5 +49,10 @@
             _additionalInfo = "";
             _astObjects = new Dictionary<string, object>();
         }
+
+        public override string ToString()
+        {
+            return string.Format("Signature: {0}", _signature);
+        }
     }
 }

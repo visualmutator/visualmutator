@@ -69,8 +69,6 @@
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
             return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
-       
-
      
        
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths)
@@ -138,6 +136,11 @@
                 {
                     IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
                    
+                    if(module.StrongNameSigned)
+                    {
+                        throw new StrongNameSignedAssemblyException();
+                    }
+
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
                     System.Action<CheckedNode, ICollection<INamespaceTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>

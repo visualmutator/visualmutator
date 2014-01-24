@@ -14,34 +14,24 @@ namespace VisualMutator.Model.StoringMutants
     using Microsoft.Cci.Ast;
     using Mutations.Types;
 
-    public class WhiteCache : IWhiteCache
+    public class DisabledWhiteCache : IWhiteCache
     {
-        private readonly BlockingCollection<ModuleSource> _whiteCache;
         private IList<string> _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public WhiteCache()
+        public DisabledWhiteCache()
         {
-            _whiteCache = new BlockingCollection<ModuleSource>(4);
         }
 
         public void Initialize(IList<string> assembliesPaths)
         {
             _assembliesPaths = assembliesPaths;
-            Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
-                  .Subscribe(ev =>
-                  {
-                      if(_whiteCache.Count < _whiteCache.BoundedCapacity)
-                      {
-                          _whiteCache.TryAdd(CreateSource(assembliesPaths));
-                      }
-                     
-                  });
+           
         }
 
         public ModuleSource GetWhiteModules()
         {
-            return _whiteCache.Take();
+            return CreateSource(_assembliesPaths);
 
         }
         public ModuleSource CreateSource(IList<string> assembliesPaths)

@@ -37,8 +37,8 @@
         {
             var cci = new ModuleSource();
            
-            cci.AppendFromFile(MutationTests.DsaPath);
-            cci.AppendFromFile(MutationTests.DsaTestsPath);
+            cci.AppendFromFile(MutationTestsHelper.DsaPath);
+            cci.AppendFromFile(MutationTestsHelper.DsaTestsPath);
 
             var visitor = new DebugOperatorCodeVisitor();
             var traverser = new DebugCodeTraverser(visitor);
@@ -49,8 +49,8 @@
             string listing0 = visitor.ToString();
 
             var cci2 = new ModuleSource();
-            cci2.AppendFromFile(MutationTests.DsaPath);
-            cci2.AppendFromFile(MutationTests.DsaTestsPath);
+            cci2.AppendFromFile(MutationTestsHelper.DsaPath);
+            cci2.AppendFromFile(MutationTestsHelper.DsaTestsPath);
 
             var visitor2 = new DebugOperatorCodeVisitor();
             var traverser2 = new DebugCodeTraverser(visitor2);

@@ -71,7 +71,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
@@ -106,7 +106,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
 
             foreach (Mutant mutant in mutants)
@@ -149,7 +149,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
@@ -171,11 +171,11 @@ namespace Ns
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
-            cci.AppendFromFile(MutationTests.DsaPath);
+            cci.AppendFromFile(MutationTestsHelper.DsaPath);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, cci, cache, 500).ToList();
+            List<MutantGroup> groups = MutationTestsHelper.CreateMutantGroupsLight(oper, container, cci, cache, 500).ToList();
 
             var groupsBad = groups
                 .Where(g => g.Mutants.Select(m => m.ToString()).Distinct().Count() != g.Mutants.Count()).ToList();
@@ -192,19 +192,19 @@ namespace Ns
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
-            var cache = new MutantsCache(container);
+            var cache = new MutantsCache( container);
             List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
             {
-                new AssemblyNode("", cci.AppendFromFile(MutationTests.DsaPath))
+                new AssemblyNode("", cci.AppendFromFile(MutationTestsHelper.DsaPath))
                 {
-                    AssemblyPath = new FilePathAbsolute(MutationTests.DsaPath)
+                    AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaPath)
                 },
             };
             var original = new ModulesProvider(cci.Modules);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
-            List<MutantGroup> groups = MutationTests.CreateMutantsLight(oper, container, cci, cache, 500).ToList();
+            List<MutantGroup> groups = MutationTestsHelper.CreateMutantGroupsLight(oper, container, cci, cache, 500).ToList();
             var mutants = groups.SelectMany(g=>g.Mutants).ToList();
 
             foreach (Mutant mutant in mutants)

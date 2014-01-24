@@ -59,7 +59,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, oper, out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, oper, out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

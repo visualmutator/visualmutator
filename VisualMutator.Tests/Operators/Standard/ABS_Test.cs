@@ -54,7 +54,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {
@@ -87,7 +87,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

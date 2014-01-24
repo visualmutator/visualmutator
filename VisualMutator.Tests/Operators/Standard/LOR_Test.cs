@@ -57,7 +57,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new LOR_LogicalOperatorReplacement(), 
+            MutationTestsHelper.RunMutations(code, new LOR_LogicalOperatorReplacement(), 
                 out mutants, out original, out diff);
 
 
@@ -89,7 +89,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 
             foreach (Mutant mutant in mutants)
             {

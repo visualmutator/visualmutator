@@ -58,13 +58,12 @@ namespace Ns
     }
 }";
        //     new Conditional().;
-            MutationTests.DebugTraverse(code);
-           
+            MutationTestsHelper.DebugTraverse(code);
             
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new RFI_ReferencingFaultInsertion(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new RFI_ReferencingFaultInsertion(), out mutants, out original, out diff);
 
 
             foreach (Mutant mutant in mutants)

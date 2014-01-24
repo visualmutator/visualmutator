@@ -54,11 +54,11 @@ namespace Ns
     }
 }";
        //     new Conditional().;
-            MutationTests.DebugTraverse(code);
+            MutationTestsHelper.DebugTraverse(code);
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out original, out diff);
 
             
 

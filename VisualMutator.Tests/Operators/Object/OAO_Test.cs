@@ -61,7 +61,7 @@ namespace Ns
             List<Mutant> mutants;
             ModulesProvider original;
             CodeDifferenceCreator diff;
-            MutationTests.RunMutations(code, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
 
          
 

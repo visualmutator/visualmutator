@@ -11,6 +11,7 @@
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using UsefulTools.ExtensionMethods;
+    using Xceed.Wpf.Toolkit.Core;
 
     #endregion
 
@@ -31,10 +32,9 @@
         private readonly List<AstNode> _sharedASTObjects;
 
         private readonly MutationFilter _filter;
-        private readonly IList<TypeIdentifier> _allowedTypes;
        
         private readonly IOperatorCodeRewriter _rewriter;
-        private AstFormatter _formatter;
+        private readonly AstFormatter _formatter;
 
         public AstFormatter Formatter
         {
@@ -73,7 +73,15 @@
             {
                 _log.Debug("Found object: " + Formatter.Format(obj));
             }
-            newList = _capturedASTObjects.WhereNot(t => t.Object == obj && t.Context.CallTypeName == typeName).ToList();
+            AstNode firstOrDefault = _capturedASTObjects.FirstOrDefault(t => t.Object == obj);
+            if (firstOrDefault != null)
+            {
+                _log.Info("Found object: " + firstOrDefault + " with callTypeName: " +
+                    firstOrDefault.Context.CallTypeName + "while current type name is: " + typeName);
+            }
+            newList = _capturedASTObjects.WhereNot(t => t.Object == obj && t.Context.CallTypeName ==
+                    typeName).ToList();
+            
             if (newList.Count < _capturedASTObjects.Count)
             {
                 _capturedASTObjects = newList;
@@ -82,7 +90,13 @@
             return _sharedASTObjects.Any(x => x.Object == obj);
        
         }
-
+        public void CheckForUnfoundObjects()
+        {
+            if(_capturedASTObjects.Any())
+            {
+                _log.Error("Unfound objects while rewriting: " + string.Join(",", _capturedASTObjects));
+            }
+        }
         /// <summary>
         /// Do not deeper if type is not allowed - (as requested on mutation testing start)
         /// </summary>
