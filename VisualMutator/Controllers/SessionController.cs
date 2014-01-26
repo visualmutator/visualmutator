@@ -12,6 +12,7 @@
     using log4net;
     using Model;
     using Model.Decompilation;
+    using Model.Decompilation.CodeDifference;
     using Model.Exceptions;
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
@@ -48,6 +49,7 @@
         private readonly ICodeVisualizer _codeVisualizer;
       //  private readonly SessionCreationController _scc;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
+        private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private readonly IModuleSource _commonCompiler;
 
         private int _allMutantsCount;
@@ -82,6 +84,7 @@
             ICodeVisualizer codeVisualizer,
             IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
+            ICodeDifferenceCreator codeDifferenceCreator,
             IModuleSource commonCompiler)
         {
             MutantsCreationFactory = mutantsCreationFactory;
@@ -96,6 +99,7 @@
             _xmlResultsGenerator = xmlResultsGenerator;
             _codeVisualizer = codeVisualizer;
             _resultsSavingFactory = resultsSavingFactory;
+            _codeDifferenceCreator = codeDifferenceCreator;
             _commonCompiler = commonCompiler;
             _sessionState = SessionState.NotStarted;
 
@@ -365,11 +369,10 @@
             _svc.Threading.ScheduleAsync(
             () =>
             {
-                var executedOperators = _mutantsContainer.InitMutantsForOperators(
-                    
-                     new ModulesProvider(_currentSession.OriginalAssemblies
-                         .Select(_ => _.AssemblyDefinition).ToList()), counter);
-                _currentSession.MutantsGrouped = executedOperators;
+                var modulesProvider = new ModulesProvider(_currentSession.OriginalAssemblies
+                    .Select(_ => _.AssemblyDefinition).ToList());
+                var mutantModules = _mutantsContainer.InitMutantsForOperators(modulesProvider, counter);
+                _currentSession.MutantsGrouped = mutantModules;
             },
             () =>
             {
@@ -428,13 +431,24 @@
                         .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
 
 
-                    _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, storedMutantInfo, 
-                        mutant, _currentSession.Choices.SelectedTests);
+                    CodeWithDifference diff = _codeDifferenceCreator.CreateDifferenceListing(
+                        CodeLanguage.IL, mutant,
+                        new ModulesProvider(_mutantsCache.WhiteCache.GetWhiteModules().Modules));
 
-                    _testedMutants.Add(mutant);
+                    if (diff.LineChanges.Count == 0)
+                    {   
+                        mutant.IsEquivalent = true;
+                    }
+                    else
+                    {
+                        _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions,
+                           storedMutantInfo, mutant, _currentSession.Choices.SelectedTests);
 
-                    _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
+                        _testedMutants.Add(mutant);
 
+                        _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
+
+                    }
                     _currentSession.MutationScore = ((double)_mutantsKilledCount) / _testedMutants.Count;
 
                     raiseTestingProgress();

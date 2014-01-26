@@ -210,7 +210,6 @@
 
             System.Action<CheckedNode, ICollection<MutationTarget>> typeNodeCreator = (parent, targets) =>
                 {
-
                     foreach (var byTypeGrouping in targets.GroupBy(t => t.TypeName))
                     {
                         var type = new TypeNode(parent, byTypeGrouping.Key);
@@ -237,11 +236,9 @@
                                 group.UpdateDisplayedText();
                             }
                         }
-                        
-
                     }
-                    
                 };
+
             Func<MutationTarget, string> namespaceExtractor = target => target.NamespaceName;
             Func<MutationTarget, string> nameExtractor = target => target.TypeName;
 
@@ -265,9 +262,7 @@
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
-              //  var cci = new ModuleSource();
                 var mutatedModules = new List<Assembly>();
-                var oldVersions = new Dictionary<Version, Version>();
                 foreach (var module in moduleSource.Modules)
                 {
                     percentCompleted.Progress();
@@ -289,16 +284,12 @@
                     operatorCodeRewriter.Host = _cci.Host;
                     operatorCodeRewriter.Module = module;
                     operatorCodeRewriter.OperatorUtils = _operatorUtils;
-
                     operatorCodeRewriter.Initialize();
 
-                    Assembly rewrittenModule = (Assembly) rewriter.Rewrite(module);
+                    var rewrittenModule = (Assembly) rewriter.Rewrite(module);
 
                     rewriter.CheckForUnfoundObjects();
-                  //  rewrittenModule.Version = new Version(rewrittenModule.Version.Major, rewrittenModule.Version.Minor,
-                  //      rewrittenModule.Version.Build, new Random().Next(int.MaxValue));
                     mutatedModules.Add(rewrittenModule);
-                 //   oldVersions.Add(oldver, rewrittenModule.Version);
                 }
                 return new ModulesProvider(mutatedModules.Cast<IModule>().ToList());
             }
@@ -322,15 +313,11 @@
                 get;
                 set;
             }
-
             public IMutationOperator Operator
             {
                 get;
                 set;
             }
-
-
-
             public List<MutationTarget> CommonTargets
             {
                 get;

@@ -172,7 +172,6 @@
                                           ItemsSource="{Binding Children}">
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
-
                         <TextBlock Text="{Binding DisplayedText}" />
                     </DockPanel>
                     <HierarchicalDataTemplate.ItemContainerStyle>
@@ -187,7 +186,8 @@
 
                 <DataTemplate DataType="{x:Type MutantsTree:Mutant}">
                     <DockPanel>
-                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" />
+                        <Rectangle Style="{StaticResource MutationStateRectangleStyle}" >
+                        </Rectangle>
                         <TextBlock Text="{Binding DisplayedText}" />
                     </DockPanel>
                   

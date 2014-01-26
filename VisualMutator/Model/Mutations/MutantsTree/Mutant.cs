@@ -12,10 +12,24 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
     public class Mutant : MutationNode
     {
+
+        public Mutant(string id, MutantGroup parent, MutationTarget mutationTarget)
+            : base("Mutant", false)
+        {
+            _id = id;
+            _mutationTarget = mutationTarget;
+
+            _mutantTestSession = new MutantTestSession();
+
+            Parent = parent;
+            UpdateDisplayedText();
+        }
+
+
         private readonly string _id;
 
         private readonly MutationTarget _mutationTarget;
-       
+
         public MutationTarget MutationTarget
         {
             get
@@ -24,17 +38,6 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             }
         }
      
-        public Mutant(string id, MutantGroup parent, MutationTarget mutationTarget)
-            : base( "Mutant", false)
-        {
-            _id = id;
-            _mutationTarget = mutationTarget;
-
-            _mutantTestSession  = new MutantTestSession();
-
-            Parent = parent;
-            UpdateDisplayedText();
-        }
 
         public string Id
         {
@@ -43,34 +46,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 return _id;
             }
         }
-        protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
-        {
-            base.SetState(value, updateChildren, updateParent);
-            UpdateDisplayedText();
-        }
-
-        public void UpdateDisplayedText()
-        {
-            string stateText =
-             Switch.Into<string>().From(State)
-             .Case(MutantResultState.Untested, "Untested")
-             .Case(MutantResultState.Creating, "Creating mutant...")
-             .Case(MutantResultState.Tested, "Executing tests...")
-             .Case(MutantResultState.Killed, () =>
-             {
-                 return Switch.Into<string>().From(KilledSubstate)
-                     .Case(MutantKilledSubstate.Normal, () => "Killed by {0} tests".Formatted(NumberOfFailedTests))
-                     .Case(MutantKilledSubstate.Inconclusive, () => "Killed by {0} tests".Formatted(NumberOfFailedTests))
-                     .Case(MutantKilledSubstate.Cancelled, () => "Cancelled")
-                     .GetResult();
-             })
-             .Case(MutantResultState.Live, "Live")
-             .Case(MutantResultState.Error, () => MutantTestSession.ErrorDescription)
-             .GetResult();
-
-
-            DisplayedText = "{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
-        }
+        
         private int _numberOfFailedTests;
 
         public int NumberOfFailedTests
@@ -128,8 +104,69 @@ namespace VisualMutator.Model.Mutations.MutantsTree
         {
             get { return (MutantGroup) Parent; }
         }
-    }
 
+        private bool _isEquivalent;
+
+        public bool IsEquivalent
+        {
+            get
+            {
+                return _isEquivalent;
+            }
+            set
+            {
+                SetAndRise(ref _isEquivalent, value, () => IsEquivalent);
+                UpdateDisplayedText();
+            }
+        }
+        protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
+        {
+            base.SetState(value, updateChildren, updateParent);
+            UpdateDisplayedText();
+        }
+
+        public void UpdateDisplayedText()
+        {
+            string stateText =
+             Switch.Into<string>().From(State)
+             .Case(MutantResultState.Untested, "Untested")
+             .Case(MutantResultState.Creating, "Creating mutant...")
+             .Case(MutantResultState.Tested, "Executing tests...")
+             .Case(MutantResultState.Killed, () =>
+             {
+                 return Switch.Into<string>().From(KilledSubstate)
+                     .Case(MutantKilledSubstate.Normal, () => "Killed by {0} tests".Formatted(NumberOfFailedTests))
+                     .Case(MutantKilledSubstate.Inconclusive, () => "Killed by {0} tests".Formatted(NumberOfFailedTests))
+                     .Case(MutantKilledSubstate.Cancelled, () => "Cancelled")
+                     .GetResult();
+             })
+             .Case(MutantResultState.Live, "Live")
+             .Case(MutantResultState.Error, () => MutantTestSession.ErrorDescription)
+             .GetResult();
+
+            if(IsEquivalent)
+            {
+                stateText = "Equivalent";
+            }
+
+            DisplayedText = "{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
+        }
+    }
+    public enum StateSignal
+    {
+        //Not yet tested
+        Untested,
+        Creating,
+        //During testing
+        Tested,
+        //Any test failed or was inconclusive
+        Killed,
+        //All tests passed
+        Live,
+        //Error occurred while testing
+        Error,
+        Equivalent
+    }
     public enum MutantKilledSubstate
     {
         Normal,
