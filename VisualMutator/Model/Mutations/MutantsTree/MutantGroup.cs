@@ -53,12 +53,12 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         public void UpdateDisplayedText()
         {
-            DisplayedText = "Mutation group: {0}"
+            DisplayedText = "Group: {0}"
                     .Formatted(Name);
         }
         public override string ToString()
         {
-            return "Mutation group: {0}"
+            return "Group: {0}"
                     .Formatted(Name);
         }
     }

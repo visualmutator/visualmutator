@@ -48,7 +48,7 @@
 
         public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, ModulesProvider currentOriginalModules)
         {
-
+            _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
             ModulesProvider moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {

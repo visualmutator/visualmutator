@@ -32,8 +32,7 @@
 
     public class SessionController
     {
-        public IFactory<SessionCreationController> MutantsCreationFactory { get; set; }
-        public IFactory<OnlyMutantsCreationController> OnlyMutantsCreationFactory { get; set; }
+        public IFactory<CreationController> MutantsCreationFactory { get; set; }
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly CommonServices _svc;
@@ -47,7 +46,7 @@
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
         private readonly ICodeVisualizer _codeVisualizer;
-        private readonly SessionCreationController _scc;
+      //  private readonly SessionCreationController _scc;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly IModuleSource _commonCompiler;
 
@@ -81,14 +80,11 @@
             IMutantsCache mutantsCache,
             XmlResultsGenerator xmlResultsGenerator,
             ICodeVisualizer codeVisualizer,
-            SessionCreationController scc,
-            IFactory<SessionCreationController> mutantsCreationFactory,
-            IFactory<OnlyMutantsCreationController> onlyMutantsCreationFactory,
+            IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
             IModuleSource commonCompiler)
         {
             MutantsCreationFactory = mutantsCreationFactory;
-            OnlyMutantsCreationFactory = onlyMutantsCreationFactory;
             _svc = svc;
             _mutantDetailsController = mutantDetailsController;
             _mutantsContainer = mutantsContainer;
@@ -99,7 +95,6 @@
 
             _xmlResultsGenerator = xmlResultsGenerator;
             _codeVisualizer = codeVisualizer;
-            _scc = scc;
             _resultsSavingFactory = resultsSavingFactory;
             _commonCompiler = commonCompiler;
             _sessionState = SessionState.NotStarted;
@@ -340,7 +335,10 @@
             }
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
-            _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
+            if (_testingProcessExtensionOptions != null)
+            {
+                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
+            }
             _sessionEventsSubject.OnCompleted();
         }
 
@@ -352,7 +350,10 @@
             }
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Error, 0);
-            _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
+            if (_testingProcessExtensionOptions != null)
+            {
+                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
+            }
             _sessionEventsSubject.OnCompleted();
         }
 

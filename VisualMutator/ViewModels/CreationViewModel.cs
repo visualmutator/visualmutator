@@ -6,24 +6,27 @@
     using UsefulTools.Core;
     using UsefulTools.Paths;
     using UsefulTools.Wpf;
+    using Views;
 
     #endregion
 
-    public class CreationViewModel<TView> : ViewModel<TView>
-        where TView : class, IWindow
+    public class CreationViewModel : ViewModel<ISessionCreationView>
     {
         public CreationViewModel(
-            TView view,
+            ISessionCreationView view,
             TypesTreeViewModel typesTreeToMutate,
             TestsSelectableTreeViewModel typesTreeToTest,
             MutationsTreeViewModel mutationsTree,
-            MutantsCreationOptionsViewModel mutantsCreation)
+            MutantsCreationOptionsViewModel mutantsCreation,
+             MutantsTestingOptionsViewModel mutantsTesting)
             : base(view)
         {
             MutationsTree = mutationsTree;
             TypesTreeMutate = typesTreeToMutate;
             TypesTreeToTest = typesTreeToTest;
             MutantsCreation = mutantsCreation;
+            MutantsTesting = mutantsTesting;
+            MutantsTesting.Initialize(View);
 
         }
         public List<DirectoryPathAbsolute> ProjectPaths
@@ -103,7 +106,37 @@
             }
         }
 
+        private SmartCommand _commandWriteMutants;
 
+
+        public SmartCommand CommandWriteMutants
+        {
+            get
+            {
+                return _commandWriteMutants;
+            }
+            set
+            {
+                SetAndRise(ref _commandWriteMutants, value, () => CommandWriteMutants);
+            }
+        }
+        private MutantsTestingOptionsViewModel _mutantsTesting;
+        public MutantsTestingOptionsViewModel MutantsTesting
+        {
+            get
+            {
+                return _mutantsTesting;
+            }
+            set
+            {
+                SetAndRise(ref _mutantsTesting, value, () => MutantsTesting);
+            }
+        }
+        public string MutantsGenerationPath
+        {
+            get;
+            set;
+        }
 
         public void ShowDialog()
         {

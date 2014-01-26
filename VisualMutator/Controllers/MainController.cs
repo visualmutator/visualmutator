@@ -55,10 +55,6 @@
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
 
-            _viewModel.CommandOnlyCreateMutants = new SmartCommand(OnlyCreateMutants,
-                () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
-                .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
-
 
             _viewModel.CommandPause = new SmartCommand(PauseOperations, 
                 () => _viewModel.OperationsState.IsIn(OperationsState.Testing))
@@ -159,30 +155,22 @@
                      });
                  }),
 
-               
+               _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
+                   .Subscribe(sessionController.LoadDetails)
             };
 
-            _viewModel.RegisterPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
-                   .Subscribe(sessionController.LoadDetails);
         }
 
         public void RunMutationSession()
         {
             _log.Info("Showing mutation session window.");
-            Clean();
-            _currenSessionController = _sessionControllerFactory.Create();
-            var mutantsCreationController = _currenSessionController.MutantsCreationFactory.Create();
+
+            var newSessionController = _sessionControllerFactory.Create();
+            var mutantsCreationController = newSessionController.MutantsCreationFactory.Create();
              mutantsCreationController.Run();
             if (mutantsCreationController.HasResults)
             {
-                MutationSessionChoices choices = mutantsCreationController.Result;
-               
-                _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
-
-                Subscribe(_currenSessionController);
-
-                _log.Info("Starting mutation session...");
-                _currenSessionController.RunMutationSession(choices);
+                StartNewSession(newSessionController, mutantsCreationController.Result);
             }
         }
         public void RunMutationSessionForCurrentPosition()
@@ -191,38 +179,34 @@
             if (_host.GetCurrentClassAndMethod(out classAndMethod) && classAndMethod.MethodName != null)
             {
                 _log.Info("Showing mutation session window.");
-                Clean();
-                _currenSessionController = _sessionControllerFactory.Create();
-                var mutantsCreationController = _currenSessionController.MutantsCreationFactory.Create();
+
+                var newSessionController = _sessionControllerFactory.Create();
+                var mutantsCreationController = newSessionController.MutantsCreationFactory.Create();
                 mutantsCreationController.Run(classAndMethod);
                 if (mutantsCreationController.HasResults)
                 {
-                    MutationSessionChoices choices = mutantsCreationController.Result;
-
-                    _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
-
-                    Subscribe(_currenSessionController);
-
-                    _log.Info("Starting mutation session...");
-                    _currenSessionController.RunMutationSession(choices);
+                    StartNewSession(newSessionController, mutantsCreationController.Result);
                 }
             }
             //throw new NotImplementedException();
         }
-        public void OnlyCreateMutants()
+        public void StartNewSession(SessionController newSessionController, MutationSessionChoices choices)
         {
             Clean();
-            _currenSessionController = _sessionControllerFactory.Create();
-            var onlyMutantsController = _currenSessionController.OnlyMutantsCreationFactory.Create();
-            onlyMutantsController.Run();
+            _currenSessionController = newSessionController;
 
-            if (onlyMutantsController.HasResults)
+            _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
+
+            Subscribe(_currenSessionController);
+
+            _log.Info("Starting mutation session...");
+            if (choices.MutantsCreationFolderPath != null)
             {
-                MutationSessionChoices choices = onlyMutantsController.Result;
-                _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
-                Subscribe(_currenSessionController);
-
                 _currenSessionController.OnlyCreateMutants(choices);
+            }
+            else
+            {
+                _currenSessionController.RunMutationSession(choices);
             }
         }
 

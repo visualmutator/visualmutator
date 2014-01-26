@@ -76,10 +76,11 @@
             Bind<MainViewModel>().ToSelf();
 
 
-            Bind<OnlyMutantsCreationViewModel>().ToSelf();
-            Bind<IOnlyMutantsCreationView>().To<OnlyMutantsCreationView>();
+            Bind<MutantsSavingController>().ToSelf().AndFromFactory();
+            Bind<MutantsSavingViewModel>().ToSelf();
+            Bind<IMutantsSavingView>().To<MutantsSavingView>();
 
-            Bind<SessionCreationViewModel>().ToSelf();
+            Bind<CreationViewModel>().ToSelf();
             Bind<ISessionCreationView>().To<SessionCreationView>();
 
 
@@ -136,8 +137,7 @@
             {
                 childKernel.Bind<SessionController>().ToSelf().AndFromFactory();
 
-                childKernel.Bind<SessionCreationController>().ToSelf().AndFromFactory();
-                childKernel.Bind<OnlyMutantsCreationController>().ToSelf().AndFromFactory();
+                childKernel.Bind<CreationController>().ToSelf().AndFromFactory();
                 childKernel.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
                 childKernel.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
                 childKernel.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();

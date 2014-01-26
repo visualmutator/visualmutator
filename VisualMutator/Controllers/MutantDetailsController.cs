@@ -5,7 +5,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
+    using log4net;
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
@@ -19,6 +21,7 @@
 
     public class MutantDetailsController : Controller
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutantDetailsViewModel _viewModel;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private Mutant _currentMutant;
@@ -40,15 +43,17 @@
         public void Initialize(IList<AssemblyNode> assemblies)
         {
             _originalAssemblies = assemblies;
-            _tabObs = _viewModel.RegisterPropertyChanged(_ => _.SelectedTabHeader)
+            _tabObs = _viewModel.WhenPropertyChanged(_ => _.SelectedTabHeader)
                 .Where(header => _currentMutant != null)
                 .Subscribe(LoadData);
 
-            _langObs = _viewModel.RegisterPropertyChanged(_ => _.SelectedLanguage).Subscribe(LoadCode);
+            _langObs = _viewModel.WhenPropertyChanged(_ => _.SelectedLanguage)
+                .Subscribe(LoadCode);
         }
 
         public void LoadDetails(Mutant mutant)
         {
+            _log.Debug("LoadDetails in object: " + ToString() + GetHashCode());
             _currentMutant = mutant;
 
             LoadData(_viewModel.SelectedTabHeader);

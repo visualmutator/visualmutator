@@ -207,13 +207,13 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-    <Reference Include="UsefulTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.0.9.3\lib\net45\UsefulTools.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.0.9.4\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
-    <Reference Include="UsefulTools.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools.Wpf, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.Wpf.0.9.3\lib\net45\UsefulTools.Wpf.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.Wpf.0.9.4\lib\net45\UsefulTools.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock">
@@ -240,6 +240,7 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
+    <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
     <Compile Include="ViewModels\ChooseTestingExtensionViewModel.cs" />
+    <Compile Include="ViewModels\MutantsSavingViewModel.cs" />
     <Compile Include="ViewModels\TestsSelectableTreeViewModel.cs" />
     <Compile Include="ViewModels\CreationViewModel.cs" />
     <Compile Include="ViewModels\OnlyMutantsCreationViewModel.cs" />
@@ -373,6 +375,9 @@
     <Compile Include="Views\ChooseTestingExtensionView.xaml.cs">
       <DependentUpon>ChooseTestingExtensionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MutantsSavingView.xaml.cs">
+      <DependentUpon>MutantsSavingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TestsSelectableTree.xaml.cs">
       <DependentUpon>TestsSelectableTree.xaml</DependentUpon>
     </Compile>
@@ -412,6 +417,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\ChooseTestingExtensionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MutantsSavingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

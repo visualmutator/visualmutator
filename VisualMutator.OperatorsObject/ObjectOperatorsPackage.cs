@@ -30,7 +30,7 @@
                 new ISD_BaseKeywordDeletion(), 
                 new JID_FieldInitializationDeletion(), 
                 new JTD_ThisKeywordDeletion(), 
-                new RFI_ReferencingFaultInsertion(), 
+               // new RFI_ReferencingFaultInsertion(), 
                 new PRV_ReferenceAssignmentChange(), 
                 new MCI_MemberCallFromAnotherInheritedClass(), 
               //  new NullInsertion(), 

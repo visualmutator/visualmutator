@@ -22,6 +22,7 @@
     using Model.Tests.TestsTree;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
+    using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
     using UsefulTools.Wpf;
@@ -29,8 +30,7 @@
 
     #endregion
 
-    public abstract class CreationController<TViewModel, TView> : Controller
-        where TViewModel : CreationViewModel<TView> where TView : class, IWindow
+    public class CreationController : Controller
     {
         protected readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -39,23 +39,25 @@
         protected readonly IOperatorsManager _operatorsManager;
         private readonly IHostEnviromentConnection _hostEnviroment;
         protected readonly ITestsContainer _testsContainer;
+        private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
         private readonly IFileManager _fileManager;
 
         protected readonly CommonServices _svc;
 
         protected readonly ITypesManager _typesManager;
 
-        protected readonly TViewModel _viewModel;
+        protected readonly CreationViewModel _viewModel;
 
 
         public MutationSessionChoices Result { get; protected set; }
 
-        protected CreationController(
-            TViewModel viewModel,
+        public CreationController(
+            CreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             ITestsContainer testsContainer,
+            IFactory<MutantsSavingController> mutantsSavingFactory,
             IFileManager fileManager,
             CommonServices svc)
         {
@@ -65,6 +67,7 @@
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _testsContainer = testsContainer;
+            _mutantsSavingFactory = mutantsSavingFactory;
             _fileManager = fileManager;
             _svc = svc;
 
@@ -78,7 +81,11 @@
                 .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
 
 
-
+            _viewModel.CommandWriteMutants = new SmartCommand(GenerateMutants,
+                () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
+                      && _viewModel.MutationsTree.MutationPackages.Count != 0)
+                .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
+                .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
         }
 
         public void SetMutationConstraints(ClassAndMethod classAndMethod)
@@ -238,7 +245,34 @@
 //    
 //        }
 
-        protected abstract void AcceptChoices();
+        protected void AcceptChoices()
+        {
+            Result = new MutationSessionChoices
+            {
+                SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
+                    .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
+                Assemblies = _viewModel.TypesTreeMutate.Assemblies,
+                AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
+                ProjectPaths = _viewModel.ProjectPaths.ToList(),
+                Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
+                SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.Namespaces),
+                MutantsCreationOptions = _viewModel.MutantsCreation.Options,
+                MutantsTestingOptions = _viewModel.MutantsTesting.Options,
+                MutantsCreationFolderPath = _viewModel.MutantsGenerationPath
+            };
+            _viewModel.Close();
+        }
+
+        public void GenerateMutants()
+        {
+            MutantsSavingController mutantsSavingController = _mutantsSavingFactory.Create();
+            mutantsSavingController.Run();
+            if(mutantsSavingController.Result != null)
+            {
+                _viewModel.MutantsGenerationPath = mutantsSavingController.Result;
+                AcceptChoices();
+            }
+        }
 
 
         public bool HasResults

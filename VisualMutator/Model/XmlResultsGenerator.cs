@@ -35,7 +35,7 @@
             bool includeCodeDifferenceListings)
         {
             List<Mutant> mutants = session.MutantsGrouped.Cast<CheckedNode>()
-                .SelectManyRecursive(n => n.Children, leafsOnly:true).Cast<Mutant>().ToList();
+                .SelectManyRecursive(n => n.Children, leafsOnly:true).OfType<Mutant>().ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
@@ -75,7 +75,7 @@
                     select new XElement("Type",
                         new XAttribute("Name", type.Name),
                         new XAttribute("Namespace", type.Namespace),
-                            from method in type.Children.Cast<MethodNode>()
+                            from method in type.Children.Cast<MethodNode>()//TODO: what if nested type?
                             select new XElement("Method",
                             new XAttribute("Name", method.Name),
                             from mutGroup in method.Children.Cast<MutantGroup>()

@@ -140,7 +140,7 @@
 
         public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant mutant)
         {
-            return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath, mutant);
+            return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath,  mutant);
         }
         public IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> paths)
         {

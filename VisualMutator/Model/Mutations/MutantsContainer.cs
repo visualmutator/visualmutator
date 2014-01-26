@@ -258,6 +258,7 @@
         public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
             ModuleSource moduleSource)
         {
+            _log.Debug("ExecuteMutation in object: " +ToString()+ GetHashCode());
             IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null? new IdentityOperator() : 
                 _mutOperators.Single(m => mutant.MutationTarget.OperatorId == m.Info.Id);
                 

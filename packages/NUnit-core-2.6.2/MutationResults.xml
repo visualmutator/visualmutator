@@ -1,0 +1,14 @@
+<MutationTestingSession MutationScore="0" TotalTimeSeconds="0">
+  <Mutants Total="1" Live="1" Killed="0" Untested="0" WithError="0" TotalSizeKilobytes="-1" AverageSizeKilobytes="-1" TotalTestingTimeMiliseconds="3465" AverageTestingTimeMiliseconds="3465">
+    <Assembly Name="Dsa">
+      <Type Name="AvlTree" Namespace="AvlTreeDataStructures">
+        <Method Name="Remove">
+          <MutantGroup Name="#0 - TryCatchFinallyStatement">
+            <Mutant Id="EXS#1" Description="" State="Live" />
+          </MutantGroup>
+        </Method>
+      </Type>
+    </Assembly>
+    <Assembly Name="Dsa.Test" />
+  </Mutants>
+</MutationTestingSession>

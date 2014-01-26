@@ -111,10 +111,10 @@
                 string value = testResult.Attribute("testId").Value;
                 var unitTest = doc.Root.DescendantsAnyNs("UnitTest")
                     .Single(n => n.Attribute("id").Value == value);
-                var testMethod = unitTest.ElementAnyNS("TestMethod");
+             /* //  var testMethod = unitTest.ElementAnyNS("TestMethod");
 
-                string methodName = testMethod.Attribute("name").Value;
-                string longClassName = testMethod.Attribute("className").Value;
+             //   string methodName = testMethod.Attribute("name").Value;
+              //  string longClassName = testMethod.Attribute("className").Value;
 
                 string fullClassName = longClassName.Substring(0, longClassName.IndexOf(","));
 
@@ -127,8 +127,8 @@
                     var errorInfo =testResult.DescendantsAnyNs("ErrorInfo").Single();
                     node.Message = errorInfo.ElementAnyNS("Message").Value;
                 }
-
-                yield return node;
+                */
+                yield return null;
             }
         }
         private TestNodeState TranslateTestResultStatus(string status)

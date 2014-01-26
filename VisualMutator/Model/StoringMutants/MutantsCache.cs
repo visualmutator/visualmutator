@@ -68,6 +68,7 @@
 
         public ModulesProvider GetMutatedModules(Mutant mutant)
         {
+            _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
             _log.Info("Request to cache for mutant: "+mutant.Id);
            // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
             

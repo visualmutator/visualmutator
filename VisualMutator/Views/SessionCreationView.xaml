@@ -19,7 +19,7 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid d:DataContext="{d:DesignInstance ViewModels:SessionCreationViewModel}">
+    <Grid d:DataContext="{d:DesignInstance ViewModels:CreationViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
@@ -48,6 +48,7 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Write mutants to disk..." Command="{Binding CommandWriteMutants}" />
             <Button Content="Start session" Command="{Binding CommandCreateMutants}" />
         </StackPanel>
 
