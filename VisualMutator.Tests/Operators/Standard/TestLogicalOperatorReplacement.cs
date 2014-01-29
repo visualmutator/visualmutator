@@ -54,7 +54,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new LOR_LogicalOperatorReplacement(), out mutants, out original, out diff);
 

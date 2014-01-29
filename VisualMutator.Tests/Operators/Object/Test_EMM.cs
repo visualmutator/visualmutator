@@ -115,7 +115,7 @@
         {
 
         
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -124,8 +124,8 @@
 
             cci.AppendFromFile(MutationTestsHelper.DsaPath);
 
-            var original = new ModulesProvider(cci.Modules);
-            ModulesProvider copiedModules = new ModulesProvider(
+            var original = new IModuleSource(cci.Modules);
+            IModuleSource copiedModules = new IModuleSource(
                 cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
 
@@ -141,11 +141,11 @@
 
 
 
-            var visitor = new VisualCodeVisitor("", operatorVisitor, copiedModules.Assemblies.Single());
+            var visitor = new VisualCodeVisitor("", operatorVisitor, copiedModules.Modules.Single());
 
             var traverser = new VisualCodeTraverser(MutationFilter.AllowAll(), visitor);
 
-            traverser.Traverse(copiedModules.Assemblies.Single());
+            traverser.Traverse(copiedModules.Modules.Single());
             visitor.PostProcess();
          //   IEnumerable<Tuple<string, List<MutationTarget>>> s = visitor.MutationTargets.AsEnumerable();
             mergedTargets.AddRange(visitor.MutationTargets);
@@ -153,9 +153,9 @@
             commonTargets.AddRange(visitor.SharedTargets);
 
             var visitorBack = new VisualCodeVisitorBack(visitor.MutationTargets, new List<MutationTarget>(), 
-                copiedModules.Assemblies.Single(),"");
+                copiedModules.Modules.Single(),"");
             var traverser2 = new VisualCodeTraverser(MutationFilter.AllowAll(), visitorBack);
-            traverser2.Traverse(copiedModules.Assemblies.Single());
+            traverser2.Traverse(copiedModules.Modules.Single());
             visitorBack.PostProcess();
             /*
             foreach (var pair in visitorBack.TargetAstObjects)
@@ -177,7 +177,7 @@
         {
             var oper = new EAM_AccessorMethodChange();
             ///////
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
@@ -193,7 +193,7 @@
                     AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaTestsPath)
                 }
             };
-            var original = new ModulesProvider(cci.Modules);
+            var original = new IModuleSource(cci.Modules);
             cache.setDisabled(disableCache: true);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
@@ -233,7 +233,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
@@ -270,7 +270,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 
@@ -307,7 +307,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
 

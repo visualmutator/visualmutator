@@ -29,14 +29,14 @@ namespace VisualMutator.Model.StoringMutants
            
         }
 
-        public ModuleSource GetWhiteModules()
+        public CciModuleSource GetWhiteModules()
         {
             return CreateSource(_assembliesPaths);
 
         }
-        public ModuleSource CreateSource(IList<string> assembliesPaths)
+        public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
-            var moduleSource = new ModuleSource();
+            var moduleSource = new CciModuleSource();
             foreach (var assembliesPath in assembliesPaths)
             {
                 try

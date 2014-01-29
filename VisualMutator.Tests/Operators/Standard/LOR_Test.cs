@@ -55,7 +55,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new LOR_LogicalOperatorReplacement(), 
                 out mutants, out original, out diff);
@@ -87,7 +87,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out original, out diff);
 

@@ -69,7 +69,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
@@ -104,7 +104,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
@@ -147,7 +147,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
 
@@ -166,7 +166,7 @@ namespace Ns
         {
             var oper = new ROR_RelationalOperatorReplacement();
             ///////
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
@@ -188,7 +188,7 @@ namespace Ns
         {
             var oper = new ROR_RelationalOperatorReplacement();
             ///////
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
@@ -200,7 +200,7 @@ namespace Ns
                     AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaPath)
                 },
             };
-            var original = new ModulesProvider(cci.Modules);
+            var original = new IModuleSource(cci.Modules);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;

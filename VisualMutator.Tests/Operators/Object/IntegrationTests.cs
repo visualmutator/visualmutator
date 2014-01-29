@@ -44,7 +44,7 @@
         
         public void RunMutations(IMutationOperator oper, String path)
         {
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -53,8 +53,8 @@
 
             cci.AppendFromFile(path);
 
-            var original = new ModulesProvider(cci.Modules);
-            ModulesProvider copiedModules = new ModulesProvider(
+            var original = new IModuleSource(cci.Modules);
+            IModuleSource copiedModules = new IModuleSource(
                 cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
 
             var commonTargets = new List<MutationTarget>();
@@ -68,11 +68,11 @@
 
 
 
-            var visitor = new VisualCodeVisitor("", operatorVisitor, copiedModules.Assemblies.Single());
+            var visitor = new VisualCodeVisitor("", operatorVisitor, copiedModules.Modules.Single());
 
             var traverser = new VisualCodeTraverser(MutationFilter.AllowAll(), visitor);
 
-            traverser.Traverse(copiedModules.Assemblies.Single());
+            traverser.Traverse(copiedModules.Modules.Single());
             visitor.PostProcess();
             //   IEnumerable<Tuple<string, List<MutationTarget>>> s = visitor.MutationTargets.AsEnumerable();
             mergedTargets.AddRange(visitor.MutationTargets);
@@ -80,9 +80,9 @@
             commonTargets.AddRange(visitor.SharedTargets);
 
             var visitorBack = new VisualCodeVisitorBack(visitor.MutationTargets, new List<MutationTarget>(),
-                copiedModules.Assemblies.Single(), "");
+                copiedModules.Modules.Single(), "");
             var traverser2 = new VisualCodeTraverser(MutationFilter.AllowAll(), visitorBack);
-            traverser2.Traverse(copiedModules.Assemblies.Single());
+            traverser2.Traverse(copiedModules.Modules.Single());
             visitorBack.PostProcess();
             /*
             foreach (var pair in visitorBack.TargetAstObjects)
@@ -101,7 +101,7 @@
         {
             var oper = new DEH_MethodDelegatedForEventHandlingChange();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper, 
                 out mutants, out originalModules, out diff);
@@ -112,7 +112,7 @@
         {
             var oper = new DMC_DelegatedMethodChange();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out originalModules, out diff);
@@ -123,7 +123,7 @@
         {
             var oper = new EHC_ExceptionHandlingChange();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out originalModules, out diff);
@@ -134,7 +134,7 @@
         {
             var oper = new EHR_ExceptionHandlerRemoval();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out originalModules, out diff);
@@ -145,7 +145,7 @@
         {
             var oper = new EXS_ExceptionSwallowing();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out originalModules, out diff);
@@ -156,7 +156,7 @@
         {
             var oper = new ISD_BaseKeywordDeletion();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out originalModules, out diff);
@@ -167,7 +167,7 @@
         {
             var oper = new MCI_MemberCallFromAnotherInheritedClass();
             List<Mutant> mutants;
-            ModulesProvider originalModules;
+            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out originalModules, out diff);

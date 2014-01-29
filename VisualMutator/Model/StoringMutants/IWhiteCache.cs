@@ -5,6 +5,6 @@
     public interface IWhiteCache
     {
         void Initialize(IList<string> assembliesPaths);
-        ModuleSource GetWhiteModules();
+        CciModuleSource GetWhiteModules();
     }
 }

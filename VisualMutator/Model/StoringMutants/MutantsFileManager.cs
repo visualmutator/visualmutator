@@ -25,7 +25,7 @@
 
 
         void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
-        StoredMutantInfo StoreMutant(string directory, ModulesProvider mutant);
+        StoredMutantInfo StoreMutant(string directory, IModuleSource mutant);
 
         StoredMutantInfo StoreMutant(string directory, Mutant mutant);
     }
@@ -38,7 +38,7 @@
 
         private readonly IMutantsCache _mutantsCache;
 
-        private readonly IModuleSource _moduleSource;
+        private readonly ICciModuleSource _moduleSource;
 
         private readonly IFileSystem _fs;
 
@@ -49,7 +49,7 @@
 
         public MutantsFileManager(
             IMutantsCache mutantsCache,
-            IModuleSource moduleSource,
+            ICciModuleSource moduleSource,
             IFileSystem fs)
         {
          
@@ -83,7 +83,7 @@
                     try
                     {
                         mutant.State = MutantResultState.Creating;
-                        ModulesProvider assembliesProvider = _mutantsCache.GetMutatedModules(mutant);
+                        IModuleSource assembliesProvider = _mutantsCache.GetMutatedModules(mutant);
                     
                         string mutantFolder = Path.Combine(subFolder,mutant.Id.ToString());
                         _fs.Directory.CreateDirectory(mutantFolder);
@@ -111,13 +111,13 @@
         }
 
 
-        public StoredMutantInfo StoreMutant(string directory, ModulesProvider assembliesProvider)
+        public StoredMutantInfo StoreMutant(string directory, IModuleSource assembliesProvider)
         {
 
             
             var result = new StoredMutantInfo();
             
-            foreach (IModule module in assembliesProvider.Assemblies)
+            foreach (IModule module in assembliesProvider.Modules)
             {
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name

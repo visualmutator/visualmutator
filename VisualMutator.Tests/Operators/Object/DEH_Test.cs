@@ -65,7 +65,7 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new DEH_MethodDelegatedForEventHandlingChange(), out mutants, out original, out diff);
 

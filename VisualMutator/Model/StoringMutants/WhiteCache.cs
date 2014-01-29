@@ -16,13 +16,13 @@ namespace VisualMutator.Model.StoringMutants
 
     public class WhiteCache : IWhiteCache
     {
-        private readonly BlockingCollection<ModuleSource> _whiteCache;
+        private readonly BlockingCollection<CciModuleSource> _whiteCache;
         private IList<string> _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public WhiteCache()
         {
-            _whiteCache = new BlockingCollection<ModuleSource>(4);
+            _whiteCache = new BlockingCollection<CciModuleSource>(4);
         }
 
         public void Initialize(IList<string> assembliesPaths)
@@ -39,14 +39,14 @@ namespace VisualMutator.Model.StoringMutants
                   });
         }
 
-        public ModuleSource GetWhiteModules()
+        public CciModuleSource GetWhiteModules()
         {
             return _whiteCache.Take();
 
         }
-        public ModuleSource CreateSource(IList<string> assembliesPaths)
+        public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
-            var moduleSource = new ModuleSource();
+            var moduleSource = new CciModuleSource();
             foreach (var assembliesPath in assembliesPaths)
             {
                 try

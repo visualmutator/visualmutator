@@ -265,8 +265,8 @@
     <Compile Include="Model\Mutations\VisualCodeVisitorBase.cs" />
     <Compile Include="Model\StoringMutants\FileManager.cs" />
     <Compile Include="Model\StoringMutants\IWhiteCache.cs" />
-    <Compile Include="Model\StoringMutants\ModulesProvider.cs" />
-    <Compile Include="Model\ModuleSource.cs" />
+    <Compile Include="Model\StoringMutants\IModuleSource.cs" />
+    <Compile Include="Model\CciModuleSource.cs" />
     <Compile Include="Model\Decompilation\VisualSourceEmitter.cs" />
     <Compile Include="Model\Exceptions\AssemblyReadException.cs" />
     <Compile Include="Model\Exceptions\TestingCancelledException.cs" />

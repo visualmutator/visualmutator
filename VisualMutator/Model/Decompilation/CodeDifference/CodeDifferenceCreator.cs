@@ -17,8 +17,7 @@
     public interface ICodeDifferenceCreator
     {
 
-        CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant,
-            ModulesProvider currentOriginalModules);
+        CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant);
     }
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
@@ -46,13 +45,13 @@
             };
         }
 
-        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant, ModulesProvider currentOriginalModules)
+        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant)
         {
             _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
-            ModulesProvider moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
+            IModuleSource moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {
-                var originalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, currentOriginalModules);
+                var originalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, _mutantsCache.WhiteCache.GetWhiteModules());
                 var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, moduleDefinitions);
                 CodePair pair = new CodePair
                 {
@@ -73,7 +72,7 @@
 
             
         }
-        public string GetListing(CodeLanguage language, ModulesProvider modules)
+        public string GetListing(CodeLanguage language, IModuleSource modules)
         {
             return _codeVisualizer.Visualize(language, modules);
 

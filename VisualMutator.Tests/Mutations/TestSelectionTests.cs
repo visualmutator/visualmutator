@@ -42,7 +42,7 @@
         {
             var a = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
             var b = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var typesManager = new SolutionTypesManager(cci);
             var cam = new ClassAndMethod
             {
@@ -64,7 +64,7 @@
         {
            var a = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
            var b = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var typesManager = new SolutionTypesManager(cci);
             var cam = new ClassAndMethod
                       {

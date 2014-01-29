@@ -17,7 +17,7 @@
     {
         void setDisabled( bool disableCache = false);
 
-        ModulesProvider GetMutatedModules(Mutant mutant);
+        IModuleSource GetMutatedModules(Mutant mutant);
         IWhiteCache WhiteCache
         {
             get;
@@ -66,13 +66,13 @@
             _disableCache = disableCache;
         }
 
-        public ModulesProvider GetMutatedModules(Mutant mutant)
+        public IModuleSource GetMutatedModules(Mutant mutant)
         {
             _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
             _log.Info("Request to cache for mutant: "+mutant.Id);
            // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
             
-            ModulesProvider result;
+            IModuleSource result;
             if (!_cache.Contains(mutant.Id) || _disableCache)
             {
                 result = _mutantsContainer.ExecuteMutation(mutant, 
@@ -82,7 +82,7 @@
             }
             else
             {
-                result = (ModulesProvider)_cache.Get(mutant.Id);
+                result = (IModuleSource)_cache.Get(mutant.Id);
             }
             return result;
         }

@@ -53,7 +53,7 @@ namespace Ns
 }";
             var oper = new OMR_OverloadingMethodContentsChange();
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, oper, out mutants, out original, out diff);
 
@@ -90,7 +90,7 @@ namespace Ns
 }";
             var oper = new OMR_OverloadingMethodContentsChange();
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, oper, out mutants, out original, out diff);
             

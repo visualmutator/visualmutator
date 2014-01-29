@@ -21,7 +21,7 @@
 
     #endregion
 
-    public interface IModuleSource
+    public interface ICciModuleSource
     {
         List<IModule> Modules { get; }
         void Cleanup();
@@ -30,24 +30,13 @@
         void WriteToFile(IModule module, string filePath);
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
-        List<ModuleSource.ModuleInfo> ModulesInfo { get; }
+        List<CciModuleSource.ModuleInfo> ModulesInfo { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
-        ModuleSource.ModuleInfo FindModuleInfo(IModule module);
-        ModuleSource.ModuleInfo DecompileCopy(IModule module);
+        CciModuleSource.ModuleInfo FindModuleInfo(IModule module);
+        CciModuleSource.ModuleInfo DecompileCopy(IModule module);
     }
-    public class Sss : MetadataReaderHost
-    {
-        public Sss(INameTable nameTable, IInternFactory factory, byte pointerSize, IEnumerable<string> searchPaths, bool searchInGAC) : base(nameTable, factory, pointerSize, searchPaths, searchInGAC)
-        {
-        }
 
-        public override IUnit LoadUnitFrom(string location)
-        {
-            throw new NotImplementedException();
-        }
-        
-    }
-    public class ModuleSource : IDisposable, IModuleSource
+    public class CciModuleSource : IDisposable, ICciModuleSource, IModuleSource
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
@@ -66,7 +55,7 @@
                 return _moduleInfoList;
             }
         }
-        public ModuleSource()
+        public CciModuleSource()
         {
             _host = new PeReader.DefaultHost();
             _moduleInfoList = new List<ModuleInfo>();
@@ -132,7 +121,7 @@
         public ModuleInfo DecompileCopy(IModule module)
         {
             ModuleInfo info = FindModuleInfo(module);
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             ModuleInfo moduleCopy = cci.DecompileFile(info.FilePath);
             moduleCopy.SubCci = cci;
             return moduleCopy;
@@ -254,7 +243,7 @@
                 set;
             }
             [CanBeNull]
-            public ModuleSource SubCci { get; set; }
+            public CciModuleSource SubCci { get; set; }
         }
 
         #endregion

@@ -105,7 +105,7 @@
             if (includeCodeDifferenceListings)
             {
 
-                optionalElements.Add(CreateCodeDifferenceListings(mutants, new ModulesProvider(session.OriginalAssemblies.Select(_=>_.AssemblyDefinition).ToList())));
+                optionalElements.Add(CreateCodeDifferenceListings(mutants));
             }
 
             if (includeDetailedTestResults)
@@ -124,7 +124,7 @@
                         optionalElements));
             
         }
-        public XElement CreateCodeDifferenceListings(List<Mutant> mutants, ModulesProvider originalModules)
+        public XElement CreateCodeDifferenceListings(List<Mutant> mutants)
         {
 
             return new XElement("CodeDifferenceListings",
@@ -133,7 +133,7 @@
                     new XAttribute("MutantId", mutant.Id),
                     new XElement("Code", 
                         Environment.NewLine+_codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp, 
-                        mutant, originalModules).Code)
+                        mutant).Code)
                         )
                     );
 

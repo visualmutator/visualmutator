@@ -14,29 +14,29 @@
     {
 
 
-        string Visualize(CodeLanguage language, IMethodDefinition method, ModulesProvider modules);
-        string Visualize(CodeLanguage language, ModulesProvider modules);
+        string Visualize(CodeLanguage language, IMethodDefinition method, IModuleSource modules);
+        string Visualize(CodeLanguage language, IModuleSource modules);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly IModuleSource _cci;
+        private readonly ICciModuleSource _cci;
         
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public CodeVisualizer(IModuleSource cci)
+        public CodeVisualizer(ICciModuleSource cci)
         {
             _cci = cci;
         }
 
-        public string Visualize(CodeLanguage language, ModulesProvider modules)
+        public string Visualize(CodeLanguage language, IModuleSource modules)
         {
             var sb = new StringBuilder();
      
             
-            foreach (var assembly in modules.Assemblies)
+            foreach (var assembly in modules.Modules)
             {
                 var sourceEmitterOutput = new SourceEmitterOutputString();
                 var sourceEmitter = _cci.GetSourceEmitter(language, assembly, sourceEmitterOutput);
@@ -47,7 +47,7 @@
             return sb.ToString();
         }
         
-        public string Visualize(CodeLanguage language, IMethodDefinition method, ModulesProvider modules)
+        public string Visualize(CodeLanguage language, IMethodDefinition method, IModuleSource modules)
         {
             if (method == null)
             {

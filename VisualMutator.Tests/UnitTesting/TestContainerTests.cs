@@ -66,7 +66,7 @@
             dispMock.Setup(_ => _.GuiScheduler).Returns(TaskScheduler.FromCurrentSynchronizationContext());
             
             var fs = new FileSystemService();
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             foreach (var path in list)
             {
                 cci.AppendFromFile(path);

@@ -70,7 +70,7 @@ namespace Ns
 }";
             MutationTestsHelper.DebugTraverse(code);
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EHR_ExceptionHandlerRemoval(), out mutants, out original, out diff);
 

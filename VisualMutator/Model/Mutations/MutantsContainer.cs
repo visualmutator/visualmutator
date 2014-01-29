@@ -32,15 +32,15 @@
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        ModulesProvider ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, ModuleSource moduleSource);
+        IModuleSource ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, CciModuleSource moduleSource);
 
 
-        IList<AssemblyNode> InitMutantsForOperators(ModulesProvider originalModules, ProgressCounter percentCompleted);
+        IList<AssemblyNode> InitMutantsForOperators(IModuleSource originalModules, ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly IModuleSource _cci;
+        private readonly ICciModuleSource _cci;
         private readonly IOperatorUtils _operatorUtils;
 
         private bool _debugConfig ;
@@ -57,7 +57,7 @@
         private ICollection<IMutationOperator> _mutOperators;
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
-        public MutantsContainer(IModuleSource cci, 
+        public MutantsContainer(ICciModuleSource cci, 
             IOperatorUtils operatorUtils
         
             )
@@ -108,7 +108,7 @@
 
 
         public IList<AssemblyNode> InitMutantsForOperators(
-            ModulesProvider originalModules, ProgressCounter percentCompleted)
+            IModuleSource originalModules, ProgressCounter percentCompleted)
         {
             var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
@@ -117,13 +117,13 @@
             Func<int> genId = () => id[0]++;
 
 
-            percentCompleted.Initialize(originalModules.Assemblies.Count);
+            percentCompleted.Initialize(originalModules.Modules.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
             var assNodes = new List<AssemblyNode>();
-            foreach (var module in originalModules.Assemblies)
+            foreach (var module in originalModules.Modules)
             {
 
                 sw.Restart();
@@ -252,8 +252,8 @@
 
         }
 
-        public ModulesProvider ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
-            ModuleSource moduleSource)
+        public IModuleSource ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
+            CciModuleSource moduleSource)
         {
             _log.Debug("ExecuteMutation in object: " +ToString()+ GetHashCode());
             IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null? new IdentityOperator() : 
@@ -291,7 +291,7 @@
                     rewriter.CheckForUnfoundObjects();
                     mutatedModules.Add(rewrittenModule);
                 }
-                return new ModulesProvider(mutatedModules.Cast<IModule>().ToList());
+                return new SimpleModuleSource(mutatedModules.Cast<IModule>().ToList());
             }
             catch (Exception e)
             {

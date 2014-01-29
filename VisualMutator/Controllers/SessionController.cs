@@ -50,7 +50,7 @@
       //  private readonly SessionCreationController _scc;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
-        private readonly IModuleSource _commonCompiler;
+        private readonly ICciModuleSource _commonCompiler;
 
         private int _allMutantsCount;
 
@@ -85,7 +85,7 @@
             IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
             ICodeDifferenceCreator codeDifferenceCreator,
-            IModuleSource commonCompiler)
+            ICciModuleSource commonCompiler)
         {
             MutantsCreationFactory = mutantsCreationFactory;
             _svc = svc;
@@ -153,7 +153,6 @@
 
                 _currentSession = new MutationTestingSession
                 {
-                    OriginalAssemblies = choices.Assemblies,
                     Filter = choices.Filter,
                     Choices = choices,
                 };
@@ -256,11 +255,9 @@
 
                 _currentSession = new MutationTestingSession
                 {
-                    OriginalAssemblies = choices.Assemblies,
                     Filter = choices.Filter,
                     Choices = choices,
                 };
-
 
                 _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
 
@@ -369,8 +366,8 @@
             _svc.Threading.ScheduleAsync(
             () =>
             {
-                var modulesProvider = new ModulesProvider(_currentSession.OriginalAssemblies
-                    .Select(_ => _.AssemblyDefinition).ToList());
+
+                var modulesProvider = _mutantsCache.WhiteCache.GetWhiteModules();
                 var mutantModules = _mutantsContainer.InitMutantsForOperators(modulesProvider, counter);
                 _currentSession.MutantsGrouped = mutantModules;
             },
@@ -432,8 +429,7 @@
 
 
                     CodeWithDifference diff = _codeDifferenceCreator.CreateDifferenceListing(
-                        CodeLanguage.IL, mutant,
-                        new ModulesProvider(_mutantsCache.WhiteCache.GetWhiteModules().Modules));
+                        CodeLanguage.IL, mutant);
 
                     if (diff.LineChanges.Count == 0)
                     {   

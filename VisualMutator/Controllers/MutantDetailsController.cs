@@ -78,11 +78,9 @@
 
             if(mutant != null)
             {
-                var modules = new ModulesProvider(_originalAssemblies
-                    .Select(_ => _.AssemblyDefinition).ToList());
                 CodeWithDifference diff = await Task.Run(
                     () => _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
-                    mutant, modules));
+                    mutant));
                 if (diff != null)
                 {
                     _viewModel.PresentCode(diff);

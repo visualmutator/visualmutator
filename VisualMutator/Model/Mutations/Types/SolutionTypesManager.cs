@@ -47,7 +47,7 @@
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IModuleSource _moduleSource;
+        private readonly ICciModuleSource _moduleSource;
 
 
 
@@ -56,7 +56,7 @@
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
-            IModuleSource moduleSource)
+            ICciModuleSource moduleSource)
         {
             _moduleSource = moduleSource;
 

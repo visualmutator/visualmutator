@@ -51,7 +51,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
@@ -83,7 +83,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
@@ -116,7 +116,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
@@ -144,7 +144,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
@@ -172,7 +172,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 
@@ -209,7 +209,7 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
 

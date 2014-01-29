@@ -59,7 +59,7 @@ namespace Ns
            
            // MutationTests.DsaPath
             List<Mutant> mutants;
-            ModulesProvider original;
+            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new OAO_ArgumentOrderChange(), out mutants, out original, out diff);
 

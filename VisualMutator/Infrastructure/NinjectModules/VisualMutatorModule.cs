@@ -150,7 +150,7 @@
                 childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
                 childKernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
                 childKernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-                childKernel.Bind<IModuleSource>().To<ModuleSource>().InSingletonScope();
+                childKernel.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                 childKernel.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
 
                 childKernel.Bind<WhiteCache>().ToSelf().InSingletonScope();

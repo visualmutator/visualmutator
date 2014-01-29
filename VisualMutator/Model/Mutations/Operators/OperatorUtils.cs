@@ -15,16 +15,16 @@
 
     public class OperatorUtils : IOperatorUtils
     {
-        private readonly IModuleSource _cci;
+        private readonly ICciModuleSource _cci;
         private readonly AstFormatter _formatter;
 
-        public OperatorUtils(IModuleSource cci, 
+        public OperatorUtils(ICciModuleSource cci, 
             AstFormatter formatter)
         {
             _cci = cci;
             _formatter = formatter;
         }
-        public OperatorUtils(IModuleSource cci)
+        public OperatorUtils(ICciModuleSource cci)
         {
             _cci = cci;
             _formatter = new AstFormatter();

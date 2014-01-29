@@ -38,7 +38,7 @@
 
 
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
-                                        out ModulesProvider original, out CodeDifferenceCreator diff)
+                                        out IModuleSource original, out CodeDifferenceCreator diff)
         {
             RunMutationsFromFile(CreateModule(code), oper, out mutants, out original, out diff);
 
@@ -46,11 +46,11 @@
 
         }
         public static void RunMutationsFromFile(string filePath, IMutationOperator oper, out List<Mutant> mutants,
-                                       out ModulesProvider original, out CodeDifferenceCreator diff)
+                                       out IModuleSource original, out CodeDifferenceCreator diff)
         {
             _log.Info("MutationTests.RunMutations configuring for " + oper + "...");
 
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -59,7 +59,7 @@
             cache.WhiteCache.Initialize(new[]{filePath});
             IModule module = cci.AppendFromFile(filePath);
 
-            original = new ModulesProvider(cci.Modules);
+            original = new IModuleSource(cci.Modules);
 
             cache.setDisabled(disableCache: false);
             diff = new CodeDifferenceCreator(cache, visualizer);
@@ -78,7 +78,7 @@
         public static  void DebugTraverseFile(string filePath)
         {
 
-            var cci = new ModuleSource();
+            var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
             var container = new MutantsContainer(cci, utils);
@@ -87,7 +87,7 @@
             cache.WhiteCache.Initialize(new[] { filePath });
             IModule module = cci.AppendFromFile(filePath);
 
-            var original = new ModulesProvider(cci.Modules);
+            var original = new IModuleSource(cci.Modules);
 
             List<AssemblyNode> assemblyNodes = new AssemblyNode("", module)
             {
@@ -148,14 +148,14 @@
         public static List<IModule> CreateModules(string code)
         {
             var path = CreateModule(code);
-            return CreateModules(path, new ModuleSource());
+            return CreateModules(path, new CciModuleSource());
         }
 
         public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container,
-            ModuleSource ccii, MutantsCache cache, int numberOfMutants)
+            CciModuleSource ccii, MutantsCache cache, int numberOfMutants)
         {
             _log.Info("Copying modules...");
-            ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
+            IModuleSource copiedModules = new IModuleSource(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
@@ -168,11 +168,11 @@
                 .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
         }
         public static IEnumerable<MutantGroup> CreateMutantGroupsLight(IMutationOperator operatorr, MutantsContainer container,
-            ModuleSource ccii, MutantsCache cache, int numberOfMutants)
+            CciModuleSource ccii, MutantsCache cache, int numberOfMutants)
         {
 
             _log.Info("Copying modules...");
-            ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
+            IModuleSource copiedModules = new IModuleSource(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
@@ -185,7 +185,7 @@
 
         }
         public static List<Mutant> CreateMutantsLight(IMutationOperator operatorr,
-            ModuleSource ccii, int numberOfMutants, out CodeDifferenceCreator diff)
+            CciModuleSource ccii, int numberOfMutants, out CodeDifferenceCreator diff)
         {
             var container = new MutantsContainer(ccii, new OperatorUtils(ccii));
             var visualizer = new CodeVisualizer(ccii);
@@ -196,7 +196,7 @@
             container.DebugConfig = true;
 
             _log.Info("Copying modules...");
-            ModulesProvider copiedModules = new ModulesProvider(ccii.Modules);
+            IModuleSource copiedModules = new IModuleSource(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
@@ -209,7 +209,7 @@
                 g => g.Children??new NotifyingCollection<CheckedNode>()).OfType<Mutant>().ToList();
 
         }
-        public static List<IModule> CreateModules(string filePath, ModuleSource cci)
+        public static List<IModule> CreateModules(string filePath, CciModuleSource cci)
         {
             cci.AppendFromFile(filePath);
             _log.Info("Copying modules...");
@@ -220,9 +220,9 @@
      public class MutMod
      {
          public Mutant Mutant { get; set; }
-         public ModulesProvider ModulesProvider { get; set; }
+         public IModuleSource ModulesProvider { get; set; }
 
-         public MutMod(Mutant mutant, ModulesProvider modulesProvider)
+         public MutMod(Mutant mutant, IModuleSource modulesProvider)
          {
              Mutant = mutant;
              ModulesProvider = modulesProvider;
