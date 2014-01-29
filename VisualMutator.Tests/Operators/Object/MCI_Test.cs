@@ -59,14 +59,13 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new MCI_MemberCallFromAnotherInheritedClass(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new MCI_MemberCallFromAnotherInheritedClass(), out mutants, out diff);
 
          
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
              //   Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }

@@ -53,7 +53,7 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -85,14 +85,13 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 1);
             Assert.AreEqual(mutants[0].MutationTarget.Variant.Signature, "Right");
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
@@ -118,7 +117,7 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -146,7 +145,7 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
         }
@@ -174,12 +173,11 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out diff);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
@@ -211,12 +209,11 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EOC_EqualityOperatorChange(), out mutants, out diff);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }

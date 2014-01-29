@@ -55,14 +55,13 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, oper, out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, oper, out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 0);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
@@ -92,15 +91,14 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, oper, out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, oper, out mutants, out diff);
             
             mutants.Count.ShouldEqual(2);
            
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 //codeWithDifference.LineChanges.ShouldCount(2);
             }

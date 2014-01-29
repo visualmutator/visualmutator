@@ -38,15 +38,16 @@
 
 
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
-                                        out IModuleSource original, out CodeDifferenceCreator diff)
+         
+            out CodeDifferenceCreator diff)
         {
-            RunMutationsFromFile(CreateModule(code), oper, out mutants, out original, out diff);
+            RunMutationsFromFile(CreateModule(code), oper, out mutants, out diff);
 
 
 
         }
         public static void RunMutationsFromFile(string filePath, IMutationOperator oper, out List<Mutant> mutants,
-                                       out IModuleSource original, out CodeDifferenceCreator diff)
+            out CodeDifferenceCreator diff)
         {
             _log.Info("MutationTests.RunMutations configuring for " + oper + "...");
 
@@ -59,7 +60,6 @@
             cache.WhiteCache.Initialize(new[]{filePath});
             IModule module = cci.AppendFromFile(filePath);
 
-            original = new IModuleSource(cci.Modules);
 
             cache.setDisabled(disableCache: false);
             diff = new CodeDifferenceCreator(cache, visualizer);
@@ -87,7 +87,6 @@
             cache.WhiteCache.Initialize(new[] { filePath });
             IModule module = cci.AppendFromFile(filePath);
 
-            var original = new IModuleSource(cci.Modules);
 
             List<AssemblyNode> assemblyNodes = new AssemblyNode("", module)
             {
@@ -107,11 +106,11 @@
             Console.WriteLine(listing0);
 
             Console.WriteLine("ORIGINAL C#:");
-            string listing = diff.GetListing(CodeLanguage.CSharp, original);
+            string listing = diff.GetListing(CodeLanguage.CSharp, cci);
             Console.WriteLine(listing);
 
             Console.WriteLine("ORIGINAL IL:");
-            string listing2 = diff.GetListing(CodeLanguage.IL, original);
+            string listing2 = diff.GetListing(CodeLanguage.IL, cci);
             Console.WriteLine(listing2);
 
 
@@ -155,14 +154,13 @@
             CciModuleSource ccii, MutantsCache cache, int numberOfMutants)
         {
             _log.Info("Copying modules...");
-            IModuleSource copiedModules = new IModuleSource(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
             };
             container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var assemblyNodes = container.InitMutantsForOperators(copiedModules, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators(ccii, ProgressCounter.Inactive());
 
             return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children, leafsOnly:true).Cast<Mutant>()
                 .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
@@ -172,7 +170,6 @@
         {
 
             _log.Info("Copying modules...");
-            IModuleSource copiedModules = new IModuleSource(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
@@ -180,7 +177,7 @@
 
             container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var assemblyNodes = container.InitMutantsForOperators(copiedModules, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators(ccii, ProgressCounter.Inactive());
             return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children).OfType<MutantGroup>();
 
         }
@@ -196,7 +193,6 @@
             container.DebugConfig = true;
 
             _log.Info("Copying modules...");
-            IModuleSource copiedModules = new IModuleSource(ccii.Modules);
             var mutantsCreationOptions = new MutantsCreationOptions()
             {
                 MaxNumerOfMutantPerOperator = numberOfMutants,
@@ -204,7 +200,7 @@
 
             container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var assemblyNodes = container.InitMutantsForOperators(copiedModules, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators(ccii, ProgressCounter.Inactive());
             return assemblyNodes.Single().Children.SelectManyRecursive(
                 g => g.Children??new NotifyingCollection<CheckedNode>()).OfType<Mutant>().ToList();
 

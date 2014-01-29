@@ -71,14 +71,13 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 Assert.AreEqual(codeWithDifference.LineChanges.Count, 2);
             }
@@ -106,13 +105,12 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out diff);
 
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
@@ -149,14 +147,13 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out diff);
 
             Assert.AreEqual(mutants.Count, 42);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 codeWithDifference.LineChanges.Count.ShouldEqual(2);
             }
@@ -193,14 +190,6 @@ namespace Ns
             var container = new MutantsContainer(cci, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache( container);
-            List<AssemblyNode> assemblyNodes = new List<AssemblyNode>
-            {
-                new AssemblyNode("", cci.AppendFromFile(MutationTestsHelper.DsaPath))
-                {
-                    AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaPath)
-                },
-            };
-            var original = new IModuleSource(cci.Modules);
             cache.setDisabled(disableCache: false);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
@@ -209,8 +198,7 @@ namespace Ns
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                   original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
                 if (codeWithDifference.LineChanges.Count > 4 || codeWithDifference.LineChanges.Count == 0)
                 {

@@ -124,9 +124,7 @@
 
             cci.AppendFromFile(MutationTestsHelper.DsaPath);
 
-            var original = new IModuleSource(cci.Modules);
-            IModuleSource copiedModules = new IModuleSource(
-                cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
+            IModuleSource copiedModules = cci;
 
 
 
@@ -193,7 +191,6 @@
                     AssemblyPath = new FilePathAbsolute(MutationTestsHelper.DsaTestsPath)
                 }
             };
-            var original = new IModuleSource(cci.Modules);
             cache.setDisabled(disableCache: true);
             var diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
@@ -235,12 +232,11 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out diff);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
 
                 // codeWithDifference.LineChanges.Count.ShouldEqual(2);
@@ -272,12 +268,11 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out diff);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
 
                 // codeWithDifference.LineChanges.Count.ShouldEqual(2);
@@ -309,12 +304,11 @@ namespace Ns
             List<Mutant> mutants;
             IModuleSource original;
             CodeDifferenceCreator diff;
-            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out original, out diff);
+            MutationTestsHelper.RunMutations(code, new EMM_ModiferMethodChange(), out mutants, out diff);
 
             foreach (Mutant mutant in mutants)
             {
-                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant,
-                                                                                     original);
+                CodeWithDifference codeWithDifference = diff.CreateDifferenceListing(CodeLanguage.CSharp, mutant);
                 Console.WriteLine(codeWithDifference.Code);
 
                 // codeWithDifference.LineChanges.Count.ShouldEqual(2);

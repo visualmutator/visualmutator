@@ -53,9 +53,7 @@
 
             cci.AppendFromFile(path);
 
-            var original = new IModuleSource(cci.Modules);
-            IModuleSource copiedModules = new IModuleSource(
-                cci.Modules.Select(cci.Copy).Cast<IModule>().ToList());
+            IModuleSource copiedModules = cci;
 
             var commonTargets = new List<MutationTarget>();
             
@@ -104,7 +102,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper, 
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
         [Test]
@@ -115,7 +113,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
         [Test]
@@ -126,7 +124,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
         [Test]
@@ -137,7 +135,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
         [Test]
@@ -148,7 +146,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
         [Test]
@@ -159,7 +157,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
         [Test]
@@ -170,7 +168,7 @@
             IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
-                out mutants, out originalModules, out diff);
+                out mutants, out diff);
             Assert.Pass();
         }
     }
