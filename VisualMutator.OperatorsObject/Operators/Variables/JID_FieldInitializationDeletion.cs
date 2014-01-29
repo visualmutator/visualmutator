@@ -1,11 +1,8 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Variables
 {
-    using System.Linq;
-
-    using Microsoft.Cci.MutableCodeModel;
-    using VisualMutator.Extensibility;
+    using Extensibility;
     using Microsoft.Cci;
-
+    using Microsoft.Cci.MutableCodeModel;
 
     public class JID_FieldInitializationDeletion : IMutationOperator
     {

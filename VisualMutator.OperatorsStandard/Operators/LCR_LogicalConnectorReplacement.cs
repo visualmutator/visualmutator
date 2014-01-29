@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace VisualMutator.OperatorsStandard
+﻿namespace VisualMutator.OperatorsStandard.Operators
 {
-    using System.Collections;
-    using System.ComponentModel.Composition;
+    using System.Collections.Generic;
+    using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using UsefulTools.Switches;
-    using VisualMutator.Extensibility;
-
 
     public class LCR_LogicalConnectorReplacement : IMutationOperator
     {

@@ -11,9 +11,12 @@
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
+    using Model.StoringMutants;
     using NUnit.Framework;
     using OperatorsObject.Operators;
+    using OperatorsObject.Operators.Variables;
     using OperatorsStandard;
+    using OperatorsStandard.Operators;
     using SoftwareApproach.TestingExtensions;
 
     #endregion

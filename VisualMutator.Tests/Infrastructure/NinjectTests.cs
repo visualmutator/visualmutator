@@ -6,9 +6,9 @@
     using Ninject.Activation.Strategies;
     using Ninject.Modules;
     using NUnit.Framework;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using SoftwareApproach.TestingExtensions;
     using UsefulTools.DependencyInjection;
+    using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;
 
     #endregion

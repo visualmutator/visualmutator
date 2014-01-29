@@ -1,12 +1,13 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Methods
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Cci;
-    using UsefulTools.ExtensionMethods;
-    using VisualMutator.Extensibility;
-    using Microsoft.Cci.MutableCodeModel;
+    using Extensibility;
     using LinqLib.Sequence;
+    using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
+    using UsefulTools.ExtensionMethods;
+
     public class OAO_ArgumentOrderChange : IMutationOperator
     {
         public OperatorInfo Info

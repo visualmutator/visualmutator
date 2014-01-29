@@ -1,10 +1,7 @@
-﻿namespace VisualMutator.Extensibility
+﻿namespace VisualMutator.Model.Mutations
 {
-    using System.Collections.Generic;
-
+    using Extensibility;
     using Microsoft.Cci;
-    using Model.Mutations;
-
 
     public class MutationTarget
     {

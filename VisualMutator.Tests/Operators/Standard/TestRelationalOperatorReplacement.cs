@@ -15,8 +15,10 @@
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
     using Model.Mutations.Types;
+    using Model.StoringMutants;
     using NUnit.Framework;
     using OperatorsStandard;
+    using OperatorsStandard.Operators;
     using SoftwareApproach.TestingExtensions;
     using UsefulTools.Paths;
 

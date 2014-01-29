@@ -7,6 +7,7 @@
     using CSharpSourceEmitter;
     using log4net;
     using Microsoft.Cci;
+    using StoringMutants;
 
     #endregion
 

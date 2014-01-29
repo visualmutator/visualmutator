@@ -1,12 +1,12 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Exceptions
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using VisualMutator.Extensibility;
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using log4net;
 
     public class EXS_ExceptionSwallowing : IMutationOperator
     {

@@ -1,16 +1,13 @@
-﻿namespace VisualMutator.Extensibility
+﻿namespace VisualMutator.Model.Mutations
 {
     #region
 
-    using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using Extensibility;
     using log4net;
     using Microsoft.Cci;
-    using Model.Mutations;
-    using UsefulTools.ExtensionMethods;
 
     #endregion
 

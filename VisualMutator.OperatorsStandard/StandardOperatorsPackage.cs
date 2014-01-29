@@ -1,14 +1,8 @@
-﻿namespace VisualMutator.MvcMutations
+﻿namespace VisualMutator.OperatorsStandard
 {
-    using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-    using System.ComponentModel.Composition.Hosting;
-    using System.Linq;
-    using System.Text;
-
-    using VisualMutator.Extensibility;
-    using VisualMutator.OperatorsStandard;
+    using Extensibility;
+    using Operators;
 
     [PackageExport]
     public class StandardOperatorsPackage : IOperatorsPackage

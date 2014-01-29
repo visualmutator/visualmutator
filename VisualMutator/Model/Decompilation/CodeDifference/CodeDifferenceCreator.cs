@@ -10,6 +10,7 @@
     using DiffLib;
     using log4net;
     using Mutations.MutantsTree;
+    using StoringMutants;
     using UsefulTools.Switches;
 
     #endregion

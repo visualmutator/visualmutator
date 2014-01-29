@@ -16,8 +16,13 @@
     using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
+    using Model.StoringMutants;
     using NUnit.Framework;
     using OperatorsObject.Operators;
+    using OperatorsObject.Operators.Delegates;
+    using OperatorsObject.Operators.Exceptions;
+    using OperatorsObject.Operators.Methods;
+    using OperatorsObject.Operators.Variables;
 
     #endregion
 

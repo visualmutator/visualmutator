@@ -1,18 +1,14 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Other
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using UsefulTools.ExtensionMethods;
-    using VisualMutator.Extensibility;
-
-    using log4net;
-
 
     public class EOC_EqualityOperatorChange : IMutationOperator
     {

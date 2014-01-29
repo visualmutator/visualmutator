@@ -1,15 +1,11 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Variables
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using VisualMutator.Extensibility;
-
-    using log4net;
 
     public class PRV_ReferenceAssignmentChange : IMutationOperator
     {

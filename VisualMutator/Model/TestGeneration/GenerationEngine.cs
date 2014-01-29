@@ -1,14 +1,14 @@
-﻿namespace VisualMutator.TestGeneration
+﻿namespace VisualMutator.Model.TestGeneration
 {
     #region
 
     using System;
     using System.IO;
     using System.Linq;
-    using Model;
     using Model.Mutations.MutantsTree;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
+    using StoringMutants;
 
     #endregion
 

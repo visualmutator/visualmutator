@@ -14,6 +14,7 @@
     using Microsoft.Cci.MutableCodeModel;
     using MutantsTree;
     using Operators;
+    using StoringMutants;
     using Types;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;

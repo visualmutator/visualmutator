@@ -1,16 +1,10 @@
-﻿namespace VisualMutator.OperatorsStandard
+﻿namespace VisualMutator.OperatorsStandard.Operators
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using Extensibility;
     using Microsoft.Cci;
-
     using Microsoft.Cci.MutableCodeModel;
-    using Roslyn.Compilers;
-    using Roslyn.Compilers.CSharp;
-    using SourceMethodBody = Microsoft.Cci.MutableCodeModel.SourceMethodBody;
 
     public class UOI_UnaryOperatorInsertion : IMutationOperator
     {

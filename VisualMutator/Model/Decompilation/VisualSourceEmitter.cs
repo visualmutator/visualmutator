@@ -1,5 +1,10 @@
 ﻿namespace VisualMutator.Model.Decompilation
 {
+    using System.Collections.Generic;
+    using CSharpSourceEmitter;
+    using Microsoft.Cci;
+    using Microsoft.Cci.ILToCodeModel;
+
     //-----------------------------------------------------------------------------
     //
     // Copyright (c) Microsoft. All rights reserved.
@@ -15,10 +20,6 @@
     {
         #region
 
-        using System.Collections.Generic;
-        using CSharpSourceEmitter;
-        using Microsoft.Cci;
-        using Microsoft.Cci.ILToCodeModel;
         using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
 
         #endregion

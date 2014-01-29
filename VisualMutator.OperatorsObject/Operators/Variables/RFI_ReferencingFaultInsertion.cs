@@ -1,18 +1,10 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Variables
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
-
-    using Microsoft.Cci;
-
-    using Microsoft.Cci.MutableCodeModel;
-    using VisualMutator.Extensibility;
-
+    using Extensibility;
     using log4net;
- 
-
+    using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
 
     public class RFI_ReferencingFaultInsertion : IMutationOperator
     {

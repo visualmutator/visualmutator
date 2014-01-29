@@ -1,15 +1,11 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Delegates
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
-    using VisualMutator.Extensibility;
-
-    using log4net;
 
     // using OpCodes = Mono.Cecil.Cil.OpCodes;
 

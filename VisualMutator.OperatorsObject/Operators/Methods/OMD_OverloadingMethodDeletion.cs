@@ -1,7 +1,7 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Methods
 {
     using System.Linq;
-    using VisualMutator.Extensibility;
+    using Extensibility;
     using Microsoft.Cci;
 
     public class OMD_OverloadingMethodDeletion : IMutationOperator

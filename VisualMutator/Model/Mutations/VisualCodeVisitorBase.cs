@@ -1,7 +1,8 @@
-﻿namespace VisualMutator.Extensibility
+﻿namespace VisualMutator.Model.Mutations
 {
     #region
 
+    using Extensibility;
     using Microsoft.Cci;
 
     #endregion

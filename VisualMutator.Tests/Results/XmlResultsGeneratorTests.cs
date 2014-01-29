@@ -4,6 +4,7 @@
     using System.Xml.Linq;
     using Extensibility;
     using Model;
+    using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Types;
     using NUnit.Framework;

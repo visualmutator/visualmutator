@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.StoringMutants
 {
     #region
 
@@ -8,7 +8,6 @@
     using log4net;
     using Mutations;
     using Mutations.MutantsTree;
-    using StoringMutants;
     using UsefulTools.Core;
 
     #endregion

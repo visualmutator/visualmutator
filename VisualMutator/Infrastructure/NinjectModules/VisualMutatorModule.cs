@@ -1,8 +1,12 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules
+﻿namespace VisualMutator.Infrastructure.NinjectModules
 {
     #region
 
     using System;
+    using Extensibility;
+    using Model.Decompilation;
+    using Model.Mutations;
+    using Model.StoringMutants;
     using Ninject;
     using Ninject.Extensions.ContextPreservation;
     using Ninject.Extensions.NamedScope;
@@ -12,14 +16,10 @@
     using UsefulTools.Threading;
     using UsefulTools.Wpf;
     using VisualMutator.Controllers;
-    using VisualMutator.Extensibility;
     using VisualMutator.Model;
-    using VisualMutator.Model.Decompilation;
     using VisualMutator.Model.Decompilation.CodeDifference;
-    using VisualMutator.Model.Mutations;
     using VisualMutator.Model.Mutations.Operators;
     using VisualMutator.Model.Mutations.Types;
-    using VisualMutator.Model.StoringMutants;
     using VisualMutator.Model.Tests;
     using VisualMutator.Model.Tests.Services;
     using VisualMutator.Model.Verification;

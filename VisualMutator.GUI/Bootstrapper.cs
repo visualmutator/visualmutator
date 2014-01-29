@@ -10,7 +10,6 @@
     using Ninject;
     using Ninject.Activation.Strategies;
     using Ninject.Modules;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure.NinjectModules;
     using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;

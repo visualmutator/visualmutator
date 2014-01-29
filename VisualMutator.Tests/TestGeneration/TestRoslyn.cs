@@ -9,10 +9,10 @@
     using log4net.Appender;
     using log4net.Config;
     using log4net.Layout;
+    using Model.TestGeneration;
     using NUnit.Framework;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
-    using VisualMutator.TestGeneration;
 
     #endregion
 

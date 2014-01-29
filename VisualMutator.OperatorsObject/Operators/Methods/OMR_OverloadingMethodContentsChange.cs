@@ -1,19 +1,13 @@
-﻿namespace VisualMutator.OperatorsObject.Operators
+﻿namespace VisualMutator.OperatorsObject.Operators.Methods
 {
-
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
     using Extensibility;
-    using Microsoft.Cci;
-
-    using Microsoft.Cci.MutableCodeModel;
-
-
     using log4net;
+    using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
     using UsefulTools.ExtensionMethods;
-
 
     public class OMR_OverloadingMethodContentsChange  : IMutationOperator
     {

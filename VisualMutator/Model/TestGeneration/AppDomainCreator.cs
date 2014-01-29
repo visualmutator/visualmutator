@@ -1,10 +1,9 @@
-﻿namespace VisualMutator.TestGeneration
+﻿namespace VisualMutator.Model.TestGeneration
 {
     #region
 
     using System;
     using System.Linq;
-    using Model.TestGeneration;
 
     #endregion
 

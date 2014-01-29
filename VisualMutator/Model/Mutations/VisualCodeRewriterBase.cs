@@ -1,8 +1,9 @@
-﻿namespace VisualMutator.Extensibility
+﻿namespace VisualMutator.Model.Mutations
 {
     #region
 
     using System.Collections.Generic;
+    using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
 

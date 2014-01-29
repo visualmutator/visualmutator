@@ -16,6 +16,7 @@
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
+    using StoringMutants;
     using Module = Microsoft.Cci.MutableCodeModel.Module;
     using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
 
