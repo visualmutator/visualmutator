@@ -51,7 +51,6 @@
     public class NUnitWrapper : INUnitWrapper
     {
         private readonly IMessageService _messageService;
-        private readonly IDispatcherExecute _execute;
 
         private TestRunner _testRunner;
       //  private TestLoader _testLoader;
@@ -80,10 +79,9 @@
             get { return _nameFilter; }
         }
 
-        public NUnitWrapper(IMessageService messageService, IDispatcherExecute execute)
+        public NUnitWrapper(IMessageService messageService)
         {
             _messageService = messageService;
-            _execute = execute;
 
             InternalTrace.Initialize("nunit-visual-mutator.log", InternalTraceLevel.Verbose);
          
@@ -97,7 +95,7 @@
             ServiceManager.Services.AddService(new TestAgency());
 
            // _testLoader = new TestLoader();
-            _testRunner = new TestDomain();
+            _testRunner = new ProcessRunner();
             _testRunner.Unload();
             
             /*

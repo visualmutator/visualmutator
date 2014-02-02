@@ -91,7 +91,7 @@
             Mutant changelessMutant = mutantsContainer.CreateEquivalentMutant(out execOperator);
 
 
-            var testServ = new NUnitTestService(new NUnitWrapper(logMessageService, dispMock.Object), logMessageService);
+            var testServ = new NUnitTestService(new NUnitWrapper(logMessageService), logMessageService);
             var mutantTestSession = new MutantTestSession();
             IEnumerable<TestNodeClass> testNodeClasses = testServ.LoadTests(list, mutantTestSession);
 

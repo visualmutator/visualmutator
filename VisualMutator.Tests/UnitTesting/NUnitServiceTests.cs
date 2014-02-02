@@ -3,9 +3,17 @@
     #region
 
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Threading;
+    using Model.Tests;
+    using Model.Tests.Services;
     using Moq;
     using NUnit.Core;
     using NUnit.Framework;
+    using Operators;
+    using UsefulTools.Core;
+    using UsefulTools.Wpf;
 
     #endregion
 
@@ -44,6 +52,47 @@
                 );*/
         }
 
+        [Test]
+        public void Integration()
+        {
+            var m = new Mock<IMessageService>();
+            var wrapper = new NUnitWrapper(m.Object);
+            var service = new NUnitTestService(wrapper, m.Object);
+            var session = new MutantTestSession();
+            service.LoadTests(new List<string> {MutationTestsHelper.DsaPath, MutationTestsHelper.DsaPath},
+                session);
+
+            service.RunTests(session);
+
+            Thread.Sleep(15000);
+            Console.WriteLine(":session.TestMap.Count : " + session.TestMap.Count);
+            
+                
+        }
+
+        [Test]
+        public void LoadingTests()
+        {
+            string nunitConsolePath =@"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";//"nunit-console",
+            string outputFile = "nunit-results.xml";
+            string arg = "\"" + MutationTestsHelper.DsaTestsPath + "\" /xml \"" + outputFile + "\" /nologo";
+            
+
+            var startInfo = new ProcessStartInfo
+            {
+                Arguments = arg,
+                CreateNoWindow = true,
+                ErrorDialog = true,
+                RedirectStandardOutput = false,
+                FileName = nunitConsolePath,
+                UseShellExecute = false
+            };
+
+            Process proc = Process.Start(startInfo);
+            bool res = proc.WaitForExit(1000 * 60);
+
+            res = (res && proc.ExitCode >= 0);
+        }
 
         /*
         [Test]
