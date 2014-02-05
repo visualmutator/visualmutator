@@ -5,13 +5,20 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
+    using log4net.Appender;
+    using log4net.Config;
+    using log4net.Layout;
     using Model.Tests;
     using Model.Tests.Services;
+    using Model.Tests.TestsTree;
     using Moq;
     using NUnit.Core;
     using NUnit.Framework;
     using Operators;
+    using RunProcessAsTask;
     using UsefulTools.Core;
     using UsefulTools.Wpf;
 
@@ -20,6 +27,21 @@
     [TestFixture]
     public class NUnitServiceTests
     {
+        #region Setup/Teardown
+
+        [SetUp]
+        public void Setup()
+        {
+
+            BasicConfigurator.Configure(
+                new ConsoleAppender
+                {
+                    Layout = new SimpleLayout()
+                });
+        }
+
+        #endregion
+
         private TestResult MockTestResult(string name, bool success)
         {
             var m = new Mock<ITest>();
@@ -93,7 +115,60 @@
 
             res = (res && proc.ExitCode >= 0);
         }
+        [Test]
+        public void ShouldRunAllTests()
+        {
 
+            var service = new NUnitExternal(@"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe");
+            var assemblies = new List<string>
+                                 {
+                                     MutationTestsHelper.DsaTestsPath, 
+                                     MutationTestsHelper.DsaTestsPath2
+                                 };
+            Task<ProcessResults> task = service.RunNUnitConsole(assemblies,
+                "muttest-results.xml", new List<TestId>());
+
+            task.Wait();
+
+            var results = service.ProcessResultFile("muttest-results.xml");
+            var c = results.Values.Count(r => !r.Success);
+            
+            Assert.IsNotEmpty(results);
+            Assert.AreEqual(1, c);
+            var re = results.Values.Single(r => !r.Success);
+            Assert.AreNotEqual(re.StackTrace, "");
+        }
+
+        [Test]
+        public void ShouldRunSelectedTest()
+        {
+
+            var service = new NUnitExternal(@"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe");
+            var assemblies = new List<string>
+                                 {
+                                     MutationTestsHelper.DsaTestsPath, 
+                                     MutationTestsHelper.DsaTestsPath2
+                                 };
+            var tn = new TestName();
+            tn.FullName = "Dsa.Test.DataStructures.SetTest.DuplicateObjectTest";            
+            var tn2 = new TestName();
+            tn2.FullName = "Dsa.Test.DataStructures.SetTest.ContainsTest";
+            Task<ProcessResults> task = service.RunNUnitConsole(assemblies,
+                "muttest-results.xml", new List<TestId> { 
+                    new NUnitTestId(tn), 
+                    new NUnitTestId(tn2) });
+
+            task.Wait();
+
+            var results = service.ProcessResultFile("muttest-results.xml");
+            var c = results.Values.Count(r => !r.Success);
+
+            Assert.IsNotEmpty(results);
+            Assert.AreEqual(1, c);
+            Assert.AreEqual(2, results.Count);
+            var re = results.Values.Single(r => !r.Success);
+            Assert.AreNotEqual(re.StackTrace, "");
+        }
         /*
         [Test]
         public void LoadingTests()

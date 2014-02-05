@@ -95,7 +95,7 @@
             ServiceManager.Services.AddService(new TestAgency());
 
            // _testLoader = new TestLoader();
-            _testRunner = new ProcessRunner();
+            _testRunner = new TestDomain();
             _testRunner.Unload();
             
             /*

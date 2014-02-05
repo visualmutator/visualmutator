@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>RunProcessAsTask</id>
+    <version>1.0.0</version>
+    <title>Run Process As Task</title>
+    <authors>jamesmanning</authors>
+    <owners>jamesmanning</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/jamesmanning/RunProcessAsTask</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Simple wrapper around System.Diagnostics.Process to expose it as a System.Threading.Tasks.Task&lt;ProcessResults&gt;
+
+Includes support for cancellation, timeout (via cancellation), and exposes the standard output, standard error, and exit code of the process.</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+  </metadata>
+</package>

@@ -32,19 +32,16 @@
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public const String DsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
-        public const String DsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
+        public const String DsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.dll";
+        public const String DsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.Test.dll";
+        public const String DsaTestsPath2 = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.Test2.dll";
         
-
 
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
          
             out CodeDifferenceCreator diff)
         {
             RunMutationsFromFile(CreateModule(code), oper, out mutants, out diff);
-
-
-
         }
         public static void RunMutationsFromFile(string filePath, IMutationOperator oper, out List<Mutant> mutants,
             out CodeDifferenceCreator diff)

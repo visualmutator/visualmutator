@@ -45,7 +45,7 @@
         }
 
 
-        public IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession)
+        public virtual IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession)
         {
             /*
              *   _currentRunCancelled = false;
@@ -105,7 +105,7 @@
 
             return result;
         }
-        public Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession)
+        public virtual Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession)
         {
 
             var list = new List<TestNodeMethod>();
@@ -261,7 +261,7 @@
             _nUnitWrapper.Cancel();
         }
 
-        public void CreateTestFilter(ICollection<TestId> selectedTests)
+        public virtual void CreateTestFilter(ICollection<TestId> selectedTests)
         {
             _nUnitWrapper.CreateFilter(selectedTests.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
         }

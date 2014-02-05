@@ -40,10 +40,7 @@
 
         public override void Load()
         {
-
         //    childKernel = new ChildKernel(Kernel);
-
-
             Views();
             Infrastructure();
             MutantsCreation();
@@ -75,7 +72,6 @@
             Bind<IMutationResultsView>().To<MutationResultsView>();
             Bind<MainViewModel>().ToSelf();
 
-
             Bind<MutantsSavingController>().ToSelf().AndFromFactory();
             Bind<MutantsSavingViewModel>().ToSelf();
             Bind<IMutantsSavingView>().To<MutantsSavingView>();
@@ -83,10 +79,8 @@
             Bind<CreationViewModel>().ToSelf();
             Bind<ISessionCreationView>().To<SessionCreationView>();
 
-
             Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
             Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
-
 
             Bind<MutantDetailsViewModel>().ToSelf();
             Bind<IMutantDetailsView>().To<MutantDetailsView>();
@@ -122,10 +116,8 @@
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
             
-
-           
-
-            Bind<NUnitTestService>().ToSelf();
+            
+            Bind<NUnitXmlTestService>().ToSelf();
 
             Bind<MsTestService>().ToSelf();
 

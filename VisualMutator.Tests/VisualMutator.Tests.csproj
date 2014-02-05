@@ -172,6 +172,9 @@
     <Reference Include="Roslyn.Utilities">
       <HintPath>..\packages\Roslyn.Services.Common.1.2.20906.2\lib\net45\Roslyn.Utilities.dll</HintPath>
     </Reference>
+    <Reference Include="RunProcessAsTask">
+      <HintPath>..\packages\RunProcessAsTask.1.0.0\lib\RunProcessAsTask.dll</HintPath>
+    </Reference>
     <Reference Include="SoftwareApproach.TestingExtensions">
       <HintPath>..\packages\VisualStudioTestingExtensions.1.2.0.0\lib\net40\SoftwareApproach.TestingExtensions.dll</HintPath>
     </Reference>
