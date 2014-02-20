@@ -11,7 +11,16 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid d:DataContext="{d:DesignInstance ViewModels:TestsSelectableTreeViewModel}">
         <Grid.Resources>
+            <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeAssembly}"
+                                      ItemsSource="{Binding Path=Children}">
+                <DockPanel>
+                    <Image Source="Resources/assembly.png" />
+                    <CheckBox IsChecked="{Binding IsIncluded}" />
+                    <TextBlock Text="{Binding Name}" />
+                </DockPanel>
 
+            </HierarchicalDataTemplate>
+            
             <HierarchicalDataTemplate DataType="{x:Type TestsTree:TestNodeNamespace}"
                                       ItemsSource="{Binding Path=Children}">
                 <DockPanel>
@@ -40,7 +49,7 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <TreeView ItemsSource="{Binding Namespaces}">
+        <TreeView ItemsSource="{Binding TestAssemblies}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
@@ -49,7 +58,7 @@
         </TreeView>
 
         <Views:ProgressControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Visibility="{Binding Namespaces, Converter={Converters:NullToVisibilityConverter}}" />
+                               Visibility="{Binding TestAssemblies, Converter={Converters:NullToVisibilityConverter}}" />
 
     </Grid>
 </UserControl>

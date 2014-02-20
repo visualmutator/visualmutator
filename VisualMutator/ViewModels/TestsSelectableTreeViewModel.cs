@@ -15,21 +15,20 @@
         public TestsSelectableTreeViewModel(ITestsSelectableTree view)
             : base(view)
         {
-            //_namespaces = new ReadOnlyCollection<TestNodeNamespace>(new List<TestNodeNamespace>());
             
         }
 
-        private ReadOnlyCollection<TestNodeNamespace> _namespaces;
+        private ReadOnlyCollection<TestNodeAssembly> _testAssemblies;
 
-        public ReadOnlyCollection<TestNodeNamespace> Namespaces
+        public ReadOnlyCollection<TestNodeAssembly> TestAssemblies
         {
             get
             {
-                return _namespaces;
+                return _testAssemblies;
             }
             set
             {
-                SetAndRise(ref _namespaces, value, () => Namespaces);
+                SetAndRise(ref _testAssemblies, value, () => TestAssemblies);
             }
         }
         

@@ -16,7 +16,7 @@
     public class TestNodeNamespace : TestTreeNode
     {
      
-        public TestNodeNamespace(TestsRootNode parent, string name)
+        public TestNodeNamespace(TestNodeAssembly parent, string name)
             : base(parent, name, true)
         {
         }

@@ -15,24 +15,41 @@
     using Model.Tests.Services;
     using Model.Tests.TestsTree;
     using Moq;
+    using Ninject;
+    using Ninject.Modules;
     using NUnit.Core;
     using NUnit.Framework;
     using Operators;
     using RunProcessAsTask;
     using UsefulTools.Core;
     using UsefulTools.Wpf;
+    using VisualMutator.Infrastructure;
+    using VisualMutator.Infrastructure.NinjectModules;
 
     #endregion
 
     [TestFixture]
     public class NUnitServiceTests
     {
+        private IKernel kernel;
         #region Setup/Teardown
 
         [SetUp]
         public void Setup()
         {
+            var modules = new INinjectModule[]
+            {
+               // new VisualMutatorModule(), 
+            };
 
+
+
+            kernel = new StandardKernel();
+
+
+
+
+            kernel.Load(modules);
             BasicConfigurator.Configure(
                 new ConsoleAppender
                 {
@@ -87,9 +104,17 @@
             service.RunTests(session);
 
             Thread.Sleep(15000);
-            Console.WriteLine(":session.TestMap.Count : " + session.TestMap.Count);
+            Console.WriteLine(":session.TestMap.Count : " + session.TestsByAssembly.Count);
             
                 
+        }
+
+        [Test]
+        public void Loading2()
+        {
+            var nUnitWrapper = new NUnitWrapper(null);
+            ITest loadTests = nUnitWrapper.LoadTests(new [] { @"C:\Users\Arego\AppData\Local\Microsoft\VisualStudio\12.0Exp\Extensions\PiotrTrzpil\VisualMutator\2.0.8\VisualMutator.dll" });
+        Assert.Pass();
         }
 
         [Test]
@@ -118,14 +143,16 @@
         [Test]
         public void ShouldRunAllTests()
         {
+           
 
-            var service = new NUnitExternal(@"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe");
+            string path = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
+            var service = new NUnitExternal(kernel.Get<CommonServices>(), kernel.Get<IProcesses>());
             var assemblies = new List<string>
                                  {
                                      MutationTestsHelper.DsaTestsPath, 
                                      MutationTestsHelper.DsaTestsPath2
                                  };
-            Task<ProcessResults> task = service.RunNUnitConsole(assemblies,
+            Task<ProcessResults> task = service.RunNUnitConsole(path, assemblies,
                 "muttest-results.xml", new List<TestId>());
 
             task.Wait();
@@ -142,8 +169,8 @@
         [Test]
         public void ShouldRunSelectedTest()
         {
-
-            var service = new NUnitExternal(@"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe");
+            string nunitpath = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
+            var service = new NUnitExternal(kernel.Get<CommonServices>(), kernel.Get<IProcesses>());
             var assemblies = new List<string>
                                  {
                                      MutationTestsHelper.DsaTestsPath, 
@@ -153,7 +180,7 @@
             tn.FullName = "Dsa.Test.DataStructures.SetTest.DuplicateObjectTest";            
             var tn2 = new TestName();
             tn2.FullName = "Dsa.Test.DataStructures.SetTest.ContainsTest";
-            Task<ProcessResults> task = service.RunNUnitConsole(assemblies,
+            Task<ProcessResults> task = service.RunNUnitConsole(nunitpath, assemblies,
                 "muttest-results.xml", new List<TestId> { 
                     new NUnitTestId(tn), 
                     new NUnitTestId(tn2) });

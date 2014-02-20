@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model.Tests.Services
+﻿namespace VisualMutator.Model.Exceptions
 {
     #region
 
@@ -8,29 +8,28 @@
     #endregion
 
     [Serializable]
-    public class MsTestException : Exception
+    public class TestsLoadingException : Exception
     {
-       
-        public MsTestException()
+
+        public TestsLoadingException()
         {
         }
 
-        public MsTestException(string message)
+        public TestsLoadingException(string message)
             : base(message)
         {
         }
-
-        public MsTestException(string message, Exception inner)
+      
+        public TestsLoadingException(string message, Exception inner)
             : base(message, inner)
         {
         }
 
-        protected MsTestException(
+        protected TestsLoadingException(
             SerializationInfo info,
             StreamingContext context)
             : base(info, context)
         {
         }
     }
-   
 }

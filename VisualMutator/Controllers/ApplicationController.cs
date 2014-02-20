@@ -99,7 +99,7 @@
         private void Current_DispatcherUnhandledException(
             object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            _messageService.ShowFatalError(e.Exception,null);
+            _messageService.ShowError(e.Exception.ToString());
             e.Handled = true;
         }
 
@@ -108,7 +108,7 @@
         {
             var exception = (Exception)e.ExceptionObject;
 
-            _messageService.ShowFatalError(exception, null);
+            _messageService.ShowError(exception.ToString());
 
         }
 

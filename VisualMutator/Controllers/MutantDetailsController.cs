@@ -99,7 +99,8 @@
 
             if (mutant.MutantTestSession.IsComplete)
             {
-                _viewModel.TestNamespaces.AddRange(mutant.MutantTestSession.TestNamespaces);
+                _viewModel.TestNamespaces.AddRange(mutant.MutantTestSession.TestsRootNode
+                    .TestNodeAssemblies.SelectMany(a => a.TestNamespaces));
             }
             else
             {

@@ -165,6 +165,9 @@
     <Reference Include="nunit-agent">
       <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit-agent.exe</HintPath>
     </Reference>
+    <Reference Include="nunit-console">
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit-console.exe</HintPath>
+    </Reference>
     <Reference Include="nunit-console-runner">
       <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\lib\nunit-console-runner.dll</HintPath>
     </Reference>
@@ -258,8 +261,10 @@
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
+    <Compile Include="Infrastructure\Processes.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Model\ClassAndMethod.cs" />
+    <Compile Include="Model\Exceptions\TestsLoadingException.cs" />
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
     <Compile Include="Model\Exceptions\StrongNameSignedAssemblyException.cs" />
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
@@ -310,7 +315,10 @@
     <Compile Include="Model\Tests\MyTestResult.cs" />
     <Compile Include="Model\Tests\Services\NUnitExternal.cs" />
     <Compile Include="Model\Tests\Services\NUnitXmlTestService.cs" />
+    <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestNodeAssembly.cs" />
+    <Compile Include="Model\Tests\TestsTree\TestsRootNode.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />
@@ -353,10 +361,6 @@
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
     <Compile Include="Model\MutationTestingSession.cs" />
     <Compile Include="Model\Tests\Services\ITestService.cs" />
-    <Compile Include="Model\Tests\Services\MsTestException.cs" />
-    <Compile Include="Model\Tests\Services\MsTestLoader.cs" />
-    <Compile Include="Model\Tests\Services\MsTestService.cs" />
-    <Compile Include="Model\Tests\Services\MsTestWrapper.cs" />
     <Compile Include="Model\Tests\Services\NUnitTestService.cs" />
     <Compile Include="Model\Tests\Services\NUnitWrapper.cs" />
     <Compile Include="Model\Tests\TestsContainer.cs" />

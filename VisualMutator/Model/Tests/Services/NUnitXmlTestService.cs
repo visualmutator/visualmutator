@@ -6,6 +6,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
@@ -22,6 +23,8 @@
 
     public class NUnitXmlTestService : NUnitTestService
     {
+        private readonly INUnitExternal _nUnitExternal;
+        private readonly CommonServices _svc;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IList<string> _assemblies;
@@ -32,13 +35,25 @@
             get { return _assemblies; }
             set { _assemblies = value; }
         }
-
+        
+        public string NUnitConsoleAltPath { get; set; }
         public string NUnitConsolePath { get; set; }
-        public NUnitXmlTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
-            : base(nUnitWrapper, messageService)
+
+        public NUnitXmlTestService(
+            INUnitWrapper nUnitWrapper, 
+            INUnitExternal nUnitExternal, 
+            CommonServices svc)
+            : base(nUnitWrapper, svc.Logging)
         {
-            NUnitConsolePath = "nunit-console-x86.exe";
+            _nUnitExternal = nUnitExternal;
+            _svc = svc;
+
+            var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            NUnitConsoleAltPath = Path.Combine(Path.GetDirectoryName(localPath), "nunit-console.exe");
+            NUnitConsolePath = Path.Combine(Path.GetDirectoryName(localPath), "nunit-console-x86.exe");
+
         }
+
 
         public override IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession)
         {
@@ -48,41 +63,70 @@
             UnloadTests();
             return testNodeClasses;
         }
-        
+        private string findConsolePath()
+        {
+            string runPath;
+            if (_svc.FileSystem.File.Exists(NUnitConsolePath))
+            {
+                runPath = NUnitConsolePath;
+            }
+            else if (_svc.FileSystem.File.Exists(NUnitConsoleAltPath))
+            {
+                runPath = NUnitConsoleAltPath;
+            }
+            else
+            {
+                throw new FileNotFoundException(NUnitConsolePath + " nor " + NUnitConsoleAltPath + " file was found.");
+            }
+            return runPath;
+        }
         public override Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession)
         {
-
-            var list = new List<TestNodeMethod>();
 
             var sw = new Stopwatch();
             sw.Start();
 
-            var ext = new NUnitExternal(NUnitConsolePath);
+            string runPath = findConsolePath();
 
-            Task<ProcessResults> results = ext.RunNUnitConsole(_assemblies, "muttest-results.xml", _selectedTests);
+            _log.Info("Running NUnit Console from: " + runPath);
 
-            return results.ContinueWith(testResult =>
+            var tasks = new List<Task<List<MyTestResult>>>();
+            int ordinal = 0;
+            foreach (var assembly in _assemblies)
             {
-                if(testResult.Exception != null)
+                string name = string.Format("muttest{0}-{1}.xml", ordinal, Path.GetFileName(assembly));
+                Task<List<MyTestResult>> task = _nUnitExternal.RunTests(runPath, assembly.InList(),
+                    name, _selectedTests);
+                tasks.Add(task);
+                ordinal++;
+            }
+
+            return Task.WhenAll(tasks)
+                .ContinueWith( testResult =>
                 {
-                    _log.Error(testResult.Exception);
-                    return null;
-                }
-                else
-                {
-                    Dictionary<string, MyTestResult> tresults = ext.ProcessResultFile("muttest-results.xml");
-                    foreach (var myTestResult in tresults)
+                    if(testResult.Exception != null)
                     {
-                        TestNodeMethod testNodeMethod = mutantTestSession.TestMap[myTestResult.Key];
-                        testNodeMethod.Message = myTestResult.Value.Message + "\n" + myTestResult.Value.StackTrace;
-                        testNodeMethod.State = myTestResult.Value.Success
-                            ? TestNodeState.Success
-                            : TestNodeState.Failure;
+                        _log.Error(testResult.Exception);
+                        //todo: erorrs
+                        return new List<TestNodeMethod>();
                     }
-                    sw.Stop();
-                    mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
-                    return list;
-                }
+                    else
+                    {
+                        //todo: check for empty lists
+                        IList<MyTestResult> testResults = testResult.Result.Flatten().ToList();
+
+                        foreach (var myTestResult in testResults)
+                        {
+                            TestNodeMethod testNodeMethod = mutantTestSession.TestsByAssembly[myTestResult.Name];
+                            testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
+                            testNodeMethod.State = myTestResult.Success
+                                ? TestNodeState.Success
+                                : TestNodeState.Failure;
+                        }
+                        sw.Stop();
+                        mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                        return new List<TestNodeMethod>();
+                    }
             });
         }
 

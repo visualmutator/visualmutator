@@ -135,10 +135,10 @@
                 try
                 {
                     IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
-                   
                     if(module.StrongNameSigned)
                     {
-                        throw new StrongNameSignedAssemblyException();
+
+                       // throw new StrongNameSignedAssemblyException();
                     }
 
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);

@@ -13,12 +13,22 @@ namespace TestGround
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
+    using NUnit.Core;
     using Roslyn.Compilers;
     using Roslyn.Compilers.CSharp;
+    using VisualMutator.Model.Tests.Services;
 
     class Program
     {
         static void Main(string[] args)
+        {
+            var nUnitWrapper = new NUnitWrapper(null);
+            ITest loadTests = nUnitWrapper.LoadTests(new[] { @"C:\Users\Arego\AppData\Local\Microsoft\VisualStudio\12.0Exp\Extensions\PiotrTrzpil\VisualMutator\2.0.8\VisualMutator.dll" });
+
+            int i = 0;
+        }
+
+        static void Main2(string[] args)
         {
 
    var tree = SyntaxTree.ParseText(@"using System;

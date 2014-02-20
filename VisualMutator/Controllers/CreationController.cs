@@ -74,10 +74,10 @@
 
             _viewModel.CommandCreateMutants = new SmartCommand(AcceptChoices,
                 () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
-                      && _viewModel.TypesTreeToTest.Namespaces!=null && _viewModel.TypesTreeToTest.Namespaces.Count != 0
+                      && _viewModel.TypesTreeToTest.TestAssemblies!=null && _viewModel.TypesTreeToTest.TestAssemblies.Count != 0
                       && _viewModel.MutationsTree.MutationPackages.Count != 0)
                 .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
-                .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.Namespaces)
+                .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.TestAssemblies)
                 .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
 
 
@@ -98,7 +98,7 @@
             bool loadError;
             var originalFilesList = _fileManager.CopyOriginalFiles(out loadError);
             var originalFilesListForTests = _fileManager.CopyOriginalFiles(out loadError);
-            if (loadError)
+            if (loadError || originalFilesListForTests.Count == 0)
             {
                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
             }
@@ -121,6 +121,7 @@
                 {
                     if(result.Exception!= null)
                     {
+                        _log.Error(result.Exception);
                         _svc.Threading.PostOnGui(() =>
                         {
                             if (result.Exception.Flatten().InnerException is TestWasSelectedToMutateException)
@@ -130,6 +131,10 @@
                             else if (result.Exception.Flatten().InnerException is StrongNameSignedAssemblyException)
                             {
                                 _svc.Logging.ShowError(UserMessages.ErrorStrongNameSignedAssembly(), _viewModel.View);
+                            }
+                            else if (result.Exception.Flatten().InnerException is TestsLoadingException)
+                            {
+                                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading(), _viewModel.View);
                             }
                             else
                             {
@@ -141,7 +146,7 @@
                     else
                     {
                         var assemblies = (IList<AssemblyNode>)result.Result[0];
-                        var tests = (IList<TestNodeNamespace>)result.Result[1];
+                        var tests = (IList<TestNodeAssembly>)result.Result[1];
 
                         assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
                         
@@ -178,7 +183,7 @@
                             }
                             
                             _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
-                            _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests);
+                            _viewModel.TypesTreeToTest.TestAssemblies = new ReadOnlyCollection<TestNodeAssembly>(tests);
 
                         });
                     }
@@ -255,7 +260,7 @@
                 AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                 ProjectPaths = _viewModel.ProjectPaths.ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
-                SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.Namespaces),
+                SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.TestAssemblies),
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
                 MutantsCreationFolderPath = _viewModel.MutantsGenerationPath

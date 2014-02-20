@@ -21,13 +21,4 @@
 
         public string FullName { get; set; }
     }
-
-    public class TestsRootNode : TestTreeNode
-    {
-        public TestsRootNode()
-            : base(null, "", true)
-        {
-
-        }
-    }
 }

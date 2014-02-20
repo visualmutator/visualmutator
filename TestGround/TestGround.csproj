@@ -128,6 +128,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
@@ -184,6 +187,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualMutator\VisualMutator.csproj">
+      <Project>{B40A493B-C264-423D-B5C7-14E120B4D358}</Project>
+      <Name>VisualMutator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

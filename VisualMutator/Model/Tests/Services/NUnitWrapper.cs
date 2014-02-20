@@ -11,6 +11,7 @@
     using System.Security.AccessControl;
     using System.Threading;
     using System.Threading.Tasks;
+    using Exceptions;
     using log4net;
     using NUnit.Core;
     using NUnit.Core.Filters;
@@ -34,7 +35,7 @@
         IObservable<Exception> TestLoadFailed { get; }
         TestFilter NameFilter { get; }
 
-        void LoadTests(IEnumerable<string> assemblies);
+        ITest LoadTests(IEnumerable<string> assemblies);
 
         Task<TestResult> RunTests();
 
@@ -53,7 +54,6 @@
         private readonly IMessageService _messageService;
 
         private TestRunner _testRunner;
-      //  private TestLoader _testLoader;
 
         private readonly ISubject<ITest> _testLoaded;
 
@@ -95,55 +95,10 @@
             ServiceManager.Services.AddService(new TestAgency());
 
            // _testLoader = new TestLoader();
-            _testRunner = new TestDomain();
+            _testRunner = new SimpleTestRunner();
             _testRunner.Unload();
             
-            /*
-            _testLoaded = Observable.FromEvent<TestEventArgs>(_testLoader.Events, "TestLoaded")
-               // .Where(e => e.EventArgs.Test != null)
-                .Select(e => e.EventArgs.Test);
-             
-
-            _testLoadFailed = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "TestLoadFailed")
-                .Select(e => e.EventArgs.Exception);
-         
-            _testReloadFailed = Observable.FromEvent<TestEventArgs>(
-              _testLoader.Events, "TestReloadFailed")
-              .Select(e => e.EventArgs.Exception);            
-            
-            _testUnloadFailed = Observable.FromEvent<TestEventArgs>(
-              _testLoader.Events, "TestUnloadFailed")
-              .Select(e => e.EventArgs.Exception);
-
-            _projectLoadFailed = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "ProjectLoadFailed")
-                .Select(e => e.EventArgs.Exception);
-
-            _projectUnloadFailed = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "ProjectUnloadFailed")
-                .Select(e => e.EventArgs.Exception);
-
-
-
-            _testFinished = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "TestFinished")
-                .Select(e => e.EventArgs.Result);
-
-
-            _runFinished = Observable.FromEvent<TestEventArgs>(
-                _testLoader.Events, "RunFinished")
-                .Select(e => e.EventArgs.Result);
-
-            
-
-            _testLoadFailed.Subscribe(HandleException);
-            _testReloadFailed.Subscribe(HandleException);
-            _testUnloadFailed.Subscribe(HandleException);
-            _projectLoadFailed.Subscribe(HandleException);
-            _projectUnloadFailed.Subscribe(HandleException);
-            */
-
+          
             _testLoadFailed = new Subject<Exception>();
             _testLoaded = new Subject<ITest>();
             _runFinished = new ReplaySubject<TestResult>();
@@ -155,39 +110,25 @@
             _messageService.ShowFatalError(e);
         }
         
-        public void LoadTests(IEnumerable<string> assemblies)
+        public ITest LoadTests(IEnumerable<string> assemblies)
         {
 
             try
             {
-                //Assembly.
-               // _testRunner = new TestDomain();
-
                 var package = new TestPackage("", assemblies.ToList());
                 package.Settings["RuntimeFramework"] = new RuntimeFramework(RuntimeType.Net, Environment.Version);
                 package.Settings["UseThreadedRunner"] = false;
                 bool load = _testRunner.Load(package);
-                if (load)
+                if(!load)
                 {
-                    _testLoaded.OnNext(_testRunner.Test);
+                    throw new Exception("Tests load result: false.");
                 }
-                else
-                {
-                    _log.Warn("!load");
-                    _testLoaded.OnNext(_testRunner.Test);
-                }
+                return _testRunner.Test;
             }
             catch (Exception e)
             {
-                _testLoadFailed.OnNext(e);
-                _testLoadFailed.OnCompleted();
+                throw new TestsLoadingException("Exception while loading tests.",e);
             }
-         //   _testLoader.NewProject();
-//            foreach (string project in assemblies.Where(f => f.Contains("Test")))
-//            {
-//                _testLoader.TestProject.ActiveConfig.Assemblies.Add(project);
-//            }
-         //   _testLoader.LoadTest();
 
         }
 
@@ -197,14 +138,11 @@
             {
                 _testRunner.CancelRun();
             }
-           // _testLoader.CancelTestRun();
         }
 
         public void CreateFilter(ICollection<TestName> names)
         {
             var nameFilter = new IDTestFilter();
-         //   IEnumerable<ITest> selectManyRecursive = ConvertToListOf<ITest>(_testRunner.Test.Tests)
-        //                .SelectManyRecursive(test => ConvertToListOf<ITest>(test.Tests));
 
             foreach (TestName name in names)
             {
@@ -227,24 +165,6 @@
         }
         public Task<TestResult> RunTests()
         {
-           /* 
-            Task<TestResult> task = Task.Run(() => _testRunner.Run(new NullListener(), _nameFilter, true, LoggingThreshold.All));
-            task.ContinueWith(t =>
-            {
-                if (t.Exception == null)
-                {
-                    IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(t.Result.Results)
-                        .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
-
-                    foreach (var result in selectManyRecursive)
-                    {
-                        _testFinished.OnNext(result);
-                    }
-                    _testFinished.OnCompleted();
-                    _runFinished.OnNext(t.Result);
-                    _runFinished.OnCompleted();
-                }
-            });*/
             return Task.Run(() =>
             {
                 var taskCompletion = new TaskCompletionSource<TestResult>();
@@ -252,29 +172,6 @@
 
                  listener = new MyRecordingListener();
 
-
-                 /*   listener.RunFinishedNormally.Subscribe(result =>
-                    {
-                        IEnumerable<TestResult> selectManyRecursive = ConvertToListOf<TestResult>(result.Results)
-                                   .SelectManyRecursive(test => ConvertToListOf<TestResult>(test.Results));
-
-                        foreach (var t in selectManyRecursive)
-                        {
-                            _testFinished.OnNext(t);
-                        }
-                        _testFinished.OnCompleted();
-                        _runFinished.OnNext(result);
-                        _runFinished.OnCompleted();
-                    
-                        taskCompletion.SetResult(result);
-                    },
-                    exc =>
-                    {
-                        _runFinished.OnError(exc);
-                        taskCompletion.TrySetException(exc);
-                    });
-                    */
-                 //  _nameFilter = new EmptyFilter();
                 _testRunner.BeginRun(listener, _nameFilter, true, LoggingThreshold.All);
                 new Thread(() =>
                 {
@@ -289,20 +186,15 @@
                         {
                             _testFinished.OnNext(t);
                         }
-                       // _testFinished.OnCompleted();
                         _runFinished.OnNext(_testRunner.TestResult);
-                       // _runFinished.OnCompleted();
                     }
                     taskCompletion.SetResult(null);
 
                 }).Start();
-             //    Task.Run();
                 
                 return taskCompletion.Task;
             });
             
-          //  TestResult testResult = ;
-           // _testLoader.RunTests(_nameFilter);
             
         }
 
@@ -325,7 +217,6 @@
                     catch (Exception e)
                     {
                         _log.Warn(e);
-                        //Console.WriteLine(e);
                     }
 
                 }
@@ -343,8 +234,6 @@
             {
                 _log.Warn(e);
             }
-           // _testLoader.UnloadProject()
-            ;
         }
 
         public IObservable<TestResult> RunFinished

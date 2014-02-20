@@ -71,5 +71,11 @@ public static string ErrorBadMethodSelected()
             return
                     @"One of the assemblies is strong name signed. This will not allow to run any code in mutated assemblies. Please disable the assembly signing in project properties.";
         }
+
+        public static string ErrorTestsLoading()
+        {
+            return
+                    @"An error occurred while loading tests.";
+        }
     }
 }

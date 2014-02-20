@@ -5,10 +5,12 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
     using Exceptions;
+    using LinqLib.Operators;
     using log4net;
     using Mutations.MutantsTree;
     using Services;
@@ -24,7 +26,7 @@
     {
        // TestSession LoadTests(StoredMutantInfo mutant);
 
-        Task<List<TestNodeMethod>[]> RunTests(MutantTestSession mutantTestSession);
+        Task RunTests(MutantTestSession mutantTestSession);
 
  
         void UnloadTests();
@@ -42,7 +44,7 @@
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
         StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant);
-        IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> paths);
+        IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths);
 
         ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces);
         void CreateTestFilter(ICollection<TestId> selectedTests);
@@ -65,7 +67,7 @@
         private MutationTestingSession _currentSession;
 
         public TestsContainer(
-            NUnitTestService nunit, 
+            NUnitXmlTestService nunit, 
             IMutantsFileManager mutantsFileManager,
             IFileManager fileManager,
             IAssemblyVerifier assemblyVerifier)
@@ -142,17 +144,19 @@
         {
             return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath,  mutant);
         }
-        public IEnumerable<TestNodeNamespace> LoadTests(IEnumerable<string> paths)
+        public IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths)
         {
-            var session = new MutantTestSession();
-            LoadTests(paths.ToList(), session);
+            var mutantTestSession = new MutantTestSession();
+            LoadTests(paths.ToList(), mutantTestSession);
             UnloadTests();
+            
+            
+           // session.TestsByAssembly
+           // var root = new RootNode();
+            //root.Children.AddRange(session.TestNamespaces);
+            //root.IsIncluded = true;
 
-            var root = new RootNode();
-            root.Children.AddRange(session.TestNamespaces);
-            root.IsIncluded = true;
-
-            return session.TestNamespaces;
+            return mutantTestSession.TestsRootNode.TestNodeAssemblies;
         }
 
         public void RunTestsForMutant(MutantsTestingOptions options, 
@@ -185,7 +189,7 @@
                     .Subscribe(e => CancelCurrentTestRun());
 
                 _log.Info("Running tests for mutant " + mutant.Id);
-                Task<List<TestNodeMethod>[]> runTests = RunTests(mutant.MutantTestSession);
+                Task runTests = RunTests(mutant.MutantTestSession);
                 runTests.Wait();
 
                 timoutDisposable.Dispose();
@@ -233,25 +237,27 @@
         }
         private void ResolveMutantState(Mutant mutant)
         {
-            mutant.NumberOfFailedTests = mutant.MutantTestSession.TestMap.Values
+            List<TestNodeClass> testNodeClasses = mutant.MutantTestSession
+                .TestsByAssembly.Values.SelectMany(c => c.ClassNodes).ToList();
+
+            mutant.NumberOfFailedTests = testNodeClasses
                           .Count(t => t.State.IsIn(TestNodeState.Failure, TestNodeState.Inconclusive));
 
 
-
-            if (mutant.MutantTestSession.TestMap.Values.Any(t => t.State == TestNodeState.Inconclusive))
+            if (testNodeClasses.Any(t => t.State == TestNodeState.Inconclusive))
             {
                 
                 mutant.KilledSubstate = MutantKilledSubstate.Inconclusive;
                 mutant.State = MutantResultState.Killed;
             }
 
-            else if (mutant.MutantTestSession.TestMap.Values.Any(t => t.State == TestNodeState.Failure))
+            else if (testNodeClasses.Any(t => t.State == TestNodeState.Failure))
             {
               
                 mutant.KilledSubstate = MutantKilledSubstate.Normal;
                 mutant.State = MutantResultState.Killed;
             }
-            else if (mutant.MutantTestSession.TestMap.Values.All(t => t.State == TestNodeState.Success))
+            else if (testNodeClasses.All(t => t.State == TestNodeState.Success))
             {
                 mutant.State = MutantResultState.Live;
             }
@@ -280,36 +286,59 @@
                     _currentSession.Choices.MutantsTestingOptions
                         .TestingProcessExtensionOptions.TestingProcessExtension.OnTestingCancelled();
                 }
-               // _mutantsFileManager.OnTestingCancelled();
             }
         }
 
         public void LoadTests(IList<string> assembliesPaths, MutantTestSession mutantTestSession)
         {
             Throw.IfNull(assembliesPaths, "assembliesPaths");
-           
 
-            IEnumerable<TestNodeClass> testClassses = _testServices
-                .SelectMany(s => s.LoadTests(assembliesPaths, mutantTestSession));
+            var sw = new Stopwatch();
+            sw.Start();
+            var tasks = new Dictionary<string, Task<TestNodeAssembly>>();
+            
 
-            var r = testClassses.Where(t => t.Namespace == null);
-            List<TestNodeNamespace> testNamespaces = testClassses
-                .GroupBy(classNode => classNode.Namespace)
-                .Select(group =>
-                {
-                    var ns = new TestNodeNamespace(mutantTestSession.TestsRootNode, group.Key);
-                    foreach (TestNodeClass nodeClass in group)
+            ITestService service1 = _testServices.Single();
+            foreach (var path in assembliesPaths)
+            {
+                string path1 = path;
+                Task<TestNodeAssembly> task = Task.Run(() => service1.LoadTests(path1.InList()))
+                    .ContinueWith(result =>
                     {
-                        nodeClass.Parent = ns;
-                    }
-       
-                    ns.Children.AddRange(group);
-                    return ns;
+                        string assemblyName = Path.GetFileNameWithoutExtension(path1);
+                        string assemblyPath = path1;
+                        result.Result.TestNodeAssembly = new TestNodeAssembly(mutantTestSession.TestsRootNode, assemblyName);
+                        result.Result.TestNodeAssembly.AssemblyPath = assemblyPath;
+                        result.Result.TestNodeAssembly.TestsLoadContext = result.Result;
 
-                }).ToList();
+                        List<TestNodeNamespace> testNamespaces = result.Result.ClassNodes
+                            .GroupBy(classNode => classNode.Namespace)
+                            .Select(group =>
+                            {
+                                var ns = new TestNodeNamespace(result.Result.TestNodeAssembly, group.Key);
+                                foreach (TestNodeClass nodeClass in group)
+                                {
+                                    nodeClass.Parent = ns;
+                                }
+
+                                ns.Children.AddRange(group);
+                                return ns;
+
+                            }).ToList();
+
+                        result.Result.TestNodeAssembly.Children.AddRange(testNamespaces);
+                        return result.Result.TestNodeAssembly;
+                    });
+                tasks.Add(path, task);
+
+            }
+            List<TestNodeAssembly> testNodeAssemblies = Task.WhenAll(tasks.Values).Result.ToList();
+
+            sw.Stop();
+            mutantTestSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
 
 
-            mutantTestSession.TestsRootNode.Children.AddRange(testNamespaces);
+            mutantTestSession.TestsRootNode.Children.AddRange(testNodeAssemblies);
             mutantTestSession.TestsRootNode.State = TestNodeState.Inactive;
 
             _testsLoaded = true;
@@ -317,16 +346,15 @@
 
 
 
-        public Task<List<TestNodeMethod>[]> RunTests(MutantTestSession mutantTestSession)
+        public Task RunTests(MutantTestSession mutantTestSession)
         {
             mutantTestSession.TestsRootNode.State = TestNodeState.Running;
-            return Task.WhenAll(_testServices.Select(s => s.RunTests(mutantTestSession)));
-            
-            /*
-            foreach (var service in _testServices)
-            {
-                service.RunTests(mutantTestSession);
-            }*/
+            var service = _testServices.Single();
+
+            List<Task> tasks = mutantTestSession.TestsRootNode.TestNodeAssemblies
+                .Select(a => service.RunTests(a.TestsLoadContext)).ToList();
+
+            return Task.WhenAll(tasks);
         }
 
 

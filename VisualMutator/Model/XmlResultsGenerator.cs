@@ -144,7 +144,7 @@
             return new XElement("DetailedTestingResults",   
                 from mutant in mutants
                 where mutant.MutantTestSession.IsComplete
-                let groupedTests = mutant.MutantTestSession.TestMap.Values.GroupBy(m => m.State).ToList()
+                let groupedTests = mutant.MutantTestSession.TestsByAssembly.Values.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("MutantId", mutant.Id),
                     new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),

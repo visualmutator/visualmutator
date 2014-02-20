@@ -54,6 +54,7 @@
             Bind<IThreading>().To<Threading>().InSingletonScope();
             Bind<CommonServices>().ToSelf().InSingletonScope();
             Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
+            Bind<IProcesses>().To<Processes>().InSingletonScope();
             Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
 
             var exe = new DispatcherExecute();
@@ -118,12 +119,14 @@
             
             
             Bind<NUnitXmlTestService>().ToSelf();
+            Bind<NUnitTestService>().To<NUnitXmlTestService>();
 
             Bind<MsTestService>().ToSelf();
 
             Bind<INUnitWrapper>().To<NUnitWrapper>();
             Bind<IMsTestWrapper>().To<MsTestWrapper>();
             Bind<IMsTestLoader>().To<MsTestLoader>();
+            Bind<INUnitExternal>().To<NUnitExternal>().AndFromFactory();
 
             Kernel.InjectChildFactory<SessionController>(childKernel =>
             {

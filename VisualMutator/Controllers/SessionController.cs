@@ -46,8 +46,6 @@
 
 
         private readonly XmlResultsGenerator _xmlResultsGenerator;
-        private readonly ICodeVisualizer _codeVisualizer;
-      //  private readonly SessionCreationController _scc;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private readonly ICciModuleSource _commonCompiler;
@@ -81,7 +79,6 @@
             IMutantsFileManager mutantsFileManager,
             IMutantsCache mutantsCache,
             XmlResultsGenerator xmlResultsGenerator,
-            ICodeVisualizer codeVisualizer,
             IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
             ICodeDifferenceCreator codeDifferenceCreator,
@@ -97,7 +94,6 @@
 
 
             _xmlResultsGenerator = xmlResultsGenerator;
-            _codeVisualizer = codeVisualizer;
             _resultsSavingFactory = resultsSavingFactory;
             _codeDifferenceCreator = codeDifferenceCreator;
             _commonCompiler = commonCompiler;
@@ -532,7 +528,7 @@
                     return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_Cancelled());
                 }
 
-                var test = changelessMutant.MutantTestSession.TestMap.Values
+                var test = changelessMutant.MutantTestSession.TestsByAssembly.Values
                     .FirstOrDefault(t => t.State == TestNodeState.Failure);
 
                 string testName = null;
@@ -545,7 +541,7 @@
                 }
                 else
                 {
-                    var testInconcl = changelessMutant.MutantTestSession.TestMap.Values
+                    var testInconcl = changelessMutant.MutantTestSession.TestsByAssembly.Values
                         .First(t =>t.State == TestNodeState.Inconclusive);
 
                     testName = testInconcl.Name;

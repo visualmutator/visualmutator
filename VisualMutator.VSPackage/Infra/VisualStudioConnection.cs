@@ -274,9 +274,49 @@
             return colCodeElements;
 
         }
+        private void Collect(Project p, IList<Project> projects)
+        {
+         //   Trace.WriteLine(p.Name + " " + p.ConfigurationManager);
+            if ( p.ProjectItems != null)
+            {
+                foreach (ProjectItem projectItem in p.ProjectItems)
+                {
+                    Collect(projectItem, projects);
+                }
+            }
+            if (p.ConfigurationManager != null)
+            {
+                projects.Add(p);
+            }
+        }
+        private void Collect(ProjectItem p, IList<Project> projects)
+        {
+          //  Trace.WriteLine(p.Name + " " + (p.ConfigurationManager == null));
+            if (p.ProjectItems != null)
+            {
+                foreach (ProjectItem projectItem in p.ProjectItems)
+                {
+                    
+                    Collect(projectItem, projects);
+                    
+                }
+            }
+            var ss = p.Object as Project;
+            if (ss != null && ss.ConfigurationManager != null)
+            {
+                projects.Add(ss);
+            }
+        }
         public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
         {
-            return from project in _dte.Solution.Cast<Project>()
+            var projects2 = _dte.Solution.Projects.Cast<Project>();
+            var listt = new List<Project>();
+            foreach (var project in projects2)
+            {
+                Collect(project, listt);
+            }
+            
+            return from project in listt 
                    where project.ConfigurationManager != null
                    let config = project.ConfigurationManager.ActiveConfiguration
                    where config != null && config.IsBuildable

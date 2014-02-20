@@ -9,51 +9,87 @@
     using System.Threading.Tasks;
     using System.Xml;
     using System.Xml.Linq;
+    using Infrastructure;
     using log4net;
     using NUnit.Core;
     using RunProcessAsTask;
     using TestsTree;
+    using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
 
-    public class NUnitExternal
+    public interface INUnitExternal
     {
-        private readonly string _nunitConsolePath;
+        Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
+            IList<string> inputFiles, string outputFile,
+            ICollection<TestId> selectedTests);
+    }
+
+    public class NUnitExternal : INUnitExternal
+    {
+        private readonly CommonServices _svc;
+        private readonly IProcesses _processes;
         Dictionary<string, MyTestResult> resultDictionary;
 
-        public NUnitExternal(
-            string nunitConsolePath)
+        public NUnitExternal(CommonServices svc, IProcesses processes)
             : base()
         {
-            _nunitConsolePath = nunitConsolePath;
+            _svc = svc;
+            _processes = processes;
             resultDictionary = new Dictionary<string, MyTestResult>();
         }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
 
-
-        public Task<ProcessResults> RunNUnitConsole(IList<string> inputFile, string outputFile, 
+        public Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
+            IList<string> inputFiles, string outputFile,
             ICollection<TestId> selectedTests)
         {
-            string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
-                selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)
-                             .Aggregate((a, b) => a + ","+b));
-            string arg = inputFile.Aggregate((a, b) => a.InQuotes() + " " + b.InQuotes())
-                + testToRun
-                + " /xml \"" + outputFile + "\" /nologo /nothread";
+            Task<ProcessResults> results = RunNUnitConsole(nunitConsolePath, inputFiles, outputFile, selectedTests);
 
-            _log.Info("Running " + _nunitConsolePath + " with args: " + arg);
+            return results.ContinueWith(testResult =>
+            {
+                if (testResult.Exception != null)
+                {
+                    _log.Error(testResult.Exception);
+                    return new List<MyTestResult>();
+                }
+                else if (!_svc.FileSystem.File.Exists(outputFile))
+                {
+                    _log.Error("Test results in file: " + outputFile+" not found.");
+                    return new List<MyTestResult>();
+                }
+                else
+                {
+                    Dictionary<string, MyTestResult> tresults = ProcessResultFile(outputFile);
+                    return tresults.Values.ToList();
+                }
+            }); 
+
+        }
+
+        public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath, 
+            IList<string> inputFiles, string outputFile, 
+            ICollection<TestId> selectedTests)
+        {
+           // string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
+             //  string.Join(",",selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)));
+            string testToRun = "";
+            string arg = string.Join(" ", inputFiles.Select(a => a.InQuotes()))
+                + testToRun
+                + " /xml \"" + outputFile + "\" /nologo -trace Verbose -wait true";
+
+            _log.Info("Running " + nunitConsolePath + " with args: " + arg);
             var startInfo = new ProcessStartInfo
             {
                 Arguments = arg,
-                CreateNoWindow = true,
+               // CreateNoWindow = true,
                 ErrorDialog = true,
                 RedirectStandardOutput = false,
-                FileName = _nunitConsolePath,
-                UseShellExecute = false,
+                FileName = nunitConsolePath,
+                UseShellExecute = true,// false,
             };
 
-            return ProcessEx.RunAsync(startInfo);
+            return _processes.RunAsync(startInfo);
         }
         
         public Dictionary<string, MyTestResult> ProcessResultFile( string fileName)
@@ -132,9 +168,9 @@
                         testName = testName.Substring(0, paranIdx);
                 }
                 String testRes = "False";
-               
 
-                var result = new MyTestResult();
+
+                var result = new MyTestResult(test.Attribute("name").Value);
                 if (test.Attribute("success") != null)
                 {
                     result.Success = test.Attribute("success").Value == "True";
@@ -144,8 +180,8 @@
                     result.Message = test.Descendants(XName.Get("message", "")).Single().Value;
                     result.StackTrace = test.Descendants(XName.Get("stack-trace", "")).Single().Value;
                 }
-                
-                resultDictionary.Add(test.Attribute("name").Value, result);
+
+                resultDictionary.Add(result.Name, result);
               
             }
             catch (Exception e)

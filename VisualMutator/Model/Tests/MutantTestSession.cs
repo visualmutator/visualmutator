@@ -5,6 +5,7 @@ namespace VisualMutator.Model.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Services;
     using TestsTree;
     using UsefulTools.Core;
 
@@ -12,23 +13,23 @@ namespace VisualMutator.Model.Tests
 
     public class MutantTestSession : ModelElement
     {
-        private IDictionary<string, TestNodeMethod> _testMap;
+        private IDictionary<string, TestsLoadContext> _testsByAssembly;
 
         private TestsRootNode _testsRootNode;
 
         public MutantTestSession()
         {
-            _testMap = new Dictionary<string, TestNodeMethod>();
+            _testsByAssembly = new Dictionary<string, TestsLoadContext>();
             
         
             _testsRootNode = new TestsRootNode();
         }
 
-        public IDictionary<string, TestNodeMethod> TestMap
+        public IDictionary<string, TestsLoadContext> TestsByAssembly
         {
             get
             {
-                return _testMap;
+                return _testsByAssembly;
             }
         }
 
@@ -56,14 +57,6 @@ namespace VisualMutator.Model.Tests
             {
                 return _testsRootNode;
             }
-        }
-
-        public IEnumerable<TestNodeNamespace> TestNamespaces
-        { 
-            get
-            {
-                return TestsRootNode.Children.Cast<TestNodeNamespace>();
-            } 
         }
 
         public IList<string> AssembliesWithTests { get; set; }

@@ -2,10 +2,18 @@
 {
     public class MyTestResult
     {
-        public MyTestResult()
+        private readonly string _name;
+
+        public MyTestResult(string name)
         {
+            _name = name;
             Message = "";
             StackTrace = "";
+        }
+
+        public string Name
+        {
+            get { return _name; }
         }
 
         public string Message { get; set; }

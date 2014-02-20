@@ -206,6 +206,7 @@
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
+    <Compile Include="Mutations\NamespaceGrouperTests.cs" />
     <Compile Include="Mutations\TestSelectionTests.cs" />
     <Compile Include="Operators\BruteForceTests - Copy.cs" />
     <Compile Include="Operators\CciAssumptions.cs" />
