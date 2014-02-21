@@ -529,6 +529,7 @@
                 }
 
                 var test = changelessMutant.MutantTestSession.TestsByAssembly.Values
+                    .SelectMany(v => v.TestMap.Values)
                     .FirstOrDefault(t => t.State == TestNodeState.Failure);
 
                 string testName = null;
@@ -542,6 +543,7 @@
                 else
                 {
                     var testInconcl = changelessMutant.MutantTestSession.TestsByAssembly.Values
+                        .SelectMany(v => v.TestMap.Values)
                         .First(t =>t.State == TestNodeState.Inconclusive);
 
                     testName = testInconcl.Name;

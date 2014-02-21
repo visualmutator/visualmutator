@@ -71,6 +71,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="May">
+      <HintPath>..\packages\Strilanc.Value.May.1.0.2\lib\portable-net4+sl4+wp7+win8\May.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
       <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
     </Reference>

@@ -115,9 +115,11 @@
 
             try
             {
+                _log.Debug("Creating NUnit package for files " + assemblies);
                 var package = new TestPackage("", assemblies.ToList());
                 package.Settings["RuntimeFramework"] = new RuntimeFramework(RuntimeType.Net, Environment.Version);
                 package.Settings["UseThreadedRunner"] = false;
+                _log.Debug("Loading NUnit package: " + package);
                 bool load = _testRunner.Load(package);
                 if(!load)
                 {

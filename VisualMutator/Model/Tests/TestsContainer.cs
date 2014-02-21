@@ -15,6 +15,7 @@
     using Mutations.MutantsTree;
     using Services;
     using StoringMutants;
+    using Strilanc.Value;
     using TestsTree;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
@@ -46,7 +47,7 @@
         StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant);
         IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths);
 
-        ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces);
+        ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces);
         void CreateTestFilter(ICollection<TestId> selectedTests);
     }
 
@@ -80,7 +81,7 @@
                 nunit//,ms
             };
         }
-        public ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeNamespace> testNodeNamespaces)
+        public ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces)
         {
             return testNodeNamespaces
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
@@ -295,27 +296,32 @@
 
             var sw = new Stopwatch();
             sw.Start();
-            var tasks = new Dictionary<string, Task<TestNodeAssembly>>();
+            var tasks = new Dictionary<string, Task<May<TestNodeAssembly>>>();
             
 
             ITestService service1 = _testServices.Single();
             foreach (var path in assembliesPaths)
             {
                 string path1 = path;
-                Task<TestNodeAssembly> task = Task.Run(() => service1.LoadTests(path1.InList()))
+                Task<May<TestNodeAssembly>> task = Task.Run(() => service1.LoadTests(path1.InList()))
                     .ContinueWith(result =>
                     {
+                        if(!result.Result.HasValue)
+                        {
+                            return May.NoValue;
+                        }
                         string assemblyName = Path.GetFileNameWithoutExtension(path1);
                         string assemblyPath = path1;
-                        result.Result.TestNodeAssembly = new TestNodeAssembly(mutantTestSession.TestsRootNode, assemblyName);
-                        result.Result.TestNodeAssembly.AssemblyPath = assemblyPath;
-                        result.Result.TestNodeAssembly.TestsLoadContext = result.Result;
+                        TestsLoadContext context = result.Result.ForceGetValue();
+                        context.TestNodeAssembly = new TestNodeAssembly(mutantTestSession.TestsRootNode, assemblyName);
+                        context.TestNodeAssembly.AssemblyPath = assemblyPath;
+                        context.TestNodeAssembly.TestsLoadContext = context;
 
-                        List<TestNodeNamespace> testNamespaces = result.Result.ClassNodes
+                        List<TestNodeNamespace> testNamespaces = context.ClassNodes
                             .GroupBy(classNode => classNode.Namespace)
                             .Select(group =>
                             {
-                                var ns = new TestNodeNamespace(result.Result.TestNodeAssembly, group.Key);
+                                var ns = new TestNodeNamespace(context.TestNodeAssembly, group.Key);
                                 foreach (TestNodeClass nodeClass in group)
                                 {
                                     nodeClass.Parent = ns;
@@ -326,13 +332,14 @@
 
                             }).ToList();
 
-                        result.Result.TestNodeAssembly.Children.AddRange(testNamespaces);
-                        return result.Result.TestNodeAssembly;
+                        context.TestNodeAssembly.Children.AddRange(testNamespaces);
+                        return new May<TestNodeAssembly>(context.TestNodeAssembly);
                     });
                 tasks.Add(path, task);
 
             }
-            List<TestNodeAssembly> testNodeAssemblies = Task.WhenAll(tasks.Values).Result.ToList();
+            List<TestNodeAssembly> testNodeAssemblies = Task.WhenAll(tasks.Values).Result
+                .WhereHasValue().ToList();
 
             sw.Stop();
             mutantTestSession.LoadTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;

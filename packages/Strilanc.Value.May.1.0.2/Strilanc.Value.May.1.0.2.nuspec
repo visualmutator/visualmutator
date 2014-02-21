@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Strilanc.Value.May</id>
+    <version>1.0.2</version>
+    <title>May: A functional C# option type</title>
+    <authors>Craig Gidney</authors>
+    <owners>Craig Gidney</owners>
+    <projectUrl>https://github.com/Strilanc/May</projectUrl>
+    <iconUrl>http://i.imgur.com/zpnkv.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Implements an option type (Strilanc.Value.May&lt;T&gt;) that encourages usage based on pattern matching rather than ForceGetValue. Also includes utility methods for producing, consuming and transforming May&lt;T&gt;.
+
+Note on null: May&lt;T&gt; treats null like any other value. May.NoValue is distinct from null, and both are distinct from ((object)null).Maybe().</description>
+    <summary>Implements an option type (May&lt;T&gt;) with a functional-style API.</summary>
+    <releaseNotes>Added utility methods for working with sequences: WhereHasValue, MayAll, MayAggregate, MayMin, MayMax, MayMinBy, MayMaxBy, MayFirst, MayLast, and MaySingle.</releaseNotes>
+    <copyright>Public Domain</copyright>
+    <language>en-US</language>
+    <tags>may option type maybe</tags>
+  </metadata>
+</package>

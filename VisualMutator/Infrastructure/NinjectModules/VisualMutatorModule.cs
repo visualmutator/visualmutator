@@ -121,11 +121,9 @@
             Bind<NUnitXmlTestService>().ToSelf();
             Bind<NUnitTestService>().To<NUnitXmlTestService>();
 
-            Bind<MsTestService>().ToSelf();
 
             Bind<INUnitWrapper>().To<NUnitWrapper>();
-            Bind<IMsTestWrapper>().To<MsTestWrapper>();
-            Bind<IMsTestLoader>().To<MsTestLoader>();
+            
             Bind<INUnitExternal>().To<NUnitExternal>().AndFromFactory();
 
             Kernel.InjectChildFactory<SessionController>(childKernel =>

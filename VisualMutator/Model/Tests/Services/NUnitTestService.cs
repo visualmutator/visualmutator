@@ -13,12 +13,19 @@
     using Exceptions;
     using log4net;
     using NUnit.Core;
+    using Strilanc.Value;
     using TestsTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
 
     #endregion
-
+    public static class TestEx
+    {
+        public static IEnumerable<ITest> TestsEx(this ITest test)
+        {
+            return (test.Tests ?? new List<ITest>()).Cast<ITest>();
+        }
+    }
     public class NUnitTestService : ITestService
     {
         private readonly INUnitWrapper _nUnitWrapper;
@@ -45,12 +52,16 @@
         }
 
 
-        public virtual TestsLoadContext LoadTests(IList<string> assemblies)
+        public virtual May<TestsLoadContext> LoadTests(IList<string> assemblies)
         {
             _currentRunCancelled = false;
             var context = new TestsLoadContext();
             ITest testRoot = _nUnitWrapper.LoadTests(assemblies);
-            if (testRoot.Tests.S)
+            int testCount = testRoot.TestsEx().SelectMany(n => n.TestsEx()).Count();
+            if (testCount == 0)
+            {
+                return May.NoValue;
+            }
             BuildTestTree(testRoot, context);
             return context;
         }

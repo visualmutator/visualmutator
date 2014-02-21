@@ -192,13 +192,13 @@
             _viewModel.ShowDialog();
         }
 
-        private void SelectOnlyCovered(IList<TestNodeNamespace> tests, List<ClassAndMethod> coveredTests)
+        private void SelectOnlyCovered(IList<TestNodeAssembly> tests, List<ClassAndMethod> coveredTests)
         {
             if (coveredTests != null)
             {
-                foreach (var testNodeNamespace in tests)
+                foreach (var testNodeAssembly in tests)
                 {
-                    testNodeNamespace.IsIncluded = false;
+                    testNodeAssembly.IsIncluded = false;
                 }
                 var toSelect = tests.Cast<CheckedNode>().SelectManyRecursive(n => n.Children, leafsOnly: true)
                     .OfType<TestNodeMethod>()
@@ -211,44 +211,6 @@
             }
         }
 
-
-//        public void Run()
-//        {
-//        
-//            bool loadError;
-//            var originalFilesList = _fileManager.CopyOriginalFiles(out loadError);
-//            var originalFilesListForTests = _fileManager.CopyOriginalFiles(out loadError);
-//            if (loadError)
-//            {
-//                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
-//            }
-//            _viewModel.ProjectPaths = _hostEnviroment.GetProjectPaths().ToList();
-//
-//            _svc.Threading.ScheduleAsync(()=> _operatorsManager.LoadOperators(),
-//                packages => _viewModel.MutationsTree.MutationPackages 
-//                    = new ReadOnlyCollection<PackageNode>(packages));
-//
-//            _svc.Threading.ScheduleAsync(() => _typesManager.GetTypesFromAssemblies(originalFilesList),
-//                assemblies =>
-//                {
-//                    _viewModel.TypesTreeMutate.Assemblies =  new ReadOnlyCollection<AssemblyNode>(assemblies);
-//                    _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.AsStrings().ToList();
-//                    if (_typesManager.IsAssemblyLoadError)
-//                    {
-//                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(),  _viewModel.View);
-//                    }
-//                });
-//            _svc.Threading.ScheduleAsync(() => _testsContainer.LoadTests(
-//                originalFilesListForTests.AsStrings()),
-//               tests =>
-//               {
-//                   _viewModel.TypesTreeToTest.Namespaces = new ReadOnlyCollection<TestNodeNamespace>(tests.ToList());
-//
-//                
-//               });
-//            _viewModel.ShowDialog();
-//    
-//        }
 
         protected void AcceptChoices()
         {

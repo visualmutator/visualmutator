@@ -15,6 +15,7 @@
     using log4net;
     using NUnit.Core;
     using RunProcessAsTask;
+    using Strilanc.Value;
     using TestsTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
@@ -55,13 +56,13 @@
         }
 
 
-        public override IEnumerable<TestNodeClass> LoadTests(IList<string> assemblies, MutantTestSession mutantTestSession)
+        public override May<TestsLoadContext> LoadTests(IList<string> assemblies)
         {
             _assemblies = assemblies;
-            IEnumerable<TestNodeClass> testNodeClasses = base.LoadTests(assemblies, mutantTestSession);
+            May<TestsLoadContext> loadTests = base.LoadTests(assemblies);
 
             UnloadTests();
-            return testNodeClasses;
+            return loadTests;
         }
         private string findConsolePath()
         {
@@ -80,11 +81,11 @@
             }
             return runPath;
         }
-        public override Task<List<TestNodeMethod>> RunTests(MutantTestSession mutantTestSession)
+        public override Task RunTests(TestsLoadContext context)
         {
 
-            var sw = new Stopwatch();
-            sw.Start();
+          //  var sw = new Stopwatch();
+          //  sw.Start();
 
             string runPath = findConsolePath();
 
@@ -117,14 +118,14 @@
 
                         foreach (var myTestResult in testResults)
                         {
-                            TestNodeMethod testNodeMethod = mutantTestSession.TestsByAssembly[myTestResult.Name];
+                            TestNodeMethod testNodeMethod = context.TestMap[myTestResult.Name];
                             testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
                             testNodeMethod.State = myTestResult.Success
                                 ? TestNodeState.Success
                                 : TestNodeState.Failure;
                         }
-                        sw.Stop();
-                        mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                       // sw.Stop();
+                       // mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
                         return new List<TestNodeMethod>();
                     }
             });

@@ -6,13 +6,14 @@ namespace VisualMutator.Model.Tests.Services
 
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Strilanc.Value;
     using TestsTree;
 
     #endregion
 
     public interface ITestService
     {
-        TestsLoadContext LoadTests(IList<string> assemblies);
+        May<TestsLoadContext> LoadTests(IList<string> assemblies);
 
         Task RunTests(TestsLoadContext context);
 

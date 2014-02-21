@@ -144,7 +144,9 @@
             return new XElement("DetailedTestingResults",   
                 from mutant in mutants
                 where mutant.MutantTestSession.IsComplete
-                let groupedTests = mutant.MutantTestSession.TestsByAssembly.Values.GroupBy(m => m.State).ToList()
+                let groupedTests = mutant.MutantTestSession.TestsByAssembly.Values
+                .Select(c => c.TestNodeAssembly).SelectMany(n => n.TestNamespaces)
+                .GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("MutantId", mutant.Id),
                     new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
@@ -154,7 +156,8 @@
                     new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
                     new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
-                    from testClass in mutant.MutantTestSession.TestNamespaces.SelectMany(n => n.TestClasses)
+                    from testClass in mutant.MutantTestSession.TestsRootNode.TestNodeAssemblies
+                        .Cast<CheckedNode>().SelectManyRecursive(n => n.Children).OfType<TestNodeClass>()
                     select new XElement("TestClass",
                         new XAttribute("Name", testClass.Name),
                         new XAttribute("FullName", testClass.FullName),
