@@ -232,17 +232,12 @@
         {
             _sessionState = SessionState.Running;
 
-           
-
             RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
 
             _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
-                if (choices.SelectedTests.TestIds.Count == 0)
-                {
-                    throw new NoTestsSelectedException();
-                }
+               
 
                 _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
@@ -256,6 +251,12 @@
                 };
 
                 _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
+                _testsContainer.CreateTestSelections(choices.TestAssemblies);
+
+                if (choices.TestAssemblies.Select(a => a.TestsLoadContext.SelectedTests.TestIds.Count).Sum() == 0)
+                {
+                    throw new NoTestsSelectedException();
+                }
 
                 _mutantDetailsController.Initialize(choices.Assemblies);
                 _log.Info("Creating pure mutant for initial checks...");
@@ -285,14 +286,14 @@
 
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
-               
+                
 
                 _testingProcessExtensionOptions.TestingProcessExtension
                     .OnTestingOfMutantStarting(_currentSession.ProjectFilesClone.ParentPath.Path, storedMutantInfo.AssembliesPaths);
 
                 _log.Info("Running tests for pure mutant...");
                 _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, 
-                    storedMutantInfo, changelessMutant, choices.SelectedTests);
+                    storedMutantInfo, changelessMutant);
                 return changelessMutant;
 
             },
@@ -435,7 +436,7 @@
                     else
                     {
                         _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions,
-                           storedMutantInfo, mutant, _currentSession.Choices.SelectedTests);
+                           storedMutantInfo, mutant);
 
                         _testedMutants.Add(mutant);
 

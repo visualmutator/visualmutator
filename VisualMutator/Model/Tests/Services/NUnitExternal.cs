@@ -70,12 +70,20 @@
             IList<string> inputFiles, string outputFile,
             SelectedTests selectedTests)
         {
+            var listpath = Path.Combine(Path.GetTempPath(), "visualMutator-Runlist.txt");
+            using(var file = File.CreateText(listpath))
+            {
+                foreach (var str in selectedTests.TestsDescription.Split(' '))
+                {
+                    file.WriteLine(str.Trim());
+                }
+            }
            // string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
              //  string.Join(",",selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)));
-            string testToRun = "";
+            string testToRun = " /runlist:" + listpath.InQuotes() + " ";
             string arg = string.Join(" ", inputFiles.Select(a => a.InQuotes()))
                          + testToRun
-                         + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
+                         + " /xml \"" + outputFile + "\" /nologo /noshadow -trace=Verbose";
               //  + " -framework net-4.0";
 
             _log.Info("Running " + nunitConsolePath + " with args: " + arg);

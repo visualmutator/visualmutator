@@ -4,6 +4,7 @@
 
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -97,22 +98,26 @@
         {
             _fileManager.Initialize();
 
-            bool loadError;
-            ProjectFilesClone originalFilesList = _fileManager.CreateClone();
-            ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone();
+            ProjectFilesClone originalFilesList = _fileManager.CreateClone("Mutants");
+            ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone("Tests");
             if (originalFilesList.IsIncomplete || originalFilesListForTests.IsIncomplete 
                 || originalFilesListForTests.Assemblies.Count == 0)
             {
                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
             }
-
+            
             _viewModel.ProjectPaths = _hostEnviroment.GetProjectPaths().ToList();
 
             _svc.Threading.ScheduleAsync(() => _operatorsManager.LoadOperators(),
                 packages => _viewModel.MutationsTree.MutationPackages
                     = new ReadOnlyCollection<PackageNode>(packages));
 
-            
+            if(originalFilesListForTests.Assemblies.Exists(a => !_svc.FileSystem.File.Exists(a.Path)))
+            {
+                Debugger.Break();
+            }
+            int files = originalFilesListForTests.Assemblies.Count;
+            files++;
             List<ClassAndMethod> coveredTests = null;
             var t = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, classAndMethod,
                 out coveredTests).CastTo<object>());
@@ -231,7 +236,8 @@
                 AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                 ProjectPaths = _viewModel.ProjectPaths.ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
-                SelectedTests = _testsContainer.GetIncludedTests(_viewModel.TypesTreeToTest.TestAssemblies),
+                TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
+                //_testsContaine.GetIncludedTests(
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
                 MutantsCreationFolderPath = _viewModel.MutantsGenerationPath

@@ -9,6 +9,7 @@ namespace VisualMutator.Model
     using Mutations;
     using Mutations.Types;
     using Tests;
+    using Tests.TestsTree;
     using UsefulTools.Paths;
 
     #endregion
@@ -17,13 +18,13 @@ namespace VisualMutator.Model
     {
         public MutationSessionChoices()
         {
-        SelectedOperators = new List<IMutationOperator>();
+            SelectedOperators = new List<IMutationOperator>();
             Assemblies = new List<AssemblyNode>();
             ProjectPaths = new List<DirectoryPathAbsolute>();
            // SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>());
             MutantsTestingOptions= new MutantsTestingOptions();
             MutantsCreationOptions= new MutantsCreationOptions();
-            SelectedTests = new SelectedTests();
+            TestAssemblies = new List<TestNodeAssembly>();
             Filter = MutationFilter.AllowAll();
         }
 
@@ -36,7 +37,7 @@ namespace VisualMutator.Model
         public string MutantsCreationFolderPath { get; set; }
         public MutantsTestingOptions MutantsTestingOptions { get; set; }
         public MutantsCreationOptions MutantsCreationOptions { get; set; }
-        public SelectedTests SelectedTests { get; set; }
         public List<string> AssembliesPaths { get; set; }
+        public IList<TestNodeAssembly> TestAssemblies { get; set; }
     }
 }

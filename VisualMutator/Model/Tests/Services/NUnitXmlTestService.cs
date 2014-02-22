@@ -28,15 +28,9 @@
         private readonly CommonServices _svc;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IList<string> _assemblies;
-        private SelectedTests _selectedTests;
+        private string _assemblyPath;
 
-        public IList<string> Assemblies
-        {
-            get { return _assemblies; }
-            set { _assemblies = value; }
-        }
-        
+
         public string NUnitConsoleAltPath { get; set; }
         public string NUnitConsolePath { get; set; }
 
@@ -56,10 +50,10 @@
         }
 
 
-        public override May<TestsLoadContext> LoadTests(IList<string> assemblies)
+        public override May<TestsLoadContext> LoadTests(string assemblyPath)
         {
-            _assemblies = assemblies;
-            May<TestsLoadContext> loadTests = base.LoadTests(assemblies);
+            _assemblyPath = assemblyPath;
+            May<TestsLoadContext> loadTests = base.LoadTests(assemblyPath);
 
             UnloadTests();
             return loadTests;
@@ -90,16 +84,14 @@
             string runPath = findConsolePath();
 
             _log.Info("Running NUnit Console from: " + runPath);
-
+            string assemblyPath = context.TestNodeAssembly.AssemblyPath;
             var tasks = new List<Task<List<MyTestResult>>>();
-            int ordinal = 0;
-            foreach (var assembly in _assemblies)
+            string name = string.Format("muttest-{0}.xml", Path.GetFileName(assemblyPath));
+            if(!string.IsNullOrWhiteSpace(context.SelectedTests.TestsDescription))
             {
-                string name = string.Format("muttest{0}-{1}.xml", ordinal, Path.GetFileName(assembly));
-                Task<List<MyTestResult>> task = _nUnitExternal.RunTests(runPath, assembly.InList(),
-                    name, _selectedTests);
+                Task<List<MyTestResult>> task = _nUnitExternal.RunTests(runPath, assemblyPath.InList(),
+                    name, context.SelectedTests);
                 tasks.Add(task);
-                ordinal++;
             }
 
             return Task.WhenAll(tasks)
@@ -118,11 +110,19 @@
 
                         foreach (var myTestResult in testResults)
                         {
-                            TestNodeMethod testNodeMethod = context.TestMap[myTestResult.Name];
-                            testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
-                            testNodeMethod.State = myTestResult.Success
-                                ? TestNodeState.Success
-                                : TestNodeState.Failure;
+                            if(context.TestMap.ContainsKey(myTestResult.Name))
+                            {
+                                _log.Info("Found test in map: " + myTestResult.Name);
+                                TestNodeMethod testNodeMethod = context.TestMap[myTestResult.Name];
+                                testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
+                                testNodeMethod.State = myTestResult.Success
+                                    ? TestNodeState.Success
+                                    : TestNodeState.Failure;
+                            }
+                            else
+                            {
+                                _log.Error("Cannot fine test in map: " + myTestResult.Name);
+                            }
                         }
                        // sw.Stop();
                        // mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
@@ -131,11 +131,11 @@
             });
         }
 
-        public override void CreateTestFilter(SelectedTests selectedTests)
-        {
-            _selectedTests = selectedTests;
-            base.CreateTestFilter(selectedTests);
-        }
+//        public override void CreateTestFilter(SelectedTests selectedTests)
+//        {
+//            _selectedTests = selectedTests;
+//            base.CreateTestFilter(selectedTests);
+//        }
 
 
         

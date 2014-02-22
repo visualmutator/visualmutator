@@ -13,14 +13,13 @@ namespace VisualMutator.Model.Tests.Services
 
     public interface ITestService
     {
-        May<TestsLoadContext> LoadTests(IList<string> assemblies);
+        May<TestsLoadContext> LoadTests(string assemblyPath);
 
         Task RunTests(TestsLoadContext context);
 
         void UnloadTests();
 
         void Cancel();
-        void CreateTestFilter(SelectedTests selectedTests);
     }
 
   

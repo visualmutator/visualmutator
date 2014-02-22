@@ -27,5 +27,7 @@
         {
             get { return _classNodes; }
         }
+
+        public SelectedTests SelectedTests { get; set; }
     }
 }

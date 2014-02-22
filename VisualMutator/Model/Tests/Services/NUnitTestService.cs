@@ -52,11 +52,11 @@
         }
 
 
-        public virtual May<TestsLoadContext> LoadTests(IList<string> assemblies)
+        public virtual May<TestsLoadContext> LoadTests(string assemblyPath)
         {
             _currentRunCancelled = false;
             var context = new TestsLoadContext();
-            ITest testRoot = _nUnitWrapper.LoadTests(assemblies);
+            ITest testRoot = _nUnitWrapper.LoadTests(assemblyPath.InList());
             int testCount = testRoot.TestsEx().SelectMany(n => n.TestsEx()).Count();
             if (testCount == 0)
             {
@@ -200,10 +200,10 @@
             _nUnitWrapper.Cancel();
         }
 
-        public virtual void CreateTestFilter(SelectedTests selectedTests)
-        {
-            _nUnitWrapper.CreateFilter(selectedTests.TestIds.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
-        }
+//        public virtual void CreateTestFilter(SelectedTests selectedTests)
+//        {
+//            _nUnitWrapper.CreateFilter(selectedTests.TestIds.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
+//        }
 
 
 

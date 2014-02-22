@@ -165,30 +165,35 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.Extensions.NamedScope.3.0.0.5\lib\net45-full\Ninject.Extensions.NamedScope.dll</HintPath>
     </Reference>
-    <Reference Include="nunit-agent">
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit-agent.exe</HintPath>
-    </Reference>
-    <Reference Include="nunit-console">
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit-console.exe</HintPath>
-    </Reference>
-    <Reference Include="nunit-console-runner">
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\lib\nunit-console-runner.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.core, Version=2.6.2.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit-agent, Version=2.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\nunit-agent.exe</HintPath>
     </Reference>
-    <Reference Include="nunit.core.interfaces, Version=2.6.2.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.core.interfaces.dll</HintPath>
+    <Reference Include="nunit-agent-x86">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\nunit-agent-x86.exe</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit-console, Version=2.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\nunit-console.exe</HintPath>
     </Reference>
-    <Reference Include="nunit.util, Version=2.6.2.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit-console-runner, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\NUnit-2.6.3\bin\Debug\nunit.util.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit-console-runner.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit-console-x86">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe</HintPath>
+    </Reference>
+    <Reference Include="nunit.core, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.util.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

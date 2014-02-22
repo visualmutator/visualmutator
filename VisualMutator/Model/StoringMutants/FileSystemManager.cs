@@ -14,7 +14,7 @@
 
     public interface IFileSystemManager : IDisposable
     {
-        ProjectFilesClone CreateClone();
+        ProjectFilesClone CreateClone(string name);
         void Initialize();
     }
 
@@ -50,7 +50,7 @@
             _originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
             _referencedFiles = GetReferencedAssemblyPaths(_originalProjectFiles).Select(s => s.ToFilePathAbs());
 
-            _mainClone = CreateProjectClone(_referencedFiles, _originalProjectFiles);
+            _mainClone = CreateProjectClone(_referencedFiles, _originalProjectFiles, "MainClone");
         }
         public void Dispose()
         {
@@ -71,19 +71,18 @@
             }
         }
 
-        public ProjectFilesClone CreateClone()
+        public ProjectFilesClone CreateClone(string name)
         {
-            ProjectFilesClone clone = CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies);
+            ProjectFilesClone clone = CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies, name);
             clone.IsIncomplete |= _mainClone.IsIncomplete;
             return clone;
         }
 
-        private ProjectFilesClone CreateProjectClone(
-            IEnumerable<FilePathAbsolute> referencedFiles, 
-            IEnumerable<FilePathAbsolute> projectFiles)
+        private ProjectFilesClone CreateProjectClone(IEnumerable<FilePathAbsolute> referencedFiles, 
+            IEnumerable<FilePathAbsolute> projectFiles, string name)
         {
-            
-            FilePathAbsolute tmp = CreateTmpDir();
+
+            FilePathAbsolute tmp = CreateTmpDir("VisualMutator-" + name + "-");
             var clone = new ProjectFilesClone(tmp, _fs);
             foreach (var referenced in referencedFiles)
             {
@@ -117,9 +116,9 @@
             return clone;
         }
 
-        private FilePathAbsolute CreateTmpDir()
+        private FilePathAbsolute CreateTmpDir(string s)
         {
-            string tmpDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), Path.GetRandomFileName());
+            string tmpDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), s+Path.GetRandomFileName());
             _fs.Directory.CreateDirectory(tmpDirectoryPath);
             return new FilePathAbsolute(tmpDirectoryPath);
         }

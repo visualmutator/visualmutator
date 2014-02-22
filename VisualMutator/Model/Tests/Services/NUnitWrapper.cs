@@ -42,7 +42,7 @@
         void UnloadProject();
 
         void Cancel();
-        void CreateFilter(ICollection<TestName> names);
+       
          NUnitWrapper.CustomEventListener Listener
         {
             get;
@@ -115,17 +115,22 @@
 
             try
             {
-                _log.Debug("Creating NUnit package for files " + assemblies);
-                var package = new TestPackage("", assemblies.ToList());
+                var enumerable = assemblies as IList<string> ?? assemblies.ToList();
+                _log.Debug("Creating NUnit package for files " + string.Join(", ", enumerable));
+                var package = new TestPackage("", enumerable.ToList());
                 package.Settings["RuntimeFramework"] = new RuntimeFramework(RuntimeType.Net, Environment.Version);
                 package.Settings["UseThreadedRunner"] = false;
+
+                Monitor.Enter(this);
                 _log.Debug("Loading NUnit package: " + package);
                 bool load = _testRunner.Load(package);
                 if(!load)
                 {
                     throw new Exception("Tests load result: false.");
                 }
-                return _testRunner.Test;
+                var t =_testRunner.Test;
+                Monitor.Exit(this);
+                return t;
             }
             catch (Exception e)
             {
@@ -142,16 +147,7 @@
             }
         }
 
-        public void CreateFilter(ICollection<TestName> names)
-        {
-            var nameFilter = new IDTestFilter();
-
-            foreach (TestName name in names)
-            {
-                nameFilter.Add(name);
-            }
-            _nameFilter = nameFilter;
-        }
+      
         public static IList<T> ConvertToListOf<T>(IList iList)
         {
             IList<T> result = new List<T>();
@@ -165,12 +161,13 @@
 
             return result;
         }
+
+
         public Task<TestResult> RunTests()
         {
             return Task.Run(() =>
             {
                 var taskCompletion = new TaskCompletionSource<TestResult>();
-
 
                  listener = new MyRecordingListener();
 
@@ -196,8 +193,6 @@
                 
                 return taskCompletion.Task;
             });
-            
-            
         }
 
         public void UnloadProject()
@@ -211,9 +206,6 @@
                     try
                     {
                         path = new FilePathAbsolute(firstOrDefault.Name);
-
-                        
-                            
                             
                     }
                     catch (Exception e)
@@ -225,17 +217,6 @@
             }
             _testRunner.Unload();
             _testRunner.Dispose();
-            try
-            {
-                if (path != null)
-                {
-                    Directory.Delete(path.ParentDirectoryPath.ToString(), recursive: true);
-                }
-            }
-            catch (Exception e)
-            {
-                _log.Warn(e);
-            }
         }
 
         public IObservable<TestResult> RunFinished

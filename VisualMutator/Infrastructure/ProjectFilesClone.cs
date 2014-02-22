@@ -56,6 +56,7 @@
                 {
                     try
                     {
+                        _log.Debug("Deleting clone directory: " + ParentPath.Path);
                         _fs.Directory.Delete(ParentPath.Path, recursive: true);
                     }
                     catch (UnauthorizedAccessException e)

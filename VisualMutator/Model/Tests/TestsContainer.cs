@@ -35,7 +35,8 @@
 
 
 
-        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant, SelectedTests selectedTests);
+        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, 
+            Mutant mutant);
 
         ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession);
 
@@ -47,8 +48,8 @@
         StoredMutantInfo StoreMutant(ProjectFilesClone testEnvironment, Mutant changelessMutant);
         IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths);
 
-        SelectedTests GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces);
-        void CreateTestFilter(SelectedTests selectedTests);
+   
+        void CreateTestSelections(IList<TestNodeAssembly> testAssemblies);
     }
 
     public class TestsContainer : ITestsContainer
@@ -81,22 +82,18 @@
                 nunit//,ms
             };
         }
-        public SelectedTests GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces)
-        {
-            ICollection<TestId> selected = testNodeNamespaces
-                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
-                .Cast<TestNodeMethod>().Select(m => m.TestId).ToList();
+       
 
-            return new SelectedTests();
-        }
-
-        public void CreateTestFilter(SelectedTests selectedTests)
+        public void CreateTestSelections(IList<TestNodeAssembly> testAssemblies)
         {
-            foreach (var testService in _testServices)
+            var testsSelector = new TestsSelector();
+            foreach (var testNodeAssembly in testAssemblies)
             {
-                testService.CreateTestFilter(selectedTests);
+                testNodeAssembly.TestsLoadContext.SelectedTests = 
+                    testsSelector.GetIncludedTests(testNodeAssembly);
             }
         }
+
 
         public void VerifyAssemblies(List<string> assembliesPaths)
         {
@@ -109,7 +106,7 @@
         public ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession)
         {
             _currentSession = currentSession;
-            return _fileManager.CreateClone();
+            return _fileManager.CreateClone("InitTestEnvironment");
         }
 
 
@@ -157,7 +154,7 @@
         }
 
         public void RunTestsForMutant(MutantsTestingOptions options,
-            StoredMutantInfo storedMutantInfo, Mutant mutant, SelectedTests selectedTests)
+            StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
             if (_allTestingCancelled)
             {
@@ -174,16 +171,24 @@
             IDisposable timoutDisposable = null;
             try
             {
-                CreateTestFilter(selectedTests);
+                ITestService testService = _testServices.Single();
+
                 _log.Info("Loading tests for mutant " + mutant.Id);
                 LoadTests(storedMutantInfo.AssembliesPaths, mutant.MutantTestSession);
 
                 testsLoaded = true;
 
-                
-
                 timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
                     .Subscribe(e => CancelCurrentTestRun());
+
+                //todo: get rid of this ungly thing
+                foreach (var testNodeAssembly in mutant.MutantTestSession.TestsRootNode.TestNodeAssemblies)
+                {
+                    testNodeAssembly.TestsLoadContext.SelectedTests = _currentSession.Choices
+                        .TestAssemblies.Single(n => testNodeAssembly.Name == n.Name)
+                        .TestsLoadContext.SelectedTests;
+                }
+
 
                 _log.Info("Running tests for mutant " + mutant.Id);
                 Task runTests = RunTests(mutant.MutantTestSession);
@@ -299,7 +304,7 @@
             foreach (var path in assembliesPaths)
             {
                 string path1 = path;
-                Task<May<TestNodeAssembly>> task = Task.Run(() => service1.LoadTests(path1.InList()))
+                Task<May<TestNodeAssembly>> task = Task.Run(() => service1.LoadTests(path1))
                     .ContinueWith(result =>
                     {
                         if(!result.Result.HasValue)

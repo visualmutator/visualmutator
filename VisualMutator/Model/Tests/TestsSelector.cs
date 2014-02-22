@@ -12,13 +12,15 @@
     public class TestsSelector
     {
 
-        public SelectedTests GetIncludedTests(IEnumerable<TestNodeAssembly> assemblyNodes)
+        public SelectedTests GetIncludedTests(TestNodeAssembly assemblyNode)
         {
-            ICollection<TestId> selected = assemblyNodes
-                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
-                .Cast<TestNodeMethod>().Select(m => m.TestId).ToList();
+            ICollection<TestId> selected = assemblyNode.Children
+                .SelectManyRecursive(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
+                .Cast<TestNodeMethod>()
+                .Select(m => m.TestId)
+                .ToList();
 
-            return new SelectedTests();
+            return new SelectedTests(selected, CreateMinimalTestsInfo(assemblyNode.TestNamespaces));
         }
 
         public string NameExtractor(TestTreeNode node)

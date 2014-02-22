@@ -4,6 +4,13 @@
 
     public class SelectedTests
     {
-        public ICollection<TestId> TestIds { get; set; }
+        public SelectedTests(ICollection<TestId> selected, string testsDescription)
+        {
+            TestsDescription = testsDescription;
+            TestIds = selected;
+        }
+
+        public ICollection<TestId> TestIds { get; private set; }
+        public string TestsDescription { get; private set; }
     }
 }
