@@ -137,8 +137,7 @@
 
                 childKernel.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
                 childKernel.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
-                childKernel.Bind<IFileManager>().To<FileManager>().InSingletonScope();
-
+                childKernel.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
 
                 childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
                 childKernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
@@ -153,11 +152,7 @@
                 childKernel.Bind<AstFormatter>().ToSelf();
                 childKernel.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
 
-
-
                 childKernel.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
-
-
 
                 childKernel.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
                 childKernel.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();

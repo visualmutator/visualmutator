@@ -160,8 +160,8 @@
                 AssemblyNode oper;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
 
-                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-                StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment,
+                _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
+                StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.ProjectFilesClone,
                     changelessMutant);
                
                 TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
@@ -255,7 +255,7 @@
                     Choices = choices,
                 };
 
-                _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
+                _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
 
                 _mutantDetailsController.Initialize(choices.Assemblies);
                 _log.Info("Creating pure mutant for initial checks...");
@@ -279,7 +279,7 @@
                     _testingProcessExtensionOptions.Parameter, choices.ProjectPaths.Select(p=>p.Path).ToList());
 
                 _log.Info("Writing pure mutant to disk...");
-                var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
+                var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.ProjectFilesClone, changelessMutant);
 
                 _log.Info("Verifying IL code of pure mutant...");
 
@@ -288,7 +288,7 @@
                
 
                 _testingProcessExtensionOptions.TestingProcessExtension
-                    .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+                    .OnTestingOfMutantStarting(_currentSession.ProjectFilesClone.ParentPath.Path, storedMutantInfo.AssembliesPaths);
 
                 _log.Info("Running tests for pure mutant...");
                 _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, 
@@ -302,7 +302,7 @@
 
                 if (_requestedHaltState != null)
                 {
-                    _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+                    _currentSession.ProjectFilesClone.Dispose();
                     _sessionState = SessionState.NotStarted;
                     _requestedHaltState = null;
                     
@@ -328,7 +328,7 @@
         {
             if (_currentSession != null)
             {
-                _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+                _currentSession.ProjectFilesClone.Dispose();
             }
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
@@ -336,6 +336,7 @@
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             }
+            
             _sessionEventsSubject.OnCompleted();
         }
 
@@ -343,7 +344,7 @@
         {
             if (_currentSession!= null)
             {
-                _testsContainer.CleanupTestEnvironment(_currentSession.TestEnvironment);
+                _currentSession.ProjectFilesClone.Dispose();
             }
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Error, 0);
@@ -412,8 +413,8 @@
                 try
                 {
                     //todo:
-                    _currentSession.TestEnvironment = _testsContainer.InitTestEnvironment(_currentSession);
-                    var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, mutant);
+                    _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
+                    var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.ProjectFilesClone, mutant);
 
                     if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
                     {
@@ -421,7 +422,7 @@
                     }
 
                     _testingProcessExtensionOptions.TestingProcessExtension
-                        .OnTestingOfMutantStarting(_currentSession.TestEnvironment.DirectoryPath, storedMutantInfo.AssembliesPaths);
+                        .OnTestingOfMutantStarting(_currentSession.ProjectFilesClone.ParentPath.Path, storedMutantInfo.AssembliesPaths);
 
 
                     CodeWithDifference diff = _codeDifferenceCreator.CreateDifferenceListing(

@@ -40,7 +40,7 @@
         private readonly IHostEnviromentConnection _hostEnviroment;
         protected readonly ITestsContainer _testsContainer;
         private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
-        private readonly IFileManager _fileManager;
+        private readonly IFileSystemManager _fileManager;
 
         protected readonly CommonServices _svc;
 
@@ -58,7 +58,7 @@
             IHostEnviromentConnection hostEnviroment,
             ITestsContainer testsContainer,
             IFactory<MutantsSavingController> mutantsSavingFactory,
-            IFileManager fileManager,
+            IFileSystemManager fileManager,
             CommonServices svc)
         {
             _viewModel = viewModel;
@@ -95,10 +95,13 @@
 
         public void Run(ClassAndMethod classAndMethod = null)
         {
+            _fileManager.Initialize();
+
             bool loadError;
-            var originalFilesList = _fileManager.CopyOriginalFiles(out loadError);
-            var originalFilesListForTests = _fileManager.CopyOriginalFiles(out loadError);
-            if (loadError || originalFilesListForTests.Count == 0)
+            ProjectFilesClone originalFilesList = _fileManager.CreateClone();
+            ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone();
+            if (originalFilesList.IsIncomplete || originalFilesListForTests.IsIncomplete 
+                || originalFilesListForTests.Assemblies.Count == 0)
             {
                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
             }
@@ -111,10 +114,11 @@
 
             
             List<ClassAndMethod> coveredTests = null;
-            var t = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList, classAndMethod,
+            var t = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, classAndMethod,
                 out coveredTests).CastTo<object>());
+
             var task = Task.Run(() => _testsContainer.LoadTests(
-                originalFilesListForTests.AsStrings()).ToList().CastTo<object>());
+                originalFilesListForTests.Assemblies.AsStrings()).ToList().CastTo<object>());
 
             Task.WhenAll(t, task).ContinueWith( 
                 (Task<object[]> result) =>
@@ -157,7 +161,7 @@
                             {
                                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
                             }
-                            _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.AsStrings().ToList();
+                            _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.Assemblies.AsStrings().ToList();
 
                             if(classAndMethod != null)
                             {

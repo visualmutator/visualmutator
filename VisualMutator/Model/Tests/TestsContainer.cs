@@ -10,6 +10,7 @@
     using System.Reflection;
     using System.Threading.Tasks;
     using Exceptions;
+    using Infrastructure;
     using LinqLib.Operators;
     using log4net;
     using Mutations.MutantsTree;
@@ -36,15 +37,14 @@
 
         void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant, ICollection<TestId> selectedTests);
 
-        TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession);
+        ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession);
 
-        void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo);
 
         void CancelAllTesting();
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
-        StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant changelessMutant);
+        StoredMutantInfo StoreMutant(ProjectFilesClone testEnvironment, Mutant changelessMutant);
         IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths);
 
         ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces);
@@ -54,7 +54,7 @@
     public class TestsContainer : ITestsContainer
     {
         private readonly IMutantsFileManager _mutantsFileManager;
-        private readonly IFileManager _fileManager;
+        private readonly IFileSystemManager _fileManager;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
 
@@ -70,7 +70,7 @@
         public TestsContainer(
             NUnitXmlTestService nunit, 
             IMutantsFileManager mutantsFileManager,
-            IFileManager fileManager,
+            IFileSystemManager fileManager,
             IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
@@ -105,17 +105,12 @@
             }
   
         }
-        public TestEnvironmentInfo InitTestEnvironment(MutationTestingSession currentSession)
+        public ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession)
         {
             _currentSession = currentSession;
-            return _fileManager.InitTestEnvironment(currentSession);
+            return _fileManager.CreateClone();
         }
 
-
-        public void CleanupTestEnvironment(TestEnvironmentInfo testEnvironmentInfo)
-        {
-            _fileManager.CleanupTestEnvironment(testEnvironmentInfo);
-        }
 
 
         public bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant)
@@ -141,9 +136,9 @@
 
         }
 
-        public StoredMutantInfo StoreMutant(TestEnvironmentInfo testEnvironment, Mutant mutant)
+        public StoredMutantInfo StoreMutant(ProjectFilesClone testEnvironment, Mutant mutant)
         {
-            return _mutantsFileManager.StoreMutant(testEnvironment.DirectoryPath,  mutant);
+            return _mutantsFileManager.StoreMutant(testEnvironment.ParentPath.Path,  mutant);
         }
         public IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths)
         {
@@ -347,7 +342,7 @@
 
             mutantTestSession.TestsRootNode.Children.AddRange(testNodeAssemblies);
             mutantTestSession.TestsRootNode.State = TestNodeState.Inactive;
-
+            mutantTestSession.TestsRootNode.IsIncluded = true;
             _testsLoaded = true;
         }
 

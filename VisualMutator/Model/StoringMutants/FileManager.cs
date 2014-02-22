@@ -17,7 +17,7 @@
     using UsefulTools.Paths;
 
     #endregion
-
+    /*
     public interface IFileManager
     {
 
@@ -117,21 +117,7 @@
             bool loadError;
             var originalFilesList = CopyOriginalFiles(out loadError);
             return new TestEnvironmentInfo(originalFilesList.First().ParentDirectoryPath.ToString());
-            /*
-            var refer = GetReferencedAssemblies(_hostEnviroment.GetProjectAssemblyPaths().ToList());//TODO: Use better way
-            foreach (var referenced in refer)
-            {
-                string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(referenced));
-                _fs.File.Copy(referenced, destination, overwrite: true); //TODO: Remove overwrite?
-            }
-            if (currentSession != null)
-            {
-                foreach (string path in currentSession.Choices.MutantsCreationOptions.AdditionalFilesToCopy)
-                {
-                    string destination = Path.Combine(mutantDirectoryPath, Path.GetFileName(path));
-                    _fs.File.Copy(path, destination, overwrite: true); 
-                }
-            }*/
+        
         //    return new TestEnvironmentInfo(mutantDirectoryPath);
         }
 
@@ -168,5 +154,5 @@
         }
 
         public string DirectoryPath { get; set; }
-    }
+    }*/
 }

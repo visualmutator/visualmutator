@@ -28,7 +28,7 @@
 
         private readonly IEventService _eventService;
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IDisposable _disp;
 
         public ApplicationController(
@@ -77,7 +77,6 @@
             _settingsManager.Initialize();
 
         }
-
        
 
         private void BuildEvents_OnBuildBegin()
@@ -116,12 +115,10 @@
         private void ActivateOnSolutionOpened()
         {
             _mutationResultsController.Initialize();
-           //// _testingAndManagingController.Initialize();
         }
         private void DeactivateOnSolutionClosed()
         {
             _mutationResultsController.Deactivate();
-           // _testingAndManagingController.Deactivate();
         }
 
 

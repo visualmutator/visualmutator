@@ -113,8 +113,6 @@
 
         public StoredMutantInfo StoreMutant(string directory, IModuleSource assembliesProvider)
         {
-
-            
             var result = new StoredMutantInfo();
             
             foreach (IModule module in assembliesProvider.Modules)
@@ -125,10 +123,7 @@
                 _moduleSource.WriteToFile(module, file);
                 result.AssembliesPaths.Add(file);
             }
-
-
             return result;
-
         }
 
 

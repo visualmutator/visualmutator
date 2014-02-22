@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using Extensibility;
+    using Infrastructure;
     using Mutations;
     using Mutations.MutantsTree;
     using Mutations.Types;
@@ -14,10 +15,10 @@
 
     public class MutationTestingSession
     {
-        public MutationTestingSession(TestEnvironmentInfo testEnvironmentInfo)
+        public MutationTestingSession(ProjectFilesClone projectFilesClone)
         {
             MutantsGrouped = new List<AssemblyNode>();
-            TestEnvironment = testEnvironmentInfo;
+            ProjectFilesClone = projectFilesClone;
             Filter = MutationFilter.AllowAll();
             Choices = new MutationSessionChoices();
         }
@@ -25,14 +26,14 @@
         public MutationTestingSession()
         {
             MutantsGrouped = new List<AssemblyNode>();
-            TestEnvironment = new TestEnvironmentInfo("");
+            ProjectFilesClone = null;//new ProjectFilesClone("");
             Filter = MutationFilter.AllowAll();
             Choices = new MutationSessionChoices();
         }
 
         public IList<AssemblyNode> MutantsGrouped { get; set; }
         public double MutationScore { get; set; }
-        public TestEnvironmentInfo TestEnvironment { get; set; }
+        public ProjectFilesClone ProjectFilesClone { get; set; }
         public MutationFilter Filter { get; set; }
         public MutationSessionChoices Choices { get; set; }
     }

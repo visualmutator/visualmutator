@@ -5,21 +5,29 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Security.Cryptography;
     using Infrastructure;
     using log4net;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.FileSystem;
     using UsefulTools.Paths;
 
-    public class FileSystemManager
+    public interface IFileSystemManager : IDisposable
     {
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        ProjectFilesClone CreateClone();
+        void Initialize();
+    }
 
+    public class FileSystemManager : IFileSystemManager
+    {
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IHostEnviromentConnection _hostEnviroment;
         private readonly IFileSystem _fs;
         private List<FilePathAbsolute> _originalProjectFiles;
         private IEnumerable<FilePathAbsolute> _referencedFiles;
+        private ProjectFilesClone _mainClone;
+        private readonly IList<ProjectFilesClone> _clones;
 
         public FileSystemManager(
             IHostEnviromentConnection hostEnviroment,
@@ -28,30 +36,85 @@
             _hostEnviroment = hostEnviroment;
             _fs = fs;
 
+            _clones = new List<ProjectFilesClone>();
+        }
+
+        ~FileSystemManager()
+        {
+            Dispose(false);
+        }
+
+
+        public void Initialize()
+        {
             _originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
             _referencedFiles = GetReferencedAssemblyPaths(_originalProjectFiles).Select(s => s.ToFilePathAbs());
 
-            _mainClone = 
+            _mainClone = CreateProjectClone(_referencedFiles, _originalProjectFiles);
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
 
-
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _mainClone.Dispose();
+                foreach (var projectFilesClone in _clones)
+                {
+                    projectFilesClone.Dispose();
+                }
+            }
         }
 
-        private object CreateProjectClone()
+        public ProjectFilesClone CreateClone()
         {
+            ProjectFilesClone clone = CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies);
+            clone.IsIncomplete |= _mainClone.IsIncomplete;
+            return clone;
+        }
+
+        private ProjectFilesClone CreateProjectClone(
+            IEnumerable<FilePathAbsolute> referencedFiles, 
+            IEnumerable<FilePathAbsolute> projectFiles)
+        {
+            
             FilePathAbsolute tmp = CreateTmpDir();
-            foreach (var referenced in _referencedFiles)
+            var clone = new ProjectFilesClone(tmp, _fs);
+            foreach (var referenced in referencedFiles)
             {
                 try
                 {
-                    _fs.File.Copy(referenced.Path, tmp.AsChild(referenced).Path, overwrite: true);
+                    var destination = (FilePathAbsolute) tmp.AsChild(referenced);
+                    _fs.File.Copy(referenced.Path, destination.Path, overwrite: true);
+                    clone.Referenced.Add(destination);
                 }
                 catch (Exception e)
                 {
-                    _log.Warn("File load error", e);
-                    isError = true;
+                    _log.Warn("Could not copy file : " +e.Message);
+                    clone.IsIncomplete = true;
                 }
             }
-            tmp.AsChild()
+            foreach (var projFile in projectFiles)
+            {
+                try
+                {
+                    var destination = (FilePathAbsolute) tmp.AsChild(projFile);
+                    _fs.File.Copy(projFile.Path, destination.Path, overwrite: true);
+                    clone.Assemblies.Add(destination);
+                }
+                catch (Exception e)
+                {
+                    _log.Warn("Could not copy file : " + e.Message);
+                    clone.IsIncomplete = true;
+                }
+            }
+            _clones.Add(clone);
+            return clone;
         }
 
         private FilePathAbsolute CreateTmpDir()
@@ -75,40 +138,6 @@
             return list;
         }
 
-        public List<FilePathAbsolute> CopyOriginalFiles(out bool isError)
-        {
-            isError = false;
-            
-            _fs.Directory.CreateDirectory(tmpDirectoryPath);
-            var originalFilesList = new List<FilePathAbsolute>();
-            foreach (var referenced in GetReferencedAssemblyPaths(_hostEnviroment.GetProjectAssemblyPaths().ToList()).AsStrings())
-            {
-                try
-                {
-                    string destination = Path.Combine(tmpDirectoryPath, Path.GetFileName(referenced));
-                    _fs.File.Copy(referenced, destination, overwrite: true);
-                }
-                catch (Exception e)
-                {
-                    _log.Warn("File load error", e);
-                    isError = true;
-                }
-            }
-            foreach (var projFile in _hostEnviroment.GetProjectAssemblyPaths().AsStrings().ToList())
-            {
-                try
-                {
-                    string destination = Path.Combine(tmpDirectoryPath, Path.GetFileName(projFile));
-                    _fs.File.Copy(projFile, destination, overwrite: true);
-                    originalFilesList.Add(destination.ToFilePathAbs());
-                }
-                catch (Exception e)
-                {
-                    _log.Warn("File load error", e);
-                    isError = true;
-                }
-            }
-            return originalFilesList;
-        }
+       
     }
 }

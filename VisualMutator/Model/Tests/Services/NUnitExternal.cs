@@ -76,17 +76,17 @@
             string testToRun = "";
             string arg = string.Join(" ", inputFiles.Select(a => a.InQuotes()))
                 + testToRun
-                + " /xml \"" + outputFile + "\" /nologo -trace Verbose -wait true";
+                + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
 
             _log.Info("Running " + nunitConsolePath + " with args: " + arg);
             var startInfo = new ProcessStartInfo
             {
                 Arguments = arg,
-               // CreateNoWindow = true,
+                CreateNoWindow = true,
                 ErrorDialog = true,
                 RedirectStandardOutput = false,
                 FileName = nunitConsolePath,
-                UseShellExecute = true,// false,
+                UseShellExecute = false,
             };
 
             return _processes.RunAsync(startInfo);
