@@ -165,25 +165,7 @@
 
                             if(classAndMethod != null)
                             {
-                                var allTypeTreeNodes = assemblies
-                                    .Cast<CheckedNode>()
-                                    .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
-                                    n => n.IsIncluded == null || n.IsIncluded == true)
-                                    .Cast<MutationNode>();
-                                foreach (var typeTreeNode in allTypeTreeNodes)
-                                {
-                                    typeTreeNode.IsExpanded = true;
-                                }
-
-                                var allTests = tests
-                                    .Cast<CheckedNode>()
-                                    .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
-                                    n => n.IsIncluded == null || n.IsIncluded == true)
-                                    .Cast<TestTreeNode>();
-                                foreach (var testNode in allTests)
-                                {
-                                    testNode.IsExpanded = true;
-                                }
+                                ExpandLoneNodes(assemblies, tests);
                             }
                             
                             _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
@@ -194,6 +176,29 @@
                 });
 
             _viewModel.ShowDialog();
+        }
+
+        private void ExpandLoneNodes(IList<AssemblyNode> assemblies, IList<TestNodeAssembly> tests)
+        {
+            var allTypeTreeNodes = assemblies
+                .Cast<CheckedNode>()
+                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                    n => n.IsIncluded == null || n.IsIncluded == true)
+                .Cast<MutationNode>();
+            foreach (var typeTreeNode in allTypeTreeNodes)
+            {
+                typeTreeNode.IsExpanded = true;
+            }
+
+            var allTests = tests
+                .Cast<CheckedNode>()
+                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                    n => n.IsIncluded == null || n.IsIncluded == true)
+                .Cast<TestTreeNode>();
+            foreach (var testNode in allTests)
+            {
+                testNode.IsExpanded = true;
+            }
         }
 
         private void SelectOnlyCovered(IList<TestNodeAssembly> tests, List<ClassAndMethod> coveredTests)

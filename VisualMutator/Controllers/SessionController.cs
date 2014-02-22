@@ -239,7 +239,7 @@
             _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
-                if (choices.SelectedTests.Count == 0)
+                if (choices.SelectedTests.TestIds.Count == 0)
                 {
                     throw new NoTestsSelectedException();
                 }

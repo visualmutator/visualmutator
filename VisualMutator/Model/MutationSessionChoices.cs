@@ -23,7 +23,7 @@ namespace VisualMutator.Model
            // SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>());
             MutantsTestingOptions= new MutantsTestingOptions();
             MutantsCreationOptions= new MutantsCreationOptions();
-            SelectedTests = new Collection<TestId>();
+            SelectedTests = new SelectedTests();
             Filter = MutationFilter.AllowAll();
         }
 
@@ -36,7 +36,7 @@ namespace VisualMutator.Model
         public string MutantsCreationFolderPath { get; set; }
         public MutantsTestingOptions MutantsTestingOptions { get; set; }
         public MutantsCreationOptions MutantsCreationOptions { get; set; }
-        public ICollection<TestId> SelectedTests { get; set; }
+        public SelectedTests SelectedTests { get; set; }
         public List<string> AssembliesPaths { get; set; }
     }
 }

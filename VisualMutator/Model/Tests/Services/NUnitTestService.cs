@@ -200,9 +200,9 @@
             _nUnitWrapper.Cancel();
         }
 
-        public virtual void CreateTestFilter(ICollection<TestId> selectedTests)
+        public virtual void CreateTestFilter(SelectedTests selectedTests)
         {
-            _nUnitWrapper.CreateFilter(selectedTests.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
+            _nUnitWrapper.CreateFilter(selectedTests.TestIds.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
         }
 
 

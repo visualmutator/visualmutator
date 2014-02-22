@@ -319,10 +319,12 @@
     <Compile Include="Model\Tests\Custom\ITestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\TestingProcessExtensionOptions.cs" />
     <Compile Include="Model\Tests\MyTestResult.cs" />
+    <Compile Include="Model\Tests\SelectedTests.cs" />
     <Compile Include="Model\Tests\Services\NUnitExternal.cs" />
     <Compile Include="Model\Tests\Services\NUnitXmlTestService.cs" />
     <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
+    <Compile Include="Model\Tests\TestsSelector.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeAssembly.cs" />
     <Compile Include="Model\Tests\TestsTree\TestsRootNode.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />

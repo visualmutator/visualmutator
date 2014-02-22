@@ -98,10 +98,10 @@
             var wrapper = new NUnitWrapper(m.Object);
             var service = new NUnitTestService(wrapper, m.Object);
             var session = new MutantTestSession();
-            service.LoadTests(new List<string> {MutationTestsHelper.DsaPath, MutationTestsHelper.DsaPath},
-                session);
+           // service.LoadTests(new List<string> {MutationTestsHelper.DsaPath, MutationTestsHelper.DsaPath},
+          //      session);
 
-            service.RunTests(session);
+          //  service.RunTests(session);
 
             Thread.Sleep(15000);
             Console.WriteLine(":session.TestMap.Count : " + session.TestsByAssembly.Count);
@@ -153,7 +153,7 @@
                                      MutationTestsHelper.DsaTestsPath2
                                  };
             Task<ProcessResults> task = service.RunNUnitConsole(path, assemblies,
-                "muttest-results.xml", new List<TestId>());
+                "muttest-results.xml", new SelectedTests());
 
             task.Wait();
 
@@ -181,9 +181,9 @@
             var tn2 = new TestName();
             tn2.FullName = "Dsa.Test.DataStructures.SetTest.ContainsTest";
             Task<ProcessResults> task = service.RunNUnitConsole(nunitpath, assemblies,
-                "muttest-results.xml", new List<TestId> { 
+                "muttest-results.xml", new SelectedTests(){TestIds = new List<TestId> { 
                     new NUnitTestId(tn), 
-                    new NUnitTestId(tn2) });
+                    new NUnitTestId(tn2) }});
 
             task.Wait();
 

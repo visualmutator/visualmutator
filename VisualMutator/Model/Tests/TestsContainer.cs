@@ -35,7 +35,7 @@
 
 
 
-        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant, ICollection<TestId> selectedTests);
+        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, Mutant mutant, SelectedTests selectedTests);
 
         ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession);
 
@@ -47,8 +47,8 @@
         StoredMutantInfo StoreMutant(ProjectFilesClone testEnvironment, Mutant changelessMutant);
         IEnumerable<TestNodeAssembly> LoadTests(IEnumerable<string> paths);
 
-        ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces);
-        void CreateTestFilter(ICollection<TestId> selectedTests);
+        SelectedTests GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces);
+        void CreateTestFilter(SelectedTests selectedTests);
     }
 
     public class TestsContainer : ITestsContainer
@@ -81,15 +81,16 @@
                 nunit//,ms
             };
         }
-        public ICollection<TestId> GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces)
+        public SelectedTests GetIncludedTests(IEnumerable<TestNodeAssembly> testNodeNamespaces)
         {
-            return testNodeNamespaces
+            ICollection<TestId> selected = testNodeNamespaces
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
                 .Cast<TestNodeMethod>().Select(m => m.TestId).ToList();
-        
+
+            return new SelectedTests();
         }
 
-        public void CreateTestFilter(ICollection<TestId> selectedTests)
+        public void CreateTestFilter(SelectedTests selectedTests)
         {
             foreach (var testService in _testServices)
             {
@@ -155,8 +156,8 @@
             return mutantTestSession.TestsRootNode.TestNodeAssemblies;
         }
 
-        public void RunTestsForMutant(MutantsTestingOptions options, 
-            StoredMutantInfo storedMutantInfo, Mutant mutant, ICollection<TestId> selectedTests)
+        public void RunTestsForMutant(MutantsTestingOptions options,
+            StoredMutantInfo storedMutantInfo, Mutant mutant, SelectedTests selectedTests)
         {
             if (_allTestingCancelled)
             {

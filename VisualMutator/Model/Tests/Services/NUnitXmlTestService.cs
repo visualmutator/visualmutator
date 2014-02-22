@@ -29,7 +29,7 @@
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IList<string> _assemblies;
-        private ICollection<TestId> _selectedTests;
+        private SelectedTests _selectedTests;
 
         public IList<string> Assemblies
         {
@@ -131,7 +131,7 @@
             });
         }
 
-        public override void CreateTestFilter(ICollection<TestId> selectedTests)
+        public override void CreateTestFilter(SelectedTests selectedTests)
         {
             _selectedTests = selectedTests;
             base.CreateTestFilter(selectedTests);

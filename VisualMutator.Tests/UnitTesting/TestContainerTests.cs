@@ -19,6 +19,7 @@
     using Model.Verification;
     using Moq;
     using NUnit.Framework;
+    using Strilanc.Value;
     using UsefulTools.Core;
     using UsefulTools.FileSystem;
     using UsefulTools.Paths;
@@ -31,12 +32,12 @@
     [TestFixture]
     public class TestContainerTests
     {
-        public TestContainerTests(ICollection<TestId> selectedTests)
+        public TestContainerTests(SelectedTests selectedTests)
         {
             _selectedTests = selectedTests;
         }
 
-        private ICollection<TestId> _selectedTests;
+        private SelectedTests _selectedTests;
 
         [SetUp]
         public void TestSetUp()
@@ -78,14 +79,14 @@
             hostEnv.Setup(_ => _.GetProjectAssemblyPaths()).Returns(list.Select(_ => _.ToFilePathAbs()));
             hostEnv.Setup(_ => _.GetTempPath()).Returns(@"C:\PLIKI\Programowanie\Testy");
 
-            FileManager fileManager = new FileManager(hostEnv.Object, new FileSystemService());
+            var fileManager = new FileSystemManager(hostEnv.Object, new FileSystemService());
             MutantsFileManager mutantsFileManager = new MutantsFileManager(mutantCache, cci, fs);
 
             mutantsContainer.Initialize(new List<IMutationOperator>(), 
                 new MutantsCreationOptions(), MutationFilter.AllowAll());
 
 
-            TestEnvironmentInfo initTestEnvironment = fileManager.InitTestEnvironment(null);
+            var clone = fileManager.CreateClone();
 
             AssemblyNode execOperator;
             Mutant changelessMutant = mutantsContainer.CreateEquivalentMutant(out execOperator);
@@ -93,18 +94,18 @@
 
             var testServ = new NUnitXmlTestService(new NUnitWrapper(logMessageService), new NUnitExternal(null, null), null);
             var mutantTestSession = new MutantTestSession();
-            IEnumerable<TestNodeClass> testNodeClasses = testServ.LoadTests(list, mutantTestSession);
+            May<TestsLoadContext> loadTests = testServ.LoadTests(list);
 
             var teco = new TestsContainer(testServ, mutantsFileManager, fileManager, new AssemblyVerifier());
-            teco.InitTestEnvironment(new MutationTestingSession(initTestEnvironment));
+            teco.InitTestEnvironment(new MutationTestingSession(clone));
 
-            var storedMutantInfo = teco.StoreMutant(initTestEnvironment, changelessMutant);
+            var storedMutantInfo = teco.StoreMutant(clone, changelessMutant);
 
             bool ddd = true;
             teco.RunTestsForMutant(new MutantsTestingOptions(), storedMutantInfo, changelessMutant, _selectedTests);
 
             Assert.That(ddd, Is.True.After(5000));
-            Assert.IsNotNull(testNodeClasses);
+            Assert.IsNotNull(loadTests);
         }
 
         /* [Test]

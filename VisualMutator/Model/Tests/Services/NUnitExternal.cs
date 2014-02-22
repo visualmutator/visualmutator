@@ -21,7 +21,7 @@
     {
         Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
             IList<string> inputFiles, string outputFile,
-            ICollection<TestId> selectedTests);
+            SelectedTests selectedTests);
     }
 
     public class NUnitExternal : INUnitExternal
@@ -42,7 +42,7 @@
 
         public Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
             IList<string> inputFiles, string outputFile,
-            ICollection<TestId> selectedTests)
+            SelectedTests selectedTests)
         {
             Task<ProcessResults> results = RunNUnitConsole(nunitConsolePath, inputFiles, outputFile, selectedTests);
 
@@ -64,19 +64,19 @@
                     return tresults.Values.ToList();
                 }
             }); 
-
         }
 
         public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath, 
-            IList<string> inputFiles, string outputFile, 
-            ICollection<TestId> selectedTests)
+            IList<string> inputFiles, string outputFile,
+            SelectedTests selectedTests)
         {
            // string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
              //  string.Join(",",selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)));
             string testToRun = "";
             string arg = string.Join(" ", inputFiles.Select(a => a.InQuotes()))
-                + testToRun
-                + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
+                         + testToRun
+                         + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
+              //  + " -framework net-4.0";
 
             _log.Info("Running " + nunitConsolePath + " with args: " + arg);
             var startInfo = new ProcessStartInfo
