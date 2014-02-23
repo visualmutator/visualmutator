@@ -25,13 +25,13 @@ namespace VisualMutator.Model.Tests
             _testsRootNode = new TestsRootNode();
         }
 
-        public IDictionary<string, TestsLoadContext> TestsByAssembly
-        {
-            get
-            {
-                return _testsByAssembly;
-            }
-        }
+//        public IDictionary<string, TestsLoadContext> TestsByAssembly
+//        {
+//            get
+//            {
+//                return _testsByAssembly;
+//            }
+//        }
 
         public string ErrorMessage
         {
@@ -51,13 +51,13 @@ namespace VisualMutator.Model.Tests
             get;
             set;
         }
-        public TestsRootNode TestsRootNode
-        {
-            get
-            {
-                return _testsRootNode;
-            }
-        }
+//        public TestsRootNode TestsRootNode
+//        {
+//            get
+//            {
+//                return _testsRootNode;
+//            }
+//        }
 
         public IList<string> AssembliesWithTests { get; set; }
 

@@ -2,6 +2,7 @@
 {
     #region
 
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
@@ -40,6 +41,7 @@
         protected readonly IOperatorsManager _operatorsManager;
         private readonly IHostEnviromentConnection _hostEnviroment;
         protected readonly ITestsContainer _testsContainer;
+        private readonly TestsLoader _testsLoader;
         private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
         private readonly IFileSystemManager _fileManager;
 
@@ -58,6 +60,7 @@
             IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             ITestsContainer testsContainer,
+            TestsLoader testsLoader,
             IFactory<MutantsSavingController> mutantsSavingFactory,
             IFileSystemManager fileManager,
             CommonServices svc)
@@ -68,6 +71,7 @@
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _testsContainer = testsContainer;
+            _testsLoader = testsLoader;
             _mutantsSavingFactory = mutantsSavingFactory;
             _fileManager = fileManager;
             _svc = svc;
@@ -112,20 +116,15 @@
                 packages => _viewModel.MutationsTree.MutationPackages
                     = new ReadOnlyCollection<PackageNode>(packages));
 
-            if(originalFilesListForTests.Assemblies.Exists(a => !_svc.FileSystem.File.Exists(a.Path)))
-            {
-                Debugger.Break();
-            }
-            int files = originalFilesListForTests.Assemblies.Count;
-            files++;
+           
             List<ClassAndMethod> coveredTests = null;
-            var t = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, classAndMethod,
+            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, classAndMethod,
                 out coveredTests).CastTo<object>());
 
-            var task = Task.Run(() => _testsContainer.LoadTests(
-                originalFilesListForTests.Assemblies.AsStrings()).ToList().CastTo<object>());
+            var testsTask = Task.Run(() => _testsLoader.LoadTests(
+                originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
 
-            Task.WhenAll(t, task).ContinueWith( 
+            Task.WhenAll(assembliesTask, testsTask).ContinueWith( 
                 (Task<object[]> result) =>
                 {
                     if(result.Exception!= null)
@@ -133,33 +132,19 @@
                         _log.Error(result.Exception);
                         _svc.Threading.PostOnGui(() =>
                         {
-                            if (result.Exception.Flatten().InnerException is TestWasSelectedToMutateException)
-                            {
-                                _svc.Logging.ShowError(UserMessages.ErrorBadMethodSelected(), _viewModel.View);
-                            }
-                            else if (result.Exception.Flatten().InnerException is StrongNameSignedAssemblyException)
-                            {
-                                _svc.Logging.ShowError(UserMessages.ErrorStrongNameSignedAssembly(), _viewModel.View);
-                            }
-                            else if (result.Exception.Flatten().InnerException is TestsLoadingException)
-                            {
-                                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading(), _viewModel.View);
-                            }
-                            else
-                            {
-                                _svc.Logging.ShowError(result.Exception, _viewModel.View);
-                            }
+                            ShowError(result.Exception);
                             _viewModel.Close();
                         });
                     }
                     else
                     {
                         var assemblies = (IList<AssemblyNode>)result.Result[0];
-                        var tests = (IList<TestNodeAssembly>)result.Result[1];
+                        var testsRootNode = (TestsRootNode)result.Result[1];
 
                         assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
                         
-                        SelectOnlyCovered(tests, coveredTests);
+                        SelectOnlyCovered(testsRootNode, coveredTests);
+
                         _svc.Threading.PostOnGui(() =>
                         {
                             if (_typesManager.IsAssemblyLoadError)
@@ -170,11 +155,12 @@
 
                             if(classAndMethod != null)
                             {
-                                ExpandLoneNodes(assemblies, tests);
+                                ExpandLoneNodes(assemblies, testsRootNode);
                             }
                             
                             _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
-                            _viewModel.TypesTreeToTest.TestAssemblies = new ReadOnlyCollection<TestNodeAssembly>(tests);
+                            _viewModel.TypesTreeToTest.TestAssemblies 
+                                = new ReadOnlyCollection<TestNodeAssembly>(testsRootNode.TestNodeAssemblies.ToList());
 
                         });
                     }
@@ -183,7 +169,28 @@
             _viewModel.ShowDialog();
         }
 
-        private void ExpandLoneNodes(IList<AssemblyNode> assemblies, IList<TestNodeAssembly> tests)
+        private void ShowError(AggregateException exc)
+        {
+            Exception innerException = exc.Flatten().InnerException;
+            if (innerException is TestWasSelectedToMutateException)
+            {
+                _svc.Logging.ShowError(UserMessages.ErrorBadMethodSelected(), _viewModel.View);
+            }
+            else if (innerException is StrongNameSignedAssemblyException)
+            {
+                _svc.Logging.ShowError(UserMessages.ErrorStrongNameSignedAssembly(), _viewModel.View);
+            }
+            else if (innerException is TestsLoadingException)
+            {
+                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading(), _viewModel.View);
+            }
+            else
+            {
+                _svc.Logging.ShowError(exc, _viewModel.View);
+            }
+        }
+
+        private void ExpandLoneNodes(IList<AssemblyNode> assemblies, TestsRootNode tests)
         {
             var allTypeTreeNodes = assemblies
                 .Cast<CheckedNode>()
@@ -195,8 +202,7 @@
                 typeTreeNode.IsExpanded = true;
             }
 
-            var allTests = tests
-                .Cast<CheckedNode>()
+            var allTests = tests.Children
                 .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
                     n => n.IsIncluded == null || n.IsIncluded == true)
                 .Cast<TestTreeNode>();
@@ -206,15 +212,23 @@
             }
         }
 
-        private void SelectOnlyCovered(IList<TestNodeAssembly> tests, List<ClassAndMethod> coveredTests)
+        public void GenerateMutants()
+        {
+            MutantsSavingController mutantsSavingController = _mutantsSavingFactory.Create();
+            mutantsSavingController.Run();
+            if (mutantsSavingController.Result != null)
+            {
+                _viewModel.MutantsGenerationPath = mutantsSavingController.Result;
+                AcceptChoices();
+            }
+        }
+
+        private void SelectOnlyCovered(TestsRootNode rootNode, List<ClassAndMethod> coveredTests)
         {
             if (coveredTests != null)
             {
-                foreach (var testNodeAssembly in tests)
-                {
-                    testNodeAssembly.IsIncluded = false;
-                }
-                var toSelect = tests.Cast<CheckedNode>().SelectManyRecursive(n => n.Children, leafsOnly: true)
+                rootNode.IsIncluded = false;
+                var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
                     .OfType<TestNodeMethod>()
                     .Where(t => coveredTests.Select(_=>_.ClassName).Contains(t.ContainingClassFullName)
                                 &&  coveredTests.Select(_=>_.MethodName).Contains(t.Name));
@@ -224,6 +238,9 @@
                 }
             }
         }
+
+
+      
 
 
         protected void AcceptChoices()
@@ -237,25 +254,12 @@
                 ProjectPaths = _viewModel.ProjectPaths.ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
-                //_testsContaine.GetIncludedTests(
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
                 MutantsCreationFolderPath = _viewModel.MutantsGenerationPath
             };
             _viewModel.Close();
         }
-
-        public void GenerateMutants()
-        {
-            MutantsSavingController mutantsSavingController = _mutantsSavingFactory.Create();
-            mutantsSavingController.Run();
-            if(mutantsSavingController.Result != null)
-            {
-                _viewModel.MutantsGenerationPath = mutantsSavingController.Result;
-                AcceptChoices();
-            }
-        }
-
 
         public bool HasResults
         {

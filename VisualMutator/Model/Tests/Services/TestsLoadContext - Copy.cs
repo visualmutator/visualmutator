@@ -3,15 +3,13 @@
     using System.Collections.Generic;
     using TestsTree;
 
-    public class TestsLoadContext
+    public class TestsRunContext
     {
-        private readonly Dictionary<string /*testName*/, TestNodeMethod> _testMap;
         private readonly List<TestNodeClass> _classNodes;
         //public TestNodeAssembly TestNodeAssembly { get; set; }
 
-        public TestsLoadContext()
+        public TestsRunContext()
         {
-            _testMap = new Dictionary<string, TestNodeMethod>();
             _classNodes = new List<TestNodeClass>();
         }
 
@@ -30,5 +28,6 @@
         }
 
         public SelectedTests SelectedTests { get; set; }
+        public MutantTestResults TestResults { get; set; }
     }
 }

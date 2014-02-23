@@ -5,6 +5,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
     using System.Collections.Generic;
     using Extensibility;
     using Tests;
+    using Tests.Services;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Switches;
 
@@ -119,6 +120,14 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 UpdateDisplayedText();
             }
         }
+
+        public List<MutantTestResults> TestResults { get; set; }
+        public List<TestsRunContext> TestRunContexts
+        {
+            get;
+            set;
+        }
+
         protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
             base.SetState(value, updateChildren, updateParent);

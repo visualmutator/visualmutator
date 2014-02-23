@@ -58,7 +58,7 @@
             UnloadTests();
             return loadTests;
         }
-        private string findConsolePath()
+        private string FindConsolePath()
         {
             string runPath;
             if (_svc.FileSystem.File.Exists(NUnitConsolePath))
@@ -75,16 +75,16 @@
             }
             return runPath;
         }
-        public override Task RunTests(TestsLoadContext context)
+        public override Task RunTests(TestsRunContext context)
         {
 
           //  var sw = new Stopwatch();
           //  sw.Start();
 
-            string runPath = findConsolePath();
+            string runPath = FindConsolePath();
 
             _log.Info("Running NUnit Console from: " + runPath);
-            string assemblyPath = context.TestNodeAssembly.AssemblyPath;
+            string assemblyPath = context.AssemblyPath;
             var tasks = new List<Task<List<MyTestResult>>>();
             string name = string.Format("muttest-{0}.xml", Path.GetFileName(assemblyPath));
             if(!string.IsNullOrWhiteSpace(context.SelectedTests.TestsDescription))
@@ -97,11 +97,12 @@
             return Task.WhenAll(tasks)
                 .ContinueWith( testResult =>
                 {
+                    var list = new List<TmpTestNodeMethod>();
                     if(testResult.Exception != null)
                     {
                         _log.Error(testResult.Exception);
                         //todo: erorrs
-                        return new List<TestNodeMethod>();
+                        //return new List<TmpTestNodeMethod>();
                     }
                     else
                     {
@@ -110,23 +111,30 @@
 
                         foreach (var myTestResult in testResults)
                         {
-                            if(context.TestMap.ContainsKey(myTestResult.Name))
-                            {
-                                _log.Info("Found test in map: " + myTestResult.Name);
-                                TestNodeMethod testNodeMethod = context.TestMap[myTestResult.Name];
-                                testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
-                                testNodeMethod.State = myTestResult.Success
-                                    ? TestNodeState.Success
-                                    : TestNodeState.Failure;
-                            }
-                            else
-                            {
-                                _log.Error("Cannot fine test in map: " + myTestResult.Name);
-                            }
+                            TmpTestNodeMethod node = new TmpTestNodeMethod(myTestResult.Name);
+                            //TestNodeMethod node = context.TestMap[result.Test.TestName.FullName];
+                            node.State = myTestResult.Success ? TestNodeState.Success : TestNodeState.Failure;
+                            node.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
+                            list.Add(node);
+
+//                            if(context.TestMap.ContainsKey(myTestResult.Name))
+//                            {
+//                                _log.Info("Found test in map: " + myTestResult.Name);
+//                                TestNodeMethod testNodeMethod = context.TestMap[myTestResult.Name];
+//                                testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
+//                                testNodeMethod.State = myTestResult.Success
+//                                    ? TestNodeState.Success
+//                                    : TestNodeState.Failure;
+//                            }
+//                            else
+//                            {
+//                                _log.Error("Cannot fine test in map: " + myTestResult.Name);
+//                            }
                         }
-                       // sw.Stop();
-                       // mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
-                        return new List<TestNodeMethod>();
+                        context.TestResults = new MutantTestResults(list);
+                        // sw.Stop();
+                        // mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
+                        //  return list;
                     }
             });
         }

@@ -64,6 +64,7 @@
         }
 
         public TestId TestId { get; set; }
+        public string FullName { get; set; }
 
         public void ShowMessage()
         {

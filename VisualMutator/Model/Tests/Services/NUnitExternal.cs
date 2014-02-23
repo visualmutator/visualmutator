@@ -28,14 +28,13 @@
     {
         private readonly CommonServices _svc;
         private readonly IProcesses _processes;
-        Dictionary<string, MyTestResult> resultDictionary;
 
         public NUnitExternal(CommonServices svc, IProcesses processes)
             : base()
         {
             _svc = svc;
             _processes = processes;
-            resultDictionary = new Dictionary<string, MyTestResult>();
+            
         }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -104,7 +103,7 @@
         {
             XmlReaderSettings s = new XmlReaderSettings();
             s.CheckCharacters = false;
-
+            Dictionary<string, MyTestResult> resultDictionary = new Dictionary<string, MyTestResult>();
             XmlReader reader = XmlReader.Create(fileName, s);
 
             var nsStack = new Stack<String>();
@@ -148,7 +147,7 @@
                     {
                         var node = (XElement)XNode.ReadFrom(reader);
 
-                        GetValue(node, isParametrizedTest);
+                        GetValue(resultDictionary, node, isParametrizedTest);
                     }
                 
                 }
@@ -163,7 +162,7 @@
             return resultDictionary;
         }
         
-        private void GetValue( XElement test, bool isParametrizedTest)
+        private void GetValue(Dictionary<string, MyTestResult> resultDictionary, XElement test, bool isParametrizedTest)
         {
             
             try

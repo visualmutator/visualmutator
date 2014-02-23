@@ -141,11 +141,11 @@
 
         public XElement CreateDetailedTestingResults(List<Mutant> mutants)
         {
-            return new XElement("DetailedTestingResults",   
+            return new XElement("DetailedTestingResults");/*,   
                 from mutant in mutants
                 where mutant.MutantTestSession.IsComplete
-                let groupedTests = mutant.MutantTestSession.TestsByAssembly.Values
-                .Select(c => c.TestNodeAssembly).SelectMany(n => n.TestNamespaces)
+                let groupedTests = mutant.MutantTestSession.TestsRootNode.TestNodeAssemblies 
+                .SelectMany(n => n.TestNamespaces)
                 .GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("MutantId", mutant.Id),
@@ -178,8 +178,8 @@
                             )
                         )
                     )
-                ));
+                )); */
         }
-
+           
     }
 }

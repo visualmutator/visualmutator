@@ -63,6 +63,7 @@
                 return May.NoValue;
             }
             BuildTestTree(testRoot, context);
+            UnloadTests();
             return context;
         }
 
@@ -79,46 +80,36 @@
 
             return result;
         }
-        public virtual Task RunTests(TestsLoadContext context)
+        public virtual Task RunTests(TestsRunContext testsRunContext)
         {
-
-            var list = new List<TestNodeMethod>();
-
-           
-
-            var sw = new Stopwatch();
-         //   sw.Start();
-            Task<TestResult> runTests = TestLoader.RunTests();
-
-
-            return runTests.ContinueWith(testResult =>
-            {
-                if(testResult.Exception != null)
-                {
-                    _log.Error(testResult.Exception);
-                   // return null;
-                }
-                else
-                {
-                    _subscription = TestLoader.TestFinished.Subscribe(result =>
-                    {
-                        TestNodeMethod node = context.TestMap[result.Test.TestName.FullName];
-                        node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
-                        node.Message = result.Message + "\n" + result.StackTrace;
-                        list.Add(node);
-                    }, () =>
-                    {
-
-                        
-                    });
-                    _subscription.Dispose();
-               
-                  //  sw.Stop();
-                  //  mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
-                   // return list;
-                }
-            });
-        
+//            Task<TestResult> runTests = TestLoader.RunTests();
+//
+//            return runTests.ContinueWith(testResult =>
+//            {
+//                var list = new List<TmpTestNodeMethod>();
+//                if(testResult.Exception != null)
+//                {
+//                    _log.Error(testResult.Exception);
+//                }
+//                else
+//                {
+//                    _subscription = TestLoader.TestFinished.Subscribe(result =>
+//                    {
+//                        TmpTestNodeMethod node = new TmpTestNodeMethod(result.Test.TestName.FullName);
+//                        //TestNodeMethod node = context.TestMap[result.Test.TestName.FullName];
+//                        node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
+//                        node.Message = result.Message + "\n" + result.StackTrace;
+//                        list.Add(node);
+//                    }, () =>
+//                    {
+//
+//                        
+//                    });
+//                    _subscription.Dispose();
+//                }
+//                return list;
+//            });
+            throw new NotImplementedException();
         }
 
         public void UnloadTests()
@@ -145,20 +136,23 @@
                 {
                     if (_nUnitWrapper.NameFilter == null || _nUnitWrapper.NameFilter.Match(testMethod))
                     {
-                        string testName = testMethod.TestName.Name;
-                        if(!context.TestMap.ContainsKey(testName))
-                        {
-                            var nodeMethod = new TestNodeMethod(c, testName);
-                            nodeMethod.TestId = new NUnitTestId(testMethod.TestName);
-                            c.Children.Add(nodeMethod);
-                            _log.Debug("Adding test: " + testName);
-                            context.TestMap.Add(testName, nodeMethod);
-                        }
-                        else
-                        {
-                            _log.Debug("Already exists test: " + testName);
-                            //TODO: handle he case where parametrized test method may be present duplicated.
-                        }
+                        string testName = testMethod.TestName.FullName;
+                        //if(!context.TestMap.ContainsKey(testName))
+                      //  {
+                        var nodeMethod = new TestNodeMethod(c, testName)
+                            {
+                                TestId = new NUnitTestId(testMethod.TestName),
+                                FullName = testMethod.TestName.FullName
+                            };
+                        c.Children.Add(nodeMethod);
+                        _log.Debug("Adding test: " + testName);
+                       // context.TestMap.Add(testName, nodeMethod);
+                       // }
+                      //  else
+                      //  {
+                     //       _log.Debug("Already exists test: " + testName);
+                     //       //TODO: handle he case where parametrized test method may be present duplicated.
+                     //   }
                     }
                 }
                 if(c.Children.Any())

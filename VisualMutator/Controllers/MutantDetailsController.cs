@@ -13,6 +13,7 @@
     using Model.Decompilation.CodeDifference;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Types;
+    using Model.Tests;
     using UsefulTools.Switches;
     using UsefulTools.Wpf;
     using ViewModels;
@@ -23,6 +24,7 @@
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutantDetailsViewModel _viewModel;
+        private readonly TestsContainer _testsContainer;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private Mutant _currentMutant;
         private IList<AssemblyNode> _originalAssemblies;
@@ -31,9 +33,11 @@
 
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
+            TestsContainer testsContainer, 
             ICodeDifferenceCreator codeDifferenceCreator)
         {
             _viewModel = viewModel;
+            _testsContainer = testsContainer;
             _codeDifferenceCreator = codeDifferenceCreator;
 
 
@@ -96,11 +100,11 @@
             _viewModel.TestNamespaces.Clear();
 
            
-
+            
             if (mutant.MutantTestSession.IsComplete)
             {
-                _viewModel.TestNamespaces.AddRange(mutant.MutantTestSession.TestsRootNode
-                    .TestNodeAssemblies.SelectMany(a => a.TestNamespaces));
+                var namespaces = _testsContainer.CreateMutantTestTree(mutant);
+                _viewModel.TestNamespaces.AddRange(namespaces);
             }
             else
             {
