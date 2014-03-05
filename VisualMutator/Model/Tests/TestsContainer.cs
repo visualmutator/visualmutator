@@ -182,6 +182,7 @@
                 _log.Info("Running tests for mutant " + mutant.Id);
                 var task = RunTests(contexts);
                 task.Wait();
+                _log.Debug("Finished waiting for tests. ");
                 mutant.TestRunContexts = contexts;
 
                 timoutDisposable.Dispose();
@@ -308,8 +309,9 @@
         public Task RunTests(List<TestsRunContext> testContexts)
         {
             var service = _testServices.Single();
-
-            return Task.WhenAll(testContexts.Select(service.RunTests));
+            List<Task> tasks = testContexts.Select(service.RunTests).ToList();
+            _log.Debug("Waiting for " + tasks.Count + " test task. ");
+            return Task.WhenAll(tasks);
         }
 
 

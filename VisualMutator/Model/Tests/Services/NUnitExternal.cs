@@ -16,11 +16,12 @@
     using TestsTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
 
     public interface INUnitExternal
     {
         Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
-            IList<string> inputFiles, string outputFile,
+            string inputFile, string outputFile,
             SelectedTests selectedTests);
     }
 
@@ -40,13 +41,15 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
-            IList<string> inputFiles, string outputFile,
+            string inputFile, string outputFile,
             SelectedTests selectedTests)
         {
-            Task<ProcessResults> results = RunNUnitConsole(nunitConsolePath, inputFiles, outputFile, selectedTests);
+            _log.Debug("Running tests on: " + inputFile);
+            Task<ProcessResults> results = RunNUnitConsole(nunitConsolePath, inputFile, outputFile, selectedTests);
 
             return results.ContinueWith(testResult =>
             {
+
                 if (testResult.Exception != null)
                 {
                     _log.Error(testResult.Exception);
@@ -66,10 +69,14 @@
         }
 
         public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath, 
-            IList<string> inputFiles, string outputFile,
+            string inputFile, string outputFile,
             SelectedTests selectedTests)
         {
-            var listpath = Path.Combine(Path.GetTempPath(), "visualMutator-Runlist.txt");
+            var listpath = new FilePathAbsolute(inputFile)
+                .GetBrotherFileWithName(
+                Path.GetFileNameWithoutExtension(inputFile) + "-Runlist.txt").Path;
+
+         //   var listpath = Path.Combine(Path.GetTempPath(), "visualMutator-Runlist.txt");
             using(var file = File.CreateText(listpath))
             {
                 foreach (var str in selectedTests.TestsDescription.Split(' '))
@@ -80,9 +87,9 @@
            // string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
              //  string.Join(",",selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)));
             string testToRun = " /runlist:" + listpath.InQuotes() + " ";
-            string arg = string.Join(" ", inputFiles.Select(a => a.InQuotes()))
+            string arg =  inputFile.InQuotes()
                          + testToRun
-                         + " /xml \"" + outputFile + "\" /nologo /noshadow -trace=Verbose";
+                         + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
               //  + " -framework net-4.0";
 
             _log.Info("Running " + nunitConsolePath + " with args: " + arg);
@@ -101,6 +108,7 @@
         
         public Dictionary<string, MyTestResult> ProcessResultFile( string fileName)
         {
+            _log.Debug("Processing result file: " + fileName);
             XmlReaderSettings s = new XmlReaderSettings();
             s.CheckCharacters = false;
             Dictionary<string, MyTestResult> resultDictionary = new Dictionary<string, MyTestResult>();
@@ -175,13 +183,14 @@
                         testName = testName.Substring(0, paranIdx);
                 }
                 String testRes = "False";
-
+                
 
                 var result = new MyTestResult(test.Attribute("name").Value);
                 if (test.Attribute("success") != null)
                 {
                     result.Success = test.Attribute("success").Value == "True";
                 }
+                _log.Debug("Found test case: " + testName + " with success: " + result.Success);
                 if (!result.Success)
                 {
                     result.Message = test.Descendants(XName.Get("message", "")).Single().Value;

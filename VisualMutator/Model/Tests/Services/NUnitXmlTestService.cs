@@ -87,14 +87,14 @@
             string assemblyPath = context.AssemblyPath;
             var tasks = new List<Task<List<MyTestResult>>>();
             string name = string.Format("muttest-{0}.xml", Path.GetFileName(assemblyPath));
-            if(!string.IsNullOrWhiteSpace(context.SelectedTests.TestsDescription))
+            if(string.IsNullOrWhiteSpace(context.SelectedTests.TestsDescription))
             {
-                Task<List<MyTestResult>> task = _nUnitExternal.RunTests(runPath, assemblyPath.InList(),
-                    name, context.SelectedTests);
-                tasks.Add(task);
+                return Task.FromResult(0);
             }
-
-            return Task.WhenAll(tasks)
+        //    _log.Debug("Creating " + tasks.Count + " testing jobs.");
+            return _nUnitExternal.RunTests(runPath, assemblyPath,
+                    name, context.SelectedTests)
+           
                 .ContinueWith( testResult =>
                 {
                     var list = new List<TmpTestNodeMethod>();
@@ -107,7 +107,7 @@
                     else
                     {
                         //todo: check for empty lists
-                        IList<MyTestResult> testResults = testResult.Result.Flatten().ToList();
+                        IList<MyTestResult> testResults = testResult.Result;//.Flatten().ToList();
 
                         foreach (var myTestResult in testResults)
                         {
@@ -136,6 +136,7 @@
                         // mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
                         //  return list;
                     }
+                    _log.Debug("Finished processing tests.");
             });
         }
 

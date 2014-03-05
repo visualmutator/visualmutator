@@ -328,7 +328,7 @@
     <Compile Include="Model\Tests\SelectedTests.cs" />
     <Compile Include="Model\Tests\Services\NUnitExternal.cs" />
     <Compile Include="Model\Tests\Services\NUnitXmlTestService.cs" />
-    <Compile Include="Model\Tests\Services\TestsLoadContext - Copy.cs" />
+    <Compile Include="Model\Tests\Services\TestsRunContext.cs" />
     <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
     <Compile Include="Model\Tests\TestsLoader.cs" />
