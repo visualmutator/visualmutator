@@ -162,10 +162,10 @@
                     };
                     Func<INamespaceTypeDefinition, string> namespaceExtractor = typeDef => 
                         typeDef.ContainingUnitNamespace.Name.Value;
-                    Func<INamespaceTypeDefinition, string> nameExtractor = typeDef =>
-                       typeDef.Name.Value;
-                    new NamespaceGrouper().
-                        GroupTypes2(assemblyNode, "", namespaceExtractor, nameExtractor, typeNodeCreator,
+
+                    NamespaceGrouper<INamespaceTypeDefinition, CheckedNode>.
+                        GroupTypes(assemblyNode, namespaceExtractor, 
+                        (parent, name) => new TypeNamespaceNode(parent, name), typeNodeCreator,
                             ChooseTypes(module, constraints).ToList());
 
                     

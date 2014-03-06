@@ -44,6 +44,14 @@
         {
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
         }
+
+        [Test]
+        public void TestTreeBuilding()
+        {
+           
+        }
+
+        /*
         [Test]
         public void Test1()
         {
@@ -108,7 +116,7 @@
             Assert.IsNotNull(loadTests);
         }
 
-        /* [Test]
+         [Test]
         public void Test1()
         {
             List<ITest> testClasses;

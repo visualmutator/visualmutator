@@ -211,7 +211,9 @@
 
             System.Action<CheckedNode, ICollection<MutationTarget>> typeNodeCreator = (parent, targets) =>
                 {
-                    foreach (var byTypeGrouping in targets.GroupBy(t => t.TypeName))
+                    foreach (var byTypeGrouping in targets
+                        .OrderBy(t => t.TypeName)
+                        .GroupBy(t => t.TypeName))
                     {
                         var type = new TypeNode(parent, byTypeGrouping.Key);
                         parent.Children.Add(type);
@@ -241,12 +243,13 @@
                 };
 
             Func<MutationTarget, string> namespaceExtractor = target => target.NamespaceName;
-            Func<MutationTarget, string> nameExtractor = target => target.TypeName;
 
-            new NamespaceGrouper().
-                GroupTypes2(assemblyNode, "", namespaceExtractor, nameExtractor, typeNodeCreator, 
-                    mutationTargets.Values.SelectMany(a=>a).ToList());
-
+            NamespaceGrouper<MutationTarget, CheckedNode>.GroupTypes(assemblyNode, 
+                namespaceExtractor, 
+                (parent, name) => new TypeNamespaceNode(parent, name), 
+                typeNodeCreator,
+                mutationTargets.Values.SelectMany(a => a).ToList());
+          
 
             return assemblyNode;
 

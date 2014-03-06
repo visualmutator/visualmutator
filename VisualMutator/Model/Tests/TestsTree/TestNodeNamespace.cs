@@ -4,6 +4,7 @@
 
     using System.Collections.Generic;
     using System.Linq;
+    using UsefulTools.CheckboxedTree;
 
     #region Usings
 
@@ -15,8 +16,8 @@
 
     public class TestNodeNamespace : TestTreeNode
     {
-     
-        public TestNodeNamespace(TestNodeAssembly parent, string name)
+
+        public TestNodeNamespace(TestTreeNode parent, string name)
             : base(parent, name, true)
         {
         }

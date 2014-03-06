@@ -13,6 +13,7 @@
     using Infrastructure;
     using LinqLib.Operators;
     using log4net;
+    using Mutations;
     using Mutations.MutantsTree;
     using Services;
     using StoringMutants;
@@ -65,6 +66,7 @@
         private bool _testsLoaded;
 
         private MutationTestingSession _currentSession;
+        private readonly TestResultTreeCreator _testResultTreeCreator;
 
         public TestsContainer(
             NUnitXmlTestService nunit, 
@@ -79,6 +81,7 @@
             {
                 nunit//,ms
             };
+            _testResultTreeCreator = new TestResultTreeCreator();
         }
        
 
@@ -314,10 +317,12 @@
             return Task.WhenAll(tasks);
         }
 
-
         public IEnumerable<TestNodeNamespace> CreateMutantTestTree(Mutant mutant)
         {
-            throw new NotImplementedException();
+            List<TmpTestNodeMethod> nodeMethods = mutant.TestRunContexts
+                .SelectMany(c => c.TestResults.ResultMethods).ToList();
+
+            return _testResultTreeCreator.CreateMutantTestTree(nodeMethods);
         }
     }
 }

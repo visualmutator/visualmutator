@@ -104,7 +104,7 @@
           //  service.RunTests(session);
 
             Thread.Sleep(15000);
-            Console.WriteLine(":session.TestMap.Count : " + session.TestsByAssembly.Count);
+           // Console.WriteLine(":session.TestMap.Count : " + session.TestsByAssembly.Count);
             
                 
         }
@@ -152,8 +152,8 @@
                                      MutationTestsHelper.DsaTestsPath, 
                                      MutationTestsHelper.DsaTestsPath2
                                  };
-            Task<ProcessResults> task = service.RunNUnitConsole(path, assemblies,
-                "muttest-results.xml", new SelectedTests());
+            Task<ProcessResults> task = service.RunNUnitConsole(path, MutationTestsHelper.DsaTestsPath,
+                "muttest-results.xml", new SelectedTests(new List<TestId>(), ""));
 
             task.Wait();
 
@@ -180,10 +180,10 @@
             tn.FullName = "Dsa.Test.DataStructures.SetTest.DuplicateObjectTest";            
             var tn2 = new TestName();
             tn2.FullName = "Dsa.Test.DataStructures.SetTest.ContainsTest";
-            Task<ProcessResults> task = service.RunNUnitConsole(nunitpath, assemblies,
-                "muttest-results.xml", new SelectedTests(){TestIds = new List<TestId> { 
+            Task<ProcessResults> task = service.RunNUnitConsole(nunitpath, MutationTestsHelper.DsaTestsPath,
+                "muttest-results.xml", new SelectedTests( new List<TestId> { 
                     new NUnitTestId(tn), 
-                    new NUnitTestId(tn2) }});
+                    new NUnitTestId(tn2) }, ""));
 
             task.Wait();
 

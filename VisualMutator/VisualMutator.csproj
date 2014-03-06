@@ -331,6 +331,7 @@
     <Compile Include="Model\Tests\Services\TestsRunContext.cs" />
     <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
+    <Compile Include="Model\Tests\TestResultTreeCreator.cs" />
     <Compile Include="Model\Tests\TestsLoader.cs" />
     <Compile Include="Model\Tests\TestsSelector.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeAssembly.cs" />
