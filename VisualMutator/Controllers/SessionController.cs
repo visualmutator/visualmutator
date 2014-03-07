@@ -48,7 +48,6 @@
         private readonly XmlResultsGenerator _xmlResultsGenerator;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
-        private readonly ICciModuleSource _commonCompiler;
 
         private int _allMutantsCount;
 
@@ -81,8 +80,7 @@
             XmlResultsGenerator xmlResultsGenerator,
             IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
-            ICodeDifferenceCreator codeDifferenceCreator,
-            ICciModuleSource commonCompiler)
+            ICodeDifferenceCreator codeDifferenceCreator)
         {
             MutantsCreationFactory = mutantsCreationFactory;
             _svc = svc;
@@ -96,7 +94,6 @@
             _xmlResultsGenerator = xmlResultsGenerator;
             _resultsSavingFactory = resultsSavingFactory;
             _codeDifferenceCreator = codeDifferenceCreator;
-            _commonCompiler = commonCompiler;
             _sessionState = SessionState.NotStarted;
 
             _sessionEventsSubject = new Subject<SessionEventArgs>();
@@ -110,15 +107,6 @@
             }
         }
 
-
-        public MutationTestingSession Session
-        {
-            get
-            {
-                return _currentSession;
-            }
-            
-        }
 
         public MutantDetailsController MutantDetailsController
         {
@@ -138,42 +126,7 @@
         }
 
       
-        public void OnlyCreateMutants(MutationSessionChoices choices)
-        {
-            _sessionState = SessionState.Running;
-
-            RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
-
-            _svc.Threading.ScheduleAsync(() =>
-            {
-
-                _currentSession = new MutationTestingSession
-                {
-                    Filter = choices.Filter,
-                    Choices = choices,
-                };
-                _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
-
-                _mutantsContainer.Initialize(choices.SelectedOperators, 
-                    choices.MutantsCreationOptions, choices.Filter);
-
-                AssemblyNode oper;
-                Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out oper);
-
-                _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
-                StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.ProjectFilesClone,
-                    changelessMutant);
-               
-                TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
-
-            },
-            () =>
-            {
-                CreateMutants(continuation: SaveMutants);
-            },
-            onException: FinishWithError);
-        }
-
+   
 
         private void TryVerifyPreCheckMutantIfAllowed(StoredMutantInfo storedMutantInfo, Mutant changelessMutant)
         {
@@ -187,41 +140,6 @@
             }
         }
 
-
-        private void SaveMutants()
-        {
-            _svc.Threading.ScheduleAsync(() =>
-            {
-                
-                var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.SavingMutants);
-    
-                Action<Mutant, StoredMutantInfo> verify = (mutant, storageInfo) => {};
-                if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
-                {
-                    verify = (mutant, storageInfo) => _testsContainer.VerifyMutant(storageInfo, mutant);
-                }
-
-                //        StoredMutantInfo storedMutantInfo = _testsContainer.StoreMutant(_currentSession.TestEnvironment, changelessMutant);
-
-                _mutantsFileManager.WriteMutantsToDisk(_currentSession.Choices.MutantsCreationFolderPath,
-                        _currentSession.MutantsGrouped, verify,counter);
-
-
-                XDocument results = _xmlResultsGenerator.GenerateResults(_currentSession, includeDetailedTestResults: false, 
-                    includeCodeDifferenceListings: true);
-
-                string resultsFilePath = Path.Combine(_currentSession.Choices.MutantsCreationFolderPath, "Results.xml");
-                using (var writer = _svc.FileSystem.File.CreateText(resultsFilePath))
-                {
-                    writer.Write(results.ToString());
-                }
-
-            },
-           onGui: Finish,
-           onException: FinishWithError);
-           
-
-        }
 
         public void OnTestingStarting(string directory, Mutant mutant)
         {
@@ -567,7 +485,7 @@
         public void SaveResults()
         {
             var resultsSavingController = _resultsSavingFactory.Create();
-            resultsSavingController.Run(Session);
+            resultsSavingController.Run(_currentSession);
         }
     }
 

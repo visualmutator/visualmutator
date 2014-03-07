@@ -37,29 +37,26 @@
         protected readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-
         protected readonly IOperatorsManager _operatorsManager;
-        private readonly IHostEnviromentConnection _hostEnviroment;
-        protected readonly ITestsContainer _testsContainer;
+        protected readonly ITypesManager _typesManager;
         private readonly TestsLoader _testsLoader;
-        private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
+
+        private readonly IHostEnviromentConnection _hostEnviroment;
         private readonly IFileSystemManager _fileManager;
 
         protected readonly CommonServices _svc;
-
-        protected readonly ITypesManager _typesManager;
-
+        private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
         protected readonly CreationViewModel _viewModel;
 
 
         public MutationSessionChoices Result { get; protected set; }
+
 
         public CreationController(
             CreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
-            ITestsContainer testsContainer,
             TestsLoader testsLoader,
             IFactory<MutantsSavingController> mutantsSavingFactory,
             IFileSystemManager fileManager,
@@ -70,7 +67,6 @@
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
-            _testsContainer = testsContainer;
             _testsLoader = testsLoader;
             _mutantsSavingFactory = mutantsSavingFactory;
             _fileManager = fileManager;

@@ -128,6 +128,12 @@
 
             Kernel.InjectChildFactory<SessionController>(childKernel =>
             {
+
+                childKernel.InjectChildFactory<SessionController>(ch =>
+                {
+
+                });
+
                 childKernel.Bind<SessionController>().ToSelf().AndFromFactory();
 
                 childKernel.Bind<CreationController>().ToSelf().AndFromFactory();

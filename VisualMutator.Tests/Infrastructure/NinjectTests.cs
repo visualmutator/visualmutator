@@ -76,10 +76,14 @@
             Assert.AreNotSame(someTimedModule1.InnerModule, someTimedModule2.InnerModule);
 
             SomeTimedObject someTimedObject = someTimedModule1.ObjFactory.CreateWithParams(1);
+            
+            
             Assert.AreSame(someTimedObject.ModuleTimed, someTimedModule1.InnerModule);
             Assert.AreSame(someTimedObject.Module, main2);
-            
 
+            SomeTimedObject someTimedObject2 = someTimedModule1.ObjFactory.CreateWithParams(2);
+            Assert.AreNotSame(someTimedObject2.TimedObjectInner, someTimedObject.TimedObjectInner);
+            Assert.AreSame(someTimedObject2.TimedObjectInner, someTimedObject2.InnerInner.Inner);
         }
         
         public class TestModuleChilds : NinjectModule
@@ -90,8 +94,17 @@
                 Kernel.Bind<SomeMainModule>().ToSelf().InSingletonScope();
                 Kernel.InjectChildFactory<SomeTimedModule>(childKernel =>
                 {
-                    childKernel.Bind<SomeTimedObject>().ToSelf().AndFromFactory();
+                    //childKernel.Bind<SomeTimedObject>().ToSelf().AndFromFactory();
                     childKernel.Bind<SomeInnerModule>().ToSelf().InSingletonScope();
+
+                    childKernel.InjectChildFactory<SomeTimedObject>(child =>
+                    {
+                        child.Bind<SomeTimedObject>().ToSelf().InSingletonScope();
+                        child.Bind<SomeTimedObjectInner>().ToSelf().InSingletonScope();
+                        child.Bind<SomeTimedObjectInnerInner>().ToSelf().InSingletonScope();
+
+                    });
+
                 });
                 
                 Kernel.Bind<SomeObject>().ToSelf().AndFromFactory();
@@ -121,6 +134,29 @@
                 get { return _objFactory; }
             }
         }
+        public class SomeTimedModule2
+        {
+            public SomeInnerModule InnerModule
+            {
+                get;
+                set;
+            }
+            private readonly IFactory<SomeTimedObject> _objFactory;
+
+            public SomeTimedModule2(IFactory<SomeTimedObject> objFactory, SomeInnerModule innerModule)
+            {
+                InnerModule = innerModule;
+                _objFactory = objFactory;
+            }
+
+            public IFactory<SomeTimedObject> ObjFactory
+            {
+                get
+                {
+                    return _objFactory;
+                }
+            }
+        }
         public class SomeObject
         {
             private readonly SomeMainModule _module;
@@ -145,12 +181,19 @@
         public class SomeTimedObject
         {
             public SomeInnerModule ModuleTimed { get; set; }
+            public SomeTimedObjectInner TimedObjectInner { get; set; }
+            public SomeTimedObjectInnerInner InnerInner { get; set; }
             private readonly SomeMainModule _module;
             private readonly int _parameter;
 
-            public SomeTimedObject(SomeMainModule module, SomeInnerModule moduleTimed, int parameter)
+            public SomeTimedObject(SomeMainModule module, 
+                SomeInnerModule moduleTimed,
+                SomeTimedObjectInner timedObjectInner,
+                SomeTimedObjectInnerInner innerInner, int parameter)
             {
                 ModuleTimed = moduleTimed;
+                TimedObjectInner = timedObjectInner;
+                InnerInner = innerInner;
                 _module = module;
                 _parameter = parameter;
             }
@@ -169,6 +212,29 @@
                 {
                     return _parameter;
                 }
+            }
+        }
+        public class SomeTimedObjectInner
+        {
+            public static int i = 0;
+            public int id;
+
+            public SomeTimedObjectInner()
+            {
+                id = i++;
+            }
+
+        }
+        public class SomeTimedObjectInnerInner
+        {
+            public SomeTimedObjectInner Inner { get; set; }
+            public static int i = 0;
+            public int id;
+
+            public SomeTimedObjectInnerInner(SomeTimedObjectInner inner)
+            {
+                Inner = inner;
+                id = i++;
             }
         }
     }

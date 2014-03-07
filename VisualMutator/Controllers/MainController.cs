@@ -202,10 +202,11 @@
             _log.Info("Starting mutation session...");
             if (choices.MutantsCreationFolderPath != null)
             {
-                _currenSessionController.OnlyCreateMutants(choices);
+               // _currenSessionController.OnlyCreateMutants(choices);
             }
             else
             {
+
                 _currenSessionController.RunMutationSession(choices);
             }
         }
