@@ -120,7 +120,7 @@
             var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
-            var container = new MutantsContainer(cci, utils);
+            var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
 
@@ -179,7 +179,7 @@
             ///////
             var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
-            var container = new MutantsContainer(cci, utils);
+            var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
             List<AssemblyNode> assemblyNodes = new List<AssemblyNode>

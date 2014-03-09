@@ -46,6 +46,7 @@
 
         protected readonly CommonServices _svc;
         private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
+        private readonly IBindingFactory<SessionController> _sessionFactory;
         protected readonly CreationViewModel _viewModel;
 
 
@@ -59,6 +60,7 @@
             IHostEnviromentConnection hostEnviroment,
             TestsLoader testsLoader,
             IFactory<MutantsSavingController> mutantsSavingFactory,
+            IBindingFactory<SessionController> sessionFactory,
             IFileSystemManager fileManager,
             CommonServices svc)
         {
@@ -69,6 +71,7 @@
             _hostEnviroment = hostEnviroment;
             _testsLoader = testsLoader;
             _mutantsSavingFactory = mutantsSavingFactory;
+            _sessionFactory = sessionFactory;
             _fileManager = fileManager;
             _svc = svc;
 
@@ -265,5 +268,9 @@
             }
         }
 
+        public SessionController CreateSession(MutationSessionChoices result)
+        {
+            return _sessionFactory.CreateWithBindings(result);
+        }
     }
 }

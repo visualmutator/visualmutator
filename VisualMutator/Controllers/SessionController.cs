@@ -40,14 +40,13 @@
         private readonly MutantDetailsController _mutantDetailsController;
 
         private readonly ITestsContainer _testsContainer;
-
-        private readonly IMutantsFileManager _mutantsFileManager;
+       
         private readonly IMutantsCache _mutantsCache;
 
 
-        private readonly XmlResultsGenerator _xmlResultsGenerator;
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
+        private readonly MutationSessionChoices _choices;
 
         private int _allMutantsCount;
 
@@ -69,34 +68,34 @@
         private List<Mutant> _testedMutants;
 
         private TestingProcessExtensionOptions _testingProcessExtensionOptions;
+        private List<IDisposable> _subscriptions;
 
         public SessionController(
             CommonServices svc,
             MutantDetailsController mutantDetailsController,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
-            IMutantsFileManager mutantsFileManager,
             IMutantsCache mutantsCache,
-            XmlResultsGenerator xmlResultsGenerator,
             IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
-            ICodeDifferenceCreator codeDifferenceCreator)
+            ICodeDifferenceCreator codeDifferenceCreator,
+            MutationSessionChoices choices)
         {
             MutantsCreationFactory = mutantsCreationFactory;
             _svc = svc;
             _mutantDetailsController = mutantDetailsController;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
-            _mutantsFileManager = mutantsFileManager;
             _mutantsCache = mutantsCache;
 
 
-            _xmlResultsGenerator = xmlResultsGenerator;
             _resultsSavingFactory = resultsSavingFactory;
             _codeDifferenceCreator = codeDifferenceCreator;
+            _choices = choices;
             _sessionState = SessionState.NotStarted;
 
             _sessionEventsSubject = new Subject<SessionEventArgs>();
+            _subscriptions = new List<IDisposable>();
         }
 
         public IObservable<SessionEventArgs> SessionEventsObservable
@@ -130,13 +129,13 @@
 
         private void TryVerifyPreCheckMutantIfAllowed(StoredMutantInfo storedMutantInfo, Mutant changelessMutant)
         {
-            if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled
+            if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled
                    && !_testsContainer.VerifyMutant(storedMutantInfo, changelessMutant))
             {
                 _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
                     changelessMutant.MutantTestSession.Exception.Message));
 
-                _currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
+                _choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
             }
         }
 
@@ -146,8 +145,11 @@
         
         }
 
-        public void RunMutationSession(MutationSessionChoices choices)
+        public void RunMutationSession(IObservable<ControlEvent> controlSource)
         {
+            Subscribe(controlSource);
+
+            MutationSessionChoices choices = _choices;
             _sessionState = SessionState.Running;
 
             RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
@@ -155,8 +157,6 @@
             _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
-               
-
                 _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
 
                 _mutantsContainer.Initialize(choices.SelectedOperators, 
@@ -168,7 +168,7 @@
                     Choices = choices,
                 };
 
-                _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
+                _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment();
                 _testsContainer.CreateTestSelections(choices.TestAssemblies);
 
                 if (choices.TestAssemblies.Select(a => a.TestsLoadContext.SelectedTests.TestIds.Count).Sum() == 0)
@@ -210,7 +210,7 @@
                     .OnTestingOfMutantStarting(_currentSession.ProjectFilesClone.ParentPath.Path, storedMutantInfo.AssembliesPaths);
 
                 _log.Info("Running tests for pure mutant...");
-                _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions, 
+                _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, 
                     storedMutantInfo, changelessMutant);
                 return changelessMutant;
 
@@ -243,6 +243,22 @@
             onException: FinishWithError);
         }
 
+        private void Subscribe(IObservable<ControlEvent> controlSource)
+        {
+            _subscriptions.Add(
+                controlSource.Where(ev => ev.Type == ControlEventType.Resume)
+                .Subscribe(o => ResumeOperations()));
+            _subscriptions.Add(
+                controlSource.Where(ev => ev.Type == ControlEventType.Pause)
+                .Subscribe(o => PauseOperations()));
+            _subscriptions.Add(
+                controlSource.Where(ev => ev.Type == ControlEventType.Stop)
+                .Subscribe(o => StopOperations()));
+            _subscriptions.Add(
+                controlSource.Where(ev => ev.Type == ControlEventType.SaveResults)
+                .Subscribe(o => SaveResults()));
+        }
+
         private void Finish()
         {
             if (_currentSession != null)
@@ -255,7 +271,12 @@
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             }
-            
+
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.Dispose();
+            }
+            _subscriptions.Clear();
             _sessionEventsSubject.OnCompleted();
         }
 
@@ -271,6 +292,11 @@
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             }
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.Dispose();
+            }
+            _subscriptions.Clear();
             _sessionEventsSubject.OnCompleted();
         }
 
@@ -283,8 +309,7 @@
             () =>
             {
 
-                var modulesProvider = _mutantsCache.WhiteCache.GetWhiteModules();
-                var mutantModules = _mutantsContainer.InitMutantsForOperators(modulesProvider, counter);
+                var mutantModules = _mutantsContainer.InitMutantsForOperators(counter);
                 _currentSession.MutantsGrouped = mutantModules;
             },
             () =>
@@ -332,10 +357,10 @@
                 try
                 {
                     //todo:
-                    _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment(_currentSession);
+                    _currentSession.ProjectFilesClone = _testsContainer.InitTestEnvironment();
                     var storedMutantInfo = _testsContainer.StoreMutant(_currentSession.ProjectFilesClone, mutant);
 
-                    if (_currentSession.Choices.MutantsCreationOptions.IsMutantVerificationEnabled)
+                    if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
                     {
                         _testsContainer.VerifyMutant(storedMutantInfo, mutant);
                     }
@@ -353,7 +378,7 @@
                     }
                     else
                     {
-                        _testsContainer.RunTestsForMutant(_currentSession.Choices.MutantsTestingOptions,
+                        _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions,
                            storedMutantInfo, mutant);
 
                         _testedMutants.Add(mutant);

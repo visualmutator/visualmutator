@@ -37,7 +37,7 @@
         void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, 
             Mutant mutant);
 
-        ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession);
+        ProjectFilesClone InitTestEnvironment();
 
 
         void CancelAllTesting();
@@ -57,6 +57,7 @@
         private readonly IFileSystemManager _fileManager;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
+        private readonly MutationSessionChoices _choices;
 
         private readonly IEnumerable<ITestService> _testServices;
 
@@ -65,18 +66,19 @@
         private bool _allTestingCancelled;
         private bool _testsLoaded;
 
-        private MutationTestingSession _currentSession;
         private readonly TestResultTreeCreator _testResultTreeCreator;
 
         public TestsContainer(
             NUnitXmlTestService nunit, 
             IMutantsFileManager mutantsFileManager,
             IFileSystemManager fileManager,
-            IAssemblyVerifier assemblyVerifier)
+            IAssemblyVerifier assemblyVerifier,
+            MutationSessionChoices choices)
         {
             _mutantsFileManager = mutantsFileManager;
             _fileManager = fileManager;
             _assemblyVerifier = assemblyVerifier;
+            _choices = choices;
             _testServices = new List<ITestService>
             {
                 nunit//,ms
@@ -104,9 +106,8 @@
             }
   
         }
-        public ProjectFilesClone InitTestEnvironment(MutationTestingSession currentSession)
+        public ProjectFilesClone InitTestEnvironment()
         {
-            _currentSession = currentSession;
             return _fileManager.CreateClone("InitTestEnvironment");
         }
 
@@ -180,7 +181,7 @@
                     .Subscribe(e => CancelCurrentTestRun());
 
                 var contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
-                    _currentSession.Choices.TestAssemblies).ToList();
+                    _choices.TestAssemblies).ToList();
 
                 _log.Info("Running tests for mutant " + mutant.Id);
                 var task = RunTests(contexts);
@@ -300,10 +301,10 @@
             foreach (var service in _testServices)
             {
                 service.Cancel();
-                if (_currentSession.Choices.MutantsTestingOptions
+                if (_choices.MutantsTestingOptions
                     .TestingProcessExtensionOptions.TestingProcessExtension != null)
                 {
-                    _currentSession.Choices.MutantsTestingOptions
+                    _choices.MutantsTestingOptions
                         .TestingProcessExtensionOptions.TestingProcessExtension.OnTestingCancelled();
                 }
             }

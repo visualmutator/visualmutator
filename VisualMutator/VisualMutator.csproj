@@ -262,6 +262,7 @@
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\ControlEvent.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
     <Compile Include="Model\Exceptions\StrongNameSignedAssemblyException.cs" />
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
+    <Compile Include="Model\MutationProcessor.cs" />
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />

@@ -51,7 +51,7 @@
             var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
-            var container = new MutantsContainer(cci, utils);
+            var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(new DisabledWhiteCache(), container);
             cache.WhiteCache.Initialize(new[]{filePath});
@@ -78,7 +78,7 @@
             var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
 
-            var container = new MutantsContainer(cci, utils);
+            var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(new DisabledWhiteCache(), container);
             cache.WhiteCache.Initialize(new[] { filePath });
@@ -157,7 +157,7 @@
             };
             container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var assemblyNodes = container.InitMutantsForOperators(ccii, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children, leafsOnly:true).Cast<Mutant>()
                 .Select(m => new MutMod(m, cache.GetMutatedModules(m))).ToList();
@@ -174,14 +174,14 @@
 
             container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var assemblyNodes = container.InitMutantsForOperators(ccii, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators( ProgressCounter.Inactive());
             return assemblyNodes.Single().Children.SelectManyRecursive(g => g.Children).OfType<MutantGroup>();
 
         }
         public static List<Mutant> CreateMutantsLight(IMutationOperator operatorr,
             CciModuleSource ccii, int numberOfMutants, out CodeDifferenceCreator diff)
         {
-            var container = new MutantsContainer(ccii, new OperatorUtils(ccii));
+            var container = new MutantsContainer(ccii, null, new OperatorUtils(ccii));
             var visualizer = new CodeVisualizer(ccii);
             var cache = new MutantsCache(new DisabledWhiteCache() ,container);
             cache.setDisabled(disableCache: false);
@@ -197,7 +197,7 @@
 
             container.Initialize(operatorr.InList(), mutantsCreationOptions, MutationFilter.AllowAll());
 
-            var assemblyNodes = container.InitMutantsForOperators(ccii, ProgressCounter.Inactive());
+            var assemblyNodes = container.InitMutantsForOperators( ProgressCounter.Inactive());
             return assemblyNodes.Single().Children.SelectManyRecursive(
                 g => g.Children??new NotifyingCollection<CheckedNode>()).OfType<Mutant>().ToList();
 

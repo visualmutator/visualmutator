@@ -36,12 +36,13 @@
         IModuleSource ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, CciModuleSource moduleSource);
 
 
-        IList<AssemblyNode> InitMutantsForOperators(IModuleSource originalModules, ProgressCounter percentCompleted);
+        IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
     {
         private readonly ICciModuleSource _cci;
+        private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
 
         private bool _debugConfig ;
@@ -58,12 +59,15 @@
         private ICollection<IMutationOperator> _mutOperators;
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
-        public MutantsContainer(ICciModuleSource cci, 
+        public MutantsContainer(
+            ICciModuleSource cci, 
+            IWhiteCache whiteCache,
             IOperatorUtils operatorUtils
         
             )
         {
             _cci = cci;
+            _whiteCache = whiteCache;
             _operatorUtils = operatorUtils;
 
         }
@@ -108,8 +112,7 @@
         }
 
 
-        public IList<AssemblyNode> InitMutantsForOperators(
-            IModuleSource originalModules, ProgressCounter percentCompleted)
+        public IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted)
         {
             var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
@@ -117,7 +120,7 @@
             int[] id = { 1 };
             Func<int> genId = () => id[0]++;
 
-
+            var originalModules = _whiteCache.GetWhiteModules();
             percentCompleted.Initialize(originalModules.Modules.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 

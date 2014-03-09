@@ -24,33 +24,34 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MainViewModel _viewModel;
-        private readonly IFactory<SessionController> _sessionControllerFactory;
+        private readonly IFactory<CreationController> _creationControllerFactory;
         private readonly IHostEnviromentConnection _host;
 
 
         private readonly CommonServices _svc;
 
-        private SessionController _currenSessionController;
 
-        private List<IDisposable> _subscriptions; 
+        private List<IDisposable> _subscriptions;
+        private Subject<ControlEvent> _controlSource;
+        private SessionController _currentSessionController;
 
 
         public MainController(
             MainViewModel viewModel,
-            IFactory<SessionController> sessionControllerFactory,
+            IFactory<CreationController> creationControllerFactory,
             IHostEnviromentConnection host,
            
             CommonServices svc)
         {
             _viewModel = viewModel;
-            _sessionControllerFactory = sessionControllerFactory;
+            _creationControllerFactory = creationControllerFactory;
             _host = host;
 
-
+            _controlSource = new Subject<ControlEvent>();
             _svc = svc;
 
 
-            _viewModel.CommandCreateNewMutants = new SmartCommand(RunMutationSession,
+            _viewModel.CommandCreateNewMutants = new SmartCommand(() => RunMutationSession(),
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
@@ -76,6 +77,103 @@
 
             _viewModel.CommandTest = new SmartCommand(Test);
 
+        }
+
+     
+        public void RunMutationSessionForCurrentPosition()
+        {
+            ClassAndMethod classAndMethod;
+            if (_host.GetCurrentClassAndMethod(out classAndMethod) && classAndMethod.MethodName != null)
+            {
+                _log.Info("Showing mutation session window.");
+
+                RunMutationSession(classAndMethod);
+
+            }
+        }
+        public void RunMutationSession(ClassAndMethod classAndMethod = null)
+        {
+            _log.Info("Showing mutation session window.");
+
+            var mutantsCreationController = _creationControllerFactory.Create();
+            mutantsCreationController.Run(classAndMethod);
+            if (mutantsCreationController.HasResults)
+            {
+                SessionController sessionController = mutantsCreationController
+                    .CreateSession(mutantsCreationController.Result);
+                StartNewSession(sessionController, mutantsCreationController.Result);
+            }
+        }
+    
+        public void StartNewSession(SessionController newSessionController, MutationSessionChoices choices)
+        {
+            Clean();
+            _currentSessionController = newSessionController;
+
+            _viewModel.MutantDetailsViewModel = _currentSessionController.MutantDetailsController.ViewModel;
+
+            Subscribe(_currentSessionController);
+
+            _log.Info("Starting mutation session...");
+            if (choices.MutantsCreationFolderPath != null)
+            {
+               // _currenSessionController.OnlyCreateMutants(choices);
+            }
+            else
+            {
+
+                _currentSessionController.RunMutationSession(_controlSource);
+            }
+        }
+
+        public void PauseOperations()
+        {
+            SetState(OperationsState.Pausing);
+            _controlSource.OnNext(new ControlEvent(ControlEventType.Pause));
+        }
+        public void ResumeOperations()
+        {
+            _controlSource.OnNext(new ControlEvent(ControlEventType.Resume));
+        }
+
+        public void StopOperations()
+        {
+            _controlSource.OnNext(new ControlEvent(ControlEventType.Stop));
+
+        }
+        public void SaveResults()
+        {
+            _controlSource.OnNext(new ControlEvent(ControlEventType.SaveResults));
+        }
+
+        public void Initialize()
+        {
+            _viewModel.IsVisible = true;
+        }
+
+        public void Deactivate()
+        {
+            _controlSource.OnNext(new ControlEvent(ControlEventType.Stop));
+            Clean();
+            _viewModel.IsVisible = false;
+        }
+
+        private void Clean()
+        {
+            _viewModel.Clean();
+            if (_currentSessionController != null)
+            {
+                _currentSessionController.MutantDetailsController.Clean();
+            }
+            if (_subscriptions!=null)
+            {
+                foreach (var subscription in _subscriptions)
+                {
+                    subscription.Dispose();
+                }
+            }
+            _currentSessionController = null;
+            SetState(OperationsState.None);
         }
 
         private void Test()
@@ -107,7 +205,7 @@
         }
 
 
-       
+
         public void Subscribe(SessionController sessionController)
         {
             _subscriptions = new List<IDisposable>
@@ -161,111 +259,6 @@
 
         }
 
-        public void RunMutationSession()
-        {
-            _log.Info("Showing mutation session window.");
-
-            var newSessionController = _sessionControllerFactory.Create();
-            var mutantsCreationController = newSessionController.MutantsCreationFactory.Create();
-             mutantsCreationController.Run();
-            if (mutantsCreationController.HasResults)
-            {
-                StartNewSession(newSessionController, mutantsCreationController.Result);
-            }
-        }
-        public void RunMutationSessionForCurrentPosition()
-        {
-            ClassAndMethod classAndMethod;
-            if (_host.GetCurrentClassAndMethod(out classAndMethod) && classAndMethod.MethodName != null)
-            {
-                _log.Info("Showing mutation session window.");
-
-                var newSessionController = _sessionControllerFactory.Create();
-                var mutantsCreationController = newSessionController.MutantsCreationFactory.Create();
-                mutantsCreationController.Run(classAndMethod);
-                if (mutantsCreationController.HasResults)
-                {
-                    StartNewSession(newSessionController, mutantsCreationController.Result);
-                }
-            }
-            //throw new NotImplementedException();
-        }
-        public void StartNewSession(SessionController newSessionController, MutationSessionChoices choices)
-        {
-            Clean();
-            _currenSessionController = newSessionController;
-
-            _viewModel.MutantDetailsViewModel = _currenSessionController.MutantDetailsController.ViewModel;
-
-            Subscribe(_currenSessionController);
-
-            _log.Info("Starting mutation session...");
-            if (choices.MutantsCreationFolderPath != null)
-            {
-               // _currenSessionController.OnlyCreateMutants(choices);
-            }
-            else
-            {
-
-                _currenSessionController.RunMutationSession(choices);
-            }
-        }
-
-        public void PauseOperations()
-        {
-            SetState(OperationsState.Pausing);
-            _currenSessionController.PauseOperations();
-        }
-        public void ResumeOperations()
-        {
-           _currenSessionController.ResumeOperations();
-        }
-
-        public void StopOperations()
-        {
-        
-            _currenSessionController.StopOperations();
-
-        }
-        public void SaveResults()
-        {
-            
-            _currenSessionController.SaveResults();
-        }
-
-        public void Initialize()
-        {
-            _viewModel.IsVisible = true;
-        }
-
-        public void Deactivate()
-        {
-            if (_currenSessionController != null)
-            {
-                _currenSessionController.StopOperations();
-            }
-            Clean();
-            _viewModel.IsVisible = false;
-        }
-
-        private void Clean()
-        {
-            _viewModel.Clean();
-            if (_currenSessionController != null)
-            {
-                _currenSessionController.MutantDetailsController.Clean();
-            }
-            if (_subscriptions!=null)
-            {
-                foreach (var subscription in _subscriptions)
-                {
-                    subscription.Dispose();
-                }
-            }
-            _currenSessionController = null;
-            SetState(OperationsState.None);
-        }
-       
         public MainViewModel ViewModel
         {
             get

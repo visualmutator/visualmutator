@@ -167,7 +167,7 @@ namespace Ns
             ///////
             var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
-            var container = new MutantsContainer(cci, utils);
+            var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
             cci.AppendFromFile(MutationTestsHelper.DsaPath);
@@ -189,7 +189,7 @@ namespace Ns
             ///////
             var cci = new CciModuleSource();
             var utils = new OperatorUtils(cci);
-            var container = new MutantsContainer(cci, utils);
+            var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache( container);
             cache.setDisabled(disableCache: false);
