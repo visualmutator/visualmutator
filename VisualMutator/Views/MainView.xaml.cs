@@ -43,15 +43,35 @@
             var item = ((TreeViewItem) sender);
             var mutant = (Mutant)((TreeViewItem)sender).DataContext;
             item.IsSelected = true;
+            item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
             if (mutant.State == MutantResultState.Error)
             {
-                item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
+                (item.ContextMenu.Items[0] as MenuItem).IsEnabled = true;
+            }
+         
+            if(mutant.IsEquivalent)
+            {
+                (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Visible;
+                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Collapsed;
             }
             else
             {
-                item.ContextMenu = null;
-                Tree.ContextMenu = null;
+                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Visible;
+                (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Collapsed;
             }
+
+        }
+
+        private void MenuItemMarkEquivalent_Click(object sender, RoutedEventArgs e)
+        {
+            var mutant = ((Mutant) Tree.SelectedItem);
+            mutant.IsEquivalent = true;
+        }
+
+        private void MenuItemUnmarkEquivalent_Click(object sender, RoutedEventArgs e)
+        {
+            var mutant = ((Mutant)Tree.SelectedItem);
+            mutant.IsEquivalent = false;
         }
     }
 

@@ -248,7 +248,6 @@
             {
                 SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                     .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
-                Assemblies = _viewModel.TypesTreeMutate.Assemblies,
                 AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                 ProjectPaths = _viewModel.ProjectPaths.ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
@@ -268,9 +267,9 @@
             }
         }
 
-        public SessionController CreateSession(MutationSessionChoices result)
+        public SessionController CreateSession()
         {
-            return _sessionFactory.CreateWithBindings(result);
+            return _sessionFactory.CreateWithBindings(Result);
         }
     }
 }

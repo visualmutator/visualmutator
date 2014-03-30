@@ -27,7 +27,6 @@
         private readonly TestsContainer _testsContainer;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private Mutant _currentMutant;
-        private IList<AssemblyNode> _originalAssemblies;
         private IDisposable _langObs;
         private IDisposable _tabObs;
 
@@ -44,9 +43,8 @@
             
 
         }
-        public void Initialize(IList<AssemblyNode> assemblies)
+        public void Initialize()
         {
-            _originalAssemblies = assemblies;
             _tabObs = _viewModel.WhenPropertyChanged(_ => _.SelectedTabHeader)
                 .Where(header => _currentMutant != null)
                 .Subscribe(LoadData);
@@ -61,6 +59,15 @@
             _currentMutant = mutant;
 
             LoadData(_viewModel.SelectedTabHeader);
+
+        }
+        public void CleanDetails()
+        {
+            _log.Debug("CleanDetails in object: " + ToString() + GetHashCode());
+
+            _viewModel.IsCodeLoading = false;
+            _viewModel.ClearCode();
+            _viewModel.TestNamespaces.Clear();
 
         }
         public void LoadData(string header)

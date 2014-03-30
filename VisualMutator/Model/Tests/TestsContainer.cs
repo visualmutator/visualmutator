@@ -44,7 +44,7 @@
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
-        StoredMutantInfo StoreMutant(ProjectFilesClone testEnvironment, Mutant changelessMutant);
+        StoredMutantInfo StoreMutant(Mutant changelessMutant);
      //   TestsRootNode LoadTestsPublic(IEnumerable<string> paths);
 
    
@@ -134,23 +134,14 @@
 
         }
 
-        public StoredMutantInfo StoreMutant(ProjectFilesClone testEnvironment, Mutant mutant)
+        public StoredMutantInfo StoreMutant( Mutant mutant)
         {
-            return _mutantsFileManager.StoreMutant(testEnvironment.ParentPath.Path,  mutant);
+            var clone = InitTestEnvironment();
+            var result = new StoredMutantInfo(clone);
+            _mutantsFileManager.StoreMutant(result, mutant);
+            return result;
         }
-//        public TestsRootNode LoadTestsPublic(IEnumerable<string> paths)
-//        {
-//          //  var mutantTestSession = new MutantTestSession();
-//            var root = LoadTests(paths.ToList());
-//            
-//            
-//           // session.TestsByAssembly
-//           // var root = new RootNode();
-//            //root.Children.AddRange(session.TestNamespaces);
-//            //root.IsIncluded = true;
-//
-//            return root;
-//        }
+
 
         public void RunTestsForMutant(MutantsTestingOptions options,
             StoredMutantInfo storedMutantInfo, Mutant mutant)

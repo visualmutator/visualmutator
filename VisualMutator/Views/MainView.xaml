@@ -112,8 +112,9 @@
 
             <TreeView.Resources>
                 <ContextMenu x:Key="ErrorMutantContextMenu" StaysOpen="true">
-                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" />
-
+                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" IsEnabled="false"/>
+                    <MenuItem Header="Mark Equivalent" Click="MenuItemMarkEquivalent_Click" Visibility="Collapsed" />
+                    <MenuItem Header="Unmark Equivalent" Click="MenuItemUnmarkEquivalent_Click" Visibility="Collapsed" />
                 </ContextMenu>
 
                 <HierarchicalDataTemplate DataType="{x:Type types:AssemblyNode}"

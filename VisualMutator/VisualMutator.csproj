@@ -195,6 +195,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.util.dll</HintPath>
     </Reference>
+    <Reference Include="PowerCollections">
+      <HintPath>..\packages\XAct.Wintellect.PowerCollections.0.0.1\lib\net20\PowerCollections.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -266,6 +269,7 @@
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />
+    <Compile Include="Controllers\SessionEventArgs.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
@@ -321,6 +325,7 @@
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />
     <Compile Include="Model\TestGeneration\GenerationInterface.cs" />
     <Compile Include="Model\TestGeneration\ValueSupplier.cs" />
+    <Compile Include="Model\TestingProcess.cs" />
     <Compile Include="Model\Tests\Custom\AspNetTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\DefaultTestingProcessExtension.cs" />
     <Compile Include="Model\Tests\Custom\ITestingProcessExtension.cs" />

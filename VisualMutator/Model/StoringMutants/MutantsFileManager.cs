@@ -22,20 +22,14 @@
 
     public interface IMutantsFileManager
     {
+        void StoreMutant(StoredMutantInfo directory, IModuleSource mutant);
 
-
-        void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress);
-        StoredMutantInfo StoreMutant(string directory, IModuleSource mutant);
-
-        StoredMutantInfo StoreMutant(string directory, Mutant mutant);
+        void StoreMutant(StoredMutantInfo directory, Mutant mutant);
     }
 
  
     public class MutantsFileManager : IMutantsFileManager
     {
-       
-    
-
         private readonly IMutantsCache _mutantsCache;
 
         private readonly ICciModuleSource _moduleSource;
@@ -43,9 +37,6 @@
         private readonly IFileSystem _fs;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-
-
 
         public MutantsFileManager(
             IMutantsCache mutantsCache,
@@ -58,78 +49,24 @@
             _fs = fs;
         }
 
-
-        public void WriteMutantsToDisk(string rootFolder, IList<AssemblyNode> mutantsInOperators, 
-            System.Action<Mutant, StoredMutantInfo> verify, ProgressCounter onSavingProgress)
+        public void StoreMutant(StoredMutantInfo info, IModuleSource assembliesProvider)
         {
-
-           
-          //  var storedMutantsList = new List<Tuple<Mutant, StoredMutantInfo>>();
-
-            onSavingProgress.Initialize(mutantsInOperators.Cast<CheckedNode>().SelectManyRecursive(
-                    g => g.Children??new NotifyingCollection<CheckedNode>(), leafsOnly:true).Count(),
-                    ProgressMode.Before);
-
-            foreach (AssemblyNode assembly in mutantsInOperators)
-            {
-                string subFolder = Path.Combine(rootFolder, assembly.Name.RemoveInvalidPathCharacters());
-                
-                _fs.Directory.CreateDirectory(subFolder);
-                //TODO: to subfolders by group
-                foreach (Mutant mutant in assembly.Children.SelectManyRecursive(
-                    g => g.Children??new NotifyingCollection<CheckedNode>(), leafsOnly:true) )
-                {
-                    onSavingProgress.Progress();
-                    try
-                    {
-                        mutant.State = MutantResultState.Creating;
-                        IModuleSource assembliesProvider = _mutantsCache.GetMutatedModules(mutant);
-                    
-                        string mutantFolder = Path.Combine(subFolder,mutant.Id.ToString());
-                        _fs.Directory.CreateDirectory(mutantFolder);
-
-
-
-                        StoredMutantInfo storedMutantInfo = StoreMutant(mutantFolder, assembliesProvider);
-                        verify(mutant, storedMutantInfo);
-                    }
-                    catch (Exception e)
-                    {
-                        mutant.MutantTestSession.ErrorDescription = "Error ocurred";
-                        mutant.MutantTestSession.ErrorMessage = e.Message;
-                        mutant.MutantTestSession.Exception = e;
-                        mutant.State = MutantResultState.Error;
-                        _log.Error("Set mutant " + mutant.Id + " error: " + mutant.State + " message: " + e.Message);
-                    }
-
-
-                    mutant.State = MutantResultState.Live;
-                   // storedMutantsList.Add(Tuple.Create(mutant,));
-                }
-                
-            }
-        }
-
-
-        public StoredMutantInfo StoreMutant(string directory, IModuleSource assembliesProvider)
-        {
-            var result = new StoredMutantInfo();
+            
             
             foreach (IModule module in assembliesProvider.Modules)
             {
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(directory, module.Name.Value + ".dll");
+                string file = Path.Combine(info.Directory, module.Name.Value + ".dll");
                 _moduleSource.WriteToFile(module, file);
-                result.AssembliesPaths.Add(file);
+                info.AssembliesPaths.Add(file);
             }
-            return result;
         }
 
 
-        public StoredMutantInfo StoreMutant(string directory, Mutant mutant)
+        public void StoreMutant(StoredMutantInfo info, Mutant mutant)
         {
-            return StoreMutant(directory, _mutantsCache.GetMutatedModules(mutant));
+            StoreMutant(info, _mutantsCache.GetMutatedModules(mutant));
 
         }
 

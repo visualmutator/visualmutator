@@ -19,7 +19,6 @@ namespace VisualMutator.Model
         public MutationSessionChoices()
         {
             SelectedOperators = new List<IMutationOperator>();
-            Assemblies = new List<AssemblyNode>();
             ProjectPaths = new List<DirectoryPathAbsolute>();
            // SelectedTypes = new LoadedTypes(new List<INamespaceTypeDefinition>());
             MutantsTestingOptions= new MutantsTestingOptions();
@@ -29,7 +28,6 @@ namespace VisualMutator.Model
         }
 
         public IList<IMutationOperator> SelectedOperators { get; set; }
-        public IList<AssemblyNode> Assemblies { get; set; }
         public IList<DirectoryPathAbsolute> ProjectPaths { get; set; }
         //public LoadedTypes SelectedTypes { get; set; }
         public MutationFilter Filter { get; set; }

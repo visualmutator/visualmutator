@@ -99,8 +99,7 @@
             mutantsCreationController.Run(classAndMethod);
             if (mutantsCreationController.HasResults)
             {
-                SessionController sessionController = mutantsCreationController
-                    .CreateSession(mutantsCreationController.Result);
+                SessionController sessionController = mutantsCreationController.CreateSession();
                 StartNewSession(sessionController, mutantsCreationController.Result);
             }
         }
@@ -254,7 +253,15 @@
                  }),
 
                _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
-                   .Subscribe(sessionController.LoadDetails)
+                   .Subscribe(x =>
+                   {
+                       sessionController.LoadDetails(x);
+                       sessionController.TestWithHighPriority(x);
+                   } ),
+               _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).Where(i => !(i is Mutant))
+                   .Subscribe(x => sessionController.CleanDetails()),
+               _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).Where(i => !(i is Mutant))
+                   .Subscribe(x => sessionController.CleanDetails())
             };
 
         }
