@@ -138,14 +138,14 @@
         }
 
 
-        public void RunTestsForMutant(MutantsTestingOptions options,
+        public Task RunTestsForMutant(MutantsTestingOptions options,
     StoredMutantInfo storedMutantInfo, Mutant mutant)
         {
             if (_allTestingCancelled)
             {
                 mutant.State = MutantResultState.Killed;
                 mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
-                return;
+                return null;
             }
             bool testsLoaded = false;
             var sw = new Stopwatch();
@@ -171,15 +171,25 @@
 
                 _log.Info("Running tests for mutant " + mutant.Id);
                 var task = RunTests(contexts);
-                task.Wait();
-                _log.Debug("Finished waiting for tests. ");
-                mutant.TestRunContexts = contexts;
+                return task.ContinueWith(t =>
+                {
+                    _log.Debug("Finished waiting for tests. ");
+                    mutant.TestRunContexts = contexts;
 
-                timoutDisposable.Dispose();
+                    timoutDisposable.Dispose();
 
-                ResolveMutantState(mutant);
+                    ResolveMutantState(mutant);
 
-                mutant.MutantTestSession.IsComplete = true;
+                    mutant.MutantTestSession.IsComplete = true;
+
+                    if (timoutDisposable != null)
+                    {
+                        timoutDisposable.Dispose();
+                    }
+                    sw.Stop();
+                    mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+                });
+
             }
             catch (TestingCancelledException)
             {
@@ -196,18 +206,13 @@
             {
 
 
-                if (timoutDisposable != null)
-                {
-                    timoutDisposable.Dispose();
-                }
-                sw.Stop();
-                mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+               
             }
 
-
+            return null;
         }
 
-        private IEnumerable<TestsRunContext> CreateTestContexts(
+        public IEnumerable<TestsRunContext> CreateTestContexts(
             List<string> mutatedPaths,
             IList<TestNodeAssembly> testAssemblies)
         {

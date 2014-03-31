@@ -71,8 +71,9 @@
             //                    }
             if (!mutant.IsEquivalent) //todo: somewhat non-threadsafe, but valid
             {
-                return Task.Run(() => _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo, mutant))
-               // return RunTestsAsync()
+              //  return Task.Run(() => _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo, mutant))
+                return RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo, mutant)
+                //return RunTestsAsync()
                     .ContinueWith(task =>
                     {
                         _storedMutantInfo.Dispose();
@@ -87,6 +88,81 @@
                 return Task.FromResult(MutantResultState.Untested);
             }
         }
+
+        public Task RunTestsForMutant(MutantsTestingOptions options,
+  StoredMutantInfo storedMutantInfo, Mutant mutant)
+        {
+            bool testsLoaded = false;
+            var sw = new Stopwatch();
+            sw.Start();
+
+            mutant.State = MutantResultState.Tested;
+
+            try
+            {
+
+                _log.Info("Loading tests for mutant " + mutant.Id);
+                // LoadTests(storedMutantInfo.AssembliesPaths, mutant.MutantTestSession);
+
+                testsLoaded = true;
+
+                IDisposable timoutDisposable = 
+                    Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
+                    .Subscribe(e => CancelTestRun());
+
+                var contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
+                    _choices.TestAssemblies).ToList();
+
+                _log.Info("Running tests for mutant " + mutant.Id);
+                var task = _testsContainer.RunTests(contexts);
+                return task.ContinueWith(t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        //TODO: CANCELLATION (also after timeout)
+                        SetError(mutant, t.Exception.InnerException);
+                        _timoutDisposable.Dispose();
+                    }
+                    else
+                    {
+                        _log.Debug("Finished waiting for tests. ");
+                        mutant.TestRunContexts = contexts;
+
+                        timoutDisposable.Dispose();
+
+                        ResolveMutantState(mutant);
+
+                        mutant.MutantTestSession.IsComplete = true;
+                    }
+                    timoutDisposable.Dispose();
+                    sw.Stop();
+                    mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+                });
+
+            }
+            catch (TestingCancelledException)
+            {
+                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
+                mutant.State = MutantResultState.Killed;
+
+            }
+            catch (Exception e)
+            {
+
+                SetError(mutant, e);
+            }
+            finally
+            {
+
+
+
+            }
+
+            return null;
+        }
+
+
+
         public Task RunTestsAsync()
         {
 //            if (_cancelRequested)
@@ -107,13 +183,13 @@
                 _choices.MutantsTestingOptions.TestingTimeoutSeconds))
                     .Subscribe(e => CancelTestRun());
 
-            var contexts = CreateTestContexts(_choices.AssembliesPaths,
+            var contexts = _testsContainer.CreateTestContexts(_choices.AssembliesPaths,
                 _choices.TestAssemblies).ToList();
 
             _log.Info("Running tests for mutant " + mutant.Id);
-            var task = _testsContainer.RunTests(contexts);
 
-            return task.ContinueWith(t =>
+            return _testsContainer.RunTests(contexts)
+                .ContinueWith(t =>
             {
                 if(t.Exception != null)
                 {
