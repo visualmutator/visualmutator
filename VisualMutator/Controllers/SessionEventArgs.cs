@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using Model.Mutations.MutantsTree;
     using Model.Mutations.Types;
     using Model.StoringMutants;
 
@@ -54,6 +55,41 @@
             }
         }
     }
+
+    public class MutantVerifiedEvent : SessionEventArgs
+    {
+        public Mutant Mutant { get; set; }
+        public bool VerificationResult { get; set; }
+
+        public MutantVerifiedEvent()
+            : base(OperationsState.PreCheck)
+        {
+        }
+
+        public MutantVerifiedEvent(Mutant mutant, bool verificationResult)
+            : base(OperationsState.PreCheck)
+        {
+            Mutant = mutant;
+            VerificationResult = verificationResult;
+        }
+    }
+
+    public class MutantTestedEvent : SessionEventArgs
+    {
+        private readonly MutantResultState _state;
+
+        public MutantTestedEvent(MutantResultState state)
+            : base(OperationsState.Testing)
+        {
+            _state = state;
+        }
+
+        public MutantResultState State
+        {
+            get { return _state; }
+        }
+    }
+
     public class MutantStoredEventArgs : SessionEventArgs
     {
         private readonly StoredMutantInfo _storedMutantInfo;

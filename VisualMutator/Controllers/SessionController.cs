@@ -51,6 +51,7 @@
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private readonly IFactory<TestingProcess> _testingProcessFactory;
+        private readonly IFactory<TestingMutant> _testingMutantFactory;
         private readonly MutationSessionChoices _choices;
 
        // private int _allMutantsCount;
@@ -86,6 +87,7 @@
             IFactory<ResultsSavingController> resultsSavingFactory,
             ICodeDifferenceCreator codeDifferenceCreator,
             IFactory<TestingProcess> testingProcessFactory,
+            IFactory<TestingMutant> testingMutantFactory,
             MutationSessionChoices choices)
         {
             MutantsCreationFactory = mutantsCreationFactory;
@@ -99,6 +101,7 @@
             _resultsSavingFactory = resultsSavingFactory;
             _codeDifferenceCreator = codeDifferenceCreator;
             _testingProcessFactory = testingProcessFactory;
+            _testingMutantFactory = testingMutantFactory;
             _choices = choices;
             _sessionState = SessionState.NotStarted;
 
@@ -139,22 +142,6 @@
         {
             _sessionEventsSubject.OnNext(new MinorSessionUpdateEventArgs(type, mode));
         }
-
-      
-   
-
-        private void TryVerifyPreCheckMutantIfAllowed(StoredMutantInfo storedMutantInfo, Mutant changelessMutant)
-        {
-            if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled
-                   && !_testsContainer.VerifyMutant(storedMutantInfo, changelessMutant))
-            {
-                _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
-                    changelessMutant.MutantTestSession.Exception.Message));
-
-                _choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
-            }
-        }
-
 
         public void OnTestingStarting(string directory, Mutant mutant)
         {
@@ -199,7 +186,7 @@
 
                 _log.Info("Initializing test environment...");
                 
-
+                
                 _log.Info("Creating pure mutant for initial checks...");
                 AssemblyNode assemblyNode;
                 Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out assemblyNode);
@@ -214,21 +201,40 @@
 
                     });
 
+                var disp =_sessionEventsSubject.OfType<MutantVerifiedEvent>().Subscribe(e =>
+                {
+                    if (e.Mutant == changelessMutant && !e.VerificationResult)
+                    {
+                        _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
+                            changelessMutant.MutantTestSession.Exception.Message));
 
-                _log.Info("Writing pure mutant to disk...");
-                var storedMutantInfo = _testsContainer.StoreMutant(changelessMutant);
-                _log.Info("Verifying IL code of pure mutant...");
+                        _choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
+                    }
+                });
 
-                TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
 
-                _testingProcessExtensionOptions.TestingProcessExtension
-                    .OnTestingOfMutantStarting(storedMutantInfo.Directory, storedMutantInfo.AssembliesPaths);
+                TestingMutant testingMutant = _testingMutantFactory
+                    .CreateWithParams(_sessionEventsSubject, changelessMutant);
 
-                _log.Info("Running tests for pure mutant...");
-                _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, 
-                    storedMutantInfo, changelessMutant);
+                testingMutant.RunAsync().ContinueWith(t =>
+                {
+                    disp.Dispose();
+                });
 
-                storedMutantInfo.Dispose();
+//                _log.Info("Writing pure mutant to disk...");
+//                var storedMutantInfo = _testsContainer.StoreMutant(changelessMutant);
+//                _log.Info("Verifying IL code of pure mutant...");
+//
+//                TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
+//
+//                _testingProcessExtensionOptions.TestingProcessExtension
+//                    .OnTestingOfMutantStarting(storedMutantInfo.Directory, storedMutantInfo.AssembliesPaths);
+//
+//                _log.Info("Running tests for pure mutant...");
+//                _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, 
+//                    storedMutantInfo, changelessMutant);
+//
+//                storedMutantInfo.Dispose();
 
                 return changelessMutant;
 
@@ -333,7 +339,8 @@
 
             _testingProcess = _testingProcessFactory.CreateWithParams(_sessionEventsSubject, allMutants);
 
-            _svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
+            new Thread(RunTestsInternal).Start();
+            //_svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }
         
         private void RunTestsInternal()
@@ -374,7 +381,8 @@
 
         public void ResumeOperations()
         {
-            _svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
+            new Thread(RunTestsInternal).Start();
+            //_svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }
 
         public void StopOperations()

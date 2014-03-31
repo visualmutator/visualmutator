@@ -142,6 +142,7 @@
                     ch.Bind<SessionController>().ToSelf().InSingletonScope();
 
                     ch.Bind<TestingProcess>().ToSelf().AndFromFactory();
+                    ch.Bind<TestingMutant>().ToSelf().AndFromFactory();
                     ch.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
                     ch.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
                     ch.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();

@@ -31,11 +31,6 @@
 
         Task RunTests(List<TestsRunContext> testContexts);
 
- 
-
-
-        void RunTestsForMutant(MutantsTestingOptions session, StoredMutantInfo storedMutantInfo, 
-            Mutant mutant);
 
         ProjectFilesClone InitTestEnvironment();
 
@@ -143,163 +138,15 @@
         }
 
 
-        public void RunTestsForMutant(MutantsTestingOptions options,
-            StoredMutantInfo storedMutantInfo, Mutant mutant)
-        {
-            if (_allTestingCancelled)
-            {
-                mutant.State = MutantResultState.Killed;
-                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
-                return;
-            }
-            bool testsLoaded = false;
-            var sw = new Stopwatch();
-            sw.Start();
-
-            mutant.State = MutantResultState.Tested;
-
-            IDisposable timoutDisposable = null;
-            try
-            {
-                ITestService testService = _testServices.Single();
-
-                _log.Info("Loading tests for mutant " + mutant.Id);
-               // LoadTests(storedMutantInfo.AssembliesPaths, mutant.MutantTestSession);
-
-                testsLoaded = true;
-
-                timoutDisposable = Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
-                    .Subscribe(e => CancelCurrentTestRun());
-
-                var contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
-                    _choices.TestAssemblies).ToList();
-
-                _log.Info("Running tests for mutant " + mutant.Id);
-                var task = RunTests(contexts);
-                task.Wait();
-                _log.Debug("Finished waiting for tests. ");
-                mutant.TestRunContexts = contexts;
-
-                timoutDisposable.Dispose();
-
-                ResolveMutantState(mutant);
-
-                mutant.MutantTestSession.IsComplete = true;
-            }
-            catch (TestingCancelledException)
-            {
-                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
-                mutant.State = MutantResultState.Killed;
-                
-            }
-            catch (Exception e)
-            {
-
-                SetError(mutant, e);
-            }
-            finally
-            {
-            
-                
-                if (timoutDisposable != null)
-                {
-                    timoutDisposable.Dispose();
-                }
-                sw.Stop();
-                mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds; 
-            }
-            
-            
-        }
-
-        private IEnumerable<TestsRunContext> CreateTestContexts(
-            List<string> mutatedPaths, 
-            IList<TestNodeAssembly> testAssemblies)
-        {
-
-            
-            foreach (var testNodeAssembly in testAssemblies)
-            {
-                //todo: get rid of this ungly thing
-                var mutatedPath = mutatedPaths.Single(p => Path.GetFileName(p) == 
-                    Path.GetFileName(testNodeAssembly.AssemblyPath));
-                
-                var originalContext = testNodeAssembly.TestsLoadContext;
-                var context = new TestsRunContext();
-                context.SelectedTests = originalContext.SelectedTests;
-                context.AssemblyPath = mutatedPath; 
-
-//                testNodeAssembly.TestsLoadContext.SelectedTests = _currentSession.Choices
-//                    .TestAssemblies.Single(n => testNodeAssembly.Name == n.Name)
-//                    .TestsLoadContext.SelectedTests;
-                yield return context;
-            }
-        }
-
-        private void SetError(Mutant mutant, Exception e)
-        {
-            mutant.MutantTestSession.ErrorDescription = "Error ocurred";
-            mutant.MutantTestSession.ErrorMessage = e.Message;
-            mutant.MutantTestSession.Exception = e;
-            mutant.State = MutantResultState.Error;
-            _log.Error("Set mutant " + mutant.Id + " error: " + mutant.State + " message: " + e.Message);
-        }
-
-
-        private void ResolveMutantState(Mutant mutant)
-        {
-            List<TmpTestNodeMethod> nodeMethods = mutant.TestRunContexts
-                .SelectMany(c => c.TestResults.ResultMethods).ToList();
-                //.TestsByAssembly.Values.SelectMany(c => c.ClassNodes).ToList();
-
-            mutant.NumberOfFailedTests = nodeMethods
-                          .Count(t => t.State.IsIn(TestNodeState.Failure, TestNodeState.Inconclusive));
-
-
-            if (nodeMethods.Any(t => t.State == TestNodeState.Inconclusive))
-            {
-                
-                mutant.KilledSubstate = MutantKilledSubstate.Inconclusive;
-                mutant.State = MutantResultState.Killed;
-            }
-
-            else if (nodeMethods.Any(t => t.State == TestNodeState.Failure))
-            {
-              
-                mutant.KilledSubstate = MutantKilledSubstate.Normal;
-                mutant.State = MutantResultState.Killed;
-            }
-            else if (nodeMethods.All(t => t.State == TestNodeState.Success))
-            {
-                mutant.State = MutantResultState.Live;
-            }
-            else
-            {
-                throw new InvalidOperationException("Unknown state");
-            }
-            _log.Info("Resolved mutant"+mutant.Id+" state: " + mutant.State + " sub: " + mutant.KilledSubstate);
-        }
 
         public void CancelAllTesting()
         {
             _log.Info("Request to cancel all testing.");
             _allTestingCancelled = true;
-            CancelCurrentTestRun();
+           // CancelCurrentTestRun();
         }
 
-        private void CancelCurrentTestRun()
-        {
-            foreach (var service in _testServices)
-            {
-                service.Cancel();
-                if (_choices.MutantsTestingOptions
-                    .TestingProcessExtensionOptions.TestingProcessExtension != null)
-                {
-                    _choices.MutantsTestingOptions
-                        .TestingProcessExtensionOptions.TestingProcessExtension.OnTestingCancelled();
-                }
-            }
-        }
+       
 
         public Task RunTests(List<TestsRunContext> testContexts)
         {

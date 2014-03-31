@@ -4,18 +4,20 @@
     using System.Collections.Generic;
     using System.Reflection;
     using System.Threading;
+    using System.Threading.Tasks;
     using Controllers;
+    using Infrastructure;
     using log4net;
     using Mutations.MutantsTree;
     using Tests;
+    using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
 
     public class TestingProcess
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly MutationSessionChoices _choices;
-        private readonly TestsContainer _testsContainer;
+        private readonly IFactory<TestingMutant> _mutantTestingFactory;
         private readonly Subject<SessionEventArgs> _sessionEventsSubject;
         
         private readonly LinkedList<Mutant> _mutantsToTest;
@@ -23,20 +25,21 @@
         private int _testedNonEquivalentMutantsCount;
         private bool _requestedStop;
         private int _mutantsKilledCount;
+        private SemaphoreSlim _semaphore;
 
         public TestingProcess(
-            MutationSessionChoices choices,
-            TestsContainer testsContainer,
+            IFactory<TestingMutant> mutantTestingFactory,
             Subject<SessionEventArgs> sessionEventsSubject,
             ICollection<Mutant> allMutants)
         {
-            _choices = choices;
-            _testsContainer = testsContainer;
+            _mutantTestingFactory = mutantTestingFactory;
             _sessionEventsSubject = sessionEventsSubject;
 
             _mutantsToTest = new LinkedList<Mutant>(allMutants);
             _allMutantsCount = allMutants.Count;
             _testedNonEquivalentMutantsCount = 0;
+
+            _semaphore = new SemaphoreSlim(1);
         }
 
         public void RaiseTestingProgress(double mutationScore)
@@ -58,60 +61,57 @@
         public void Start()
         {
             _requestedStop = false;
-            Mutant mutant;
-            while ((mutant = LockingRemoveFirst(_mutantsToTest)) != null && !_requestedStop)
+            
+            bool emptyStop = false;
+            while (!emptyStop && !_requestedStop)
             {
-
-                TestOneMutant(mutant);
+                _semaphore.Wait();
+                Mutant mutant = LockingRemoveFirst(_mutantsToTest);
+                if(mutant != null)
+                {
+                    TestOneMutant(mutant)
+                        .ContinueWith(t => _semaphore.Release());
+                }
+                else
+                {
+                    emptyStop = true;
+                    _semaphore.Release();
+                }
             }
         }
 
-        public void TestOneMutant(Mutant mutant)
+        public Task TestOneMutant(Mutant mutant)
         {
-                //RaiseTestingProgress();
+            mutant.State = MutantResultState.Creating;
 
-                mutant.State = MutantResultState.Creating;
+            TestingMutant testingMutant = _mutantTestingFactory.CreateWithParams(_sessionEventsSubject, mutant);
 
-                try
+            return testingMutant.RunAsync().ContinueWith(t =>
+            {
+                if(t.Exception != null)
                 {
-                    var storedMutantInfo = _testsContainer.StoreMutant( mutant);
-
-                    if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
-                    {
-                        _testsContainer.VerifyMutant(storedMutantInfo, mutant);
-                    }
-                    _sessionEventsSubject.OnNext(new MutantStoredEventArgs(storedMutantInfo));
-                    
-//                    CodeWithDifference diff = _codeDifferenceCreator.CreateDifferenceListing(
-//                        CodeLanguage.IL, mutant);
-//
-//                    if (diff.LineChanges.Count == 0)
-//                    {
-//                        mutant.IsEquivalent = true;
-//                    }
-                    if (!mutant.IsEquivalent)
-                    {
-                        _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions,
-                            storedMutantInfo, mutant);
-
-                        _testedNonEquivalentMutantsCount++;
-
-                        _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
-                    }
-                    storedMutantInfo.Dispose();
-
-                    double mutationScore = ((double)_mutantsKilledCount) / _testedNonEquivalentMutantsCount;
-
-                    RaiseTestingProgress(mutationScore);
+                    _log.Error(t.Exception);
                 }
-                catch (Exception e)
+                else
                 {
-                    _log.Error(e);
-                    mutant.MutantTestSession.ErrorDescription = e.Message;
-                    mutant.MutantTestSession.ErrorMessage = e.Message;
-                    mutant.MutantTestSession.Exception = e;
-                    mutant.State = MutantResultState.Error;
+                    lock (this)
+                    {
+                        double mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
+                        RaiseTestingProgress(mutationScore);
+                    }
                 }
+            });
+           
+        }
+
+        private double UpdateMetricsAfterMutantTesting(MutantResultState state)
+        {
+            _testedNonEquivalentMutantsCount++;
+
+            _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(state == MutantResultState.Killed);
+
+            return ((double)_mutantsKilledCount) / _testedNonEquivalentMutantsCount;
+
         }
 
 
@@ -123,24 +123,26 @@
 
         private Mutant LockingRemoveFirst(LinkedList<Mutant> mutantsToTest)
         {
-            Monitor.Enter(mutantsToTest);
-            Mutant toReturn = mutantsToTest.Count != 0 ? mutantsToTest.First.Value : null;
-            if (toReturn != null)
+            lock(mutantsToTest)
             {
-                mutantsToTest.RemoveFirst();
+                Mutant toReturn = mutantsToTest.Count != 0 ? mutantsToTest.First.Value : null;
+                if (toReturn != null)
+                {
+                    mutantsToTest.RemoveFirst();
+                }
+                return toReturn;
             }
-            Monitor.Exit(mutantsToTest);
-            return toReturn;
         }
 
         private void LockingMoveToFront(LinkedList<Mutant> mutantsToTest, Mutant mutant)
         {
-            Monitor.Enter(mutantsToTest);
-            if (mutantsToTest.Remove(mutant))
+            lock (mutantsToTest)
             {
-                mutantsToTest.AddFirst(mutant);
+                if (mutantsToTest.Remove(mutant))
+                {
+                    mutantsToTest.AddFirst(mutant);
+                }
             }
-            Monitor.Exit(mutantsToTest);
         }   
     }
 }
