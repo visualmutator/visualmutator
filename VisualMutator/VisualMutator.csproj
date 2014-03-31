@@ -270,7 +270,6 @@
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
-    <Compile Include="Infrastructure\AsyncSemaphore.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />

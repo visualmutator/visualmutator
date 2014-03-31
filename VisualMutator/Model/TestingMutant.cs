@@ -71,7 +71,8 @@
             //                    }
             if (!mutant.IsEquivalent) //todo: somewhat non-threadsafe, but valid
             {
-                return RunTestsAsync()
+                return Task.Run(() => _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo, mutant))
+               // return RunTestsAsync()
                     .ContinueWith(task =>
                     {
                         _storedMutantInfo.Dispose();
