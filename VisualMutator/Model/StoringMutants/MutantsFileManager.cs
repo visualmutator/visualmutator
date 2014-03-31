@@ -31,8 +31,8 @@
     public class MutantsFileManager : IMutantsFileManager
     {
         private readonly IMutantsCache _mutantsCache;
-
         private readonly ICciModuleSource _moduleSource;
+
 
         private readonly IFileSystem _fs;
 
@@ -51,13 +51,15 @@
 
         public void StoreMutant(StoredMutantInfo info, IModuleSource assembliesProvider)
         {
-            
-            
+            //CciModuleSource cciModuleSource = _mutantsCache.WhiteCache.GetWhiteModules();
+
             foreach (IModule module in assembliesProvider.Modules)
             {
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                 string file = Path.Combine(info.Directory, module.Name.Value + ".dll");
+                
+              //  ((CciModuleSource) assembliesProvider).WriteToFile(module, file);
                 _moduleSource.WriteToFile(module, file);
                 info.AssembliesPaths.Add(file);
             }

@@ -19,10 +19,13 @@ namespace VisualMutator.Model.StoringMutants
         private readonly BlockingCollection<CciModuleSource> _whiteCache;
         private IList<string> _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private int _lowerBound;
+        private int _currentCount;
 
         public WhiteCache()
         {
-            _whiteCache = new BlockingCollection<CciModuleSource>(4);
+            _whiteCache = new BlockingCollection<CciModuleSource>(20);
+            _lowerBound = 8;
         }
 
         public void Initialize(IList<string> assembliesPaths)
@@ -31,8 +34,9 @@ namespace VisualMutator.Model.StoringMutants
             Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
                   .Subscribe(ev =>
                   {
-                      if(_whiteCache.Count < _whiteCache.BoundedCapacity)
+                      if (_whiteCache.Count < _lowerBound)
                       {
+                         // Task.Run(() => _whiteCache.TryAdd(CreateSource(assembliesPaths)));
                           _whiteCache.TryAdd(CreateSource(assembliesPaths));
                       }
                      
@@ -44,9 +48,31 @@ namespace VisualMutator.Model.StoringMutants
             return _whiteCache.Take();
 
         }
+
+        public void Reinitialize(List<string> assembliesPaths)
+        {
+            //todo: remove other assemblies
+        }
+
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
             var moduleSource = new CciModuleSource();
+//            Parallel.ForEach(assembliesPaths, path =>
+//            {
+//                try
+//                {
+//                    moduleSource.AppendFromFile(path);
+//
+//                }
+//                catch (AssemblyReadException e)
+//                {
+//                    _log.Warn("ReadAssembly failed. ", e);
+//                }
+//                catch (Exception e)
+//                {
+//                    _log.Warn("ReadAssembly failed. ", e);
+//                }
+//            });
             foreach (var assembliesPath in assembliesPaths)
             {
                 try

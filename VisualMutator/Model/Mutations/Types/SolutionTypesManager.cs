@@ -14,6 +14,7 @@
     using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.Immutable;
+    using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
@@ -47,19 +48,17 @@
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IWhiteCache _whiteCache;
         private readonly ICciModuleSource _moduleSource;
-
-
-
-  
 
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
+            IWhiteCache whiteCache,
             ICciModuleSource moduleSource)
         {
+            _whiteCache = whiteCache;
             _moduleSource = moduleSource;
-
         }
 
         public MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies)
@@ -69,7 +68,6 @@
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
             return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
-     
        
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths)
         {
@@ -81,6 +79,7 @@
 
             return loadedAssemblies;
         }
+
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
             ClassAndMethod constraints, out List<ClassAndMethod> coveredTests)
         {
@@ -129,6 +128,7 @@
         private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
             ClassAndMethod constraints = null)
         {
+           // CciModuleSource cciModuleSource = _whiteCache.GetWhiteModules();
             var assemblyTreeNodes = new List<AssemblyNode>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
             {

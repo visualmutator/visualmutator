@@ -135,6 +135,7 @@
 
                 childKernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
                 childKernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
+                childKernel.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
 
                 childKernel.InjectChildFactory<SessionController>(ch =>
                 {
@@ -152,7 +153,7 @@
                     
                     ch.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
 
-                    ch.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
+                    
                     ch.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
 
 

@@ -160,7 +160,7 @@
             _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
             _svc.Threading.ScheduleAsync(() =>
             {
-                _mutantsCache.WhiteCache.Initialize(choices.AssembliesPaths);
+                _mutantsCache.WhiteCache.Reinitialize(choices.AssembliesPaths);
 
                 _mutantsContainer.Initialize(choices.SelectedOperators, 
                     choices.MutantsCreationOptions, choices.Filter);

@@ -19,6 +19,7 @@
     using TestsTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
 
     #endregion
 
@@ -87,13 +88,15 @@
             string assemblyPath = context.AssemblyPath;
             var tasks = new List<Task<List<MyTestResult>>>();
             string name = string.Format("muttest-{0}.xml", Path.GetFileName(assemblyPath));
+            string outputFilePath = new FilePathAbsolute(assemblyPath).GetBrotherFileWithName(name).ToString();
+
             if(string.IsNullOrWhiteSpace(context.SelectedTests.TestsDescription))
             {
                 return Task.FromResult(0);
             }
         //    _log.Debug("Creating " + tasks.Count + " testing jobs.");
             return _nUnitExternal.RunTests(runPath, assemblyPath,
-                    name, context.SelectedTests)
+                    outputFilePath, context.SelectedTests)
            
                 .ContinueWith( testResult =>
                 {

@@ -43,6 +43,7 @@
 
         private readonly IHostEnviromentConnection _hostEnviroment;
         private readonly IFileSystemManager _fileManager;
+        private readonly IWhiteCache _whiteCache;
 
         protected readonly CommonServices _svc;
         private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
@@ -62,6 +63,7 @@
             IFactory<MutantsSavingController> mutantsSavingFactory,
             IBindingFactory<SessionController> sessionFactory,
             IFileSystemManager fileManager,
+            IWhiteCache whiteCache,
             CommonServices svc)
         {
             _viewModel = viewModel;
@@ -73,6 +75,7 @@
             _mutantsSavingFactory = mutantsSavingFactory;
             _sessionFactory = sessionFactory;
             _fileManager = fileManager;
+            _whiteCache = whiteCache;
             _svc = svc;
 
 
@@ -102,6 +105,9 @@
             _fileManager.Initialize();
 
             ProjectFilesClone originalFilesList = _fileManager.CreateClone("Mutants");
+
+            _whiteCache.Initialize(originalFilesList.Assemblies.AsStrings().ToList());
+
             ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone("Tests");
             if (originalFilesList.IsIncomplete || originalFilesListForTests.IsIncomplete 
                 || originalFilesListForTests.Assemblies.Count == 0)

@@ -269,7 +269,7 @@
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
-                var mutatedModules = new List<Assembly>();
+                var mutatedModules = new List<IModule>();
                 foreach (var module in moduleSource.Modules)
                 {
                     percentCompleted.Progress();
@@ -298,7 +298,9 @@
                     rewriter.CheckForUnfoundObjects();
                     mutatedModules.Add(rewrittenModule);
                 }
-                return new SimpleModuleSource(mutatedModules.Cast<IModule>().ToList());
+               // moduleSource.Merge(mutatedModules);
+              ////  return moduleSource;
+                return new SimpleModuleSource(mutatedModules.ToList());
             }
             catch (Exception e)
             {

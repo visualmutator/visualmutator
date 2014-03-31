@@ -3,6 +3,7 @@
     #region
 
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -17,6 +18,7 @@
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
     using StoringMutants;
+    using Assembly = Microsoft.Cci.MutableCodeModel.Assembly;
     using Module = Microsoft.Cci.MutableCodeModel.Module;
     using SourceEmitter = CSharpSourceEmitter.SourceEmitter;
 
@@ -41,7 +43,6 @@
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
-
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -136,8 +137,11 @@
         {
             _log.Info("CommonCompilerInfra.AppendFromFile:" + filePath);
             ModuleInfo module = DecompileFile(filePath);
+            lock (_moduleInfoList)
+            {
+                _moduleInfoList.Add(module);
+            }
             
-            _moduleInfoList.Add(module);
          /*   int i = 0;
             while (i++ < 10)
             {
@@ -146,35 +150,6 @@
             }
            */
             return module.Module;
-        }
-
-
-        public IModule ReadFromStream(string filePath)
-        {
-            IModule module = _host.LoadUnitFrom(filePath) as IModule;
-            if (module == null || module == Dummy.Module || module == Dummy.Assembly)
-            {
-                throw new AssemblyReadException(filePath + " is not a PE file containing a CLR module or assembly.");
-            }
-
-            PdbReader /*?*/ pdbReader = null;
-            /*  string pdbFile = Path.ChangeExtension(module.Location, "pdb");
-              if (File.Exists(pdbFile))
-              {
-                  Stream pdbStream = File.OpenRead(pdbFile);
-                  pdbReader = new PdbReader(pdbStream, _host);  
-              }*/
-            Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
-            ISourceLocationProvider sourceLocationProvider = pdbReader;
-            ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
-            _moduleInfoList.Add(new ModuleInfo
-            {
-                Module = decompiledModule,
-                PdbReader = pdbReader,
-                LocalScopeProvider = localScopeProvider,
-                SourceLocationProvider = sourceLocationProvider
-            });
-            return decompiledModule;
         }
 
 
@@ -224,7 +199,14 @@
             PeWriter.WritePeToStream(module, _host, stream);
 
         }
-       
+
+        public void Merge(List<IModule> mutatedModules)
+        {
+            foreach (var mutatedModule in mutatedModules)
+            {
+                FindModuleInfo(mutatedModule).Module = mutatedModule;
+            }
+        }
 
         #region Nested type: ModuleInfo
 
@@ -248,5 +230,7 @@
         }
 
         #endregion
+
+       
     }
 }

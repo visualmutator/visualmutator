@@ -8,6 +8,7 @@
     using log4net;
     using Mutations;
     using Mutations.MutantsTree;
+    using Ninject;
     using UsefulTools.Core;
 
     #endregion
@@ -48,6 +49,7 @@
         {
         }
 
+        [Inject]
         public MutantsCache(IWhiteCache whiteCache,IMutantsContainer mutantsContainer)
         {
             _whiteCache = whiteCache;

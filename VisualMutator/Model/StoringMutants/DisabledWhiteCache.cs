@@ -34,6 +34,12 @@ namespace VisualMutator.Model.StoringMutants
             return CreateSource(_assembliesPaths);
 
         }
+
+        public void Reinitialize(List<string> assembliesPaths)
+        {
+            
+        }
+
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
             var moduleSource = new CciModuleSource();
