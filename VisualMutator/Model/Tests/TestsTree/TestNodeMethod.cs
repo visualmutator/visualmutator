@@ -64,7 +64,11 @@
         }
 
         public TestId TestId { get; set; }
-        public string FullName { get; set; }
+        public MethodIdentifier Identifier
+        {
+            get;
+            set;
+        }
 
         public void ShowMessage()
         {

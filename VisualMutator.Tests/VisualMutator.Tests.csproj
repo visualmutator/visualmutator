@@ -214,9 +214,12 @@
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Infrastructure\NinjectParamBindingsTests.cs" />
+    <Compile Include="Mutations\TestSelectionIntTests2.cs" />
+    <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
+    <Compile Include="Mutations\TestSelectionIntTests.cs" />
     <Compile Include="Mutations\TestSelectionTests.cs" />
-    <Compile Include="Operators\BruteForceTests - Copy.cs" />
+    <Compile Include="Operators\IntegrationTests.cs" />
     <Compile Include="Operators\CciAssumptions.cs" />
     <Compile Include="Operators\Object\IntegrationTests.cs" />
     <Compile Include="Operators\Standard\LOR_Test.cs" />

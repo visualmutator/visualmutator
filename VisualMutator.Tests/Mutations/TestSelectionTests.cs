@@ -5,20 +5,57 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using log4net.Appender;
+    using log4net.Config;
+    using log4net.Layout;
+    using Microsoft.Cci;
     using Model;
     using Model.Mutations.Types;
+    using NUnit.Core;
     using NUnit.Framework;
+    using Operators;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
+    using TypeHelper = Microsoft.Cci.TypeHelper;
 
     #endregion
 
     [TestFixture]
     public class TestSelectionTests
     {
+        private CciModuleSource cci;
+        private IModule dsaTest;
+        private IModule dsa;
+        private IModule dsaTest2;
+
+        [SetUp]
+        public void sss()
+        {
+
+            BasicConfigurator.Configure(
+                new ConsoleAppender
+                {
+                    Layout = new SimpleLayout()
+                });
+            cci = new CciModuleSource();
+            dsaTest2 = cci.AppendFromFile(MutationTestsHelper.DsaTestsPath2);
+            dsaTest = cci.AppendFromFile(MutationTestsHelper.DsaTestsPath);
+            dsa = cci.AppendFromFile(MutationTestsHelper.DsaPath);
+
+        }
+        public HashSet<IMethodDefinition> FindCovering(IModule module, MethodIdentifier constraints)
+        {
+            var visitor = new CoveringTestsVisitor(constraints);
+            var traverser = new CodeTraverser
+            {
+                PreorderVisitor = visitor
+            };
+            traverser.Traverse(module);
+            return visitor.FoundTests;
+        }
         [Test]
-        public void Test31()
+        public void TestRegex()
         {
             var r = new Regex(@"[\w\d]+<(\w+,?)+>");
             Match match = r.Match("Deque<T,Sfr>");
@@ -37,87 +74,39 @@
             
             Assert.True(match.Success);
         }
+
         [Test]
-        public void Test12()
+        public void ShouldFindCoveringTests3()
         {
-            var a = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
-            var b = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
-            var cci = new CciModuleSource();
-            var typesManager = new SolutionTypesManager(cci);
-            var cam = new ClassAndMethod
-            {
-                ClassName = "Dsa.DataStructures.Deque`1",
-                MethodName = "EnqueueFront",
-            };
+            var constraints = new MethodIdentifier("Dsa.Utility.Guard", "ArgumentNull");
 
-            List<ClassAndMethod> coveredTests;
-            var types = typesManager.GetTypesFromAssemblies(new[] { a, b }.Select(_ => new FilePathAbsolute(_)).ToList(),
-                cam, out coveredTests);
-            //TODO: dodac filtrowanie tylko lisci?
-            Assert.AreEqual(1, types.Cast<CheckedNode>().SelectManyRecursive(_ => _.Children, leafsOnly: true).Count(n => n is TypeNode));
-            Assert.AreEqual(3, coveredTests.Count());
-            //TODO: ReadAssembly does not work on this artificial assembly
-
+            var found = FindCovering(dsaTest2, constraints);
+            Assert.AreEqual(3, found.Count());
         }
-            [Test]
-        public void Test1()
+
+        [Test]
+        public void ShouldFindCoveringTests2()
         {
-           var a = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
-           var b = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.dll";
-            var cci = new CciModuleSource();
-            var typesManager = new SolutionTypesManager(cci);
-            var cam = new ClassAndMethod
-                      {
-                          ClassName = "Dsa.Utility.Guard",
-                          MethodName = "ArgumentNull",
-                      };
+            var constraints = new MethodIdentifier("Dsa.DataStructures.Deque`1", "EnqueueFront");
 
-            List<ClassAndMethod> coveredTests;
-            var types = typesManager.GetTypesFromAssemblies(new[] {a, b}.Select(_ => new FilePathAbsolute(_)).ToList(),
-                cam, out coveredTests);
-            //TODO: dodac filtrowanie tylko lisci?
-            Assert.AreEqual(1,types.Cast<CheckedNode>().SelectManyRecursive(_=>_.Children, leafsOnly:true).Count(n => n is TypeNode));
-            Assert.AreEqual(3, coveredTests.Count());
-            //TODO: ReadAssembly does not work on this artificial assembly
+            var found = FindCovering(dsaTest, constraints);
 
-            /*
-            var t1 = CecilUtils.CreateTypeDefinition("ns1", "Type1");
-            var t2 = CecilUtils.CreateTypeDefinition("ns1", "Type2");
-            var t3 = CecilUtils.CreateTypeDefinition("ns1", "Type3");
-            
-            var types = new List<TypeDefinition>
-            {
-                t1,t2,t3
-            };
 
-            var assembly = CecilUtils.CreateAssembly("ass", types);
-            var assemblies = new[] { assembly };
+            Assert.AreEqual(1, found.Count());
 
-            t1.Methods.Add(CecilUtils.CreateMethodDefinition("Method1", t1));
-            t3.Methods.Add(CecilUtils.CreateMethodDefinition("Method2", t3));
+            IMethodDefinition method = found.Single();
+            var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
 
-            var assembliesManager = new AssembliesManager();
+            Assert.NotNull(def);
+            var result = (from m in found
+                    let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
+                    where t != null
+                    select new MethodIdentifier(
+                        TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
+                         + "." + t.Name.Value, m.Name.Value)).ToList();
 
-            var mutantsContainer = new MutantsContainer(assembliesManager);
-
-            var choices = new MutationSessionChoices
-            {
-                Assemblies = assemblies,
-                SelectedTypes = types, 
-                SelectedOperators = new[] { new TestOperator() }
-            };
-            // Act
-            var mutationTestingSession = mutantsContainer.Initialize(choices);
-            mutantsContainer.InitMutantsForOperators(mutationTestingSession);
-            var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
-
-            // Assert
-            executedOperator.Name.ShouldEqual("TestOperatorName");
-            executedOperator.Mutants.Count().ShouldEqual(2);
-
-            assembliesManager.Load(executedOperator.Mutants.First().StoredAssemblies).Single()
-                .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
-*/
+            Assert.IsNotEmpty(result);
         }
+       
     }
 }

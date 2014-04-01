@@ -4,7 +4,6 @@
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reactive.Subjects;
@@ -13,12 +12,14 @@
     using System.Windows.Forms;
     using EnvDTE;
     using EnvDTE80;
+    using Infra;
     using log4net;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Settings;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
+    using UsefulTools.Switches;
     using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
@@ -141,139 +142,42 @@
         {
         }
 
-        public bool GetCurrentClassAndMethod(out ClassAndMethod classAndMethod)
+        public bool GetCurrentClassAndMethod(out MethodIdentifier methodIdentifier)
         {
-            classAndMethod = null;
-            TextDocument objTextDocument = (TextDocument) _dte.ActiveDocument.Object();
-            var objCursorTextPoint = objTextDocument.Selection.ActivePoint;
-            if(objCursorTextPoint != null)
+            methodIdentifier = null;
+            //EnvDTE80.vsCMParameterKind.vsCMParameterKin
+            CodeFunction methodAtCaret = new VisualStudioCodeSearcher().GetMethodAtCaret(_dte);
+            if(methodAtCaret != null)
             {
-               
-                CodeElement codeElementAtTextPoint2 = GetCodeElementAtTextPoint(vsCMElement.vsCMElementClass,
-                   _dte.ActiveDocument.ProjectItem.FileCodeModel.CodeElements, objCursorTextPoint);
-                if (codeElementAtTextPoint2 != null)
-                {
-                    var cam = new ClassAndMethod();
-                    cam.ClassName = ConvertClassName(codeElementAtTextPoint2.FullName);
+                var parameters = methodAtCaret.Parameters.Cast<CodeParameter2>().ToList();
+                var names = parameters.Select(p => GetKindString(p) + p.Type.AsFullName).ToList();
 
-
-
-                    CodeElement codeElementAtTextPoint = GetCodeElementAtTextPoint(vsCMElement.vsCMElementFunction,
-                  _dte.ActiveDocument.ProjectItem.FileCodeModel.CodeElements, objCursorTextPoint);
-                    if (codeElementAtTextPoint != null)
-                    {
-
-                        cam.MethodName = codeElementAtTextPoint.Name;
-                       // var s = codeElementAtTextPoint.Children.
-                    }
-                    classAndMethod = cam;
-                    Trace.WriteLine(codeElementAtTextPoint2.FullName + " converted to " + cam.ClassName);
-                    return true;
-                }
-                
+                methodIdentifier = new VisualStudioCodeElementsFormatter()
+                    .CreateIdentifier(methodAtCaret.FullName, names);
+                return true;
             }
             return false;
-           
         }
 
-        private string ConvertClassName(string className)
-        {
-            if(className.EndsWith(">"))
-            {
-                var r = new Regex(@"[\w\d]+<(\w+,?)+>");
-                Match match = r.Match(className);
-                if (match.Success)
-                {
-                    var capturesCount = match.Groups[1].Captures.Cast<Capture>().Count();
-                    return new Regex(@"<.+>").Replace(className, "") + "`" + capturesCount;
-                }
-                else
-                {
-                    return className;
-                }
-            }
-            return className;
-        }
-
-        private CodeElement GetCodeElementAtTextPoint(vsCMElement eRequestedCodeElementKind, 
-            CodeElements colCodeElements, TextPoint objTextPoint)
+        private string GetKindString(CodeParameter2 codeParameter)
         {
 
-	      //  CodeElement objCodeElement = default(CodeElement);
-	        CodeElement objResultCodeElement = default(CodeElement);
-	        CodeElements colCodeElementMembers = default(CodeElements);
-	        CodeElement objMemberCodeElement = default(CodeElement);
-
-
-	        if ((colCodeElements != null)) {
-
-                foreach (CodeElement objCodeElement in colCodeElements)
-                {
-
-			        if (objCodeElement.StartPoint.GreaterThan(objTextPoint)) {
-			        // The code element starts beyond the point
-
-
-			        } else if (objCodeElement.EndPoint.LessThan(objTextPoint)) {
-			        // The code element ends before the point
-
-			        // The code element contains the point
-			        } else {
-
-				        if (objCodeElement.Kind == eRequestedCodeElementKind) {
-					        // Found
-					        objResultCodeElement = objCodeElement;
-				        }
-
-				        // We enter in recursion, just in case there is an inner code element that also 
-				        // satisfies the conditions, for example, if we are searching a namespace or a class
-				        colCodeElementMembers = GetCodeElementMembers(objCodeElement);
-
-				        objMemberCodeElement = GetCodeElementAtTextPoint(eRequestedCodeElementKind, colCodeElementMembers, objTextPoint);
-
-				        if ((objMemberCodeElement != null)) {
-					        // A nested code element also satisfies the conditions
-					        objResultCodeElement = objMemberCodeElement;
-				        }
-
-				        break; // TODO: might not be correct. Was : Exit For
-
-			        }
-
-		        }
-
-	        }
-
-	        return objResultCodeElement;
-
+//            if (codeParameter.ParameterKind.Equals(vsCMParameterKind.vsCMParameterKindOut))
+//            {
+//                return "out ";
+//            }
+//            if (codeParameter.ParameterKind.Equals(vsCMParameterKind.vsCMParameterKindRef))
+//            {
+//                return "ref ";
+//            }
+//            return "";
+            return Switch.Into<string>().From(codeParameter.ParameterKind)
+                .Case(vsCMParameterKind.vsCMParameterKindOut, "out ")
+                .Case(vsCMParameterKind.vsCMParameterKindRef, "ref ")
+                .Default("");
         }
-        private EnvDTE.CodeElements GetCodeElementMembers(CodeElement objCodeElement)
-        {
-
-            EnvDTE.CodeElements colCodeElements = default(EnvDTE.CodeElements);
 
 
-            if (objCodeElement is EnvDTE.CodeNamespace)
-            {
-                colCodeElements = ((EnvDTE.CodeNamespace)objCodeElement).Members;
-
-
-            }
-            else if (objCodeElement is EnvDTE.CodeType)
-            {
-                colCodeElements = ((EnvDTE.CodeType)objCodeElement).Members;
-
-
-            }
-            else if (objCodeElement is EnvDTE.CodeFunction)
-            {
-                colCodeElements = ((EnvDTE.CodeFunction)objCodeElement).Parameters;
-
-            }
-
-            return colCodeElements;
-
-        }
         private void Collect(Project p, IList<Project> projects)
         {
          //   Trace.WriteLine(p.Name + " " + p.ConfigurationManager);

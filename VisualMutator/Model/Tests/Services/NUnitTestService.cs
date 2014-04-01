@@ -142,7 +142,7 @@
                         var nodeMethod = new TestNodeMethod(c, testName)
                             {
                                 TestId = new NUnitTestId(testMethod.TestName),
-                                FullName = testMethod.TestName.FullName
+                                Identifier = CreateIdentifier(testMethod),
                             };
                         c.Children.Add(nodeMethod);
                         _log.Debug("Adding test: " + testName);
@@ -160,6 +160,11 @@
                     context.ClassNodes.Add(c);
                 }
             }
+        }
+
+        private MethodIdentifier CreateIdentifier(ITest testMethod)
+        {
+            return new MethodIdentifier(testMethod.TestName.FullName + "()");
         }
 
         private IEnumerable<ITest> GetTestClasses(ITest test)

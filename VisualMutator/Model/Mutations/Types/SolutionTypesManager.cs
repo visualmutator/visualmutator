@@ -13,12 +13,11 @@
     using Infrastructure;
     using log4net;
     using Microsoft.Cci;
-    using Microsoft.Cci.Immutable;
     using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
-    using GenericTypeInstanceReference = Microsoft.Cci.MutableCodeModel.GenericTypeInstanceReference;
+    using MethodIdentifier = Model.MethodIdentifier;
 
     #endregion
 
@@ -32,7 +31,7 @@
 
 
         IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            ClassAndMethod constraints, out List<ClassAndMethod> coveredTests);
+            MethodIdentifier constraints, out List<MethodIdentifier> coveredTests);
 
         MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies);
     }
@@ -48,16 +47,13 @@
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IWhiteCache _whiteCache;
         private readonly ICciModuleSource _moduleSource;
 
         public bool IsAssemblyLoadError { get; set; }
    
         public SolutionTypesManager(
-            IWhiteCache whiteCache,
             ICciModuleSource moduleSource)
         {
-            _whiteCache = whiteCache;
             _moduleSource = moduleSource;
         }
 
@@ -66,7 +62,7 @@
             var methods = assemblies
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
-            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
+            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new Extensibility.MethodIdentifier(m)).ToList());
         }
        
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths)
@@ -81,7 +77,7 @@
         }
 
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            ClassAndMethod constraints, out List<ClassAndMethod> coveredTests)
+            MethodIdentifier constraints, out List<MethodIdentifier> coveredTests)
         {
 
             var loadedAssemblies = LoadAssemblies(paths, constraints);
@@ -102,33 +98,36 @@
             return loadedAssemblies;
         }
       
-        private List<ClassAndMethod> FindCoveredTests(IList<IModule> loadedAssemblies, ClassAndMethod constraints)
+        public List<MethodIdentifier> FindCoveredTests(IList<IModule> loadedAssemblies, MethodIdentifier constraints)
         {
-            return (from m in loadedAssemblies.SelectMany(m =>
+            return loadedAssemblies.SelectMany(m =>
             {
-                var visitor = new V(constraints);
+                _log.Debug("Scanning "+m.Name.Value+" for selected covering tests. ");
+                var visitor = new CoveringTestsVisitor(constraints);
 
                 var traverser = new CodeTraverser {PreorderVisitor = visitor};
 
                 traverser.Traverse(m);
-                if(visitor.IsChoiceError)
+                _log.Debug("Finished scanning. Found " + visitor.FoundTests.Count);
+                if (visitor.IsChoiceError)
                 {
                     throw new TestWasSelectedToMutateException();
                 }
                 return visitor.FoundTests;
-            })
-                let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
-                where t != null
-                select new ClassAndMethod(
-                    TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
-                     + "." + t.Name.Value, m.Name.Value)).ToList();
+            }).ToList();
+            
+//            return (from m in methods
+//                let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
+//                where t != null
+//                select new MethodIdentifier(
+//                    TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
+//                     + "." + t.Name.Value, m.Name.Value)).ToList();
  
         }
 
         private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
-            ClassAndMethod constraints = null)
+            MethodIdentifier constraints = null)
         {
-           // CciModuleSource cciModuleSource = _whiteCache.GetWhiteModules();
             var assemblyTreeNodes = new List<AssemblyNode>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
             {
@@ -187,7 +186,7 @@
         }
     
         //TODO: nessessary?
-        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module, ClassAndMethod constraints = null)
+        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module, MethodIdentifier constraints = null)
         {
             return module.GetAllTypes()
                 .OfType<INamespaceTypeDefinition>()
@@ -196,84 +195,5 @@
                 .Where(t => !t.Name.Value.StartsWith("<>"));
 
         }
-
-        class V : CodeVisitor
-        {
-            private readonly ClassAndMethod _constraints;
-            private readonly HashSet<IMethodDefinition> _foundTests;
-
-            public HashSet<IMethodDefinition> FoundTests
-            {
-                get
-                {
-                    return _foundTests;
-                }
-            }
-
-            public V(ClassAndMethod constraints)
-            {
-                _constraints = constraints;
-                _foundTests = new HashSet<IMethodDefinition>();
-            }
-
-            public override void Visit(IMethodDefinition method)
-            {
-                CurrentTestMethod = method.Attributes.Any(a =>
-                {
-                    var t = (INamespaceTypeReference)a.Type;
-                    var typeName = t.GetTypeFullName();
-                    bool isTest = typeName
-                     == "NUnit.Framework.TestAttribute";
-
-                    return isTest;
-                }) ? method : null;
-
-                var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
-                // def.Gen
-                if (def != null && def.GetTypeFullName() == _constraints.ClassName
-                    && method.Name.Value == _constraints.MethodName)
-                {
-                    if (CurrentTestMethod != null)
-                    {
-                        IsChoiceError = true;
-                    }
-                }
-            }
-
-            public bool IsChoiceError
-            {
-                get;
-                set;
-            }
-
-            public IMethodDefinition CurrentTestMethod
-            {
-                get;
-                set;
-            }
-
-            public override void Visit(IMethodCall methodCall)
-            {
-                base.Visit(methodCall);
-                var conainingType = methodCall.MethodToCall.ContainingType as INamespaceTypeReference;
-                var genericInstance = methodCall.MethodToCall.ContainingType as GenericTypeInstanceReference;
-                if (genericInstance != null)
-                {
-                    conainingType = genericInstance.ResolvedType
-                        .CastTo<GenericTypeInstance>().GenericType as INamespaceTypeReference;
-                }
-                if (CurrentTestMethod != null && conainingType != null)
-                {
-                    var res = conainingType.ResolvedType;
-
-                    if (res.GetTypeFullName() == _constraints.ClassName
-                           && _constraints.MethodName == methodCall.MethodToCall.Name.Value)
-                    {
-                        _foundTests.Add(CurrentTestMethod);
-                    }
-                }
-            }
-        }
-       
     }
 }

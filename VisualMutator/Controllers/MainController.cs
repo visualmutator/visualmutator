@@ -82,21 +82,21 @@
      
         public void RunMutationSessionForCurrentPosition()
         {
-            ClassAndMethod classAndMethod;
-            if (_host.GetCurrentClassAndMethod(out classAndMethod) && classAndMethod.MethodName != null)
+            MethodIdentifier methodIdentifier;
+            if (_host.GetCurrentClassAndMethod(out methodIdentifier) && methodIdentifier.MethodName != null)
             {
-                _log.Info("Showing mutation session window.");
+                _log.Info("Showing mutation session window for: " + methodIdentifier);
 
-                RunMutationSession(classAndMethod);
+                RunMutationSession(methodIdentifier);
 
             }
         }
-        public void RunMutationSession(ClassAndMethod classAndMethod = null)
+        public void RunMutationSession(MethodIdentifier methodIdentifier = null)
         {
             _log.Info("Showing mutation session window.");
 
             var mutantsCreationController = _creationControllerFactory.Create();
-            mutantsCreationController.Run(classAndMethod);
+            mutantsCreationController.Run(methodIdentifier);
             if (mutantsCreationController.HasResults)
             {
                 SessionController sessionController = mutantsCreationController.CreateSession();

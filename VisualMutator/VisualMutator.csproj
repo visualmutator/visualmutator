@@ -278,7 +278,9 @@
     <Compile Include="Infrastructure\Processes.cs" />
     <Compile Include="Infrastructure\ProjectFilesClone.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
-    <Compile Include="Model\ClassAndMethod.cs" />
+    <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
+    <Compile Include="Model\CciMethodSearcher.cs" />
+    <Compile Include="Model\MethodIdentifier.cs" />
     <Compile Include="Model\Exceptions\TestsLoadingException.cs" />
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
     <Compile Include="Model\Exceptions\StrongNameSignedAssemblyException.cs" />
@@ -291,6 +293,7 @@
     <Compile Include="Model\Mutations\MutationTarget.cs" />
     <Compile Include="Model\Mutations\NamespaceGrouper.cs" />
     <Compile Include="Model\Mutations\ProcessingContext.cs" />
+    <Compile Include="Model\Mutations\Types\CoveringTestsVisitor.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriter.cs" />
     <Compile Include="Model\Mutations\VisualCodeRewriterBase.cs" />
     <Compile Include="Model\Mutations\VisualCodeTraverser.cs" />

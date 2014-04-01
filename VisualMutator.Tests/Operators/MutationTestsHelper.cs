@@ -32,16 +32,19 @@
     {
         protected static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public const String DsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.dll";
-        public const String DsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.Test.dll";
-        public const String DsaTestsPath2 = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.Test2.dll";
+//        public const String DsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.dll";
+//        public const String DsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.Test.dll";
+//        public const String DsaTestsPath2 = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Dsa.Test2.dll";
+        public const String DsaPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Testy\Dsa\x86\Dsa.dll";
+        public const String DsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Testy\Dsa\x86\Dsa.Test.dll";
+        public const String DsaTestsPath2 = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Testy\Dsa\x86\Dsa.Test2.dll";
         
 
         public static void RunMutations(string code, IMutationOperator oper, out List<Mutant> mutants,
          
             out CodeDifferenceCreator diff)
         {
-            RunMutationsFromFile(CreateModule(code), oper, out mutants, out diff);
+            RunMutationsFromFile(CompileCodeToFile(code), oper, out mutants, out diff);
         }
         public static void RunMutationsFromFile(string filePath, IMutationOperator oper, out List<Mutant> mutants,
             out CodeDifferenceCreator diff)
@@ -69,7 +72,7 @@
 
         public static void DebugTraverse(string code)
         {
-            DebugTraverseFile(CreateModule(code));
+            DebugTraverseFile(CompileCodeToFile(code));
         }
 
         public static  void DebugTraverseFile(string filePath)
@@ -116,17 +119,17 @@
         }
 
       
-        public static string CreateModule(string code)
+        public static string CompileCodeToFile(string code)
         {
             _log.Info("Parsing test code...");
             SyntaxTree tree = SyntaxTree.ParseText(code);
             _log.Info("Creating compilation...");
-            Compilation comp = Compilation.Create("MyCompilation",
+            Compilation comp = Compilation.Create("VisualMutator-Test-Compilation",
                                                   new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                 .AddSyntaxTrees(tree)
                 .AddReferences(new MetadataFileReference(typeof (object).Assembly.Location));
 
-            string outputFileName = Path.Combine(Path.GetTempPath(), "MyCompilation.lib");
+            string outputFileName = Path.Combine(Path.GetTempPath(), "VisualMutator-Test-Compilation.lib");
             var ilStream = new FileStream(outputFileName, FileMode.OpenOrCreate);
             _log.Info("Emiting file...");
             // var pdbStream = new FileStream(Path.ChangeExtension(outputFileName, "pdb"), FileMode.OpenOrCreate);
@@ -141,10 +144,15 @@
             }
             return outputFileName;
         }
-        public static List<IModule> CreateModules(string code)
+        public static IModule CreateModuleFromCode(string code)
         {
-            var path = CreateModule(code);
-            return CreateModules(path, new CciModuleSource());
+            var path = CompileCodeToFile(code);
+            return new CciModuleSource().AppendFromFile(path);
+        }
+        public static List<IModule> CreateModulesFromCode(string code)
+        {
+            var path = CompileCodeToFile(code);
+            return CreateModulesFromCode(path, new CciModuleSource());
         }
 
         public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container,
@@ -202,7 +210,7 @@
                 g => g.Children??new NotifyingCollection<CheckedNode>()).OfType<Mutant>().ToList();
 
         }
-        public static List<IModule> CreateModules(string filePath, CciModuleSource cci)
+        public static List<IModule> CreateModulesFromCode(string filePath, CciModuleSource cci)
         {
             cci.AppendFromFile(filePath);
             _log.Info("Copying modules...");

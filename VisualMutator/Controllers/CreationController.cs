@@ -95,12 +95,12 @@
                 .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
         }
 
-        public void SetMutationConstraints(ClassAndMethod classAndMethod)
+        public void SetMutationConstraints(MethodIdentifier methodIdentifier)
         {
 
         }
 
-        public void Run(ClassAndMethod classAndMethod = null)
+        public void Run(MethodIdentifier methodIdentifier = null)
         {
             _fileManager.Initialize();
 
@@ -122,8 +122,8 @@
                     = new ReadOnlyCollection<PackageNode>(packages));
 
            
-            List<ClassAndMethod> coveredTests = null;
-            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, classAndMethod,
+            List<MethodIdentifier> coveredTests = null;
+            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, methodIdentifier,
                 out coveredTests).CastTo<object>());
 
             var testsTask = Task.Run(() => _testsLoader.LoadTests(
@@ -158,7 +158,7 @@
                             }
                             _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.Assemblies.AsStrings().ToList();
 
-                            if(classAndMethod != null)
+                            if(methodIdentifier != null)
                             {
                                 ExpandLoneNodes(assemblies, testsRootNode);
                             }
@@ -228,15 +228,19 @@
             }
         }
 
-        private void SelectOnlyCovered(TestsRootNode rootNode, List<ClassAndMethod> coveredTests)
+        private void SelectOnlyCovered(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
         {
             if (coveredTests != null)
             {
                 rootNode.IsIncluded = false;
+                var se = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
+                    .OfType<TestNodeMethod>()
+                    .Select(m => m.Identifier)
+                    .ToList();
+                se.ToString();
                 var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
                     .OfType<TestNodeMethod>()
-                    .Where(t => coveredTests.Select(_=>_.ClassName).Contains(t.ContainingClassFullName)
-                                &&  coveredTests.Select(_=>_.MethodName).Contains(t.Name));
+                    .Where(t => coveredTests.Contains(t.Identifier));
                 foreach (var testNodeMethod in toSelect)
                 {
                     testNodeMethod.IsIncluded = true;
