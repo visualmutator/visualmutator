@@ -278,6 +278,7 @@
     <Compile Include="Infrastructure\PathsExt.cs" />
     <Compile Include="Infrastructure\Processes.cs" />
     <Compile Include="Infrastructure\ProjectFilesClone.cs" />
+    <Compile Include="Infrastructure\TaskErrors.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
     <Compile Include="Model\CciMethodSearcher.cs" />

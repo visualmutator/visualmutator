@@ -122,9 +122,9 @@
                     = new ReadOnlyCollection<PackageNode>(packages));
 
            
-            List<MethodIdentifier> coveredTests = null;
-            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, singleMethodToMutate,
-                out coveredTests).CastTo<object>());
+           // List<MethodIdentifier> coveredTests = null;
+            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(
+                originalFilesList.Assemblies, singleMethodToMutate).CastTo<object>());
 
             var testsTask = Task.Run(() => _testsLoader.LoadTests(
                 originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
@@ -136,7 +136,6 @@
                     var assemblies = (IList<AssemblyNode>) result.Result;
 
                     assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
-
 
                     if (singleMethodToMutate != null)
                     {
@@ -160,8 +159,15 @@
                     if (result.Exception == null)
                     {
                         var testsRootNode = (TestsRootNode)result.Result[1];
-                        
-                        SelectOnlyCoveredTests(testsRootNode, coveredTests);
+                        var assemblies = (IList<AssemblyNode>) result.Result[0];
+
+                        if (singleMethodToMutate != null)
+                        {
+                            List<MethodIdentifier> coveredTests = 
+                                _typesManager.FindCoveredTests(assemblies, singleMethodToMutate).ToList();
+                                
+                            SelectOnlyCoveredTests(testsRootNode, coveredTests);
+                        }
 
                         _svc.Threading.PostOnGui(() =>
                         {
@@ -249,21 +255,18 @@
 
         private void SelectOnlyCoveredTests(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
         {
-            if (coveredTests != null)
+            rootNode.IsIncluded = false;
+            var se = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
+                .OfType<TestNodeMethod>()
+                .Select(m => m.Identifier)
+                .ToList();
+            se.ToString();
+            var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
+                .OfType<TestNodeMethod>()
+                .Where(t => coveredTests.Contains(t.Identifier));
+            foreach (var testNodeMethod in toSelect)
             {
-                rootNode.IsIncluded = false;
-                var se = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
-                    .OfType<TestNodeMethod>()
-                    .Select(m => m.Identifier)
-                    .ToList();
-                se.ToString();
-                var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
-                    .OfType<TestNodeMethod>()
-                    .Where(t => coveredTests.Contains(t.Identifier));
-                foreach (var testNodeMethod in toSelect)
-                {
-                    testNodeMethod.IsIncluded = true;
-                }
+                testNodeMethod.IsIncluded = true;
             }
         }
 

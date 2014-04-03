@@ -219,45 +219,27 @@
                 testingMutant.RunAsync().ContinueWith(t =>
                 {
                     disp.Dispose();
+                    _svc.Threading.PostOnGui(() =>
+                    {
+                        if (_requestedHaltState != null)
+                        {
+                            _sessionState = SessionState.NotStarted;
+                            _requestedHaltState = null;
+                        }
+                        else
+                        {
+                            bool canContinue = CheckForTestingErrors(changelessMutant);
+                            if (canContinue)
+                            {
+                                CreateMutants(continuation: RunTests);
+                            }
+                            else
+                            {
+                                FinishWithError();
+                            }
+                        }
+                    });
                 });
-
-//                _log.Info("Writing pure mutant to disk...");
-//                var storedMutantInfo = _testsContainer.StoreMutant(changelessMutant);
-//                _log.Info("Verifying IL code of pure mutant...");
-//
-//                TryVerifyPreCheckMutantIfAllowed(storedMutantInfo, changelessMutant);
-//
-//                _testingProcessExtensionOptions.TestingProcessExtension
-//                    .OnTestingOfMutantStarting(storedMutantInfo.Directory, storedMutantInfo.AssembliesPaths);
-//
-//                _log.Info("Running tests for pure mutant...");
-//                _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, 
-//                    storedMutantInfo, changelessMutant);
-//
-//                storedMutantInfo.Dispose();
-
-                return changelessMutant;
-
-            },
-            onGui: changelessMutant =>
-            {
-                if (_requestedHaltState != null)
-                {
-                    _sessionState = SessionState.NotStarted;
-                    _requestedHaltState = null;
-                }
-                else
-                {
-                    bool canContinue  = CheckForTestingErrors(changelessMutant);
-                    if (canContinue)
-                    {
-                        CreateMutants(continuation: RunTests);
-                    }
-                    else
-                    {
-                        FinishWithError();
-                    }
-                }
             },
             onException: FinishWithError);
         }

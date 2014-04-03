@@ -12,6 +12,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Exceptions;
+    using Infrastructure;
     using log4net;
     using NUnit.Core;
     using RunProcessAsTask;
@@ -92,63 +93,37 @@
 
             if(string.IsNullOrWhiteSpace(context.SelectedTests.TestsDescription))
             {
+                context.TestResults = new MutantTestResults(new List<TmpTestNodeMethod>());
                 return Task.FromResult(0);
             }
-        //    _log.Debug("Creating " + tasks.Count + " testing jobs.");
             return _nUnitExternal.RunTests(runPath, assemblyPath,
-                    outputFilePath, context.SelectedTests)
-           
-                .ContinueWith( testResult =>
+                outputFilePath, context.SelectedTests)
+
+                .ContinueWith(testResult =>
                 {
                     var list = new List<TmpTestNodeMethod>();
-                    if(testResult.Exception != null)
+                    if (testResult.Exception != null)
                     {
                         _log.Error(testResult.Exception);
                         //todo: erorrs
-                        //return new List<TmpTestNodeMethod>();
                     }
                     else
                     {
                         //todo: check for empty lists
-                        IList<MyTestResult> testResults = testResult.Result;//.Flatten().ToList();
+                        IList<MyTestResult> testResults = testResult.Result; 
 
                         foreach (var myTestResult in testResults)
                         {
                             TmpTestNodeMethod node = new TmpTestNodeMethod(myTestResult.Name);
-                            //TestNodeMethod node = context.TestMap[result.Test.TestName.FullName];
                             node.State = myTestResult.Success ? TestNodeState.Success : TestNodeState.Failure;
                             node.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
                             list.Add(node);
-
-//                            if(context.TestMap.ContainsKey(myTestResult.Name))
-//                            {
-//                                _log.Info("Found test in map: " + myTestResult.Name);
-//                                TestNodeMethod testNodeMethod = context.TestMap[myTestResult.Name];
-//                                testNodeMethod.Message = myTestResult.Message + "\n" + myTestResult.StackTrace;
-//                                testNodeMethod.State = myTestResult.Success
-//                                    ? TestNodeState.Success
-//                                    : TestNodeState.Failure;
-//                            }
-//                            else
-//                            {
-//                                _log.Error("Cannot fine test in map: " + myTestResult.Name);
-//                            }
                         }
                         context.TestResults = new MutantTestResults(list);
-                        // sw.Stop();
-                        // mutantTestSession.RunTestsTimeRawMiliseconds = sw.ElapsedMilliseconds;
-                        //  return list;
                     }
                     _log.Debug("Finished processing tests.");
-            });
+                }).LogErrors();
         }
-
-//        public override void CreateTestFilter(SelectedTests selectedTests)
-//        {
-//            _selectedTests = selectedTests;
-//            base.CreateTestFilter(selectedTests);
-//        }
-
 
         
 

@@ -28,9 +28,10 @@
 
 
         IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            MethodIdentifier constraints, out List<MethodIdentifier> coveredTests);
+            MethodIdentifier constraints);
 
         MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies);
+        List<MethodIdentifier> FindCoveredTests(IList<AssemblyNode> loadedAssemblies, MethodIdentifier constraints);
     }
     public static class Helpers
     {
@@ -64,7 +65,7 @@
       
 
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            MethodIdentifier constraints, out List<MethodIdentifier> coveredTests)
+            MethodIdentifier constraints)
         {
 
             var loadedAssemblies = LoadAssemblies(paths, constraints);
@@ -72,22 +73,12 @@
             root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;
 
-            if (constraints != null)
-            {
-                coveredTests = FindCoveredTests(loadedAssemblies.Select(a => a.AssemblyDefinition).ToList(),
-                    constraints);
-            }
-            else
-            {
-                coveredTests = null;
-            }
-
             return loadedAssemblies;
         }
-      
-        public List<MethodIdentifier> FindCoveredTests(IList<IModule> loadedAssemblies, MethodIdentifier constraints)
+
+        public List<MethodIdentifier> FindCoveredTests(IList<AssemblyNode> loadedAssemblies, MethodIdentifier constraints)
         {
-            return loadedAssemblies.SelectMany(m =>
+            return loadedAssemblies.Select(a => a.AssemblyDefinition).SelectMany(m =>
             {
                 _log.Debug("Scanning "+m.Name.Value+" for selected covering tests. ");
                 var visitor = new CoveringTestsVisitor(constraints);
@@ -103,13 +94,6 @@
                 return visitor.FoundTests;
             }).ToList();
             
-//            return (from m in methods
-//                let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
-//                where t != null
-//                select new MethodIdentifier(
-//                    TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
-//                     + "." + t.Name.Value, m.Name.Value)).ToList();
- 
         }
 
         private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
