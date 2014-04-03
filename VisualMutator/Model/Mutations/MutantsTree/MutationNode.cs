@@ -3,11 +3,12 @@
     #region
 
     using System.Collections.Generic;
+    using Infrastructure;
     using UsefulTools.CheckboxedTree;
 
     #endregion
 
-    public abstract class MutationNode : StateNode<MutantResultState>
+    public abstract class MutationNode : StateNode<MutantResultState>, IExpandableNode
     {
         private bool _isExpanded;
 

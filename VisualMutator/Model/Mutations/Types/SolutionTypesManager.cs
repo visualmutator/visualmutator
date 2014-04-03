@@ -24,9 +24,6 @@
     public interface ITypesManager
     {
 
-        IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths);
-
-     
         bool IsAssemblyLoadError { get; set; }
 
 
@@ -64,17 +61,7 @@
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
             return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new Extensibility.MethodIdentifier(m)).ToList());
         }
-       
-        public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths)
-        {
-
-            var loadedAssemblies = LoadAssemblies(paths);
-            var root = new RootNode();
-            root.Children.AddRange(loadedAssemblies);
-            root.IsIncluded = true;
-
-            return loadedAssemblies;
-        }
+      
 
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
             MethodIdentifier constraints, out List<MethodIdentifier> coveredTests)

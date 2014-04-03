@@ -100,7 +100,7 @@
 
         }
 
-        public void Run(MethodIdentifier methodIdentifier = null)
+        public void Run(MethodIdentifier singleMethodToMutate = null)
         {
             _fileManager.Initialize();
 
@@ -123,32 +123,45 @@
 
            
             List<MethodIdentifier> coveredTests = null;
-            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, methodIdentifier,
+            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(originalFilesList.Assemblies, singleMethodToMutate,
                 out coveredTests).CastTo<object>());
 
             var testsTask = Task.Run(() => _testsLoader.LoadTests(
                 originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
 
+            assembliesTask.ContinueWith((Task<object> result) =>
+            {
+                if (result.Exception == null)
+                {
+                    var assemblies = (IList<AssemblyNode>) result.Result;
+
+                    assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
+
+
+                    if (singleMethodToMutate != null)
+                    {
+                        var root = new CheckedNode("");
+                        root.Children.AddRange(assemblies);
+                        ExpandLoneNodes(root);
+                    }
+                    _svc.Threading.PostOnGui(() =>
+                    {
+                        _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.Assemblies.AsStrings().ToList();
+
+                        _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
+                    });
+                }
+            }).ContinueWith(CheckError);
+
+
             Task.WhenAll(assembliesTask, testsTask).ContinueWith( 
                 (Task<object[]> result) =>
                 {
-                    if(result.Exception!= null)
+                    if (result.Exception == null)
                     {
-                        _log.Error(result.Exception);
-                        _svc.Threading.PostOnGui(() =>
-                        {
-                            ShowError(result.Exception);
-                            _viewModel.Close();
-                        });
-                    }
-                    else
-                    {
-                        var assemblies = (IList<AssemblyNode>)result.Result[0];
                         var testsRootNode = (TestsRootNode)result.Result[1];
-
-                        assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
                         
-                        SelectOnlyCovered(testsRootNode, coveredTests);
+                        SelectOnlyCoveredTests(testsRootNode, coveredTests);
 
                         _svc.Threading.PostOnGui(() =>
                         {
@@ -156,22 +169,38 @@
                             {
                                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
                             }
-                            _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.Assemblies.AsStrings().ToList();
-
-                            if(methodIdentifier != null)
+                            if (singleMethodToMutate != null)
                             {
-                                ExpandLoneNodes(assemblies, testsRootNode);
+                                ExpandLoneNodes(testsRootNode);
                             }
-                            
-                            _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
+
                             _viewModel.TypesTreeToTest.TestAssemblies 
                                 = new ReadOnlyCollection<TestNodeAssembly>(testsRootNode.TestNodeAssemblies.ToList());
 
                         });
                     }
-                });
+                }).ContinueWith(CheckError);
 
             _viewModel.ShowDialog();
+        }
+
+        private void CheckError(Task result)
+        {
+            if (result.Exception != null)
+            {
+                ShowErrorAndExit(result.Exception);
+            }
+                
+        }
+
+        private void ShowErrorAndExit(AggregateException exception)
+        {
+            _log.Error(exception);
+            _svc.Threading.PostOnGui(() =>
+            {
+                ShowError(exception);
+                _viewModel.Close();
+            });
         }
 
         private void ShowError(AggregateException exc)
@@ -195,22 +224,12 @@
             }
         }
 
-        private void ExpandLoneNodes(IList<AssemblyNode> assemblies, TestsRootNode tests)
+        private void ExpandLoneNodes(CheckedNode tests)
         {
-            var allTypeTreeNodes = assemblies
-                .Cast<CheckedNode>()
-                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
-                    n => n.IsIncluded == null || n.IsIncluded == true)
-                .Cast<MutationNode>();
-            foreach (var typeTreeNode in allTypeTreeNodes)
-            {
-                typeTreeNode.IsExpanded = true;
-            }
-
             var allTests = tests.Children
                 .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
                     n => n.IsIncluded == null || n.IsIncluded == true)
-                .Cast<TestTreeNode>();
+                .Cast<IExpandableNode>();
             foreach (var testNode in allTests)
             {
                 testNode.IsExpanded = true;
@@ -228,7 +247,7 @@
             }
         }
 
-        private void SelectOnlyCovered(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
+        private void SelectOnlyCoveredTests(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
         {
             if (coveredTests != null)
             {

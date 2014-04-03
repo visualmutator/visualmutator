@@ -271,6 +271,7 @@
     <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
+    <Compile Include="Infrastructure\IExpandableNode.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />

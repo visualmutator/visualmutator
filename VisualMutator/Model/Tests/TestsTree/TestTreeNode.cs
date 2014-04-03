@@ -5,12 +5,13 @@
     using System;
     using System.Linq;
     using System.Windows.Input;
+    using Infrastructure;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Wpf;
 
     #endregion
 
-    public abstract class TestTreeNode : CheckedNode
+    public abstract class TestTreeNode : CheckedNode, IExpandableNode
     {
         private ICommand _commandRunTest;
 
