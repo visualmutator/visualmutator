@@ -28,10 +28,9 @@
 
 
         IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            MethodIdentifier constraints);
+            ICodePartsMatcher constraints);
 
-        MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies);
-        List<MethodIdentifier> FindCoveredTests(IList<AssemblyNode> loadedAssemblies, MethodIdentifier constraints);
+        MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies);
     }
     public static class Helpers
     {
@@ -55,7 +54,7 @@
             _moduleSource = moduleSource;
         }
 
-        public MutationFilter CreateFilterBasedOnSelection(IEnumerable<AssemblyNode> assemblies)
+        public MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies)
         {
             var methods = assemblies
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
@@ -65,10 +64,10 @@
       
 
         public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            MethodIdentifier constraints)
+            ICodePartsMatcher constraints)
         {
-
-            var loadedAssemblies = LoadAssemblies(paths, constraints);
+            var matcher = constraints.Join(new ProperlyNamedMatcher());
+            var loadedAssemblies = LoadAssemblies(paths, matcher);
             var root = new RootNode();
             root.Children.AddRange(loadedAssemblies);
             root.IsIncluded = true;
@@ -76,28 +75,10 @@
             return loadedAssemblies;
         }
 
-        public List<MethodIdentifier> FindCoveredTests(IList<AssemblyNode> loadedAssemblies, MethodIdentifier constraints)
-        {
-            return loadedAssemblies.Select(a => a.AssemblyDefinition).SelectMany(m =>
-            {
-                _log.Debug("Scanning "+m.Name.Value+" for selected covering tests. ");
-                var visitor = new CoveringTestsVisitor(constraints);
-
-                var traverser = new CodeTraverser {PreorderVisitor = visitor};
-
-                traverser.Traverse(m);
-                _log.Debug("Finished scanning. Found " + visitor.FoundTests.Count);
-                if (visitor.IsChoiceError)
-                {
-                    throw new TestWasSelectedToMutateException();
-                }
-                return visitor.FoundTests;
-            }).ToList();
-            
-        }
+       
 
         private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
-            MethodIdentifier constraints = null)
+            ICodePartsMatcher matcher)
         {
             var assemblyTreeNodes = new List<AssemblyNode>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
@@ -107,36 +88,39 @@
                     IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
                     if(module.StrongNameSigned)
                     {
-
                        // throw new StrongNameSignedAssemblyException();
                     }
 
                     var assemblyNode = new AssemblyNode(module.Name.Value, module);
 
-                    System.Action<CheckedNode, ICollection<INamespaceTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
+                    System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
                     {
-                        foreach (INamespaceTypeDefinition typeDefinition in leafTypes)
+                        foreach (INamedTypeDefinition typeDefinition in leafTypes)
                         {
-                            var type = new TypeNode(parent, typeDefinition.Name.Value);
-                            foreach (var method in typeDefinition.Methods)
+                            if (matcher.Matches(typeDefinition))
                             {
-                                if (constraints == null || constraints.MethodName == method.Name.Value)
+                                var type = new TypeNode(parent, typeDefinition.Name.Value);
+                                foreach (var method in typeDefinition.Methods)
                                 {
-                                    type.Children.Add(new MethodNode(type, method.Name.Value, method, false));
+                                    if (matcher.Matches(method))
+                                    {
+                                        type.Children.Add(new MethodNode(type, method.Name.Value, method, false));
+                                    }
                                 }
+                                parent.Children.Add(type);
                             }
-
-                            parent.Children.Add(type);
-
                         }
                     };
-                    Func<INamespaceTypeDefinition, string> namespaceExtractor = typeDef => 
-                        typeDef.ContainingUnitNamespace.Name.Value;
+                    Func<INamedTypeDefinition, string> namespaceExtractor = typeDef =>
+                        TypeHelper.GetDefiningNamespace(typeDef).Name.Value;
+                    
 
                     NamespaceGrouper<INamespaceTypeDefinition, CheckedNode>.
-                        GroupTypes(assemblyNode, namespaceExtractor, 
-                        (parent, name) => new TypeNamespaceNode(parent, name), typeNodeCreator,
-                            ChooseTypes(module, constraints).ToList());
+                        GroupTypes(assemblyNode, 
+                            namespaceExtractor, 
+                            (parent, name) => new TypeNamespaceNode(parent, name), 
+                            typeNodeCreator,
+                                module.GetAllTypes().ToList());
 
                     
                     assemblyTreeNodes.Add(assemblyNode);
@@ -157,14 +141,30 @@
         }
     
         //TODO: nessessary?
-        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module, MethodIdentifier constraints = null)
+        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module)
         {
             return module.GetAllTypes()
                 .OfType<INamespaceTypeDefinition>()
-                .Where(t => constraints==null || t.GetTypeFullName() == constraints.ClassName)
                 .Where(t => t.Name.Value != "<Module>")
                 .Where(t => !t.Name.Value.StartsWith("<>"));
 
         }
+
+        class ProperlyNamedMatcher : CodePartsMatcher
+        {
+            public override bool Matches(IMethodReference method)
+            {
+                return true;
+            }
+
+            public override bool Matches(ITypeReference typeReference)
+            {
+                INamedTypeReference named = typeReference as INamedTypeReference;
+                return named != null
+                       && named.Name.Value != "<Module>"
+                       && !named.Name.Value.StartsWith("<>");
+            }
+        }
+
     }
 }

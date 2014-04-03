@@ -18,6 +18,11 @@
         {
             TestName = testName;
         }
+
+        public override string ToString()
+        {
+            return TestName.FullName;
+        }
     }
     public class MsTestTestId : TestId
     {

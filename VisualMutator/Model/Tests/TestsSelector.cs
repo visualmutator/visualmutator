@@ -34,8 +34,9 @@
 
         public string CreateMinimalTestsInfo(IEnumerable<TestNodeNamespace> namespaces)
         {
-            return string.Join(" ", namespaces
-                .Select(n => MinimalTreeId((TestTreeNode)n, NameExtractor, a => a.Children.Cast<TestTreeNode>())));
+            var ids = namespaces.Select(n => MinimalTreeId((TestTreeNode) n,
+                NameExtractor, a => a.Children.Cast<TestTreeNode>()));
+            return string.Join(" ", ids).Trim();
         }
 
         public string MinimalTreeId<Node>(Node node,

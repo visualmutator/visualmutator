@@ -14,17 +14,15 @@
     public class CoveringTestsVisitor : CodeVisitor
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
-        private readonly MethodIdentifier _constraints;
+
         private readonly HashSet<MethodIdentifier> _foundTests;
-        private readonly CciMethodSearcher _searcher;
+        private readonly ICodePartsMatcher _searcher;
         private IMethodDefinition _currentTestMethod;
 
-        public CoveringTestsVisitor(MethodIdentifier constraints)
+        public CoveringTestsVisitor(ICodePartsMatcher constraints)
         {
-            _constraints = constraints;
             _foundTests = new HashSet<MethodIdentifier>();
-            _searcher = new CciMethodSearcher(_constraints);
+            _searcher = constraints;
         }
 
         public override void Visit(IMethodDefinition method)
@@ -52,8 +50,8 @@
                 if (_searcher.Matches(methodCall.MethodToCall))
                 {
                     _log.Debug("Adding test" + _currentTestMethod + " invoking method "
-                        + _constraints);
-                    _foundTests.Add(CciMethodSearcher.CreateIdentifier(_currentTestMethod));
+                        + methodCall.MethodToCall);
+                    _foundTests.Add(CciMethodMatcher.CreateIdentifier(_currentTestMethod));
                 }
             }
         }

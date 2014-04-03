@@ -44,15 +44,10 @@
             dsa = cci.AppendFromFile(MutationTestsHelper.DsaPath);
 
         }
-        public HashSet<IMethodDefinition> FindCovering(IModule module, MethodIdentifier constraints)
+        public ICollection<MethodIdentifier> FindCovering(IModule module, MethodIdentifier constraints)
         {
-            var visitor = new CoveringTestsVisitor(constraints);
-            var traverser = new CodeTraverser
-            {
-                PreorderVisitor = visitor
-            };
-            traverser.Traverse(module);
-            return visitor.FoundTests;
+            var typeManager = new CoveringTestsFinder();
+            return typeManager.FindCoveringTests(module, new CciMethodMatcher(constraints));
         }
         [Test]
         public void TestRegex()
@@ -94,18 +89,18 @@
 
             Assert.AreEqual(1, found.Count());
 
-            IMethodDefinition method = found.Single();
-            var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
-
-            Assert.NotNull(def);
-            var result = (from m in found
-                    let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
-                    where t != null
-                    select new MethodIdentifier(
-                        TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
-                         + "." + t.Name.Value, m.Name.Value)).ToList();
-
-            Assert.IsNotEmpty(result);
+//            IMethodDefinition method = found.Single();
+//            var def = method.ContainingTypeDefinition as INamespaceTypeDefinition;
+//
+//            Assert.NotNull(def);
+//            var result = (from m in found
+//                    let t = m.ContainingTypeDefinition as INamespaceTypeDefinition
+//                    where t != null
+//                    select new MethodIdentifier(
+//                        TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None)
+//                         + "." + t.Name.Value, m.Name.Value)).ToList();
+//
+//            Assert.IsNotEmpty(result);
         }
        
     }

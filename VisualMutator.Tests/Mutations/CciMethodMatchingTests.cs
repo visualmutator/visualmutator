@@ -34,7 +34,7 @@
     [TestFixture("Ns.Class.Method1(System.String)")]
     [TestFixture("Ns.Class.Method1()")]
     [TestFixture("Ns.Class.Method2<U>(System.Collections.Generic.IEnumerable<U>)")]
-    public class TestSelectionIntTests2
+    public class CciMethodMatchingTests
     {
         private const string code = @"
 
@@ -72,7 +72,7 @@
         private readonly MethodIdentifier _context;
         private IModule _module;
 
-        public TestSelectionIntTests2(string method)
+        public CciMethodMatchingTests(string method)
         {
             _context = new MethodIdentifier(method);
         }
@@ -91,21 +91,24 @@
 
         }
      
-
         [Test]
         public void ShouldFindMethodByIdentifier()
         {
-            var searcher = new CciMethodSearcher(_context);
-            var methods = GetAllMethods(_module);
+            var searcher = new CciMethodMatcher(_context);
+            var methods = _module.GetAllTypes().SelectMany(t => t.Methods).ToList();
             IMethodDefinition method = methods.SingleOrDefault(searcher.Matches);
 
             Assert.IsNotNull(method);
         }
 
-
-        public IList<IMethodDefinition> GetAllMethods(IModule module)
+        [Test]
+        public void ShouldFindTypeByIdentifier()
         {
-            return _module.GetAllTypes().SelectMany(t => t.Methods).ToList();
+            var searcher = new CciMethodMatcher(_context);
+            var types = _module.GetAllTypes();
+            INamedTypeDefinition method = types.SingleOrDefault(searcher.Matches);
+
+            Assert.IsNotNull(method);
         }
     }
 }

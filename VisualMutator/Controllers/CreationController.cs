@@ -102,6 +102,19 @@
 
         public void Run(MethodIdentifier singleMethodToMutate = null)
         {
+            bool constrainedMutation = false;
+            ICodePartsMatcher matcher;
+            if(singleMethodToMutate != null)
+            {
+                matcher = new CciMethodMatcher(singleMethodToMutate);
+                constrainedMutation = true;
+            }
+            else
+            {
+                matcher = new AllMatcher();
+            }
+            
+
             _fileManager.Initialize();
 
             ProjectFilesClone originalFilesList = _fileManager.CreateClone("Mutants");
@@ -124,7 +137,7 @@
            
            // List<MethodIdentifier> coveredTests = null;
             var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(
-                originalFilesList.Assemblies, singleMethodToMutate).CastTo<object>());
+                originalFilesList.Assemblies, matcher).CastTo<object>());
 
             var testsTask = Task.Run(() => _testsLoader.LoadTests(
                 originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
@@ -137,7 +150,7 @@
 
                     assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
 
-                    if (singleMethodToMutate != null)
+                    if (constrainedMutation)
                     {
                         var root = new CheckedNode("");
                         root.Children.AddRange(assemblies);
@@ -152,7 +165,7 @@
                 }
             }).ContinueWith(CheckError);
 
-
+            var finder = new CoveringTestsFinder();
             Task.WhenAll(assembliesTask, testsTask).ContinueWith( 
                 (Task<object[]> result) =>
                 {
@@ -161,12 +174,15 @@
                         var testsRootNode = (TestsRootNode)result.Result[1];
                         var assemblies = (IList<AssemblyNode>) result.Result[0];
 
-                        if (singleMethodToMutate != null)
+                        if (constrainedMutation)
                         {
-                            List<MethodIdentifier> coveredTests = 
-                                _typesManager.FindCoveredTests(assemblies, singleMethodToMutate).ToList();
-                                
-                            SelectOnlyCoveredTests(testsRootNode, coveredTests);
+                            
+                            var t = Task.WhenAll(assemblies.Select(a =>
+                                Task.Run(() => finder.FindCoveringTests(a.AssemblyDefinition, matcher))));
+                            List<MethodIdentifier> coveringTests = t.Result.Flatten().ToList();
+
+
+                            SelectOnlyCoveredTests(testsRootNode, coveringTests);
                         }
 
                         _svc.Threading.PostOnGui(() =>

@@ -2,6 +2,7 @@
 {
     #region
 
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -30,6 +31,7 @@
         private SolutionTypesManager typesManager;
         private MethodIdentifier context;
         private int expectedCount;
+        private CoveringTestsFinder finder;
 
         public TestSelectionIntTests(string className, string method, int expectedCount)
         {
@@ -54,6 +56,7 @@
 
             var cci = new CciModuleSource();
             typesManager = new SolutionTypesManager(cci);
+            finder = new CoveringTestsFinder();
         }
      
 
@@ -61,9 +64,9 @@
         public void ShouldFindCoveringTests()
         {
        
-            List<MethodIdentifier> coveredTests;
-            var types = typesManager.GetTypesFromAssemblies(paths, context, out coveredTests);
-        
+            var types = typesManager.GetTypesFromAssemblies(paths, new CciMethodMatcher(context));
+            List<MethodIdentifier> coveredTests = types.Select(t =>
+                finder.FindCoveringTests(t.AssemblyDefinition, new CciMethodMatcher(context))).Flatten().ToList();
           //  Assert.AreEqual(1, types.Cast<CheckedNode>().SelectManyRecursive(_ => _.Children, leafsOnly: true).Count(n => n is TypeNode));
             Assert.AreEqual(expectedCount, coveredTests.Count());
         }
@@ -71,11 +74,11 @@
       //  [Test]
         public void Test12()
         {
-            var cam = new MethodIdentifier("Dsa.DataStructures.Deque`1.EnqueueFront");
+            var cam = new CciMethodMatcher(new MethodIdentifier("Dsa.DataStructures.Deque`1.EnqueueFront"));
 
-            List<MethodIdentifier> coveredTests;
-            var types = typesManager.GetTypesFromAssemblies(paths.ToList(),
-                cam, out coveredTests);
+            var types = typesManager.GetTypesFromAssemblies(paths.ToList(), cam);
+            List<MethodIdentifier> coveredTests = types.Select(
+                t => finder.FindCoveringTests(t.AssemblyDefinition, cam)).Flatten().ToList();
             Assert.AreEqual(1, coveredTests.Count());
 
         }
@@ -87,11 +90,14 @@
             var b = MutationTestsHelper.DsaPath;
             var cci = new CciModuleSource();
             var typesManager = new SolutionTypesManager(cci);
-            var cam = new MethodIdentifier("Dsa.Utility.Guard.ArgumentNull");
+            var cam = new CciMethodMatcher(new MethodIdentifier("Dsa.Utility.Guard.ArgumentNull"));
 
-            List<MethodIdentifier> coveredTests;
+           
             var types = typesManager.GetTypesFromAssemblies(new[] {a, b}.Select(_ => new FilePathAbsolute(_)).ToList(),
-                cam, out coveredTests);
+                cam);
+
+            List<MethodIdentifier> coveredTests = types.Select(t => 
+                finder.FindCoveringTests(t.AssemblyDefinition, cam)).Flatten().ToList();
             //TODO: dodac filtrowanie tylko lisci?
            // Assert.AreEqual(1,types.Cast<CheckedNode>().SelectManyRecursive(_=>_.Children, leafsOnly:true).Count(n => n is TypeNode));
             Assert.AreEqual(3, coveredTests.Count());

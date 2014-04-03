@@ -214,7 +214,7 @@
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Infrastructure\NinjectParamBindingsTests.cs" />
-    <Compile Include="Mutations\TestSelectionIntTests2.cs" />
+    <Compile Include="Mutations\CciMethodMatchingTests.cs" />
     <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
     <Compile Include="Mutations\TestSelectionIntTests.cs" />

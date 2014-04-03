@@ -281,7 +281,10 @@
     <Compile Include="Infrastructure\TaskErrors.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
-    <Compile Include="Model\CciMethodSearcher.cs" />
+    <Compile Include="Model\AllMatcher.cs" />
+    <Compile Include="Model\CciMethodMatcher.cs" />
+    <Compile Include="Model\CoveringTestsFinder.cs" />
+    <Compile Include="Model\ICodePartsMatcher.cs" />
     <Compile Include="Model\MethodIdentifier.cs" />
     <Compile Include="Model\Exceptions\TestsLoadingException.cs" />
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />

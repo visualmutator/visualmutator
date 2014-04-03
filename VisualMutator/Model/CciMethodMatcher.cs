@@ -5,13 +5,13 @@
     using log4net;
     using Microsoft.Cci;
 
-    public class CciMethodSearcher
+    public class CciMethodMatcher : ICodePartsMatcher
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MethodIdentifier _identifier;
 
-        public CciMethodSearcher(MethodIdentifier identifier)
+        public CciMethodMatcher(MethodIdentifier identifier)
         {
             _identifier = identifier;
             _log.Debug("Creatng searcher for: " + _identifier);
@@ -22,6 +22,15 @@
             var sig = CreateIdentifier(method);
             _log.Debug("matching: "+sig);
             return sig == _identifier;
+        }
+
+        public bool Matches(ITypeReference typeReference)
+        {
+            typeReference = TypeHelper.UninstantiateAndUnspecialize(typeReference);
+            string name = TypeHelper.GetTypeName(typeReference,
+                    NameFormattingOptions.TypeConstraints |
+                    NameFormattingOptions.TypeParameters );
+            return _identifier.ClassName == name;
         }
 
 
