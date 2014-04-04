@@ -8,19 +8,21 @@
     using UsefulTools.CheckboxedTree;
 
     #endregion
-    public class FakeOperatorPackageRootNode : CheckedNode
+    public class OperatorPackagesRoot : CheckedNode
     {
-        public FakeOperatorPackageRootNode(string name)
+        public OperatorPackagesRoot(string name)
             : base(name)
         {
         }
+
+        public IList<PackageNode> Packages { get { return Children.Cast<PackageNode>().ToList(); } }
     }
     public class PackageNode : CheckedNode
     {
         private readonly IOperatorsPackage _operatorsPackage;
 
 
-        public PackageNode(FakeOperatorPackageRootNode root, IOperatorsPackage operatorsPackage)
+        public PackageNode(OperatorPackagesRoot root, IOperatorsPackage operatorsPackage)
             : base( operatorsPackage.Name)
         {
             _operatorsPackage = operatorsPackage;

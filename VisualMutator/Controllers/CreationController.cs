@@ -14,6 +14,7 @@
     using System.Threading.Tasks;
     using Infrastructure;
     using log4net;
+    using Microsoft.Cci;
     using Model;
     using Model.Exceptions;
     using Model.Mutations.MutantsTree;
@@ -131,13 +132,13 @@
             _viewModel.ProjectPaths = _hostEnviroment.GetProjectPaths().ToList();
 
             _svc.Threading.ScheduleAsync(() => _operatorsManager.LoadOperators(),
-                packages => _viewModel.MutationsTree.MutationPackages
-                    = new ReadOnlyCollection<PackageNode>(packages));
+                root => _viewModel.MutationsTree.MutationPackages
+                    = new ReadOnlyCollection<PackageNode>(root.Packages));
 
            
            // List<MethodIdentifier> coveredTests = null;
-            var assembliesTask = Task.Run(() => _typesManager.GetTypesFromAssemblies(
-                originalFilesList.Assemblies, matcher).CastTo<object>());
+            var assembliesTask = Task.Run(() => _typesManager.LoadAssemblies(
+                originalFilesList.Assemblies).CastTo<object>());
 
             var testsTask = Task.Run(() => _testsLoader.LoadTests(
                 originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
@@ -146,9 +147,9 @@
             {
                 if (result.Exception == null)
                 {
-                    var assemblies = (IList<AssemblyNode>) result.Result;
-
-                    assemblies = assemblies.Where(a => a.Children.Count > 0).ToList();
+                    IList<IModule> modules = (IList<IModule>) result.Result;
+                    var assemblies = _typesManager.CreateNodesFromAssemblies(modules, matcher)
+                                .Where(a => a.Children.Count > 0).ToList();
 
                     if (constrainedMutation)
                     {
@@ -172,13 +173,13 @@
                     if (result.Exception == null)
                     {
                         var testsRootNode = (TestsRootNode)result.Result[1];
-                        var assemblies = (IList<AssemblyNode>) result.Result[0];
+                        var modules = (IList<IModule>)result.Result[0];
 
                         if (constrainedMutation)
                         {
-                            
-                            var t = Task.WhenAll(assemblies.Select(a =>
-                                Task.Run(() => finder.FindCoveringTests(a.AssemblyDefinition, matcher))));
+
+                            var t = Task.WhenAll(modules.Select(module =>
+                                Task.Run(() => finder.FindCoveringTests(module, matcher))));
                             List<MethodIdentifier> coveringTests = t.Result.Flatten().ToList();
 
 

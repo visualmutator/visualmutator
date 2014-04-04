@@ -10,7 +10,7 @@
     public interface IOperatorsManager
     {
 
-        IList<PackageNode> LoadOperators();
+        OperatorPackagesRoot LoadOperators();
 
 
     }
@@ -26,12 +26,12 @@
            
         }
 
-      
-        public IList<PackageNode> LoadOperators()
+
+        public OperatorPackagesRoot LoadOperators()
         {
             var list = new List<PackageNode>();
 
-            var root = new FakeOperatorPackageRootNode("Root");
+            var root = new OperatorPackagesRoot("Root");
 
             IEnumerable<IOperatorsPackage> packages = _loader.ReloadOperators();
             foreach (IOperatorsPackage operatorsPack in packages)
@@ -47,7 +47,7 @@
             }
             root.IsIncluded = true;
 
-            return list;
+            return root;
         }
 
   

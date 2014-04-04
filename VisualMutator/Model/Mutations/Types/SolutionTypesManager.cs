@@ -27,9 +27,10 @@
         bool IsAssemblyLoadError { get; set; }
 
 
-        IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
-            ICodePartsMatcher constraints);
+        IList<IModule> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths);
 
+        IList<AssemblyNode> CreateNodesFromAssemblies(IList<IModule> modules,
+            ICodePartsMatcher constraints);
         MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies);
     }
     public static class Helpers
@@ -63,24 +64,24 @@
         }
       
 
-        public IList<AssemblyNode> GetTypesFromAssemblies(IList<FilePathAbsolute> paths,
+        public IList<AssemblyNode> CreateNodesFromAssemblies(IList<IModule> modules,
             ICodePartsMatcher constraints)
         {
             var matcher = constraints.Join(new ProperlyNamedMatcher());
-            var loadedAssemblies = LoadAssemblies(paths, matcher);
+
+            List<AssemblyNode> assemblyNodes = modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
             var root = new RootNode();
-            root.Children.AddRange(loadedAssemblies);
+            root.Children.AddRange(assemblyNodes);
             root.IsIncluded = true;
 
-            return loadedAssemblies;
+            return assemblyNodes;
         }
 
-       
 
-        private IList<AssemblyNode> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths, 
-            ICodePartsMatcher matcher)
+
+        public IList<IModule> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
         {
-            var assemblyTreeNodes = new List<AssemblyNode>();
+            var assemblyTreeNodes = new List<IModule>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
             {
                 try
@@ -90,49 +91,7 @@
                     {
                        // throw new StrongNameSignedAssemblyException();
                     }
-
-                    var assemblyNode = new AssemblyNode(module.Name.Value, module);
-
-                    System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
-                    {
-                        foreach (INamedTypeDefinition typeDefinition in leafTypes)
-                        {
-                            if (matcher.Matches(typeDefinition))
-                            {
-                                var type = new TypeNode(parent, typeDefinition.Name.Value);
-                                foreach (var method in typeDefinition.Methods)
-                                {
-                                    if (matcher.Matches(method))
-                                    {
-                                        type.Children.Add(new MethodNode(type, method.Name.Value, method, false));
-                                    }
-                                }
-                                parent.Children.Add(type);
-                            }
-                        }
-                    };
-                    Func<INamedTypeDefinition, string> namespaceExtractor = typeDef =>
-                        TypeHelper.GetDefiningNamespace(typeDef).Name.Value;
-                    
-
-                    NamespaceGrouper<INamespaceTypeDefinition, CheckedNode>.
-                        GroupTypes(assemblyNode, 
-                            namespaceExtractor, 
-                            (parent, name) => new TypeNamespaceNode(parent, name), 
-                            typeNodeCreator,
-                                module.GetAllTypes().ToList());
-
-                    
-                    assemblyTreeNodes.Add(assemblyNode);
-
-                    //remove empty amespaces. 
-                    //TODO to refactor...
-                    List<CheckedNode> checkedNodes = assemblyTreeNodes.SelectMany(a => a.Children).ToList();
-                    foreach (TypeNamespaceNode node in checkedNodes)
-                    {
-                        RemoveFromParentIfEmpty(node);
-                    }
-
+                    assemblyTreeNodes.Add(module);
                 }
                 catch (AssemblyReadException e)
                 {
@@ -146,6 +105,52 @@
                 }
             } 
             return assemblyTreeNodes;
+        }
+
+
+        public AssemblyNode CreateAssemblyNode(IModule module, 
+            ICodePartsMatcher matcher)
+        {
+            var assemblyNode = new AssemblyNode(module.Name.Value, module);
+
+            System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
+            {
+                foreach (INamedTypeDefinition typeDefinition in leafTypes)
+                {
+                    if (matcher.Matches(typeDefinition))
+                    {
+                        var type = new TypeNode(parent, typeDefinition.Name.Value);
+                        foreach (var method in typeDefinition.Methods)
+                        {
+                            if (matcher.Matches(method))
+                            {
+                                type.Children.Add(new MethodNode(type, method.Name.Value, method, false));
+                            }
+                        }
+                        parent.Children.Add(type);
+                    }
+                }
+            };
+            Func<INamedTypeDefinition, string> namespaceExtractor = typeDef =>
+                TypeHelper.GetDefiningNamespace(typeDef).Name.Value;
+
+
+            NamespaceGrouper<INamespaceTypeDefinition, CheckedNode>.
+                GroupTypes(assemblyNode,
+                    namespaceExtractor,
+                    (parent, name) => new TypeNamespaceNode(parent, name),
+                    typeNodeCreator,
+                        module.GetAllTypes().ToList());
+
+
+            //remove empty amespaces. 
+            //TODO to refactor...
+            List<CheckedNode> checkedNodes = assemblyNode.Children.ToList();
+            foreach (TypeNamespaceNode node in checkedNodes)
+            {
+                RemoveFromParentIfEmpty(node);
+            }
+            return assemblyNode;
         }
         public void RemoveFromParentIfEmpty(TypeNamespaceNode node)
         {
