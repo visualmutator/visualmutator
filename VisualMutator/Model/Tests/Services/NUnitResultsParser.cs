@@ -20,91 +20,14 @@
 
     public interface INUnitExternal
     {
-        Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
-            string inputFile, string outputFile,
-            SelectedTests selectedTests);
+        Dictionary<string, MyTestResult> ProcessResultFile( string fileName);
     }
 
-    public class NUnitExternal : INUnitExternal
+    public class NUnitResultsParser : INUnitExternal
     {
-        private readonly CommonServices _svc;
-        private readonly IProcesses _processes;
-
-        public NUnitExternal(CommonServices svc, IProcesses processes)
-            : base()
-        {
-            _svc = svc;
-            _processes = processes;
-            
-        }
-
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Task<List<MyTestResult>> RunTests(string nunitConsolePath, 
-            string inputFile, string outputFile,
-            SelectedTests selectedTests)
-        {
-            _log.Debug("Running tests on: " + inputFile);
-            Task<ProcessResults> results = RunNUnitConsole(nunitConsolePath, inputFile, outputFile, selectedTests);
 
-            return results.ContinueWith(testResult =>
-            {
-
-                if (testResult.Exception != null)
-                {
-                    _log.Error(testResult.Exception);
-                    return new List<MyTestResult>();
-                }
-                else if (!_svc.FileSystem.File.Exists(outputFile))
-                {
-                    _log.Error("Test results in file: " + outputFile+" not found.");
-                    return new List<MyTestResult>();
-                }
-                else
-                {
-                    Dictionary<string, MyTestResult> tresults = ProcessResultFile(outputFile);
-                    return tresults.Values.ToList();
-                }
-            }); 
-        }
-
-        public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath, 
-            string inputFile, string outputFile,
-            SelectedTests selectedTests)
-        {
-            var listpath = new FilePathAbsolute(inputFile)
-                .GetBrotherFileWithName(
-                Path.GetFileNameWithoutExtension(inputFile) + "-Runlist.txt").Path;
-
-         //   var listpath = Path.Combine(Path.GetTempPath(), "visualMutator-Runlist.txt");
-            using(var file = File.CreateText(listpath))
-            {
-                foreach (var str in selectedTests.TestsDescription.Split(' '))
-                {
-                    file.WriteLine(str.Trim());
-                }
-            }
-           // string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
-             //  string.Join(",",selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)));
-            string testToRun = " /runlist:" + listpath.InQuotes() + " ";
-            string arg =  inputFile.InQuotes()
-                         + testToRun
-                         + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
-              //  + " -framework net-4.0";
-
-            _log.Info("Running " + nunitConsolePath + " with args: " + arg);
-            var startInfo = new ProcessStartInfo
-            {
-                Arguments = arg,
-                CreateNoWindow = true,
-                ErrorDialog = true,
-                RedirectStandardOutput = false,
-                FileName = nunitConsolePath,
-                UseShellExecute = false,
-            };
-
-            return _processes.RunAsync(startInfo);
-        }
         
         public Dictionary<string, MyTestResult> ProcessResultFile( string fileName)
         {

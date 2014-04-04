@@ -23,6 +23,7 @@
     {
         private readonly TestsContainer _testsContainer;
         private readonly MutationSessionChoices _choices;
+        private readonly NUnitXmlTestService _nunitService;
         private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
         private readonly Mutant _mutant;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -30,16 +31,19 @@
         private IDisposable _timoutDisposable;
         private bool _cancelRequested;
         private StoredMutantInfo _storedMutantInfo;
+        private ICollection<NUnitTester> _nUnitTesters;
 
 
         public TestingMutant(
             TestsContainer testsContainer,
             MutationSessionChoices choices,
+            NUnitXmlTestService nunitService,
             ISubject<SessionEventArgs> sessionEventsSubject,
             Mutant mutant)
         {
             _testsContainer = testsContainer;
             _choices = choices;
+            _nunitService = nunitService;
             _sessionEventsSubject = sessionEventsSubject;
             this.mutant = mutant;
 
@@ -99,15 +103,20 @@
 
             _log.Info("Loading tests for mutant " + mutant.Id);
 
-            IDisposable timoutDisposable = 
-                Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
-                .Subscribe(e => CancelTestRun());
+           
 
             List<TestsRunContext> contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
                 _choices.TestAssemblies).ToList();
 
             _log.Info("Running tests for mutant " + mutant.Id);
-            var task = _testsContainer.RunTests(contexts);
+
+            IDisposable timoutDisposable =
+               Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
+               .Subscribe(e => CancelTestRun());
+
+            _nUnitTesters = contexts.Select(_nunitService.SpawnTester).ToList();
+
+            var task = Task.WhenAll(_nUnitTesters.Select(t => t.RunTests()));
             return task.ContinueWith(t =>
             {
                 timoutDisposable.Dispose();
@@ -116,7 +125,7 @@
                     _log.Debug("Finished waiting for tests. ");
                     mutant.TestRunContexts = contexts;
 
-                    ResolveMutantState(mutant);
+                    ResolveMutantState(contexts.Select( c => c.TestResults));
 
                     mutant.MutantTestSession.IsComplete = true;
                 }
@@ -124,7 +133,7 @@
             {
                 if (t.Exception != null)
                 {
-                    SetError(mutant, t.Exception.InnerException);
+                    SetError(t.Exception.InnerException);
                 }
                 sw.Stop();
                 mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
@@ -136,7 +145,10 @@
 
         private void CancelTestRun()
         {
-                
+            foreach (var nUnitTester in _nUnitTesters)
+            {
+                nUnitTester.CancelRun();
+            }
         }
 
 
@@ -164,7 +176,7 @@
             }
         }
 
-        private void SetError(Mutant mutant, Exception e)
+        private void SetError(Exception e)
         {
             mutant.MutantTestSession.ErrorDescription = "Error ocurred";
             mutant.MutantTestSession.ErrorMessage = e.Message;
@@ -174,8 +186,15 @@
         }
 
 
-        private void ResolveMutantState(Mutant mutant)
+        private void ResolveMutantState(IEnumerable<MutantTestResults> results)
         {
+            if(results.Any(r => r.Cancelled))
+            {
+                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
+                mutant.State = MutantResultState.Killed;
+                return;
+            }
+
             List<TmpTestNodeMethod> nodeMethods = mutant.TestRunContexts
                 .SelectMany(c => c.TestResults.ResultMethods).ToList();
             //.TestsByAssembly.Values.SelectMany(c => c.ClassNodes).ToList();

@@ -29,9 +29,6 @@
     {
        // TestSession LoadTests(StoredMutantInfo mutant);
 
-        Task RunTests(List<TestsRunContext> testContexts);
-
-
         ProjectFilesClone InitTestEnvironment();
 
 
@@ -171,14 +168,6 @@
         }
 
        
-
-        public Task RunTests(List<TestsRunContext> testContexts)
-        {
-            var service = _testServices.Single();
-            List<Task> tasks = testContexts.Select(service.RunTests).ToList();
-            _log.Debug("Waiting for " + tasks.Count + " test task. ");
-            return Task.WhenAll(tasks);
-        }
 
         public IEnumerable<TestNodeNamespace> CreateMutantTestTree(Mutant mutant)
         {

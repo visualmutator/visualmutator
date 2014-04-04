@@ -27,5 +27,16 @@
                 }
             });
         }
+        public static Task<T> LogErrors<T>(this Task<T> task)
+        {
+            return task.ContinueWith(r =>
+            {
+                if (r.Exception != null)
+                {
+                    _log.Error(r.Exception);
+                }
+                return r.Result;
+            });
+        }
     }
 }

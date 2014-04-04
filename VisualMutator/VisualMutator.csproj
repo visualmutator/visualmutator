@@ -342,7 +342,8 @@
     <Compile Include="Model\Tests\MutantTestResults.cs" />
     <Compile Include="Model\Tests\MyTestResult.cs" />
     <Compile Include="Model\Tests\SelectedTests.cs" />
-    <Compile Include="Model\Tests\Services\NUnitExternal.cs" />
+    <Compile Include="Model\Tests\Services\NUnitResultsParser.cs" />
+    <Compile Include="Model\Tests\Services\NUnitTester.cs" />
     <Compile Include="Model\Tests\Services\NUnitXmlTestService.cs" />
     <Compile Include="Model\Tests\Services\TestsRunContext.cs" />
     <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />

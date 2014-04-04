@@ -15,8 +15,6 @@ namespace VisualMutator.Model.Tests.Services
     {
         May<TestsLoadContext> LoadTests(string assemblyPath);
 
-        Task RunTests(TestsRunContext context);
-
 
         void Cancel();
     }

@@ -140,61 +140,66 @@
 
             res = (res && proc.ExitCode >= 0);
         }
+
+
+        private MutantTestResults GetResults(string assembly, SelectedTests selected)
+        {
+            string path = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
+            var parser = new NUnitResultsParser();
+            var context = new TestsRunContext();
+            context.AssemblyPath = assembly;
+            context.SelectedTests = selected;
+            var service = new NUnitTester(parser, kernel.Get<IProcesses>(), kernel.Get<CommonServices>(), path, context);
+
+            service.RunTests().Wait();
+
+            return context.TestResults;
+        }
+
+
         [Test]
         public void ShouldRunAllTests()
         {
            
 
-            string path = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
-            var service = new NUnitExternal(kernel.Get<CommonServices>(), kernel.Get<IProcesses>());
-            var assemblies = new List<string>
-                                 {
-                                     MutationTestsHelper.DsaTestsPath, 
-                                     MutationTestsHelper.DsaTestsPath2
-                                 };
-            Task<ProcessResults> task = service.RunNUnitConsole(path, MutationTestsHelper.DsaTestsPath,
-                "muttest-results.xml", new SelectedTests(new List<TestId>(), ""));
 
-            task.Wait();
+            MutantTestResults mutantTestResults = GetResults(MutationTestsHelper.DsaTestsPath,
+                new SelectedTests(new List<TestId>(), ""));
 
-            var results = service.ProcessResultFile("muttest-results.xml");
-            var c = results.Values.Count(r => !r.Success);
+
+            var c = mutantTestResults.ResultMethods.Count(r => r.State != TestNodeState.Success);
             
-            Assert.IsNotEmpty(results);
+            //Assert.IsNotEmpty(results);
             Assert.AreEqual(1, c);
-            var re = results.Values.Single(r => !r.Success);
-            Assert.AreNotEqual(re.StackTrace, "");
+          //  var re = results.Values.Single(r => !r.Success);
+           // Assert.AreNotEqual(re.StackTrace, "");
         }
 
         [Test]
         public void ShouldRunSelectedTest()
         {
-            string nunitpath = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
-            var service = new NUnitExternal(kernel.Get<CommonServices>(), kernel.Get<IProcesses>());
-            var assemblies = new List<string>
-                                 {
-                                     MutationTestsHelper.DsaTestsPath, 
-                                     MutationTestsHelper.DsaTestsPath2
-                                 };
             var tn = new TestName();
             tn.FullName = "Dsa.Test.DataStructures.SetTest.DuplicateObjectTest";            
             var tn2 = new TestName();
             tn2.FullName = "Dsa.Test.DataStructures.SetTest.ContainsTest";
-            Task<ProcessResults> task = service.RunNUnitConsole(nunitpath, MutationTestsHelper.DsaTestsPath,
-                "muttest-results.xml", new SelectedTests( new List<TestId> { 
-                    new NUnitTestId(tn), 
-                    new NUnitTestId(tn2) }, ""));
+            var selected = new SelectedTests(new List<TestId>
+                              {
+                                  new NUnitTestId(tn),
+                                  new NUnitTestId(tn2)
+                              }, "");
 
-            task.Wait();
 
-            var results = service.ProcessResultFile("muttest-results.xml");
-            var c = results.Values.Count(r => !r.Success);
 
-            Assert.IsNotEmpty(results);
+            MutantTestResults mutantTestResults = GetResults(MutationTestsHelper.DsaTestsPath, selected);
+
+
+            var c = mutantTestResults.ResultMethods.Count(r => r.State != TestNodeState.Success);
+
+           // Assert.IsNotEmpty(results);
             Assert.AreEqual(1, c);
-            Assert.AreEqual(2, results.Count);
-            var re = results.Values.Single(r => !r.Success);
-            Assert.AreNotEqual(re.StackTrace, "");
+         ////   Assert.AreEqual(2, results.Count);
+          //  var re = results.Values.Single(r => !r.Success);
+        //    Assert.AreNotEqual(re.StackTrace, "");
         }
         /*
         [Test]

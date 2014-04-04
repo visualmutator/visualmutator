@@ -120,11 +120,11 @@
             
             Bind<NUnitXmlTestService>().ToSelf();
             Bind<NUnitTestService>().To<NUnitXmlTestService>();
-
+            Bind<NUnitTester>().ToSelf().AndFromFactory();
 
             Bind<INUnitWrapper>().To<NUnitWrapper>();
-            
-            Bind<INUnitExternal>().To<NUnitExternal>().AndFromFactory();
+
+            Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
 
             Kernel.InjectChildFactory<CreationController>(childKernel =>
             {
@@ -156,7 +156,7 @@
                     
                     ch.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
 
-
+                    
                     ch.Bind<AstFormatter>().ToSelf();
                     ch.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
 
