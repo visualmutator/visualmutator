@@ -125,6 +125,14 @@
                     
                     assemblyTreeNodes.Add(assemblyNode);
 
+                    //remove empty amespaces. 
+                    //TODO to refactor...
+                    List<CheckedNode> checkedNodes = assemblyTreeNodes.SelectMany(a => a.Children).ToList();
+                    foreach (TypeNamespaceNode node in checkedNodes)
+                    {
+                        RemoveFromParentIfEmpty(node);
+                    }
+
                 }
                 catch (AssemblyReadException e)
                 {
@@ -139,7 +147,19 @@
             } 
             return assemblyTreeNodes;
         }
-    
+        public void RemoveFromParentIfEmpty(TypeNamespaceNode node)
+        {
+            while(node.Children.OfType<TypeNamespaceNode>().Any())
+            {
+                TypeNamespaceNode typeNamespaceNode = node.Children.OfType<TypeNamespaceNode>().First();
+                RemoveFromParentIfEmpty(typeNamespaceNode);
+            }
+            if(!node.Children.Any())
+            {
+                node.Parent.Children.Remove(node);
+                node.Parent = null;
+            }
+        }
         //TODO: nessessary?
         private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module)
         {

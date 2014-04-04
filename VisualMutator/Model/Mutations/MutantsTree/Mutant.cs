@@ -146,7 +146,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                  return Switch.Into<string>().From(KilledSubstate)
                      .Case(MutantKilledSubstate.Normal, () => "Killed by {0} tests".Formatted(NumberOfFailedTests))
                      .Case(MutantKilledSubstate.Inconclusive, () => "Killed by {0} tests".Formatted(NumberOfFailedTests))
-                     .Case(MutantKilledSubstate.Cancelled, () => "Cancelled")
+                     .Case(MutantKilledSubstate.Cancelled, () => "Timed out")
                      .GetResult();
              })
              .Case(MutantResultState.Live, "Live")

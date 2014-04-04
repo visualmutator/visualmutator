@@ -22,7 +22,7 @@
             _chooseTestingExtensionFactory = chooseTestingExtensionFactory;
             Options = new MutantsTestingOptions
             {
-                TestingTimeoutSeconds = 30,
+                TestingTimeoutSeconds = 5,
                 TestingProcessExtensionOptions = TestingProcessExtensionOptions.Default
             };
 

@@ -201,7 +201,7 @@
 
                     });
 
-                var disp =_sessionEventsSubject.OfType<MutantVerifiedEvent>().Subscribe(e =>
+                var verifiEvents =_sessionEventsSubject.OfType<MutantVerifiedEvent>().Subscribe(e =>
                 {
                     if (e.Mutant == changelessMutant && !e.VerificationResult)
                     {
@@ -218,7 +218,10 @@
 
                 testingMutant.RunAsync().ContinueWith(t =>
                 {
-                    disp.Dispose();
+                    verifiEvents.Dispose();
+                    _choices.MutantsTestingOptions.TestingTimeoutSeconds
+                        = (int) ((2*changelessMutant.MutantTestSession.TestingTimeMiliseconds)/1000 + 1);
+
                     _svc.Threading.PostOnGui(() =>
                     {
                         if (_requestedHaltState != null)

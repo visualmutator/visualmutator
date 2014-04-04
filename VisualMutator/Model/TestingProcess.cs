@@ -39,7 +39,7 @@
             _allMutantsCount = allMutants.Count;
             _testedNonEquivalentMutantsCount = 0;
 
-            _semaphore = new SemaphoreSlim(1);//Environment.ProcessorCount);
+            _semaphore = new SemaphoreSlim(Environment.ProcessorCount);
         }
 
         public void RaiseTestingProgress(double mutationScore)
