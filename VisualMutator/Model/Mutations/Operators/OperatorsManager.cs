@@ -3,6 +3,7 @@
     #region
 
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Extensibility;
 
     #endregion
@@ -11,21 +12,30 @@
     {
 
         OperatorPackagesRoot LoadOperators();
-
+        Task<OperatorPackagesRoot> GetOperators();
 
     }
 
     public class OperatorsManager : IOperatorsManager
     {
         private readonly IOperatorLoader _loader;
+        private Task<OperatorPackagesRoot> loadingTask;
 
-        
+
         public OperatorsManager(IOperatorLoader loader)
         {
             _loader = loader;
            
         }
 
+        public Task<OperatorPackagesRoot> GetOperators()
+        {
+            if(loadingTask == null)
+            {
+                loadingTask = Task.Run(() => LoadOperators());
+            }
+            return loadingTask;
+        }
 
         public OperatorPackagesRoot LoadOperators()
         {

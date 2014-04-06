@@ -145,7 +145,7 @@
 
             //remove empty amespaces. 
             //TODO to refactor...
-            List<CheckedNode> checkedNodes = assemblyNode.Children.ToList();
+            List<TypeNamespaceNode> checkedNodes = assemblyNode.Children.OfType<TypeNamespaceNode>().ToList();
             foreach (TypeNamespaceNode node in checkedNodes)
             {
                 RemoveFromParentIfEmpty(node);
@@ -165,16 +165,7 @@
                 node.Parent = null;
             }
         }
-        //TODO: nessessary?
-        private static IEnumerable<INamespaceTypeDefinition> ChooseTypes(IModule module)
-        {
-            return module.GetAllTypes()
-                .OfType<INamespaceTypeDefinition>()
-                .Where(t => t.Name.Value != "<Module>")
-                .Where(t => !t.Name.Value.StartsWith("<>"));
-
-        }
-
+ 
         class ProperlyNamedMatcher : CodePartsMatcher
         {
             public override bool Matches(IMethodReference method)
@@ -186,8 +177,8 @@
             {
                 INamedTypeReference named = typeReference as INamedTypeReference;
                 return named != null
-                       && named.Name.Value != "<Module>"
-                       && !named.Name.Value.StartsWith("<>");
+                       && !named.Name.Value.StartsWith("<")
+                       && !named.Name.Value.Contains("=");
             }
         }
 

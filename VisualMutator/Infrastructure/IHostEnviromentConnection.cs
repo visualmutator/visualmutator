@@ -37,5 +37,6 @@ namespace VisualMutator.Infrastructure
         IEnumerable<DirectoryPathAbsolute> GetProjectPaths();
         void Test();
         bool GetCurrentClassAndMethod(out MethodIdentifier methodIdentifier);
+        void Build();
     }
 }

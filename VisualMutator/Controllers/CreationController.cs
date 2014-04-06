@@ -49,6 +49,7 @@
         protected readonly CommonServices _svc;
         private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
         private readonly IBindingFactory<SessionController> _sessionFactory;
+        private readonly IDispatcherExecute _dispatcher;
         protected readonly CreationViewModel _viewModel;
 
 
@@ -56,6 +57,7 @@
 
 
         public CreationController(
+            IDispatcherExecute dispatcher,
             CreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
@@ -67,6 +69,7 @@
             IWhiteCache whiteCache,
             CommonServices svc)
         {
+            _dispatcher = dispatcher;
             _viewModel = viewModel;
 
             _typesManager = typesManager;
@@ -131,9 +134,15 @@
             
             _viewModel.ProjectPaths = _hostEnviroment.GetProjectPaths().ToList();
 
-            _svc.Threading.ScheduleAsync(() => _operatorsManager.LoadOperators(),
-                root => _viewModel.MutationsTree.MutationPackages
-                    = new ReadOnlyCollection<PackageNode>(root.Packages));
+            _operatorsManager.GetOperators().ContinueWith(t =>
+            {
+                _viewModel.MutationsTree.MutationPackages
+                    = new ReadOnlyCollection<PackageNode>(t.Result.Packages);
+            }, _dispatcher.GuiScheduler);
+
+           // _svc.Threading.ScheduleAsync(() => _operatorsManager.LoadOperators(),
+            //    root => _viewModel.MutationsTree.MutationPackages
+              //      = new ReadOnlyCollection<PackageNode>(root.Packages));
 
            
            // List<MethodIdentifier> coveredTests = null;

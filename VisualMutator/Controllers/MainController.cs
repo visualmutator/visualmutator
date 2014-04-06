@@ -93,6 +93,7 @@
         }
         public void RunMutationSession(MethodIdentifier methodIdentifier = null)
         {
+            _host.Build();
             _log.Info("Showing mutation session window.");
 
             var mutantsCreationController = _creationControllerFactory.Create();

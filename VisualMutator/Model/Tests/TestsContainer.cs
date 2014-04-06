@@ -27,17 +27,14 @@
 
     public interface ITestsContainer
     {
-       // TestSession LoadTests(StoredMutantInfo mutant);
 
         ProjectFilesClone InitTestEnvironment();
-
 
         void CancelAllTesting();
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
         StoredMutantInfo StoreMutant(Mutant changelessMutant);
-     //   TestsRootNode LoadTestsPublic(IEnumerable<string> paths);
 
    
         void CreateTestSelections(IList<TestNodeAssembly> testAssemblies);
@@ -49,32 +46,22 @@
         private readonly IFileSystemManager _fileManager;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
-        private readonly MutationSessionChoices _choices;
 
-        private readonly IEnumerable<ITestService> _testServices;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private bool _allTestingCancelled;
         private bool _testsLoaded;
 
         private readonly TestResultTreeCreator _testResultTreeCreator;
 
         public TestsContainer(
-            NUnitXmlTestService nunit, 
             IMutantsFileManager mutantsFileManager,
             IFileSystemManager fileManager,
-            IAssemblyVerifier assemblyVerifier,
-            MutationSessionChoices choices)
+            IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
             _fileManager = fileManager;
             _assemblyVerifier = assemblyVerifier;
-            _choices = choices;
-            _testServices = new List<ITestService>
-            {
-                nunit//,ms
-            };
             _testResultTreeCreator = new TestResultTreeCreator();
         }
        
@@ -152,9 +139,6 @@
                 context.SelectedTests = originalContext.SelectedTests;
                 context.AssemblyPath = mutatedPath;
 
-                //                testNodeAssembly.TestsLoadContext.SelectedTests = _currentSession.Choices
-                //                    .TestAssemblies.Single(n => testNodeAssembly.Name == n.Name)
-                //                    .TestsLoadContext.SelectedTests;
                 yield return context;
             }
         }
@@ -162,9 +146,6 @@
     
         public void CancelAllTesting()
         {
-            _log.Info("Request to cancel all testing.");
-            _allTestingCancelled = true;
-           // CancelCurrentTestRun();
         }
 
        

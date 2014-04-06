@@ -28,11 +28,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Mutant testing timeout (seconds):" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run tests to first failed:" />
 
-
-        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
-                                  Value="{Binding Options.TestingTimeoutSeconds, Mode=TwoWay}" />
+        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding RunTestsToFirstFailed}"></CheckBox>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Testing process extension: (?)"
                    ToolTip="Custom extension to testing process operations." />

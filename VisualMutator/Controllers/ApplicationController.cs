@@ -10,6 +10,7 @@
     using System.Windows.Threading;
     using Infrastructure;
     using log4net;
+    using Model.Mutations.Operators;
     using UsefulTools.Core;
     using UsefulTools.Switches;
     using Switch = UsefulTools.Switches.Switch;
@@ -19,6 +20,7 @@
     public class ApplicationController
     {
         private readonly MainController _mutationResultsController;
+        private readonly IOperatorsManager _operatorsManager;
 
         private readonly IHostEnviromentConnection _hostEnviroment;
 
@@ -33,12 +35,14 @@
 
         public ApplicationController(
             MainController mutationResultsController,
+            IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             ISettingsManager settingsManager,
             IMessageService messageService,
             IEventService eventService)
         {
             _mutationResultsController = mutationResultsController;
+            _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _settingsManager = settingsManager;
             _messageService = messageService;
@@ -76,6 +80,7 @@
             _hostEnviroment.Initialize();
             _settingsManager.Initialize();
 
+            _operatorsManager.GetOperators();
         }
        
 

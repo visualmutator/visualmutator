@@ -52,7 +52,10 @@
             _subject = new Subject<EventType>();
         
         }
-
+        public void Build()
+        {
+            _dte.Solution.SolutionBuild.Build(true);
+        }
         public SettingsManager SettingsManager
         {
             get
@@ -162,15 +165,6 @@
         private string GetKindString(CodeParameter2 codeParameter)
         {
 
-//            if (codeParameter.ParameterKind.Equals(vsCMParameterKind.vsCMParameterKindOut))
-//            {
-//                return "out ";
-//            }
-//            if (codeParameter.ParameterKind.Equals(vsCMParameterKind.vsCMParameterKindRef))
-//            {
-//                return "ref ";
-//            }
-//            return "";
             return Switch.Into<string>().From(codeParameter.ParameterKind)
                 .Case(vsCMParameterKind.vsCMParameterKindOut, "out ")
                 .Case(vsCMParameterKind.vsCMParameterKindRef, "ref ")

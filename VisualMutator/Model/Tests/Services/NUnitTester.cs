@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Model.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -17,14 +18,14 @@
 
     public class NUnitTester
     {
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly NUnitResultsParser _parser;
         private readonly IProcesses _processes;
         private readonly CommonServices _svc;
         private readonly string _nUnitConsolePath;
         private readonly TestsRunContext _context;
-        private CancellationTokenSource _cancellationTokenSource;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public NUnitTester(
             NUnitResultsParser parser,
@@ -41,7 +42,7 @@
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public Task RunTests()
+        public async Task<MutantTestResults> RunTests()
         {
 
             //  var sw = new Stopwatch();
@@ -53,14 +54,11 @@
             if (string.IsNullOrWhiteSpace(_context.SelectedTests.TestsDescription))
             {
                 _context.TestResults = new MutantTestResults();
-                return Task.FromResult(0);
+                return _context.TestResults;
             }
-            return RunTests(_nUnitConsolePath, assemblyPath,
-                outputFilePath, _context.SelectedTests)
-                .ContinueWith(t =>
-                {
-                    _context.TestResults = t.Result;
-                });
+            _context.TestResults = await RunTests(_nUnitConsolePath, assemblyPath,
+                outputFilePath, _context.SelectedTests);
+            return _context.TestResults;
         }
 
         public void CancelRun()
@@ -71,26 +69,16 @@
 
         }
 
-        public Task<MutantTestResults> RunTests(string nunitConsolePath,
+        public async Task<MutantTestResults> RunTests(string nunitConsolePath,
             string inputFile, string outputFile,
             SelectedTests selectedTests)
         {
             _log.Debug("Running tests on: " + inputFile);
-            Task<ProcessResults> results = RunNUnitConsole(nunitConsolePath, inputFile, outputFile, selectedTests);
 
-            return results.ContinueWith(testResult =>
+            try
             {
-                if (testResult.Exception != null)
-                {
-                    _log.Error(testResult.Exception);
-                    return new MutantTestResults();
-                }
-                else if (testResult.IsCanceled)
-                {
-                    _log.Error("Test run cancelled.");
-                    return new MutantTestResults(cancelled: true);
-                }
-                else if (!_svc.FileSystem.File.Exists(outputFile))
+                ProcessResults results = await RunNUnitConsole(nunitConsolePath, inputFile, outputFile, selectedTests);
+                if (!_svc.FileSystem.File.Exists(outputFile))
                 {
                     _log.Error("Test results in file: " + outputFile + " not found.");
                     return new MutantTestResults();
@@ -111,7 +99,18 @@
 
                     return new MutantTestResults(list);
                 }
-            }).LogErrors();
+            }
+            catch (OperationCanceledException e)
+            {
+                _log.Error("Test run cancelled.");
+                return new MutantTestResults(cancelled: true);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                return new MutantTestResults();
+            }
+            
         }
 
         public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath,

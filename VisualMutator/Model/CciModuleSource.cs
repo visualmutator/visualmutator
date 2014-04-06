@@ -101,11 +101,12 @@
             }
 
             PdbReader /*?*/ pdbReader = null;
-            string pdbFile = Path.ChangeExtension(module.Location, "pdb");
+            string pdbFile = Path.ChangeExtension(module.Location, "pdbx");
             if (File.Exists(pdbFile))
             {
                 Stream pdbStream = File.OpenRead(pdbFile);
                 pdbReader = new PdbReader(pdbStream, _host);
+                pdbStream.Close();
             }
             Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
             ISourceLocationProvider sourceLocationProvider = pdbReader;

@@ -2,6 +2,7 @@
 {
     #region
 
+    using System.Windows;
     using Model;
     using Model.Tests.Custom;
     using UsefulTools.DependencyInjection;
@@ -72,6 +73,14 @@
             }
         }
 
-       
+        private bool _runTestsToFirstFailed;
+        public bool RunTestsToFirstFailed
+        {
+            get { return _runTestsToFirstFailed; }
+            set
+            {
+                SetAndRise(ref _runTestsToFirstFailed, value, () => RunTestsToFirstFailed);
+            }
+        }
     }
 }

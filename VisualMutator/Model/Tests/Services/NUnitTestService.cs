@@ -32,9 +32,6 @@
 
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IDisposable _subscription;
-        private IDisposable _subscriptionRun;
-        private bool _currentRunCancelled;
 
 
         public NUnitTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
@@ -54,7 +51,6 @@
 
         public virtual May<TestsLoadContext> LoadTests(string assemblyPath)
         {
-            _currentRunCancelled = false;
             var context = new TestsLoadContext();
             ITest testRoot = _nUnitWrapper.LoadTests(assemblyPath.InList());
             int testCount = testRoot.TestsEx().SelectMany(n => n.TestsEx()).Count();
@@ -195,14 +191,9 @@
 
         public void Cancel()
         {
-            _currentRunCancelled = true;
             _nUnitWrapper.Cancel();
         }
 
-//        public virtual void CreateTestFilter(SelectedTests selectedTests)
-//        {
-//            _nUnitWrapper.CreateFilter(selectedTests.TestIds.Cast<NUnitTestId>().Select(id =>id.TestName).ToList());
-//        }
 
 
 

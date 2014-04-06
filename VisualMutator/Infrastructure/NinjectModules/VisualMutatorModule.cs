@@ -126,6 +126,9 @@
 
             Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
 
+            Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
+            Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
+
             Kernel.InjectChildFactory<CreationController>(childKernel =>
             {
                 childKernel.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
@@ -133,8 +136,7 @@
                 childKernel.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                 childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
-                childKernel.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-                childKernel.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
+             
                 childKernel.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
 
                 childKernel.InjectChildFactory<SessionController>(ch =>
