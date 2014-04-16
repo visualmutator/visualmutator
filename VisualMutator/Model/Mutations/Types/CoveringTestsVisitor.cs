@@ -18,6 +18,8 @@
         private readonly HashSet<MethodIdentifier> _foundTests;
         private readonly ICodePartsMatcher _searcher;
         private IMethodDefinition _currentTestMethod;
+        public int ScannedMethods { get; private set; }
+        public int ScannedMethodCalls { get; private set; }
 
         public CoveringTestsVisitor(ICodePartsMatcher constraints)
         {
@@ -27,6 +29,7 @@
 
         public override void Visit(IMethodDefinition method)
         {
+            ScannedMethods++;
             _currentTestMethod = method.Attributes.Any(a =>
             {
                 var attrType = a.Type as INamespaceTypeReference;
@@ -44,7 +47,7 @@
         public override void Visit(IMethodCall methodCall)
         {
             base.Visit(methodCall);
-            
+            ScannedMethodCalls++;
             if (_currentTestMethod != null )
             {
                 if (_searcher.Matches(methodCall.MethodToCall))

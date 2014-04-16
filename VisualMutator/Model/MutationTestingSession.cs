@@ -15,12 +15,6 @@
 
     public class MutationTestingSession
     {
-        public MutationTestingSession(ProjectFilesClone projectFilesClone)
-        {
-            MutantsGrouped = new List<AssemblyNode>();
-            Filter = MutationFilter.AllowAll();
-            Choices = new MutationSessionChoices();
-        }
 
         public MutationTestingSession()
         {

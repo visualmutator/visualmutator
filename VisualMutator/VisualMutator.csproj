@@ -370,7 +370,6 @@
     <Compile Include="ViewModels\MutantsTestingOptionsViewModel.cs" />
     <Compile Include="ViewModels\MutantsCreationOptionsViewModel.cs" />
     <Compile Include="ViewModels\MutantDetailsViewModel.cs" />
-    <Compile Include="Controllers\SessionCreationController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Infrastructure\IHostEnviromentConnection.cs" />
     <Compile Include="Infrastructure\Log4NetConfig.cs" />

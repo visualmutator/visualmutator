@@ -23,7 +23,10 @@
             };
 
             traverser.Traverse(module);
-            _log.Debug("Finished scanning. Found " + visitor.FoundTests.Count);
+            _log.Debug("Finished scanning module"+module.Name.Value+". Found " + visitor.FoundTests.Count+
+                ". Scanned total: " + visitor.ScannedMethods + " methods and "+
+                visitor.ScannedMethodCalls+" method calls.");
+
             if (visitor.IsChoiceError)
             {
                 throw new TestWasSelectedToMutateException();

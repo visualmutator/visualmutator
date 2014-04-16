@@ -54,27 +54,22 @@
         private readonly IFactory<TestingMutant> _testingMutantFactory;
         private readonly MutationSessionChoices _choices;
 
-       // private int _allMutantsCount;
 
         private MutationTestingSession _currentSession;
 
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-       // private int _mutantsKilledCount;
-
-      //  private LinkedList<Mutant> _mutantsToTest;
 
         private RequestedHaltState? _requestedHaltState;
 
-        private Subject<SessionEventArgs> _sessionEventsSubject;
+        private readonly Subject<SessionEventArgs> _sessionEventsSubject;
 
         private SessionState _sessionState;
 
-       // private int _testedNonEquivalentMutantsCount;
 
         private TestingProcessExtensionOptions _testingProcessExtensionOptions;
-        private List<IDisposable> _subscriptions;
+        private readonly List<IDisposable> _subscriptions;
         private TestingProcess _testingProcess;
 
         public SessionController(
@@ -151,6 +146,8 @@
         public void RunMutationSession(IObservable<ControlEvent> controlSource)
         {
             Subscribe(controlSource);
+
+            SessionStartTime = DateTime.Now;
 
             MutationSessionChoices choices = _choices;
             _sessionState = SessionState.Running;
@@ -246,6 +243,8 @@
             },
             onException: FinishWithError);
         }
+
+        public DateTime SessionStartTime { get; set; }
 
         private void Subscribe(IObservable<ControlEvent> controlSource)
         {

@@ -6,7 +6,6 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Security.Cryptography;
     using System.Threading.Tasks;
     using Controllers;
     using Exceptions;
@@ -21,20 +20,21 @@
 
     public class TestingMutant
     {
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly TestsContainer _testsContainer;
         private readonly MutationSessionChoices _choices;
         private readonly NUnitXmlTestService _nunitService;
         private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
+        
         private readonly Mutant _mutant;
-        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private Mutant mutant;
-        private IDisposable _timoutDisposable;
-        private bool _cancelRequested;
         private StoredMutantInfo _storedMutantInfo;
         private ICollection<NUnitTester> _nUnitTesters;
+        private DateTime _sessionStartTime;
 
 
         public TestingMutant(
+            SessionController sessionController,
             TestsContainer testsContainer,
             MutationSessionChoices choices,
             NUnitXmlTestService nunitService,
@@ -45,25 +45,22 @@
             _choices = choices;
             _nunitService = nunitService;
             _sessionEventsSubject = sessionEventsSubject;
-            this.mutant = mutant;
-
-
-
+            _mutant = mutant;
+            _sessionStartTime = sessionController.SessionStartTime;
         }
         public void Cancel()
         {
-            _cancelRequested = true;
         }
 
 
         public Task RunAsync()
         {
-            _storedMutantInfo = _testsContainer.StoreMutant(mutant);
+            _storedMutantInfo = _testsContainer.StoreMutant(_mutant);
             _sessionEventsSubject.OnNext(new MutantStoredEventArgs(_storedMutantInfo));
             if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
             {
-                bool verResult = _testsContainer.VerifyMutant(_storedMutantInfo, mutant);
-                _sessionEventsSubject.OnNext(new MutantVerifiedEvent(mutant, verResult));
+                bool verResult = _testsContainer.VerifyMutant(_storedMutantInfo, _mutant);
+                _sessionEventsSubject.OnNext(new MutantVerifiedEvent(_mutant, verResult));
             }
             
 
@@ -74,16 +71,14 @@
             //                    {
             //                        mutant.IsEquivalent = true;
             //                    }
-            if (!mutant.IsEquivalent) //todo: somewhat non-threadsafe, but valid
+            if (!_mutant.IsEquivalent) //todo: somewhat non-threadsafe, but valid
             {
-              //  return Task.Run(() => _testsContainer.RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo, mutant))
                 return RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo)
-                //return RunTestsAsync()
                     .ContinueWith(task =>
                     {
                         _storedMutantInfo.Dispose();
 
-                        return mutant.State;
+                        return _mutant.State;
                         //_sessionEventsSubject.OnNext(new MutantTestedEvent(mutant.State));
 
                     });
@@ -99,16 +94,16 @@
             var sw = new Stopwatch();
             sw.Start();
 
-            mutant.State = MutantResultState.Tested;
+            _mutant.State = MutantResultState.Tested;
 
-            _log.Info("Loading tests for mutant " + mutant.Id);
+            _log.Info("Loading tests for mutant " + _mutant.Id);
 
            
 
             List<TestsRunContext> contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
                 _choices.TestAssemblies).ToList();
 
-            _log.Info("Running tests for mutant " + mutant.Id);
+            _log.Info("Running tests for mutant " + _mutant.Id);
 
             IDisposable timoutDisposable =
                Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
@@ -123,11 +118,11 @@
                 if (t.Exception == null)
                 {
                     _log.Debug("Finished waiting for tests. ");
-                    mutant.TestRunContexts = contexts;
+                    _mutant.TestRunContexts = contexts;
 
                     ResolveMutantState(contexts.Select( c => c.TestResults));
 
-                    mutant.MutantTestSession.IsComplete = true;
+                    _mutant.MutantTestSession.IsComplete = true;
                 }
             }).ContinueWith(t =>
             {
@@ -136,7 +131,8 @@
                     SetError(t.Exception.InnerException);
                 }
                 sw.Stop();
-                mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+                _mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
+                _mutant.MutantTestSession.TestingEndRelative = DateTime.Now - _sessionStartTime;
             });
 
            
@@ -169,20 +165,17 @@
                 context.SelectedTests = originalContext.SelectedTests;
                 context.AssemblyPath = mutatedPath;
 
-                //                testNodeAssembly.TestsLoadContext.SelectedTests = _currentSession.Choices
-                //                    .TestAssemblies.Single(n => testNodeAssembly.Name == n.Name)
-                //                    .TestsLoadContext.SelectedTests;
                 yield return context;
             }
         }
 
         private void SetError(Exception e)
         {
-            mutant.MutantTestSession.ErrorDescription = "Error ocurred";
-            mutant.MutantTestSession.ErrorMessage = e.Message;
-            mutant.MutantTestSession.Exception = e;
-            mutant.State = MutantResultState.Error;
-            _log.Error("Set mutant " + mutant.Id + " error: " + mutant.State + " message: " + e.Message);
+            _mutant.MutantTestSession.ErrorDescription = "Error ocurred";
+            _mutant.MutantTestSession.ErrorMessage = e.Message;
+            _mutant.MutantTestSession.Exception = e;
+            _mutant.State = MutantResultState.Error;
+            _log.Error("Set mutant " + _mutant.Id + " error: " + _mutant.State + " message: " + e.Message);
         }
 
 
@@ -190,41 +183,40 @@
         {
             if(results.Any(r => r.Cancelled))
             {
-                mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
-                mutant.State = MutantResultState.Killed;
+                _mutant.KilledSubstate = MutantKilledSubstate.Cancelled;
+                _mutant.State = MutantResultState.Killed;
                 return;
             }
 
-            List<TmpTestNodeMethod> nodeMethods = mutant.TestRunContexts
+            List<TmpTestNodeMethod> nodeMethods = _mutant.TestRunContexts
                 .SelectMany(c => c.TestResults.ResultMethods).ToList();
-            //.TestsByAssembly.Values.SelectMany(c => c.ClassNodes).ToList();
 
-            mutant.NumberOfFailedTests = nodeMethods
+            _mutant.NumberOfFailedTests = nodeMethods
                           .Count(t => t.State.IsIn(TestNodeState.Failure, TestNodeState.Inconclusive));
 
 
             if (nodeMethods.Any(t => t.State == TestNodeState.Inconclusive))
             {
 
-                mutant.KilledSubstate = MutantKilledSubstate.Inconclusive;
-                mutant.State = MutantResultState.Killed;
+                _mutant.KilledSubstate = MutantKilledSubstate.Inconclusive;
+                _mutant.State = MutantResultState.Killed;
             }
 
             else if (nodeMethods.Any(t => t.State == TestNodeState.Failure))
             {
 
-                mutant.KilledSubstate = MutantKilledSubstate.Normal;
-                mutant.State = MutantResultState.Killed;
+                _mutant.KilledSubstate = MutantKilledSubstate.Normal;
+                _mutant.State = MutantResultState.Killed;
             }
             else if (nodeMethods.All(t => t.State == TestNodeState.Success))
             {
-                mutant.State = MutantResultState.Live;
+                _mutant.State = MutantResultState.Live;
             }
             else
             {
                 throw new InvalidOperationException("Unknown state");
             }
-            _log.Info("Resolved mutant" + mutant.Id + " state: " + mutant.State + " sub: " + mutant.KilledSubstate);
+            _log.Info("Resolved mutant" + _mutant.Id + " state: " + _mutant.State + " sub: " + _mutant.KilledSubstate);
         }
 
     }

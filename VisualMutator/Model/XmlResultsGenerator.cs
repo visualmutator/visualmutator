@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml.Linq;
+    using Controllers;
     using Decompilation;
     using Decompilation.CodeDifference;
     using Mutations.MutantsTree;
@@ -20,14 +21,19 @@
 
     public class XmlResultsGenerator
     {
+        private readonly CreationController _creationController;
+        private readonly SessionController _sessionController;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
 
         public XmlResultsGenerator(
+            CreationController creationController,
+            SessionController sessionController,
             ICodeDifferenceCreator codeDifferenceCreator)
         {
+            _creationController = creationController;
+            _sessionController = sessionController;
             _codeDifferenceCreator = codeDifferenceCreator;
- 
         }
 
         public XDocument GenerateResults(MutationTestingSession session, 
@@ -46,14 +52,9 @@
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
-                new XAttribute("TotalSizeKilobytes", -1),//mutants.Sum(mut => mut.StoredAssemblies.SizeInKilobytes())),
-                new XAttribute("AverageSizeKilobytes", -1),//mutants.AverageOrZero(mut => mut.StoredAssemblies.SizeInKilobytes())),
               //  new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGrouped
-             //       .Sum(oper => oper.FindTargetsTimeMiliseconds)),
-               // new XAttribute("TotalMutationTimeMiliseconds", session.MutantsGrouped
-               //     .Sum(oper => oper.MutationTimeMiliseconds)),
-              //  new XAttribute("AverageMutationTimePerOperatorMiliseconds", session.MutantsGrouped
-              //      .AverageOrZero(oper => oper.MutationTimeMiliseconds)),
+              //      .Sum(oper => oper.FindTargetsTimeMiliseconds)),
+
                 new XAttribute("TotalTestingTimeMiliseconds", testedMutants
                     .Sum(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 new XAttribute("AverageTestingTimeMiliseconds", testedMutants
@@ -85,19 +86,19 @@
                                 select new XElement("Mutant",
                                     new XAttribute("Id", mutant.Id),
                                     new XAttribute("Description", mutant.Description),
-                                    //    new XAttribute("SizeInKilobytes", mutant.StoredAssemblies.SizeInKilobytes()),
-                                    new XAttribute("State", mutant.State.ToString()
-                                    ),
+                                    new XAttribute("State", mutant.State),
+                                    new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
+                                    new XAttribute("TestingEndRelativeSeconds", mutant.MutantTestSession.TestingEndRelative.TotalSeconds),
                                     new XElement("ErrorInfo",
                                             new XElement("Description", mutant.MutantTestSession.ErrorDescription),
                                             new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
-                                            ).InArrayIf(mutant.State == MutantResultState.Error)
-                                    )
+                                    ).InArrayIf(mutant.State == MutantResultState.Error)
                                 )
                             )
                         )
                     )
-                );
+                )
+            );
 
 
             var optionalElements = new List<XElement>();
@@ -118,6 +119,8 @@
             return
                 new XDocument(
                     new XElement("MutationTestingSession",
+                        new XAttribute("SessionCreationWindowShowTime", _creationController.SessionCreationWindowShowTime),
+                        new XAttribute("SessionStartTime", _sessionController.SessionStartTime),
                         new XAttribute("MutationScore", session.MutationScore),
                         new XAttribute("TotalTimeSeconds", totalTimeMs/1000),
                         mutantsNode,

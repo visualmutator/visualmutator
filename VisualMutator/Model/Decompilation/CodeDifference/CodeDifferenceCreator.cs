@@ -9,6 +9,7 @@
     using System.Text;
     using DiffLib;
     using log4net;
+    using Microsoft.Cci;
     using Mutations.MutantsTree;
     using StoringMutants;
     using UsefulTools.Switches;
@@ -28,13 +29,23 @@
         private readonly IMutantsCache _mutantsCache;
 
         private readonly ICodeVisualizer _codeVisualizer;
+        private CciModuleSource _originalModules;
 
         public CodeDifferenceCreator(IMutantsCache mutantsCache, ICodeVisualizer codeVisualizer)
         {
             _mutantsCache = mutantsCache;
             _codeVisualizer = codeVisualizer;
-        }
 
+            
+        }
+        public string GetWhiteCodeFor(CodeLanguage language, IMethodDefinition method)
+        {
+            if (_originalModules == null)
+            {
+                _originalModules = _mutantsCache.WhiteCache.GetWhiteModules();
+            }
+            return _codeVisualizer.Visualize(language, method, _originalModules);
+        }
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
         {
             var diff = new StringBuilder();
@@ -52,11 +63,11 @@
             IModuleSource moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {
-                var originalCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, _mutantsCache.WhiteCache.GetWhiteModules());
+                
                 var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, moduleDefinitions);
                 CodePair pair = new CodePair
                 {
-                    OriginalCode = originalCode,
+                    OriginalCode = GetWhiteCodeFor(language, mutant.MutationTarget.MethodRaw),
                     MutatedCode = mutatedCode
                 };
                 return GetDiff(language, pair.OriginalCode, pair.MutatedCode);

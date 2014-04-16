@@ -35,22 +35,21 @@
 
     public class CreationController : Controller
     {
-        protected readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        protected readonly IOperatorsManager _operatorsManager;
-        protected readonly ITypesManager _typesManager;
+        private readonly IOperatorsManager _operatorsManager;
+        private readonly ITypesManager _typesManager;
         private readonly TestsLoader _testsLoader;
 
         private readonly IHostEnviromentConnection _hostEnviroment;
         private readonly IFileSystemManager _fileManager;
         private readonly IWhiteCache _whiteCache;
 
-        protected readonly CommonServices _svc;
-        private readonly IFactory<MutantsSavingController> _mutantsSavingFactory;
+        private readonly CommonServices _svc;
         private readonly IBindingFactory<SessionController> _sessionFactory;
         private readonly IDispatcherExecute _dispatcher;
-        protected readonly CreationViewModel _viewModel;
+        private readonly CreationViewModel _viewModel;
 
 
         public MutationSessionChoices Result { get; protected set; }
@@ -63,7 +62,6 @@
             IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             TestsLoader testsLoader,
-            IFactory<MutantsSavingController> mutantsSavingFactory,
             IBindingFactory<SessionController> sessionFactory,
             IFileSystemManager fileManager,
             IWhiteCache whiteCache,
@@ -76,7 +74,6 @@
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _testsLoader = testsLoader;
-            _mutantsSavingFactory = mutantsSavingFactory;
             _sessionFactory = sessionFactory;
             _fileManager = fileManager;
             _whiteCache = whiteCache;
@@ -92,11 +89,6 @@
                 .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
 
 
-            _viewModel.CommandWriteMutants = new SmartCommand(GenerateMutants,
-                () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
-                      && _viewModel.MutationsTree.MutationPackages.Count != 0)
-                .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
-                .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
         }
 
         public void SetMutationConstraints(MethodIdentifier methodIdentifier)
@@ -106,6 +98,8 @@
 
         public void Run(MethodIdentifier singleMethodToMutate = null)
         {
+            SessionCreationWindowShowTime = DateTime.Now;
+
             bool constrainedMutation = false;
             ICodePartsMatcher matcher;
             if(singleMethodToMutate != null)
@@ -117,7 +111,6 @@
             {
                 matcher = new AllMatcher();
             }
-            
 
             _fileManager.Initialize();
 
@@ -143,14 +136,26 @@
            // _svc.Threading.ScheduleAsync(() => _operatorsManager.LoadOperators(),
             //    root => _viewModel.MutationsTree.MutationPackages
               //      = new ReadOnlyCollection<PackageNode>(root.Packages));
-
+            var finder = new CoveringTestsFinder();
            
            // List<MethodIdentifier> coveredTests = null;
-            var assembliesTask = Task.Run(() => _typesManager.LoadAssemblies(
+            Task<object> assembliesTask = Task.Run(() => _typesManager.LoadAssemblies(
                 originalFilesList.Assemblies).CastTo<object>());
 
-            var testsTask = Task.Run(() => _testsLoader.LoadTests(
-                originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
+            
+            var coveringTask = assembliesTask.ContinueWith((Task<object> task) =>
+            {
+                
+                IList<IModule> modules = (IList<IModule>)task.Result;
+                return Task.WhenAll(modules.Select(module =>
+                    Task.Run(() => finder.FindCoveringTests(module, matcher))))
+                    .ContinueWith(t =>
+                    {
+                        return (object) t.Result.Flatten().ToList();
+                    });
+                
+            }, TaskContinuationOptions.NotOnFaulted).Unwrap();
+            
 
             assembliesTask.ContinueWith((Task<object> result) =>
             {
@@ -165,6 +170,8 @@
                         var root = new CheckedNode("");
                         root.Children.AddRange(assemblies);
                         ExpandLoneNodes(root);
+
+
                     }
                     _svc.Threading.PostOnGui(() =>
                     {
@@ -175,22 +182,22 @@
                 }
             }).ContinueWith(CheckError);
 
-            var finder = new CoveringTestsFinder();
-            Task.WhenAll(assembliesTask, testsTask).ContinueWith( 
+
+            var testsTask = Task.Run(() => _testsLoader.LoadTests(
+                originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
+
+
+            Task.WhenAll(coveringTask, testsTask).ContinueWith( 
                 (Task<object[]> result) =>
                 {
                     if (result.Exception == null)
                     {
+                        var coveringTests = (List<MethodIdentifier>)result.Result[0];
                         var testsRootNode = (TestsRootNode)result.Result[1];
-                        var modules = (IList<IModule>)result.Result[0];
 
                         if (constrainedMutation)
                         {
-
-                            var t = Task.WhenAll(modules.Select(module =>
-                                Task.Run(() => finder.FindCoveringTests(module, matcher))));
-                            List<MethodIdentifier> coveringTests = t.Result.Flatten().ToList();
-
+                            
 
                             SelectOnlyCoveredTests(testsRootNode, coveringTests);
                         }
@@ -215,6 +222,8 @@
 
             _viewModel.ShowDialog();
         }
+
+        public DateTime SessionCreationWindowShowTime { get; set; }
 
         private void CheckError(Task result)
         {
@@ -268,25 +277,9 @@
             }
         }
 
-        public void GenerateMutants()
-        {
-            MutantsSavingController mutantsSavingController = _mutantsSavingFactory.Create();
-            mutantsSavingController.Run();
-            if (mutantsSavingController.Result != null)
-            {
-                _viewModel.MutantsGenerationPath = mutantsSavingController.Result;
-                AcceptChoices();
-            }
-        }
-
         private void SelectOnlyCoveredTests(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
         {
             rootNode.IsIncluded = false;
-            var se = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
-                .OfType<TestNodeMethod>()
-                .Select(m => m.Identifier)
-                .ToList();
-            se.ToString();
             var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
                 .OfType<TestNodeMethod>()
                 .Where(t => coveredTests.Contains(t.Identifier));
@@ -296,8 +289,6 @@
             }
         }
 
-
-      
 
 
         protected void AcceptChoices()

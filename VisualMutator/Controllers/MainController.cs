@@ -27,12 +27,10 @@
         private readonly IFactory<CreationController> _creationControllerFactory;
         private readonly IHostEnviromentConnection _host;
 
-
         private readonly CommonServices _svc;
 
-
         private List<IDisposable> _subscriptions;
-        private Subject<ControlEvent> _controlSource;
+        private readonly Subject<ControlEvent> _controlSource;
         private SessionController _currentSessionController;
 
 
@@ -50,12 +48,9 @@
             _controlSource = new Subject<ControlEvent>();
             _svc = svc;
 
-
             _viewModel.CommandCreateNewMutants = new SmartCommand(() => RunMutationSession(),
                 () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
-
-
 
             _viewModel.CommandPause = new SmartCommand(PauseOperations, 
                 () => _viewModel.OperationsState.IsIn(OperationsState.Testing))
@@ -69,7 +64,6 @@
             _viewModel.CommandContinue = new SmartCommand(ResumeOperations,
                 () => _viewModel.OperationsState == OperationsState.TestingPaused)
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
-
 
             _viewModel.CommandSaveResults = new SmartCommand(SaveResults, () =>
                 _viewModel.OperationsState == OperationsState.Finished)
@@ -96,7 +90,7 @@
             _host.Build();
             _log.Info("Showing mutation session window.");
 
-            var mutantsCreationController = _creationControllerFactory.Create();
+            CreationController mutantsCreationController = _creationControllerFactory.Create();
             mutantsCreationController.Run(methodIdentifier);
             if (mutantsCreationController.HasResults)
             {
@@ -115,15 +109,8 @@
             Subscribe(_currentSessionController);
 
             _log.Info("Starting mutation session...");
-            if (choices.MutantsCreationFolderPath != null)
-            {
-               // _currenSessionController.OnlyCreateMutants(choices);
-            }
-            else
-            {
-
-                _currentSessionController.RunMutationSession(_controlSource);
-            }
+            _currentSessionController.RunMutationSession(_controlSource);
+            
         }
 
         public void PauseOperations()
@@ -143,7 +130,8 @@
         }
         public void SaveResults()
         {
-            _controlSource.OnNext(new ControlEvent(ControlEventType.SaveResults));
+            _currentSessionController.SaveResults();
+            //_controlSource.OnNext(new ControlEvent(ControlEventType.SaveResults));
         }
 
         public void Initialize()
@@ -203,8 +191,6 @@
                 }
             });
         }
-
-
 
         public void Subscribe(SessionController sessionController)
         {

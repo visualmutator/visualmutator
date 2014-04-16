@@ -44,9 +44,6 @@
 
         public async Task<MutantTestResults> RunTests()
         {
-
-            //  var sw = new Stopwatch();
-            //  sw.Start();
             string assemblyPath = _context.AssemblyPath;
             string name = string.Format("muttest-{0}.xml", Path.GetFileName(assemblyPath));
             string outputFilePath = new FilePathAbsolute(assemblyPath).GetBrotherFileWithName(name).ToString();
@@ -120,7 +117,6 @@
             var listpath = new FilePathAbsolute(inputFile)
                 .GetBrotherFileWithName(
                 Path.GetFileNameWithoutExtension(inputFile) + "-Runlist.txt").Path;
-            //   var listpath = Path.Combine(Path.GetTempPath(), "visualMutator-Runlist.txt");
             using (var file = File.CreateText(listpath))
             {
                 foreach (var str in selectedTests.TestsDescription.Split(' '))
@@ -128,13 +124,10 @@
                     file.WriteLine(str.Trim());
                 }
             }
-            // string testToRun = (selectedTests.Count == 0 ? "": " -run " + 
-            //  string.Join(",",selectedTests.Cast<NUnitTestId>().Select(id => id.TestName.FullName)));
             string testToRun = " /runlist:" + listpath.InQuotes() + " ";
             string arg = inputFile.InQuotes()
                          + testToRun
-                         + " /xml \"" + outputFile + "\" /nologo -trace=Verbose";
-            //  + " -framework net-4.0";
+                         + " /xml \"" + outputFile + "\" /nologo -trace=Verbose /noshadow /nothread";
 
             _log.Info("Running " + nunitConsolePath + " with args: " + arg);
             var startInfo = new ProcessStartInfo

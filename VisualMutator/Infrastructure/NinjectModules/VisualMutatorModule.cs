@@ -129,43 +129,45 @@
             Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
             Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
 
-            Kernel.InjectChildFactory<CreationController>(childKernel =>
+            Kernel.InjectChildFactory<CreationController>(ch1 =>
             {
-                childKernel.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
+                ch1.Bind<CreationController>().ToSelf().InSingletonScope();
 
-                childKernel.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
-                childKernel.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
+                ch1.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
+
+                ch1.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
+                ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
              
-                childKernel.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
+                ch1.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
 
-                childKernel.InjectChildFactory<SessionController>(ch =>
+                ch1.InjectChildFactory<SessionController>(ch2 =>
                 {
 
-                    ch.Bind<SessionController>().ToSelf().InSingletonScope();
+                    ch2.Bind<SessionController>().ToSelf().InSingletonScope();
 
-                    ch.Bind<TestingProcess>().ToSelf().AndFromFactory();
-                    ch.Bind<TestingMutant>().ToSelf().AndFromFactory();
-                    ch.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
-                    ch.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
-                    ch.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
+                    ch2.Bind<TestingProcess>().ToSelf().AndFromFactory();
+                    ch2.Bind<TestingMutant>().ToSelf().AndFromFactory();
+                    ch2.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
+                    ch2.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
+                    ch2.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
 
-                    ch.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
-                    ch.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
+                    ch2.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
+                    ch2.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
                     
-                    ch.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
-
-                    
-                    ch.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
+                    ch2.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
 
                     
-                    ch.Bind<AstFormatter>().ToSelf();
-                    ch.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
+                    ch2.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
 
-                    ch.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
+                    
+                    ch2.Bind<AstFormatter>().ToSelf();
+                    ch2.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
 
-                    ch.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
-                    ch.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
+                    ch2.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
+
+                    ch2.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
+                    ch2.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
                 });
             });
 

@@ -4,6 +4,19 @@
 
     public class NewTestGround : TestGround
     {
+        public int AdditionOrSubstraction(int a, int b, bool condition)
+        {
+            if(condition)
+            {
+                return a + b;
+            }
+            else
+            {
+                return a - b;
+            }
+        }
+
+
         public override int Something(int x)
         {
             return x + 5;

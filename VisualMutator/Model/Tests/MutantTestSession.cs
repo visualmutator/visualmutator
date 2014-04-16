@@ -13,25 +13,12 @@ namespace VisualMutator.Model.Tests
 
     public class MutantTestSession : ModelElement
     {
-        private IDictionary<string, TestsLoadContext> _testsByAssembly;
-
-        private TestsRootNode _testsRootNode;
 
         public MutantTestSession()
         {
-            _testsByAssembly = new Dictionary<string, TestsLoadContext>();
-            
         
-            _testsRootNode = new TestsRootNode();
         }
 
-//        public IDictionary<string, TestsLoadContext> TestsByAssembly
-//        {
-//            get
-//            {
-//                return _testsByAssembly;
-//            }
-//        }
 
         public string ErrorMessage
         {
@@ -51,13 +38,7 @@ namespace VisualMutator.Model.Tests
             get;
             set;
         }
-//        public TestsRootNode TestsRootNode
-//        {
-//            get
-//            {
-//                return _testsRootNode;
-//            }
-//        }
+
 
         public IList<string> AssembliesWithTests { get; set; }
 
@@ -81,5 +62,6 @@ namespace VisualMutator.Model.Tests
         public long LoadTestsTimeRawMiliseconds { get; set; }
 
         public Exception Exception { get; set; }
+        public TimeSpan TestingEndRelative { get; set; }
     }
 }

@@ -119,6 +119,7 @@
             var childKernel = new ChildKernel(_kernel);
             _childKernels.Add(childKernel);
             _childBindings(childKernel);
+            
             return childKernel;
         }
 

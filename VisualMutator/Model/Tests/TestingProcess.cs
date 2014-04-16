@@ -25,7 +25,7 @@
         private int _testedNonEquivalentMutantsCount;
         private bool _requestedStop;
         private int _mutantsKilledCount;
-        private SemaphoreSlim _semaphore;
+        private readonly SemaphoreSlim _semaphore;
 
         public TestingProcess(
             IFactory<TestingMutant> mutantTestingFactory,

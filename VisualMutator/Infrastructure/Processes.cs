@@ -97,45 +97,15 @@
                 tcs.TrySetCanceled();
                 KillProcessAndChildren(process.Id);
             });
-//
-//            IDisposable[] disposable = {null};
-//               disposable[0] = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(300))
-//                .Subscribe(t =>
-//                {
-//                    _log.Debug("cancellation for " + cancellationToken.GetHashCode() + 
-//                        " : " + cancellationToken.IsCancellationRequested);
-//                    if(cancellationToken.IsCancellationRequested)
-//                    {
-//                        if (disposable[0] != null)
-//                        {
-//                            disposable[0].Dispose();
-//                        }
-//                        tcs.TrySetCanceled();
-//                        KillProcessAndChildren(process.Id);
-//                    }
-//                });
+
 
                process.Exited += (sender, args) =>
                {
-//                   if (disposable[0] != null)
-//                   {
-//                       disposable[0].Dispose();
-//                   }
                    tcs.TrySetResult(new ProcessResults(process, standardOutput, standardError));
                };
 
-          //  CancellationTokenRegistration reg = new CancellationTokenRegistration();
-          //  reg = cancellationToken.Register(() =>
-          //  ;
-
-          //  registrations.Add(reg);
-
             if (process.Start() == false)
             {
-//                if (disposable[0] != null)
-//                {
-//                    disposable[0].Dispose();
-//                }
                 tcs.TrySetException(new InvalidOperationException("Failed to start process"));
             }
 
