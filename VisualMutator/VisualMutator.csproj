@@ -356,6 +356,7 @@
     <Compile Include="Model\Tests\TestsTree\TestNodeAssembly.cs" />
     <Compile Include="Model\Tests\TestsTree\TestsRootNode.cs" />
     <Compile Include="Model\Tests\TmpTestNodeMethod.cs" />
+    <Compile Include="Model\Tests\WorkerCollection.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />

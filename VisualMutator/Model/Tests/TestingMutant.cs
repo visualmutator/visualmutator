@@ -53,11 +53,11 @@
         }
 
 
-        public Task RunAsync()
+        public async Task<MutantResultState> RunAsync()
         {
             var sw = new Stopwatch();
             sw.Start();
-            _storedMutantInfo = _testsContainer.StoreMutant(_mutant);
+            _storedMutantInfo = await _testsContainer.StoreMutant(_mutant);
             _sessionEventsSubject.OnNext(new MutantStoredEventArgs(_storedMutantInfo));
             if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
             {
@@ -75,19 +75,15 @@
             //                    }
             if (!_mutant.IsEquivalent) //todo: somewhat non-threadsafe, but valid
             {
-                return RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo)
-                    .ContinueWith(task =>
-                    {
-                        _storedMutantInfo.Dispose();
+                await RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo);
+                _storedMutantInfo.Dispose();
 
-                        return _mutant.State;
-                        //_sessionEventsSubject.OnNext(new MutantTestedEvent(mutant.State));
-
-                    });
+                return _mutant.State;
             }
+                //_sessionEventsSubject.OnNext(new MutantTestedEvent(mutant.State));
             else
             {
-                return Task.FromResult(MutantResultState.Untested);
+                return (MutantResultState.Untested);
             }
         }
 

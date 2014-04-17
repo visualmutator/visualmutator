@@ -331,9 +331,7 @@
         
         private void RunTestsInternal()
         {
-            _testingProcess.Start();
-            
-            _svc.Threading.InvokeOnGui(()=>
+            Action endCallback = () => _svc.Threading.InvokeOnGui(()=>
             {
                 if (_requestedHaltState != null)
                 {
@@ -352,6 +350,8 @@
                     Finish();
                 }
             });
+
+            _testingProcess.Start(endCallback);
         }
         public void TestWithHighPriority(Mutant mutant)
         {

@@ -2,9 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Controllers;
     using Infrastructure;
     using log4net;
@@ -19,27 +18,27 @@
 
         private readonly IFactory<TestingMutant> _mutantTestingFactory;
         private readonly Subject<SessionEventArgs> _sessionEventsSubject;
-        
-        private readonly LinkedList<Mutant> _mutantsToTest;
+
         private readonly int _allMutantsCount;
         private int _testedNonEquivalentMutantsCount;
-        private bool _requestedStop;
         private int _mutantsKilledCount;
-        private readonly SemaphoreSlim _semaphore;
+        private readonly WorkerCollection<Mutant> _mutantsWorkers;
 
         public TestingProcess(
             IFactory<TestingMutant> mutantTestingFactory,
+            MutationSessionChoices choices,
+            // ------- on creation
             Subject<SessionEventArgs> sessionEventsSubject,
             ICollection<Mutant> allMutants)
         {
             _mutantTestingFactory = mutantTestingFactory;
             _sessionEventsSubject = sessionEventsSubject;
 
-            _mutantsToTest = new LinkedList<Mutant>(allMutants);
             _allMutantsCount = allMutants.Count;
             _testedNonEquivalentMutantsCount = 0;
 
-            _semaphore = new SemaphoreSlim(Environment.ProcessorCount + 1);
+            _mutantsWorkers = new WorkerCollection<Mutant>(allMutants,
+                choices.MainOptions.ProcessingThreadsCount, TestOneMutant);
         }
 
         public void RaiseTestingProgress(double mutationScore)
@@ -55,53 +54,33 @@
 
         public void Stop()
         {
-            _requestedStop = true;
+            _mutantsWorkers.Stop();
         }
 
-        public void Start()
+        public void Start(Action endCallback)
         {
-            _requestedStop = false;
-            
-            bool emptyStop = false;
-            while (!emptyStop && !_requestedStop)
-            {
-                _semaphore.Wait();
-                Mutant mutant = LockingRemoveFirst(_mutantsToTest);
-                if(mutant != null)
-                {
-                    TestOneMutant(mutant)
-                        .ContinueWith(t => _semaphore.Release());
-                }
-                else
-                {
-                    emptyStop = true;
-                    _semaphore.Release();
-                }
-            }
+            _mutantsWorkers.Start(endCallback);
         }
 
-        public Task TestOneMutant(Mutant mutant)
+        public async void TestOneMutant(Mutant mutant)
         {
             mutant.State = MutantResultState.Creating;
 
             TestingMutant testingMutant = _mutantTestingFactory.CreateWithParams(_sessionEventsSubject, mutant);
 
-            return testingMutant.RunAsync().ContinueWith(t =>
+            try
             {
-                if(t.Exception != null)
+                await testingMutant.RunAsync();
+                lock (this)
                 {
-                    _log.Error(t.Exception);
+                    double mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
+                    RaiseTestingProgress(mutationScore);
                 }
-                else
-                {
-                    lock (this)
-                    {
-                        double mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
-                        RaiseTestingProgress(mutationScore);
-                    }
-                }
-            });
-           
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+            }
         }
 
         private double UpdateMetricsAfterMutantTesting(MutantResultState state)
@@ -111,38 +90,11 @@
             _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(state == MutantResultState.Killed);
 
             return ((double)_mutantsKilledCount) / _testedNonEquivalentMutantsCount;
-
         }
-
 
         public void TestWithHighPriority(Mutant mutant)
         {
-            LockingMoveToFront(_mutantsToTest, mutant);
+           _mutantsWorkers.LockingMoveToFront(mutant);
         }
-
-
-        private Mutant LockingRemoveFirst(LinkedList<Mutant> mutantsToTest)
-        {
-            lock(mutantsToTest)
-            {
-                Mutant toReturn = mutantsToTest.Count != 0 ? mutantsToTest.First.Value : null;
-                if (toReturn != null)
-                {
-                    mutantsToTest.RemoveFirst();
-                }
-                return toReturn;
-            }
-        }
-
-        private void LockingMoveToFront(LinkedList<Mutant> mutantsToTest, Mutant mutant)
-        {
-            lock (mutantsToTest)
-            {
-                if (mutantsToTest.Remove(mutant))
-                {
-                    mutantsToTest.AddFirst(mutant);
-                }
-            }
-        }   
     }
 }

@@ -26,13 +26,12 @@
 
     public class MutantsCache : IMutantsCache
     {
+        private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly MemoryCache _cache;
        
-
- 
         private const int MaxLoadedModules = 5;
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -44,16 +43,25 @@
             get { return _whiteCache; }
         }
 
-        public MutantsCache(IMutantsContainer mutantsContainer)
-            : this(new DisabledWhiteCache(), mutantsContainer)
+        public MutantsCache(
+            
+            IMutantsContainer mutantsContainer
+            )
+            : this(new MutationSessionChoices(), new DisabledWhiteCache(), mutantsContainer)
         {
         }
 
         [Inject]
-        public MutantsCache(IWhiteCache whiteCache,IMutantsContainer mutantsContainer)
+        public MutantsCache(
+            MutationSessionChoices choices, 
+            IWhiteCache whiteCache,
+            IMutantsContainer mutantsContainer)
         {
+            _choices = choices;
             _whiteCache = whiteCache;
             _mutantsContainer = mutantsContainer;
+
+            _disableCache = !_choices.MainOptions.MutantsCacheEnabled;
             var config = new NameValueCollection();
  
             config.Add("physicalMemoryLimitPercentage", "50");
@@ -74,7 +82,7 @@
            // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
             
             IModuleSource result;
-            if (!_cache.Contains(mutant.Id) || _disableCache)
+            if (_disableCache || !_cache.Contains(mutant.Id))
             {
                 result = _mutantsContainer.ExecuteMutation(mutant, 
                     ProgressCounter.Inactive(), _whiteCache.GetWhiteModules());

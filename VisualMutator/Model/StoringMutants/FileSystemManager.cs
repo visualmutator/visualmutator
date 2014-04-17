@@ -6,8 +6,10 @@
     using System.Linq;
     using System.Reflection;
     using System.Security.Cryptography;
+    using System.Threading.Tasks;
     using Infrastructure;
     using log4net;
+    using NUnit.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.FileSystem;
     using UsefulTools.Paths;
@@ -16,6 +18,7 @@
     {
         ProjectFilesClone CreateClone(string name);
         void Initialize();
+        Task<ProjectFilesClone> CreateCloneAsync(string name);
     }
 
     public class FileSystemManager : IFileSystemManager
@@ -50,7 +53,7 @@
             _originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
             _referencedFiles = GetReferencedAssemblyPaths(_originalProjectFiles).Select(s => s.ToFilePathAbs());
 
-            _mainClone = CreateProjectClone(_referencedFiles, _originalProjectFiles, "MainClone");
+            _mainClone = CreateProjectClone(_referencedFiles, _originalProjectFiles, "MainClone").Result;
         }
         public void Dispose()
         {
@@ -73,12 +76,16 @@
 
         public ProjectFilesClone CreateClone(string name)
         {
-            ProjectFilesClone clone = CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies, name);
+            return CreateCloneAsync(name).Result;
+        }
+
+        public async Task<ProjectFilesClone> CreateCloneAsync(string name)
+        {
+            ProjectFilesClone clone = await CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies, name);
             clone.IsIncomplete |= _mainClone.IsIncomplete;
             return clone;
         }
-
-        private ProjectFilesClone CreateProjectClone(IEnumerable<FilePathAbsolute> referencedFiles, 
+        private async Task<ProjectFilesClone> CreateProjectClone(IEnumerable<FilePathAbsolute> referencedFiles, 
             IEnumerable<FilePathAbsolute> projectFiles, string name)
         {
 
@@ -89,7 +96,7 @@
                 try
                 {
                     var destination = (FilePathAbsolute) tmp.AsChild(referenced);
-                    _fs.File.Copy(referenced.Path, destination.Path, overwrite: true);
+                    await CopyOverwriteAsync(referenced, destination);
                     clone.Referenced.Add(destination);
                 }
                 catch (Exception e)
@@ -103,7 +110,7 @@
                 try
                 {
                     var destination = (FilePathAbsolute) tmp.AsChild(projFile);
-                    _fs.File.Copy(projFile.Path, destination.Path, overwrite: true);
+                    await CopyOverwriteAsync(projFile, destination);
                     clone.Assemblies.Add(destination);
                 }
                 catch (Exception e)
@@ -115,7 +122,17 @@
             _clones.Add(clone);
             return clone;
         }
-
+        private Task<object> CopyOverwriteAsync(FilePath src, FilePath dst)
+        {
+            using (FileStream sourceStream = File.Open(src.Path, FileMode.Open))
+            {
+                using (FileStream destinationStream = File.Create(dst.Path))
+                {
+                    sourceStream.CopyTo(destinationStream);
+                    return Task.FromResult(new object());
+                }
+            }
+        }
         private FilePathAbsolute CreateTmpDir(string s)
         {
             string tmpDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), s+Path.GetRandomFileName());

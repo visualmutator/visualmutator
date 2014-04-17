@@ -8,6 +8,7 @@ namespace VisualMutator.Model.StoringMutants
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
     using Exceptions;
     using log4net;
     using Microsoft.Cci;
@@ -32,6 +33,10 @@ namespace VisualMutator.Model.StoringMutants
         public void Initialize(IList<string> assembliesPaths)
         {
             _assembliesPaths = assembliesPaths;
+
+         //   _workers = new WorkerCollection<CciModuleSource>();
+
+
             _timerRisposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
                 .Subscribe(ev =>
                 {

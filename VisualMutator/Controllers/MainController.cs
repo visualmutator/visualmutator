@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Reflection.Emit;
     using System.Threading.Tasks;
     using Infrastructure;
     using log4net;
@@ -24,6 +25,7 @@
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private readonly IFactory<OptionsController> _optionsController;
         private readonly MainViewModel _viewModel;
         private readonly ContinuousConfigurator _continuousConfigurator;
         private readonly IHostEnviromentConnection _host;
@@ -36,12 +38,13 @@
 
 
         public MainController(
+            IFactory<OptionsController> optionsController,
             MainViewModel viewModel,
             ContinuousConfigurator continuousConfigurator,
             IHostEnviromentConnection host,
-           
             CommonServices svc)
         {
+            _optionsController = optionsController;
             _viewModel = viewModel;
             _continuousConfigurator = continuousConfigurator;
             _host = host;
@@ -70,7 +73,14 @@
                 _viewModel.OperationsState == OperationsState.Finished)
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
+            _viewModel.CommandOptions = new SmartCommand(ShowOptions);
             _viewModel.CommandTest = new SmartCommand(Test);
+
+        }
+
+        private void ShowOptions()
+        {
+            _optionsController.Create().Run();
 
         }
 

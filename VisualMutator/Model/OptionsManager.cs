@@ -20,7 +20,7 @@
             string path = GetOptionsFilePath();
             if(File.Exists(path))
             {
-                using (StreamReader stream = File.OpenText(path))
+                using (StreamReader stream = new StreamReader(GetOptionsFilePath()))
                 {
                     XmlSerializer serializer = new XmlSerializer(typeof(OptionsModel));
                     return (OptionsModel)serializer.Deserialize(stream);
@@ -34,7 +34,7 @@
 
         public void WriteOptions(OptionsModel options)
         {
-            using (FileStream stream = File.OpenWrite(GetOptionsFilePath()))
+            using (StreamWriter stream = new StreamWriter(GetOptionsFilePath()))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(OptionsModel));
                 serializer.Serialize(stream, options);

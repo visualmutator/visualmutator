@@ -20,7 +20,7 @@
             </Style>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid d:DataContext="{d:DesignInstance ViewModels:ResultsSavingViewModel}">
+    <Grid d:DataContext="{d:DesignInstance ViewModels:OptionsViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -50,7 +50,7 @@
         
         <CheckBox Grid.Row="1" Style="{StaticResource checkstyle}"
                   Content="Enable mutant code cache"
-                  IsChecked="{Binding Options.MutantCacheEnabled}" />
+                  IsChecked="{Binding Options.MutantsCacheEnabled}" />
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Mutant processing threads:" />
         <xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Maximum="16" Minimum="1"

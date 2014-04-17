@@ -34,7 +34,7 @@
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
-        StoredMutantInfo StoreMutant(Mutant changelessMutant);
+        Task<StoredMutantInfo> StoreMutant(Mutant changelessMutant);
 
    
         void CreateTestSelections(IList<TestNodeAssembly> testAssemblies);
@@ -113,9 +113,9 @@
 
         }
 
-        public StoredMutantInfo StoreMutant( Mutant mutant)
+        public async Task<StoredMutantInfo> StoreMutant( Mutant mutant)
         {
-            var clone = InitTestEnvironment();
+            var clone = await _fileManager.CreateCloneAsync("InitTestEnvironment");
             var result = new StoredMutantInfo(clone);
             _mutantsFileManager.StoreMutant(result, mutant);
             return result;

@@ -23,20 +23,13 @@
         private readonly OptionsViewModel _viewModel;
         private readonly IOptionsManager _optionsManager;
 
-        private readonly IFileSystem _fs;
-
-        private readonly CommonServices _svc;
       
         public OptionsController(
             OptionsViewModel viewModel, 
-            IOptionsManager optionsManager,
-            IFileSystem fs,
-            CommonServices svc)
+            IOptionsManager optionsManager)
         {
             _viewModel = viewModel;
             _optionsManager = optionsManager;
-            _fs = fs;
-            _svc = svc;
 
             _viewModel.CommandSave = new SmartCommand(SaveResults);
             _viewModel.CommandClose = new SmartCommand(Close);
@@ -52,6 +45,7 @@
         public void SaveResults()
         {
             _optionsManager.WriteOptions(_viewModel.Options);
+            _viewModel.Close();
         }
 
         public void Close()
@@ -59,5 +53,9 @@
             _viewModel.Close();
         }
 
+        public OptionsViewModel ViewModel
+        {
+            get { return _viewModel; }
+        }
     }
 }

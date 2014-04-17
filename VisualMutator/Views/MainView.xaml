@@ -89,7 +89,8 @@
                                       Command="{Binding CommandPause}" />
                 <Button HorizontalAlignment="Right" Content="New session..."
                         Command="{Binding CommandCreateNewMutants}" />
-
+                <Button HorizontalAlignment="Right" Content="O"
+                        Command="{Binding CommandOptions}" />
             </WrapPanel>
 
             <DockPanel Grid.Row="1">

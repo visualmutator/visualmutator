@@ -110,7 +110,7 @@
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
-            Bind<OptionsController>().ToSelf().InSingletonScope();
+            Bind<OptionsController>().ToSelf().AndFromFactory();
             
             Bind<NUnitXmlTestService>().ToSelf();
             Bind<NUnitTestService>().To<NUnitXmlTestService>();
@@ -137,7 +137,6 @@
                 ch1.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                 ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
-             
                // ch1.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
 
                 ch1.InjectChildFactory<SessionController>(ch2 =>
