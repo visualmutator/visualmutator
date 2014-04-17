@@ -14,13 +14,14 @@ namespace VisualMutator.Model.StoringMutants
     using Microsoft.Cci.Ast;
     using Mutations.Types;
 
-    public class WhiteCache : IWhiteCache
+    public class WhiteCache : IDisposable, IWhiteCache
     {
         private readonly BlockingCollection<CciModuleSource> _whiteCache;
         private IList<string> _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private int _lowerBound;
         private int _currentCount;
+        private IDisposable _timerRisposable;
 
         public WhiteCache()
         {
@@ -31,18 +32,18 @@ namespace VisualMutator.Model.StoringMutants
         public void Initialize(IList<string> assembliesPaths)
         {
             _assembliesPaths = assembliesPaths;
-            Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
-                  .Subscribe(ev =>
-                  {
-                      if (_whiteCache.Count < _lowerBound)
-                      {
-                         // Task.Run(() => _whiteCache.TryAdd(CreateSource(assembliesPaths)));
-                          _whiteCache.TryAdd(CreateSource(assembliesPaths));
-                      }
+            _timerRisposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
+                .Subscribe(ev =>
+                {
+                    if (_whiteCache.Count < _lowerBound)
+                    {
+                        // Task.Run(() => _whiteCache.TryAdd(CreateSource(assembliesPaths)));
+                        _whiteCache.TryAdd(CreateSource(assembliesPaths));
+                    }
                      
-                  });
+                });
         }
-
+        
         public CciModuleSource GetWhiteModules()
         {
             return _whiteCache.Take();
@@ -91,6 +92,14 @@ namespace VisualMutator.Model.StoringMutants
 
             }
             return moduleSource;
+        }
+
+        public void Dispose()
+        {
+            if (_timerRisposable != null)
+            {
+                _timerRisposable.Dispose();
+            }
         }
     }
 }

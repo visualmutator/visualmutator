@@ -30,17 +30,9 @@
 
     public class VisualMutatorModule : NinjectModule
     {
-      //  private ChildKernel childKernel;
-
-
-        public VisualMutatorModule()
-        {
-          
-        }
 
         public override void Load()
         {
-        //    childKernel = new ChildKernel(Kernel);
             Views();
             Infrastructure();
             MutantsCreation();
@@ -104,6 +96,9 @@
             Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
             Bind<TestsSelectableTreeViewModel>().ToSelf();
 
+
+            Bind<IOptionsView>().To<OptionsView>();
+            Bind<OptionsViewModel>().ToSelf();
         }
 
 
@@ -112,11 +107,10 @@
 
             Kernel.Load(new NamedScopeModule());
             Kernel.Load(new ContextPreservationModule());
-       
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
-            
+            Bind<OptionsController>().ToSelf().InSingletonScope();
             
             Bind<NUnitXmlTestService>().ToSelf();
             Bind<NUnitTestService>().To<NUnitXmlTestService>();
@@ -126,12 +120,17 @@
 
             Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
 
+
+            Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
             Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
 
-            Kernel.InjectChildFactory<CreationController>(ch1 =>
+            Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
+
+            Kernel.InjectChildFactory<SessionConfiguration>(ch1 =>
             {
-                ch1.Bind<CreationController>().ToSelf().InSingletonScope();
+                ch1.Bind<SessionConfiguration>().ToSelf().InSingletonScope();
+                ch1.Bind<CreationController>().ToSelf().AndFromFactory();
 
                 ch1.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
 
@@ -139,7 +138,7 @@
                 ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
              
-                ch1.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
+               // ch1.Bind<IWhiteCache>().To<WhiteCache>().InSingletonScope();
 
                 ch1.InjectChildFactory<SessionController>(ch2 =>
                 {

@@ -44,7 +44,9 @@
 
         private readonly IHostEnviromentConnection _hostEnviroment;
         private readonly IFileSystemManager _fileManager;
+        private readonly SessionConfiguration _sessionConfiguration;
         private readonly IWhiteCache _whiteCache;
+        private readonly IOptionsManager _optionsManager;
 
         private readonly CommonServices _svc;
         private readonly IBindingFactory<SessionController> _sessionFactory;
@@ -62,9 +64,9 @@
             IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             TestsLoader testsLoader,
-            IBindingFactory<SessionController> sessionFactory,
             IFileSystemManager fileManager,
-            IWhiteCache whiteCache,
+            SessionConfiguration sessionConfiguration,
+            IOptionsManager optionsManager,
             CommonServices svc)
         {
             _dispatcher = dispatcher;
@@ -74,9 +76,9 @@
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _testsLoader = testsLoader;
-            _sessionFactory = sessionFactory;
             _fileManager = fileManager;
-            _whiteCache = whiteCache;
+            _sessionConfiguration = sessionConfiguration;
+            _optionsManager = optionsManager;
             _svc = svc;
 
 
@@ -94,7 +96,28 @@
         public void Run(MethodIdentifier singleMethodToMutate = null)
         {
             SessionCreationWindowShowTime = DateTime.Now;
+
+            if(_sessionConfiguration.AssemblyLoadProblem)
+            {
+                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
+            }
             
+//
+//            _fileManager.Initialize();
+//
+//            ProjectFilesClone originalFilesList = _fileManager.CreateClone("Mutants");
+//
+//            _whiteCache.Initialize(_optionsManager.ReadOptions(), 
+//                originalFilesList.Assemblies.AsStrings().ToList());
+//
+//            ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone("Tests");
+//            if (originalFilesList.IsIncomplete || originalFilesListForTests.IsIncomplete
+//                || originalFilesListForTests.Assemblies.Count == 0)
+//            {
+//                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
+//            }
+
+
             bool constrainedMutation = false;
             ICodePartsMatcher matcher;
             if(singleMethodToMutate != null)
@@ -105,19 +128,6 @@
             else
             {
                 matcher = new AllMatcher();
-            }
-
-            _fileManager.Initialize();
-
-            ProjectFilesClone originalFilesList = _fileManager.CreateClone("Mutants");
-
-            _whiteCache.Initialize(originalFilesList.Assemblies.AsStrings().ToList());
-
-            ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone("Tests");
-            if (originalFilesList.IsIncomplete || originalFilesListForTests.IsIncomplete 
-                || originalFilesListForTests.Assemblies.Count == 0)
-            {
-                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
             }
             
             _viewModel.ProjectPaths = _hostEnviroment.GetProjectPaths().ToList();
@@ -134,11 +144,10 @@
             var finder = new CoveringTestsFinder();
            
            // List<MethodIdentifier> coveredTests = null;
-            Task<object> assembliesTask = Task.Run(() => _typesManager.LoadAssemblies(
-                originalFilesList.Assemblies).CastTo<object>());
+            Task<IList<IModule>> assembliesTask = _sessionConfiguration.LoadAssemblies();
 
-            
-            var coveringTask = assembliesTask.ContinueWith((Task<object> task) =>
+
+            var coveringTask = assembliesTask.ContinueWith((task) =>
             {
                 
                 IList<IModule> modules = (IList<IModule>)task.Result;
@@ -152,7 +161,7 @@
             }, TaskContinuationOptions.NotOnFaulted).Unwrap();
             
 
-            assembliesTask.ContinueWith((Task<object> result) =>
+            assembliesTask.ContinueWith((result) =>
             {
                 if (result.Exception == null)
                 {
@@ -168,17 +177,13 @@
                     }
                     _svc.Threading.PostOnGui(() =>
                     {
-                        _viewModel.TypesTreeMutate.AssembliesPaths = originalFilesList.Assemblies.AsStrings().ToList();
-
                         _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
                     });
                 }
             }).ContinueWith(CheckError);
 
 
-            var testsTask = Task.Run(() => _testsLoader.LoadTests(
-                originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
-
+            var testsTask = _sessionConfiguration.LoadTests();
 
             Task.WhenAll(coveringTask, testsTask).ContinueWith( 
                 (Task<object[]> result) =>
@@ -290,12 +295,12 @@
             {
                 SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                     .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
-                AssembliesPaths = _viewModel.TypesTreeMutate.AssembliesPaths,
                 ProjectPaths = _viewModel.ProjectPaths.ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
+                MainOptions = _optionsManager.ReadOptions(),
                 MutantsCreationFolderPath = _viewModel.MutantsGenerationPath
             };
             _viewModel.Close();
@@ -309,9 +314,6 @@
             }
         }
 
-        public SessionController CreateSession()
-        {
-            return _sessionFactory.CreateWithBindings(Result);
-        }
+      
     }
 }

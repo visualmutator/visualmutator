@@ -269,6 +269,7 @@
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />
+    <Compile Include="Controllers\OptionsController.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\IExpandableNode.cs" />
@@ -281,6 +282,7 @@
     <Compile Include="Infrastructure\TaskErrors.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
+    <Compile Include="Model\ContinuousConfigurator.cs" />
     <Compile Include="Model\CoverageFinder\AllMatcher.cs" />
     <Compile Include="Model\CoverageFinder\CciMethodMatcher.cs" />
     <Compile Include="Model\CoverageFinder\CoveringTestsFinder.cs" />
@@ -304,6 +306,9 @@
     <Compile Include="Model\Mutations\VisualCodeVisitor.cs" />
     <Compile Include="Model\Mutations\VisualCodeVisitorBack.cs" />
     <Compile Include="Model\Mutations\VisualCodeVisitorBase.cs" />
+    <Compile Include="Model\OptionsModel.cs" />
+    <Compile Include="Model\OptionsManager.cs" />
+    <Compile Include="Model\SessionConfiguration.cs" />
     <Compile Include="Model\StoringMutants\FileSystemManager.cs" />
     <Compile Include="Model\StoringMutants\IWhiteCache.cs" />
     <Compile Include="Model\StoringMutants\IModuleSource.cs" />
@@ -363,6 +368,7 @@
     <Compile Include="Model\XmlResultsGenerator.cs" />
     <Compile Include="ViewModels\ChooseTestingExtensionViewModel.cs" />
     <Compile Include="ViewModels\MutantsSavingViewModel.cs" />
+    <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\TestsSelectableTreeViewModel.cs" />
     <Compile Include="ViewModels\CreationViewModel.cs" />
     <Compile Include="ViewModels\OnlyMutantsCreationViewModel.cs" />
@@ -427,6 +433,9 @@
     <Compile Include="Views\MutantsSavingView.xaml.cs">
       <DependentUpon>MutantsSavingView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\OptionsView.xaml.cs">
+      <DependentUpon>OptionsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TestsSelectableTree.xaml.cs">
       <DependentUpon>TestsSelectableTree.xaml</DependentUpon>
     </Compile>
@@ -470,6 +479,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MutantsSavingView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OptionsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

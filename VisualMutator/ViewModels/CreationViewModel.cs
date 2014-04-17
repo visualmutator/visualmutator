@@ -142,7 +142,6 @@
         {
             View.SetDefaultOwnerAndShowDialog();
         }
-
         public void Close()
         {
             View.Close();

@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Infrastructure;
     using log4net;
     using Model;
@@ -24,7 +25,7 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MainViewModel _viewModel;
-        private readonly IFactory<CreationController> _creationControllerFactory;
+        private readonly ContinuousConfigurator _continuousConfigurator;
         private readonly IHostEnviromentConnection _host;
 
         private readonly CommonServices _svc;
@@ -36,13 +37,13 @@
 
         public MainController(
             MainViewModel viewModel,
-            IFactory<CreationController> creationControllerFactory,
+            ContinuousConfigurator continuousConfigurator,
             IHostEnviromentConnection host,
            
             CommonServices svc)
         {
             _viewModel = viewModel;
-            _creationControllerFactory = creationControllerFactory;
+            _continuousConfigurator = continuousConfigurator;
             _host = host;
 
             _controlSource = new Subject<ControlEvent>();
@@ -73,7 +74,6 @@
 
         }
 
-     
         public void RunMutationSessionForCurrentPosition()
         {
             MethodIdentifier methodIdentifier;
@@ -85,33 +85,35 @@
 
             }
         }
-        public void RunMutationSession(MethodIdentifier methodIdentifier = null)
+
+        public async void RunMutationSession(MethodIdentifier methodIdentifier = null)
         {
             _host.Build();
             _log.Info("Showing mutation session window.");
 
-            CreationController mutantsCreationController = _creationControllerFactory.Create();
-            mutantsCreationController.Run(methodIdentifier);
-            if (mutantsCreationController.HasResults)
+            SessionConfiguration sessionConfiguration = _continuousConfigurator.CreateConfiguration();
+            try
             {
-                SessionController sessionController = mutantsCreationController.CreateSession();
-                StartNewSession(sessionController, mutantsCreationController.Result);
+                SessionController sessionController = await sessionConfiguration.CreateSession(methodIdentifier);
+
+                Clean();
+                _currentSessionController = sessionController;
+
+                _viewModel.MutantDetailsViewModel = _currentSessionController.MutantDetailsController.ViewModel;
+
+                Subscribe(_currentSessionController);
+
+                _log.Info("Starting mutation session...");
+                _currentSessionController.RunMutationSession(_controlSource);
             }
+            catch (TaskCanceledException)
+            {
+                
+            }
+       
         }
     
-        public void StartNewSession(SessionController newSessionController, MutationSessionChoices choices)
-        {
-            Clean();
-            _currentSessionController = newSessionController;
-
-            _viewModel.MutantDetailsViewModel = _currentSessionController.MutantDetailsController.ViewModel;
-
-            Subscribe(_currentSessionController);
-
-            _log.Info("Starting mutation session...");
-            _currentSessionController.RunMutationSession(_controlSource);
-            
-        }
+     
 
         public void PauseOperations()
         {
