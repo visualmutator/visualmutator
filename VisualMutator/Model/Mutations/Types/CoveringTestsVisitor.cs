@@ -5,11 +5,6 @@
     using System.Reflection;
     using log4net;
     using Microsoft.Cci;
-    using Microsoft.Cci.Immutable;
-    using NUnit.Core;
-    using UsefulTools.ExtensionMethods;
-    using GenericTypeInstanceReference = Microsoft.Cci.MutableCodeModel.GenericTypeInstanceReference;
-    using TypeHelper = Microsoft.Cci.TypeHelper;
 
     public class CoveringTestsVisitor : CodeVisitor
     {

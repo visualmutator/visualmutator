@@ -128,6 +128,8 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             set;
         }
 
+        public long CreationTimeMilis { get; set; }
+
         protected override void SetState(MutantResultState value, bool updateChildren, bool updateParent)
         {
             base.SetState(value, updateChildren, updateParent);

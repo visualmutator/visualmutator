@@ -55,8 +55,9 @@
               //  new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGrouped
               //      .Sum(oper => oper.FindTargetsTimeMiliseconds)),
 
-                new XAttribute("TotalTestingTimeMiliseconds", testedMutants
-                    .Sum(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
+                
+                new XAttribute("AverageCreationTimeMiliseconds", testedMutants
+                    .AverageOrZero(mut => mut.CreationTimeMilis)),
                 new XAttribute("AverageTestingTimeMiliseconds", testedMutants
                     .AverageOrZero(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 from assemblyNode in session.MutantsGrouped
@@ -121,6 +122,9 @@
                     new XElement("MutationTestingSession",
                         new XAttribute("SessionCreationWindowShowTime", _creationController.SessionCreationWindowShowTime),
                         new XAttribute("SessionStartTime", _sessionController.SessionStartTime),
+                        new XAttribute("SessionEndTime", _sessionController.SessionEndTime),
+                        new XAttribute("SessionRunTimeSeconds", (_sessionController.SessionEndTime
+                        - _sessionController.SessionStartTime).TotalSeconds),
                         new XAttribute("MutationScore", session.MutationScore),
                         new XAttribute("TotalTimeSeconds", totalTimeMs/1000),
                         mutantsNode,

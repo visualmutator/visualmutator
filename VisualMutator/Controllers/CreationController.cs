@@ -91,15 +91,10 @@
 
         }
 
-        public void SetMutationConstraints(MethodIdentifier methodIdentifier)
-        {
-
-        }
-
         public void Run(MethodIdentifier singleMethodToMutate = null)
         {
             SessionCreationWindowShowTime = DateTime.Now;
-
+            
             bool constrainedMutation = false;
             ICodePartsMatcher matcher;
             if(singleMethodToMutate != null)
@@ -170,8 +165,6 @@
                         var root = new CheckedNode("");
                         root.Children.AddRange(assemblies);
                         ExpandLoneNodes(root);
-
-
                     }
                     _svc.Threading.PostOnGui(() =>
                     {

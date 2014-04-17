@@ -275,9 +275,12 @@
             {
                 subscription.Dispose();
             }
+            SessionEndTime = DateTime.Now;
             _subscriptions.Clear();
             _sessionEventsSubject.OnCompleted();
         }
+
+        public DateTime SessionEndTime { get; set; }
 
         private void FinishWithError()
         {
