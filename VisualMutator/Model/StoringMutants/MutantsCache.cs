@@ -5,6 +5,7 @@
     using System.Collections.Specialized;
     using System.Reflection;
     using System.Runtime.Caching;
+    using System.Threading.Tasks;
     using log4net;
     using Mutations;
     using Mutations.MutantsTree;
@@ -22,6 +23,8 @@
         {
             get;
         }
+
+        Task<IModuleSource> GetMutatedModulesAsync(Mutant mutant);
     }
 
     public class MutantsCache : IMutantsCache
@@ -79,7 +82,6 @@
         {
             _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
             _log.Info("Request to cache for mutant: "+mutant.Id);
-           // return _mutantsContainer.ExecuteMutation(mutant, _originalCode.Assemblies, _allowedTypes.ToList(), ProgressCounter.Inactive());
             
             IModuleSource result;
             if (_disableCache || !_cache.Contains(mutant.Id))
@@ -95,6 +97,25 @@
             }
             return result;
         }
+        public async Task<IModuleSource> GetMutatedModulesAsync(Mutant mutant)
+        {
+            _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
+            _log.Info("Request to cache for mutant: " + mutant.Id);
 
+            IModuleSource result;
+            if (_disableCache || !_cache.Contains(mutant.Id))
+            {
+                CciModuleSource source = await _whiteCache.GetWhiteModulesAsync();
+                result = _mutantsContainer.ExecuteMutation(mutant,
+                    ProgressCounter.Inactive(), source);
+
+                _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
+            }
+            else
+            {
+                result = (IModuleSource)_cache.Get(mutant.Id);
+            }
+            return result;
+        }
     }
 }

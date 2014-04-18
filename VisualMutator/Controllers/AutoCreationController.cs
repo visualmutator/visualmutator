@@ -33,7 +33,7 @@
 
     #endregion
 
-    public class CreationController : Controller
+    public class AutoCreationController : Controller
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -57,7 +57,7 @@
         public MutationSessionChoices Result { get; protected set; }
 
 
-        public CreationController(
+        public AutoCreationController(
             IDispatcherExecute dispatcher,
             CreationViewModel viewModel,
             ITypesManager typesManager,
@@ -93,7 +93,7 @@
 
         }
 
-        public void Run(MethodIdentifier singleMethodToMutate = null)
+        public void Run(MethodIdentifier singleMethodToMutate)
         {
             SessionCreationWindowShowTime = DateTime.Now;
 
@@ -118,18 +118,9 @@
 //            }
 
 
-            bool constrainedMutation = false;
-            ICodePartsMatcher matcher;
-            if(singleMethodToMutate != null)
-            {
-                matcher = new CciMethodMatcher(singleMethodToMutate);
-                constrainedMutation = true;
-            }
-            else
-            {
-                matcher = new AllMatcher();
-            }
-            
+            ICodePartsMatcher matcher = new CciMethodMatcher(singleMethodToMutate);
+            bool constrainedMutation = true;
+
 
             _operatorsManager.GetOperators().ContinueWith(t =>
             {

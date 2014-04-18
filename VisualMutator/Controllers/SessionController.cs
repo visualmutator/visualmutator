@@ -176,9 +176,7 @@
                     throw new NoTestsSelectedException();
                 }
 
-                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionStarting(
-                    _testingProcessExtensionOptions.Parameter, choices.ProjectPaths.Select(p => p.Path).ToList());
-
+             
 
                 _log.Info("Initializing test environment...");
                 
