@@ -10,6 +10,7 @@ namespace VisualMutator.Model.StoringMutants
     using System.Reflection;
     using System.Threading;
     using Exceptions;
+    using Infrastructure;
     using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.Ast;
@@ -56,7 +57,7 @@ namespace VisualMutator.Model.StoringMutants
                         {
                             _paths.Add(item1);
                             NotifyClients();
-                        });
+                        }).LogErrors();
                             // _whiteCache.TryAdd(CreateSource(assembliesPaths));
                     }
                     
@@ -78,12 +79,15 @@ namespace VisualMutator.Model.StoringMutants
 
         private void NotifyClients()
         {
-            CciModuleSource cciModuleSource = TryTake();
-            if(cciModuleSource != null)
+            lock (this)
             {
-                lock (this)
+                if(_clients.Count > 0)
                 {
-                    _clients.Dequeue().TrySetResult(cciModuleSource);
+                    CciModuleSource cciModuleSource = TryTake();
+                    if(cciModuleSource != null)
+                    {
+                        _clients.Dequeue().TrySetResult(cciModuleSource);
+                    }
                 }
             }
         }
