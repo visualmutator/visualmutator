@@ -18,43 +18,114 @@ namespace VisualMutator.Model.StoringMutants
     public class WhiteCache : IDisposable, IWhiteCache
     {
         private readonly BlockingCollection<CciModuleSource> _whiteCache;
+        private BlockingCollection<IList<string>> _paths;
         private IList<string> _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private int _lowerBound;
         private int _currentCount;
         private IDisposable _timerRisposable;
-
+        private Queue<TaskCompletionSource<CciModuleSource>> _clients; 
         public WhiteCache()
         {
             _whiteCache = new BlockingCollection<CciModuleSource>(20);
+            _clients = new Queue<TaskCompletionSource<CciModuleSource>>();
             _lowerBound = 8;
         }
 
         public void Initialize(IList<string> assembliesPaths)
         {
             _assembliesPaths = assembliesPaths;
+            _paths = new BlockingCollection<IList<string>>();
+            _paths.Add(_assembliesPaths);
+            
+            //   _workers = new WorkerCollection<CciModuleSource>();
 
-         //   _workers = new WorkerCollection<CciModuleSource>();
-
-
-            _timerRisposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
-                .Subscribe(ev =>
+                new Thread(() =>
                 {
-                    if (_whiteCache.Count < _lowerBound)
+                    foreach (IList<string> item in _paths.GetConsumingEnumerable())
                     {
-                        // Task.Run(() => _whiteCache.TryAdd(CreateSource(assembliesPaths)));
-                        _whiteCache.TryAdd(CreateSource(assembliesPaths));
+                        Monitor.Enter(this);
+                        while (_whiteCache.Count >= _lowerBound)
+                        {
+                            Monitor.Wait(this);
+                        }
+                        Monitor.Exit(this);
+                        IList<string> item1 = item;
+                        Task.Run(() => _whiteCache.TryAdd(CreateSource(item1)))
+                            .ContinueWith(task =>
+                        {
+                            _paths.Add(item1);
+                            NotifyClients();
+                        });
+                            // _whiteCache.TryAdd(CreateSource(assembliesPaths));
                     }
-                     
-                });
+                    
+                }).Start();
+           
+
+//
+//            _timerRisposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
+//                .Subscribe(ev =>
+//                {
+//                    if (_whiteCache.Count < _lowerBound)
+//                    {
+//                        // Task.Run(() => _whiteCache.TryAdd(CreateSource(assembliesPaths)));
+//                        _whiteCache.TryAdd(CreateSource(assembliesPaths));
+//                    }
+//                     
+//                });
         }
-        
+
+        private void NotifyClients()
+        {
+            CciModuleSource cciModuleSource = TryTake();
+            if(cciModuleSource != null)
+            {
+                lock (this)
+                {
+                    _clients.Dequeue().TrySetResult(cciModuleSource);
+                }
+            }
+        }
+
         public CciModuleSource GetWhiteModules()
         {
-            return _whiteCache.Take();
+            CciModuleSource cciModuleSource = _whiteCache.Take();
+            Monitor.Enter(this);
+            Monitor.Pulse(this);
+            Monitor.Exit(this);
+            return cciModuleSource;
 
         }
-
+        public Task<CciModuleSource> GetWhiteModulesAsync()
+        {
+            CciModuleSource cciModuleSource = TryTake();
+            if (cciModuleSource != null)
+            {
+                return Task.FromResult(cciModuleSource);
+            }
+            else
+            {
+                var tcs = new TaskCompletionSource<CciModuleSource>();
+                lock(this)
+                {
+                    _clients.Enqueue(tcs);
+                }
+                return tcs.Task;
+            }
+        }
+        private CciModuleSource TryTake()
+        {
+            CciModuleSource cciModuleSource;
+            if (_whiteCache.TryTake(out cciModuleSource))
+            {
+                Monitor.Enter(this);
+                Monitor.Pulse(this);
+                Monitor.Exit(this);
+                return cciModuleSource;
+            }
+            return null;
+        }
         public void Reinitialize(List<string> assembliesPaths)
         {
             //todo: remove other assemblies
@@ -101,6 +172,7 @@ namespace VisualMutator.Model.StoringMutants
 
         public void Dispose()
         {
+            _paths.CompleteAdding();
             if (_timerRisposable != null)
             {
                 _timerRisposable.Dispose();

@@ -29,11 +29,6 @@
             MutantsTesting.Initialize(View);
 
         }
-        public List<DirectoryPathAbsolute> ProjectPaths
-        {
-            get;
-            set;
-        }
         private MutationsTreeViewModel _mutationsTree;
 
         public MutationsTreeViewModel MutationsTree

@@ -266,6 +266,7 @@
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\ControlEvent.cs" />
+    <Compile Include="Controllers\AutoCreationController.cs" />
     <Compile Include="Controllers\CreationController.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />

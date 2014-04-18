@@ -43,6 +43,7 @@
     public class TestsContainer : ITestsContainer
     {
         private readonly IMutantsFileManager _mutantsFileManager;
+        private readonly IMutantsCache _mutantsCache;
         private readonly IFileSystemManager _fileManager;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
@@ -56,10 +57,12 @@
 
         public TestsContainer(
             IMutantsFileManager mutantsFileManager,
+            IMutantsCache mutantsCache,
             IFileSystemManager fileManager,
             IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
+            _mutantsCache = mutantsCache;
             _fileManager = fileManager;
             _assemblyVerifier = assemblyVerifier;
             _testResultTreeCreator = new TestResultTreeCreator();
@@ -116,9 +119,10 @@
         public async Task<StoredMutantInfo> StoreMutant( Mutant mutant)
         {
             var clone = await _fileManager.CreateCloneAsync("InitTestEnvironment");
-            var result = new StoredMutantInfo(clone);
-            _mutantsFileManager.StoreMutant(result, mutant);
-            return result;
+            var info = new StoredMutantInfo(clone);
+            var modules = await _mutantsCache.GetMutatedModulesAsync(mutant);
+            _mutantsFileManager.StoreMutant(info, modules);
+            return info;
         }
 
 

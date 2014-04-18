@@ -40,6 +40,11 @@ namespace VisualMutator.Model.StoringMutants
             
         }
 
+        public Task<CciModuleSource> GetWhiteModulesAsync()
+        {
+            return Task.FromResult(CreateSource(_assembliesPaths));
+        }
+
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
             var moduleSource = new CciModuleSource();

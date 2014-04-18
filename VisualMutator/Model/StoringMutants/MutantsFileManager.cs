@@ -24,7 +24,6 @@
     {
         void StoreMutant(StoredMutantInfo directory, IModuleSource mutant);
 
-        void StoreMutant(StoredMutantInfo directory, Mutant mutant);
     }
 
  
@@ -65,12 +64,6 @@
             }
         }
 
-
-        public void StoreMutant(StoredMutantInfo info, Mutant mutant)
-        {
-            StoreMutant(info, _mutantsCache.GetMutatedModules(mutant));
-
-        }
 
     }
 
