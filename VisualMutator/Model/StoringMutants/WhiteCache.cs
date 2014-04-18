@@ -18,63 +18,76 @@ namespace VisualMutator.Model.StoringMutants
 
     public class WhiteCache : IDisposable, IWhiteCache
     {
+        private readonly IFileSystemManager _fileManager;
+        private readonly int _threadsCount;
         private readonly BlockingCollection<CciModuleSource> _whiteCache;
         private BlockingCollection<IList<string>> _paths;
-        private IList<string> _assembliesPaths;
+        private ProjectFilesClone _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private int _lowerBound;
         private int _currentCount;
         private IDisposable _timerRisposable;
-        private Queue<TaskCompletionSource<CciModuleSource>> _clients; 
-        public WhiteCache()
+        private Queue<TaskCompletionSource<CciModuleSource>> _clients;
+        private List<ProjectFilesClone> _filesPool;
+
+        public WhiteCache(
+            IFileSystemManager fileManager,
+            // ------
+            int threadsCount
+            )
         {
+            _fileManager = fileManager;
+            _threadsCount = threadsCount;
             _whiteCache = new BlockingCollection<CciModuleSource>(20);
             _clients = new Queue<TaskCompletionSource<CciModuleSource>>();
-            _lowerBound = 8;
+            _lowerBound = 16;
+            _paths = new BlockingCollection<IList<string>>();
+        }
+
+        public void Initialize()
+        {
+            _assembliesPaths = _fileManager.CreateClone("WhiteCache-" );
+            _paths = new BlockingCollection<IList<string>>();
+            _paths.Add(_assembliesPaths.Assemblies.Select(_ => _.Path).ToList());
+
+            //            ProjectFilesClone[] projectFilesClones = await Task.WhenAll(
+            //                Enumerable.Range(0, _threadsCount)
+            //                .Select(i => _fileManager.CreateCloneAsync("WhiteCache-"+i)));
+            //
+            //            _filesPool = projectFilesClones.ToList();
+            //            foreach (var projectFilesClone in _filesPool)
+            //            {
+            //                _paths.Add(projectFilesClone.Assemblies.Select(_ => _.Path).ToList());
+            //            }
+            //           
+
+            new Thread(() =>
+            {
+                foreach (IList<string> item in _paths.GetConsumingEnumerable())
+                {
+                    Monitor.Enter(this);
+                    while (_whiteCache.Count >= _lowerBound)
+                    {
+                        Monitor.Wait(this);
+                    }
+                    Monitor.Exit(this);
+                    IList<string> item1 = item;
+                    Task.Run(() => _whiteCache.TryAdd(CreateSource(item1)))
+                        .ContinueWith(task =>
+                    {
+                        _paths.Add(item1);
+                        NotifyClients();
+                    }).LogErrors();
+                }
+
+            }).Start();
         }
 
         public void Initialize(IList<string> assembliesPaths)
         {
-            _assembliesPaths = assembliesPaths;
-            _paths = new BlockingCollection<IList<string>>();
-            _paths.Add(_assembliesPaths);
             
-            //   _workers = new WorkerCollection<CciModuleSource>();
-
-                new Thread(() =>
-                {
-                    foreach (IList<string> item in _paths.GetConsumingEnumerable())
-                    {
-                        Monitor.Enter(this);
-                        while (_whiteCache.Count >= _lowerBound)
-                        {
-                            Monitor.Wait(this);
-                        }
-                        Monitor.Exit(this);
-                        IList<string> item1 = item;
-                        Task.Run(() => _whiteCache.TryAdd(CreateSource(item1)))
-                            .ContinueWith(task =>
-                        {
-                            _paths.Add(item1);
-                            NotifyClients();
-                        }).LogErrors();
-                            // _whiteCache.TryAdd(CreateSource(assembliesPaths));
-                    }
-                    
-                }).Start();
+          
            
-
-//
-//            _timerRisposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(200))
-//                .Subscribe(ev =>
-//                {
-//                    if (_whiteCache.Count < _lowerBound)
-//                    {
-//                        // Task.Run(() => _whiteCache.TryAdd(CreateSource(assembliesPaths)));
-//                        _whiteCache.TryAdd(CreateSource(assembliesPaths));
-//                    }
-//                     
-//                });
         }
 
         private void NotifyClients()
@@ -101,6 +114,7 @@ namespace VisualMutator.Model.StoringMutants
             return cciModuleSource;
 
         }
+
         public Task<CciModuleSource> GetWhiteModulesAsync()
         {
             CciModuleSource cciModuleSource = TryTake();
@@ -177,6 +191,12 @@ namespace VisualMutator.Model.StoringMutants
         public void Dispose()
         {
             _paths.CompleteAdding();
+
+            foreach (var projectFilesClone in _filesPool)
+            {
+                projectFilesClone.Dispose();
+            }
+
             if (_timerRisposable != null)
             {
                 _timerRisposable.Dispose();

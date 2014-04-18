@@ -44,14 +44,16 @@
             </Grid.ColumnDefinitions>
         </Grid>
         
-        <CheckBox Grid.Row="0"  Style="{StaticResource checkstyle}"
-                  Content="Enable original code cache"
-                  IsChecked="{Binding Options.WhiteCacheEnabled}" />
-        
+<!--        <CheckBox Grid.Row="0"  Style="{StaticResource checkstyle}"-->
+<!--                  Content="Enable original code cache"-->
+<!--                  IsChecked="{Binding Options.WhiteCacheEnabled}" />-->
+<!--        -->
         <CheckBox Grid.Row="1" Style="{StaticResource checkstyle}"
                   Content="Enable mutant code cache"
                   IsChecked="{Binding Options.MutantsCacheEnabled}" />
-        
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Source files processing threads:" />
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="16" Minimum="1"
+                                  Value="{Binding Options.WhiteCacheThreadsCount, Mode=TwoWay}" />
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Mutant processing threads:" />
         <xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Maximum="16" Minimum="1"
                                   Value="{Binding Options.ProcessingThreadsCount, Mode=TwoWay}" />

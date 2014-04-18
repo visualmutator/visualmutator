@@ -408,10 +408,10 @@
                     return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_Cancelled());
                 }
 
-                var testMethods = changelessMutant.TestResults.SelectMany(r => r.ResultMethods).ToList();
-
-              //  MutantTestSession.TestsByAssembly.Values
-               //     .SelectMany(v => v.TestMap.Values)
+                var testMethods =  changelessMutant.TestRunContexts 
+                    .SelectMany(c => c.TestResults.ResultMethods).ToList();
+                //  MutantTestSession.TestsByAssembly.Values
+                //     .SelectMany(v => v.TestMap.Values)
                 var test = testMethods.FirstOrDefault(t => t.State == TestNodeState.Failure);
 
                 string testName = null;

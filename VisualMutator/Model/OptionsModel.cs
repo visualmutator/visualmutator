@@ -7,7 +7,7 @@
     {
         public OptionsModel()
         {
-            WhiteCacheEnabled = true;
+            WhiteCacheThreadsCount = Environment.ProcessorCount + 1;
             MutantsCacheEnabled = true;
             ProcessingThreadsCount = Environment.ProcessorCount + 1;
         }
@@ -25,19 +25,18 @@
             }
         }
 
-        private bool _whiteCacheEnabled;
-        public bool WhiteCacheEnabled
+        private int _whiteCacheThreadsCount;
+        public int WhiteCacheThreadsCount
         {
             get
             {
-                return _whiteCacheEnabled;
+                return _whiteCacheThreadsCount;
             }
             set
             {
-                SetAndRise(ref _whiteCacheEnabled, value, () => WhiteCacheEnabled);
+                SetAndRise(ref _whiteCacheThreadsCount, value, () => WhiteCacheThreadsCount);
             }
         }
-
         private int _processingThreadsCount;
         public int ProcessingThreadsCount
         {

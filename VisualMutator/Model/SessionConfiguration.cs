@@ -26,8 +26,8 @@
         private readonly IFactory<CreationController> _creationControllerFactory;
         private readonly IBindingFactory<SessionController> _sessionFactory;
         private readonly List<FilePathAbsolute> _assembliesPaths;
-        private ProjectFilesClone _originalFilesList;
-        private ProjectFilesClone _originalFilesListForTests;
+        private ProjectFilesClone _originalFilesClone;
+        private ProjectFilesClone _testsClone;
 
         public SessionConfiguration(
             IOptionsManager optionsManager,
@@ -48,14 +48,14 @@
 
             _fileManager.Initialize();
 
-            _originalFilesList = _fileManager.CreateClone("Mutants");
+            _originalFilesClone = _fileManager.CreateClone("Mutants");
 
-            _whiteCache.Initialize(
-                _originalFilesList.Assemblies.AsStrings().ToList());
+            _whiteCache.Initialize();
+              //  _originalFilesClone.Assemblies.AsStrings().ToList());
 
-            _originalFilesListForTests = _fileManager.CreateClone("Tests");
-            if (_originalFilesList.IsIncomplete || _originalFilesListForTests.IsIncomplete
-                || _originalFilesListForTests.Assemblies.Count == 0)
+            _testsClone = _fileManager.CreateClone("Tests");
+            if (_originalFilesClone.IsIncomplete || _testsClone.IsIncomplete
+                || _testsClone.Assemblies.Count == 0)
             {
                 AssemblyLoadProblem = true;
             }
@@ -66,12 +66,12 @@
         public Task<IList<IModule>> LoadAssemblies()
         {
             return Task.Run(() => _typesManager.LoadAssemblies(
-                    _originalFilesList.Assemblies));
+                    _originalFilesClone.Assemblies));
         }
         public Task<object> LoadTests()
         {
             return Task.Run(() => _testLoader.LoadTests(
-             _originalFilesListForTests.Assemblies.AsStrings().ToList()).CastTo<object>());
+             _testsClone.Assemblies.AsStrings().ToList()).CastTo<object>());
 
         }
 

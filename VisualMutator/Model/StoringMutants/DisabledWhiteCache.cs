@@ -23,6 +23,11 @@ namespace VisualMutator.Model.StoringMutants
         {
         }
 
+        public void Initialize()
+        {
+            
+        }
+
         public void Initialize(IList<string> assembliesPaths)
         {
             _assembliesPaths = assembliesPaths;

@@ -283,6 +283,7 @@
     <Compile Include="Infrastructure\TaskErrors.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
+    <Compile Include="Model\ContinuousConfiguration.cs" />
     <Compile Include="Model\ContinuousConfigurator.cs" />
     <Compile Include="Model\CoverageFinder\AllMatcher.cs" />
     <Compile Include="Model\CoverageFinder\CciMethodMatcher.cs" />

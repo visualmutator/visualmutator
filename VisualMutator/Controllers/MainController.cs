@@ -101,7 +101,10 @@
             _host.Build();
             _log.Info("Showing mutation session window.");
 
-            SessionConfiguration sessionConfiguration = _continuousConfigurator.CreateConfiguration();
+            SessionConfiguration sessionConfiguration = _continuousConfigurator
+                .GetConfiguration()
+                .CreateSessionConfiguration();
+
             try
             {
                 SessionController sessionController = await sessionConfiguration.CreateSession(methodIdentifier);
