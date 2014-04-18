@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Controllers;
     using Infrastructure;
     using log4net;
@@ -43,6 +44,9 @@
 
         public void RaiseTestingProgress(double mutationScore)
         {
+            _log.Info("Testing progress: all:"+ _allMutantsCount +
+                ", tested: "+ _testedNonEquivalentMutantsCount
+                +"killed: "+ _mutantsKilledCount);
             _sessionEventsSubject.OnNext(new TestingProgressEventArgs(OperationsState.Testing)
             {
                 NumberOfAllMutants = _allMutantsCount,
@@ -62,7 +66,7 @@
             _mutantsWorkers.Start(endCallback);
         }
 
-        public async void TestOneMutant(Mutant mutant)
+        public async Task TestOneMutant(Mutant mutant)
         {
             mutant.State = MutantResultState.Creating;
 

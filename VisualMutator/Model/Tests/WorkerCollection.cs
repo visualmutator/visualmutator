@@ -5,50 +5,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class WorkerCollection2<T> where T : class
-    {
-        private bool _requestedStop;
-        private readonly SemaphoreSlim _semaphore;
-        private readonly int _maxCount;
-        private readonly Action<T> _workAction;
-
-        public WorkerCollection2(int maxCount, Action<T> workAction)
-        {
-            _maxCount = maxCount;
-            _workAction = workAction;
-            _semaphore = new SemaphoreSlim(_maxCount);
-        }
-
-        public void Stop()
-        {
-            _requestedStop = true;
-        }
-
-        public void Start(Action endCallback)
-        {
-            _requestedStop = false;
-
-            while (!_requestedStop)
-            {
-                _semaphore.Wait();
-                    Task.Run(() => _workAction())
-                        .ContinueWith(t =>
-                        {
-                            _semaphore.Release();
-                            lock (this)
-                            {
-                                if (_semaphore.CurrentCount == _maxCount
-                                    && (_requestedStop ))
-                                {
-                                    endCallback();
-                                }
-                            }
-
-                        });
-            }
-        }
-
-    }
+  
 
     public class WorkerCollection<T> where T : class 
     {
@@ -56,9 +13,10 @@
         private bool _requestedStop;
         private readonly SemaphoreSlim _semaphore;
         private readonly int _maxCount;
-        private readonly Action<T> _workAction;
+        private int _currentCount;
+        private readonly Func<T, Task> _workAction;
 
-        public WorkerCollection(ICollection<T> items, int maxCount, Action<T> workAction)
+        public WorkerCollection(ICollection<T> items, int maxCount, Func<T, Task> workAction)
         {
             _maxCount = maxCount;
             _workAction = workAction;
@@ -78,29 +36,42 @@
             bool emptyStop = false;
             while (!emptyStop && !_requestedStop)
             {
-                _semaphore.Wait();
+                lock (this)
+                {
+                    while (_currentCount == _maxCount)
+                    {
+                        Monitor.Wait(this);
+                    }
+                    _currentCount++;
+                }
+                
                 T item = LockingRemoveFirst();
                 if (item != null)
                 {
-                    Task.Run(() => _workAction(item))
-                        .ContinueWith(t =>
-                        {
-                            _semaphore.Release();
-                            lock (this)
+                    Task.Run(() =>
+                    {
+                        _workAction(item)
+                            .ContinueWith(t =>
                             {
-                                if (_semaphore.CurrentCount == _maxCount
-                                    && (_requestedStop || _toProcessList.Count == 0))
+                                lock (this)
                                 {
-                                    endCallback();
-                                }
-                            }
+                                    _currentCount--;
+                                    Monitor.Pulse(this);
 
-                        });
+                                    if (_currentCount == 0
+                                        && (_requestedStop || _toProcessList.Count == 0))
+                                    {
+                                        endCallback();
+                                    }
+                                }
+                            });
+                    });
                 }
                 else
                 {
                     emptyStop = true;
-                    _semaphore.Release();
+                    _currentCount--;
+                    // _semaphore.Release();
                 }
             }
         }

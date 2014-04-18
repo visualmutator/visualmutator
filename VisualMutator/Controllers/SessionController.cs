@@ -263,6 +263,7 @@
 
         private void Finish()
         {
+            _log.Info("Finishing mutation session.");
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
             if (_testingProcessExtensionOptions != null)
@@ -360,6 +361,7 @@
 
         public void PauseOperations()
         {
+            _log.Info("Requesting pause.");
             _requestedHaltState = RequestedHaltState.Pause;
             _testingProcess.Stop();
             RaiseMinorStatusUpdate(OperationsState.Pausing, ProgressUpdateMode.PreserveValue);
@@ -367,6 +369,7 @@
 
         public void ResumeOperations()
         {
+            _log.Info("Requesting resume.");
             new Thread(RunTestsInternal).Start();
             //_svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }

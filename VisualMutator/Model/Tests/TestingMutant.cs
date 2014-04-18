@@ -103,11 +103,12 @@
 
             _log.Info("Running tests for mutant " + _mutant.Id);
 
-            IDisposable timoutDisposable =
-               Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
-               .Subscribe(e => CancelTestRun());
-
+           
             _nUnitTesters = contexts.Select(_nunitService.SpawnTester).ToList();
+
+            IDisposable timoutDisposable =
+              Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
+              .Subscribe(e => CancelTestRun());
 
             var task = Task.WhenAll(_nUnitTesters.Select(t => t.RunTests()));
             return task.ContinueWith(t =>
