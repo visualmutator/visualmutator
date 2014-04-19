@@ -58,7 +58,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new AOR_ArithmeticOperatorReplacement(), out mutants, out diff);
 
@@ -84,7 +83,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out diff);
 
@@ -126,7 +124,6 @@ namespace Ns
             Console.WriteLine(tar);*/
             MutationTestsHelper.DebugTraverse(code);
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new UOI_UnaryOperatorInsertion(), out mutants, out diff);
 

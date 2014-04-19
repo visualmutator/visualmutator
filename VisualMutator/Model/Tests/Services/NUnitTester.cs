@@ -97,7 +97,7 @@
                     return new MutantTestResults(list);
                 }
             }
-            catch (OperationCanceledException e)
+            catch (OperationCanceledException)
             {
                 _log.Error("Test run cancelled.");
                 return new MutantTestResults(cancelled: true);

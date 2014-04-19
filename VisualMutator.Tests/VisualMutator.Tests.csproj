@@ -212,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
+    <Compile Include="Infrastructure\NinjectMemoryTests.cs" />
     <Compile Include="Infrastructure\ProcessTests.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Infrastructure\NinjectParamBindingsTests.cs" />

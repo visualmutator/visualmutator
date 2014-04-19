@@ -58,7 +58,6 @@ namespace Ns
        //     new Conditional().;
             MutationTestsHelper.DebugTraverse(code);
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new LCR_LogicalConnectorReplacement(), out mutants, out diff);
 

@@ -33,13 +33,13 @@
             _typeNodeCreator = typeNodeCreator;
         }
 
-        public static void GroupTypes<T, Node>(Node parent,
-            Func<T, string> namespaceExtractor,
-            Func<Node, string, Node> namespaceNodeCreator,
-            Action<Node, ICollection<T>> typeNodeCreator,
-            ICollection<T> types) where Node : CheckedNode
+        public static void GroupTypes<T1, Node1>(Node1 parent,
+            Func<T1, string> namespaceExtractor,
+            Func<Node1, string, Node1> namespaceNodeCreator,
+            Action<Node1, ICollection<T1>> typeNodeCreator,
+            ICollection<T1> types) where Node1 : CheckedNode
         {
-            var ng = new NamespaceGrouper<T, Node>(namespaceExtractor, namespaceNodeCreator, typeNodeCreator);
+            var ng = new NamespaceGrouper<T1, Node1>(namespaceExtractor, namespaceNodeCreator, typeNodeCreator);
             ng.GroupTypes2(parent, "", types);
         }
 

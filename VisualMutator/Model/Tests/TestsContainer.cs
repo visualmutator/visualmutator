@@ -51,7 +51,6 @@
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private bool _testsLoaded;
 
         private readonly TestResultTreeCreator _testResultTreeCreator;
 

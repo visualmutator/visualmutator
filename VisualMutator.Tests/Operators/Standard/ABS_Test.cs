@@ -54,7 +54,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out diff);
 
@@ -86,7 +85,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ABS_AbsoluteValueInsertion(), out mutants, out diff);
 

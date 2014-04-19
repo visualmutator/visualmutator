@@ -40,16 +40,11 @@
 
         private readonly IOperatorsManager _operatorsManager;
         private readonly ITypesManager _typesManager;
-        private readonly TestsLoader _testsLoader;
 
-        private readonly IHostEnviromentConnection _hostEnviroment;
-        private readonly IFileSystemManager _fileManager;
         private readonly SessionConfiguration _sessionConfiguration;
-        private readonly IWhiteCache _whiteCache;
         private readonly IOptionsManager _optionsManager;
 
         private readonly CommonServices _svc;
-        private readonly IBindingFactory<SessionController> _sessionFactory;
         private readonly IDispatcherExecute _dispatcher;
         private readonly CreationViewModel _viewModel;
 
@@ -62,9 +57,6 @@
             CreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
-            IHostEnviromentConnection hostEnviroment,
-            TestsLoader testsLoader,
-            IFileSystemManager fileManager,
             SessionConfiguration sessionConfiguration,
             IOptionsManager optionsManager,
             CommonServices svc)
@@ -74,9 +66,6 @@
 
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
-            _hostEnviroment = hostEnviroment;
-            _testsLoader = testsLoader;
-            _fileManager = fileManager;
             _sessionConfiguration = sessionConfiguration;
             _optionsManager = optionsManager;
             _svc = svc;

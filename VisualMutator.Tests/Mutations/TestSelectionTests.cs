@@ -54,7 +54,6 @@
         {
             var r = new Regex(@"[\w\d]+<(\w+,?)+>");
             Match match = r.Match("Deque<T,Sfr>");
-            var capturesCount = match.Groups[1].Captures.Cast<Capture>().Count();
             var cap = new List<Capture>();
             List<Group> groups = new List<Group>();
             foreach (Group gr in match.Groups)
@@ -64,7 +63,6 @@
                 {
                     cap.Add(c);
                 }
-                int e = 3;
             }
             
             Assert.True(match.Success);

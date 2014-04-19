@@ -65,7 +65,6 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new OAN_ArgumentNumberChange(), out mutants, out diff);
 

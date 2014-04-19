@@ -10,7 +10,6 @@
 
     public class VisualCodeTraverser : CodeTraverser
     {
-        private readonly IList<TypeIdentifier> _allowedTypes;
         private readonly MutationFilter _filter;
         private readonly VisualCodeVisitor _visitor;
 

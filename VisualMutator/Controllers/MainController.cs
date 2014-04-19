@@ -34,8 +34,8 @@
 
         private List<IDisposable> _subscriptions;
         private readonly Subject<ControlEvent> _controlSource;
-        private SessionController _currentSessionController;
-        private ContinuousConfiguration _continuousConfiguration;
+        private IObjectRoot<SessionController> _currentSessionController;
+        private IObjectRoot<ContinuousConfiguration> _continuousConfiguration;
         private SessionConfiguration _sessionConfiguration;
 
 
@@ -104,21 +104,22 @@
             _log.Info("Showing mutation session window.");
 
             _continuousConfiguration = _continuousConfigurator.GetConfiguration();
-            _sessionConfiguration = _continuousConfiguration.CreateSessionConfiguration();
+            _sessionConfiguration = _continuousConfiguration.Get.CreateSessionConfiguration();
 
             try
             {
-                SessionController sessionController = await _sessionConfiguration.CreateSession(methodIdentifier);
+                IObjectRoot<SessionController> sessionController = 
+                    await _sessionConfiguration.CreateSession(methodIdentifier);
 
                 Clean();
                 _currentSessionController = sessionController;
 
-                _viewModel.MutantDetailsViewModel = _currentSessionController.MutantDetailsController.ViewModel;
+                _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
 
-                Subscribe(_currentSessionController);
+                Subscribe(_currentSessionController.Get);
 
                 _log.Info("Starting mutation session...");
-                _currentSessionController.RunMutationSession(_controlSource);
+                _currentSessionController.Get.RunMutationSession(_controlSource);
             }
             catch (TaskCanceledException)
             {
@@ -146,7 +147,7 @@
         }
         public void SaveResults()
         {
-            _currentSessionController.SaveResults();
+            _currentSessionController.Get.SaveResults();
             //_controlSource.OnNext(new ControlEvent(ControlEventType.SaveResults));
         }
 
@@ -164,7 +165,7 @@
 
         private void SessionFinished()
         {
-            _continuousConfiguration.Dispose();
+            _continuousConfiguration.Get.Dispose();
         }
 
         private void Clean()
@@ -172,7 +173,7 @@
             _viewModel.Clean();
             if (_currentSessionController != null)
             {
-                _currentSessionController.MutantDetailsController.Clean();
+                _currentSessionController.Get.MutantDetailsController.Clean();
             }
             if (_subscriptions!=null)
             {

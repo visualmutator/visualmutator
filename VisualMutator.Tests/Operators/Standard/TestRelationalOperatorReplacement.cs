@@ -27,7 +27,7 @@
     [TestFixture]
     public class TestRelationalOperatorReplacement
     {
-        private String _dsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
+     //   private String _dsaTestsPath = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Projekty do testów\dsa-96133\Dsa\Dsa.Test\bin\Debug\Dsa.Test.dll";
 
         #region Setup/Teardown
 
@@ -71,7 +71,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out diff);
 
@@ -105,7 +104,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out diff);
 
@@ -147,7 +145,6 @@ namespace Ns
 }";
 
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new ROR_RelationalOperatorReplacement(), out mutants, out diff);
 

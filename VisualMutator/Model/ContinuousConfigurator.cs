@@ -8,17 +8,16 @@
 
     public class ContinuousConfigurator
     {
-        private readonly IBindingFactory<ContinuousConfiguration> _continuousConfigurationFactory;
+        private readonly IRootFactory<ContinuousConfiguration> _continuousConfigurationFactory;
 
         public ContinuousConfigurator(
-            IBindingFactory<ContinuousConfiguration> continuousConfigurationFactory)
+            IRootFactory<ContinuousConfiguration> continuousConfigurationFactory)
         {
             _continuousConfigurationFactory = continuousConfigurationFactory;
         }
 
-        public ContinuousConfiguration GetConfiguration()
+        public IObjectRoot<ContinuousConfiguration> GetConfiguration()
         {
-           
             return _continuousConfigurationFactory.Create();
         }
 

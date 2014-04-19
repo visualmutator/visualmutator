@@ -59,7 +59,6 @@ namespace Ns
            
             
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new MCI_MemberCallFromAnotherInheritedClass(), out mutants, out diff);
 

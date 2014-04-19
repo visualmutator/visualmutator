@@ -104,7 +104,6 @@
         {
             var oper = new DEH_MethodDelegatedForEventHandlingChange();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper, 
                 out mutants, out diff);
@@ -115,7 +114,6 @@
         {
             var oper = new DMC_DelegatedMethodChange();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out diff);
@@ -126,7 +124,6 @@
         {
             var oper = new EHC_ExceptionHandlingChange();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out diff);
@@ -137,7 +134,6 @@
         {
             var oper = new EHR_ExceptionHandlerRemoval();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out diff);
@@ -148,7 +144,6 @@
         {
             var oper = new EXS_ExceptionSwallowing();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out diff);
@@ -159,7 +154,6 @@
         {
             var oper = new ISD_BaseKeywordDeletion();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out diff);
@@ -170,7 +164,6 @@
         {
             var oper = new MCI_MemberCallFromAnotherInheritedClass();
             List<Mutant> mutants;
-            IModuleSource originalModules;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutationsFromFile(modulePath, oper,
                 out mutants, out diff);

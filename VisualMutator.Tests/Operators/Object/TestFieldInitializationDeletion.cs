@@ -65,7 +65,6 @@ namespace Ns
 
             var oper = new JID_FieldInitializationDeletion();
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, oper, out mutants, out diff);
 

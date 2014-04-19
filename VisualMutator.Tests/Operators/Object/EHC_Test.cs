@@ -79,7 +79,6 @@ namespace Ns
 }";
             MutationTestsHelper.DebugTraverse(code);
             List<Mutant> mutants;
-            IModuleSource original;
             CodeDifferenceCreator diff;
             MutationTestsHelper.RunMutations(code, new EHC_ExceptionHandlingChange(), out mutants, out diff);
 

@@ -28,7 +28,7 @@
             var p = new ProcessStartInfo("mspaint.exe");
            // p.
             var s = new CancellationTokenSource();
-            processes.RunAsync(p, s.Token).ContinueWith(t =>
+            processes.RunAsync(p, s).ContinueWith(t =>
             {
                 if(t.IsCanceled)
                 {

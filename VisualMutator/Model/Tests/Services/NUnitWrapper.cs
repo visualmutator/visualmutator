@@ -66,7 +66,6 @@
      
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private TestFilter _nameFilter;//nullable
         private MyRecordingListener listener;
 
         public CustomEventListener Listener
@@ -76,7 +75,7 @@
 
         public TestFilter NameFilter
         {
-            get { return _nameFilter; }
+            get { return null; }
         }
 
         public NUnitWrapper(IMessageService messageService)
@@ -171,7 +170,7 @@
 
                  listener = new MyRecordingListener();
 
-                _testRunner.BeginRun(listener, _nameFilter, true, LoggingThreshold.All);
+                _testRunner.BeginRun(listener, null, true, LoggingThreshold.All);
                 new Thread(() =>
                 {
                     TestDomain d = (TestDomain) _testRunner;

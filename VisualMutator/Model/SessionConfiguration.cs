@@ -18,41 +18,33 @@
 
     public class SessionConfiguration
     {
-        private readonly IOptionsManager _optionsManager;
-        private readonly IFileSystemManager _fileManager;
         private readonly TestsLoader _testLoader;
-        private readonly IWhiteCache _whiteCache;
         private readonly ITypesManager _typesManager;
         private readonly IFactory<CreationController> _creationControllerFactory;
-        private readonly IBindingFactory<SessionController> _sessionFactory;
-        private readonly List<FilePathAbsolute> _assembliesPaths;
-        private ProjectFilesClone _originalFilesClone;
-        private ProjectFilesClone _testsClone;
+        private readonly IRootFactory<SessionController> _sessionFactory;
+        private readonly ProjectFilesClone _originalFilesClone;
+        private readonly ProjectFilesClone _testsClone;
 
         public SessionConfiguration(
-            IOptionsManager optionsManager,
             IFileSystemManager fileManager,
             TestsLoader testLoader,
             ITypesManager typesManager,
             IFactory<CreationController> creationControllerFactory,
-            IBindingFactory<SessionController> sessionFactory,
+            IRootFactory<SessionController> sessionFactory,
             IWhiteCache whiteCache)
         {
-            _optionsManager = optionsManager;
-            _fileManager = fileManager;
             _testLoader = testLoader;
-            _whiteCache = whiteCache;
             _typesManager = typesManager;
             _creationControllerFactory = creationControllerFactory;
             _sessionFactory = sessionFactory;
 
-            _fileManager.Initialize();
+            fileManager.Initialize();
 
-            _originalFilesClone = _fileManager.CreateClone("Mutants");
+            _originalFilesClone = fileManager.CreateClone("Mutants");
 
-            _whiteCache.Initialize();
+            whiteCache.Initialize();
 
-            _testsClone = _fileManager.CreateClone("Tests");
+            _testsClone = fileManager.CreateClone("Tests");
             if (_originalFilesClone.IsIncomplete || _testsClone.IsIncomplete
                 || _testsClone.Assemblies.Count == 0)
             {
@@ -75,15 +67,15 @@
         }
 
 
-        public Task<SessionController> CreateSession(MethodIdentifier methodIdentifier = null)
+        public Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier = null)
         {
-            var tcs = new TaskCompletionSource<SessionController>();
+            var tcs = new TaskCompletionSource<IObjectRoot<SessionController>>();
 
             CreationController creationController = _creationControllerFactory.Create();
             creationController.Run(methodIdentifier);
             if (creationController.HasResults)
             {
-                SessionController sessionController = _sessionFactory
+                IObjectRoot<SessionController> sessionController = _sessionFactory
                     .CreateWithBindings(creationController.Result);
                 tcs.TrySetResult(sessionController);
             }

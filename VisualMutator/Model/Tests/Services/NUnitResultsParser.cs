@@ -105,7 +105,6 @@
                     if (paranIdx > 0)
                         testName = testName.Substring(0, paranIdx);
                 }
-                String testRes = "False";
                 
 
                 var result = new MyTestResult(test.Attribute("name").Value);

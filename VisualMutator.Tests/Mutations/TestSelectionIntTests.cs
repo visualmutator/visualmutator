@@ -60,87 +60,87 @@
         }
      
 
-        [Test]
-        public void ShouldFindCoveringTests()
-        {
-       
-            var types = typesManager.GetTypesFromAssemblies(paths, new CciMethodMatcher(context));
-            List<MethodIdentifier> coveredTests = types.Select(t =>
-                finder.FindCoveringTests(t.AssemblyDefinition, new CciMethodMatcher(context))).Flatten().ToList();
-          //  Assert.AreEqual(1, types.Cast<CheckedNode>().SelectManyRecursive(_ => _.Children, leafsOnly: true).Count(n => n is TypeNode));
-            Assert.AreEqual(expectedCount, coveredTests.Count());
-        }
-
-      //  [Test]
-        public void Test12()
-        {
-            var cam = new CciMethodMatcher(new MethodIdentifier("Dsa.DataStructures.Deque`1.EnqueueFront"));
-
-            var types = typesManager.GetTypesFromAssemblies(paths.ToList(), cam);
-            List<MethodIdentifier> coveredTests = types.Select(
-                t => finder.FindCoveringTests(t.AssemblyDefinition, cam)).Flatten().ToList();
-            Assert.AreEqual(1, coveredTests.Count());
-
-        }
-
-       // [Test]
-        public void Test1()
-        {
-            var a = MutationTestsHelper.DsaTestsPath;
-            var b = MutationTestsHelper.DsaPath;
-            var cci = new CciModuleSource();
-            var typesManager = new SolutionTypesManager(cci);
-            var cam = new CciMethodMatcher(new MethodIdentifier("Dsa.Utility.Guard.ArgumentNull"));
-
-           
-            var types = typesManager.GetTypesFromAssemblies(new[] {a, b}.Select(_ => new FilePathAbsolute(_)).ToList(),
-                cam);
-
-            List<MethodIdentifier> coveredTests = types.Select(t => 
-                finder.FindCoveringTests(t.AssemblyDefinition, cam)).Flatten().ToList();
-            //TODO: dodac filtrowanie tylko lisci?
-           // Assert.AreEqual(1,types.Cast<CheckedNode>().SelectManyRecursive(_=>_.Children, leafsOnly:true).Count(n => n is TypeNode));
-            Assert.AreEqual(3, coveredTests.Count());
-            //TODO: ReadAssembly does not work on this artificial assembly
-
-            /*
-            var t1 = CecilUtils.CreateTypeDefinition("ns1", "Type1");
-            var t2 = CecilUtils.CreateTypeDefinition("ns1", "Type2");
-            var t3 = CecilUtils.CreateTypeDefinition("ns1", "Type3");
-            
-            var types = new List<TypeDefinition>
-            {
-                t1,t2,t3
-            };
-
-            var assembly = CecilUtils.CreateAssembly("ass", types);
-            var assemblies = new[] { assembly };
-
-            t1.Methods.Add(CecilUtils.CreateMethodDefinition("Method1", t1));
-            t3.Methods.Add(CecilUtils.CreateMethodDefinition("Method2", t3));
-
-            var assembliesManager = new AssembliesManager();
-
-            var mutantsContainer = new MutantsContainer(assembliesManager);
-
-            var choices = new MutationSessionChoices
-            {
-                Assemblies = assemblies,
-                SelectedTypes = types, 
-                SelectedOperators = new[] { new TestOperator() }
-            };
-            // Act
-            var mutationTestingSession = mutantsContainer.Initialize(choices);
-            mutantsContainer.InitMutantsForOperators(mutationTestingSession);
-            var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
-
-            // Assert
-            executedOperator.Name.ShouldEqual("TestOperatorName");
-            executedOperator.Mutants.Count().ShouldEqual(2);
-
-            assembliesManager.Load(executedOperator.Mutants.First().StoredAssemblies).Single()
-                .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
-*/
-        }
+//        [Test]
+//        public void ShouldFindCoveringTests()
+//        {
+//       
+//            var types = typesManager.GetTypesFromAssemblies(paths, new CciMethodMatcher(context));
+//            List<MethodIdentifier> coveredTests = types.Select(t =>
+//                finder.FindCoveringTests(t.AssemblyDefinition, new CciMethodMatcher(context))).Flatten().ToList();
+//          //  Assert.AreEqual(1, types.Cast<CheckedNode>().SelectManyRecursive(_ => _.Children, leafsOnly: true).Count(n => n is TypeNode));
+//            Assert.AreEqual(expectedCount, coveredTests.Count());
+//        }
+//
+//      //  [Test]
+//        public void Test12()
+//        {
+//            var cam = new CciMethodMatcher(new MethodIdentifier("Dsa.DataStructures.Deque`1.EnqueueFront"));
+//
+//            var types = typesManager.GetTypesFromAssemblies(paths.ToList(), cam);
+//            List<MethodIdentifier> coveredTests = types.Select(
+//                t => finder.FindCoveringTests(t.AssemblyDefinition, cam)).Flatten().ToList();
+//            Assert.AreEqual(1, coveredTests.Count());
+//
+//        }
+//
+//       // [Test]
+//        public void Test1()
+//        {
+//            var a = MutationTestsHelper.DsaTestsPath;
+//            var b = MutationTestsHelper.DsaPath;
+//            var cci = new CciModuleSource();
+//            var typesManager = new SolutionTypesManager(cci);
+//            var cam = new CciMethodMatcher(new MethodIdentifier("Dsa.Utility.Guard.ArgumentNull"));
+//
+//           
+//            var types = typesManager.GetTypesFromAssemblies(new[] {a, b}.Select(_ => new FilePathAbsolute(_)).ToList(),
+//                cam);
+//
+//            List<MethodIdentifier> coveredTests = types.Select(t => 
+//                finder.FindCoveringTests(t.AssemblyDefinition, cam)).Flatten().ToList();
+//            //TODO: dodac filtrowanie tylko lisci?
+//           // Assert.AreEqual(1,types.Cast<CheckedNode>().SelectManyRecursive(_=>_.Children, leafsOnly:true).Count(n => n is TypeNode));
+//            Assert.AreEqual(3, coveredTests.Count());
+//            //TODO: ReadAssembly does not work on this artificial assembly
+//
+//            /*
+//            var t1 = CecilUtils.CreateTypeDefinition("ns1", "Type1");
+//            var t2 = CecilUtils.CreateTypeDefinition("ns1", "Type2");
+//            var t3 = CecilUtils.CreateTypeDefinition("ns1", "Type3");
+//            
+//            var types = new List<TypeDefinition>
+//            {
+//                t1,t2,t3
+//            };
+//
+//            var assembly = CecilUtils.CreateAssembly("ass", types);
+//            var assemblies = new[] { assembly };
+//
+//            t1.Methods.Add(CecilUtils.CreateMethodDefinition("Method1", t1));
+//            t3.Methods.Add(CecilUtils.CreateMethodDefinition("Method2", t3));
+//
+//            var assembliesManager = new AssembliesManager();
+//
+//            var mutantsContainer = new MutantsContainer(assembliesManager);
+//
+//            var choices = new MutationSessionChoices
+//            {
+//                Assemblies = assemblies,
+//                SelectedTypes = types, 
+//                SelectedOperators = new[] { new TestOperator() }
+//            };
+//            // Act
+//            var mutationTestingSession = mutantsContainer.Initialize(choices);
+//            mutantsContainer.InitMutantsForOperators(mutationTestingSession);
+//            var executedOperator = mutationTestingSession.MutantsGroupedByOperators.Single();
+//
+//            // Assert
+//            executedOperator.Name.ShouldEqual("TestOperatorName");
+//            executedOperator.Mutants.Count().ShouldEqual(2);
+//
+//            assembliesManager.Load(executedOperator.Mutants.First().StoredAssemblies).Single()
+//                .MainModule.Types.Single(t => t.Name == "Type1").Methods.Single().Name.ShouldEqual("MutatedMethodName0");
+//*/
+//        }
     }
 }
