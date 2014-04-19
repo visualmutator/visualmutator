@@ -1,10 +1,11 @@
 ﻿namespace VisualMutator.Model
 {
+    using System;
     using Infrastructure;
     using StoringMutants;
     using UsefulTools.DependencyInjection;
 
-    public class ContinuousConfiguration
+    public class ContinuousConfiguration : IDisposable
     {
         private readonly IBindingFactory<SessionConfiguration> _sessionConfigurationFactory;
         private readonly IWhiteCache _whiteCache;
@@ -29,6 +30,11 @@
         public SessionConfiguration CreateSessionConfiguration()
         {
             return _sessionConfigurationFactory.CreateWithBindings(_whiteCache);
+        }
+
+        public void Dispose()
+        {
+            _whiteCache.Dispose();
         }
     }
 }

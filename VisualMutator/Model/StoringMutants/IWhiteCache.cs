@@ -10,5 +10,6 @@
         CciModuleSource GetWhiteModules();
         void Reinitialize(List<string> assembliesPaths);
         Task<CciModuleSource> GetWhiteModulesAsync();
+        void Dispose();
     }
 }

@@ -50,6 +50,11 @@ namespace VisualMutator.Model.StoringMutants
             return Task.FromResult(CreateSource(_assembliesPaths));
         }
 
+        public void Dispose()
+        {
+            
+        }
+
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
             var moduleSource = new CciModuleSource();

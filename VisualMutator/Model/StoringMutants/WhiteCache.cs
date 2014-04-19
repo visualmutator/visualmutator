@@ -19,16 +19,14 @@ namespace VisualMutator.Model.StoringMutants
     public class WhiteCache : IDisposable, IWhiteCache
     {
         private readonly IFileSystemManager _fileManager;
-        private readonly int _threadsCount;
         private readonly BlockingCollection<CciModuleSource> _whiteCache;
         private BlockingCollection<IList<string>> _paths;
         private ProjectFilesClone _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private int _lowerBound;
-        private int _currentCount;
-        private IDisposable _timerRisposable;
-        private Queue<TaskCompletionSource<CciModuleSource>> _clients;
+        private readonly int _lowerBound;
+        private readonly Queue<TaskCompletionSource<CciModuleSource>> _clients;
         private List<ProjectFilesClone> _filesPool;
+        private readonly int _threadsCount;
 
         public WhiteCache(
             IFileSystemManager fileManager,
@@ -44,22 +42,22 @@ namespace VisualMutator.Model.StoringMutants
             _paths = new BlockingCollection<IList<string>>();
         }
 
-        public void Initialize()
+        public async void Initialize()
         {
             _assembliesPaths = _fileManager.CreateClone("WhiteCache-" );
             _paths = new BlockingCollection<IList<string>>();
             _paths.Add(_assembliesPaths.Assemblies.Select(_ => _.Path).ToList());
 
-            //            ProjectFilesClone[] projectFilesClones = await Task.WhenAll(
-            //                Enumerable.Range(0, _threadsCount)
-            //                .Select(i => _fileManager.CreateCloneAsync("WhiteCache-"+i)));
-            //
-            //            _filesPool = projectFilesClones.ToList();
-            //            foreach (var projectFilesClone in _filesPool)
-            //            {
-            //                _paths.Add(projectFilesClone.Assemblies.Select(_ => _.Path).ToList());
-            //            }
-            //           
+            ProjectFilesClone[] projectFilesClones = await Task.WhenAll(
+                Enumerable.Range(0, _threadsCount)
+                .Select(i => _fileManager.CreateCloneAsync("WhiteCache-"+i)));
+            
+            _filesPool = projectFilesClones.ToList();
+            foreach (var projectFilesClone in _filesPool)
+            {
+                _paths.Add(projectFilesClone.Assemblies.Select(_ => _.Path).ToList());
+            }
+                       
 
             new Thread(() =>
             {
@@ -75,7 +73,7 @@ namespace VisualMutator.Model.StoringMutants
                     Task.Run(() => _whiteCache.TryAdd(CreateSource(item1)))
                         .ContinueWith(task =>
                     {
-                        _paths.Add(item1);
+                        _paths.TryAdd(item1);
                         NotifyClients();
                     }).LogErrors();
                 }
@@ -152,28 +150,11 @@ namespace VisualMutator.Model.StoringMutants
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
             var moduleSource = new CciModuleSource();
-//            Parallel.ForEach(assembliesPaths, path =>
-//            {
-//                try
-//                {
-//                    moduleSource.AppendFromFile(path);
-//
-//                }
-//                catch (AssemblyReadException e)
-//                {
-//                    _log.Warn("ReadAssembly failed. ", e);
-//                }
-//                catch (Exception e)
-//                {
-//                    _log.Warn("ReadAssembly failed. ", e);
-//                }
-//            });
             foreach (var assembliesPath in assembliesPaths)
             {
                 try
                 {
                     moduleSource.AppendFromFile(assembliesPath);
-
                 }
                 catch (AssemblyReadException e)
                 {
@@ -197,10 +178,6 @@ namespace VisualMutator.Model.StoringMutants
                 projectFilesClone.Dispose();
             }
 
-            if (_timerRisposable != null)
-            {
-                _timerRisposable.Dispose();
-            }
         }
     }
 }

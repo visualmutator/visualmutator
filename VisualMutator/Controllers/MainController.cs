@@ -35,6 +35,8 @@
         private List<IDisposable> _subscriptions;
         private readonly Subject<ControlEvent> _controlSource;
         private SessionController _currentSessionController;
+        private ContinuousConfiguration _continuousConfiguration;
+        private SessionConfiguration _sessionConfiguration;
 
 
         public MainController(
@@ -101,13 +103,12 @@
             _host.Build();
             _log.Info("Showing mutation session window.");
 
-            SessionConfiguration sessionConfiguration = _continuousConfigurator
-                .GetConfiguration()
-                .CreateSessionConfiguration();
+            _continuousConfiguration = _continuousConfigurator.GetConfiguration();
+            _sessionConfiguration = _continuousConfiguration.CreateSessionConfiguration();
 
             try
             {
-                SessionController sessionController = await sessionConfiguration.CreateSession(methodIdentifier);
+                SessionController sessionController = await _sessionConfiguration.CreateSession(methodIdentifier);
 
                 Clean();
                 _currentSessionController = sessionController;
@@ -121,7 +122,7 @@
             }
             catch (TaskCanceledException)
             {
-                
+                // cancelled by user
             }
        
         }
@@ -161,6 +162,11 @@
             _viewModel.IsVisible = false;
         }
 
+        private void SessionFinished()
+        {
+            _continuousConfiguration.Dispose();
+        }
+
         private void Clean()
         {
             _viewModel.Clean();
@@ -178,7 +184,7 @@
             _currentSessionController = null;
             SetState(OperationsState.None);
         }
-
+        
         private void Test()
         {
             _host.Test();
@@ -211,6 +217,14 @@
         {
             _subscriptions = new List<IDisposable>
             {
+                sessionController.SessionEventsObservable
+                    .OfType<MinorSessionUpdateEventArgs>()
+                    .Where(e => e.EventType == OperationsState.Finished 
+                            || e.EventType == OperationsState.Error)
+                    .Subscribe(args =>
+                    {
+                        SessionFinished();
+                    }),
                 sessionController.SessionEventsObservable
                     .OfType<MinorSessionUpdateEventArgs>()
                     .Subscribe(args =>

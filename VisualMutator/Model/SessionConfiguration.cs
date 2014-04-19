@@ -51,7 +51,6 @@
             _originalFilesClone = _fileManager.CreateClone("Mutants");
 
             _whiteCache.Initialize();
-              //  _originalFilesClone.Assemblies.AsStrings().ToList());
 
             _testsClone = _fileManager.CreateClone("Tests");
             if (_originalFilesClone.IsIncomplete || _testsClone.IsIncomplete
