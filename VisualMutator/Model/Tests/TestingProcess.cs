@@ -24,6 +24,12 @@
         private int _testedNonEquivalentMutantsCount;
         private int _mutantsKilledCount;
         private readonly WorkerCollection<Mutant> _mutantsWorkers;
+        private double _mutationScore;
+
+        public double MutationScore
+        {
+            get { return _mutationScore; }
+        }
 
         public TestingProcess(
             IFactory<TestingMutant> mutantTestingFactory,
@@ -42,7 +48,7 @@
                 choices.MainOptions.ProcessingThreadsCount, TestOneMutant);
         }
 
-        public void RaiseTestingProgress(double mutationScore)
+        public void RaiseTestingProgress()
         {
             _log.Info("Testing progress: all:"+ _allMutantsCount +
                 ", tested: "+ _testedNonEquivalentMutantsCount
@@ -52,7 +58,7 @@
                 NumberOfAllMutants = _allMutantsCount,
                 NumberOfMutantsKilled = _mutantsKilledCount,
                 NumberOfAllMutantsTested = _testedNonEquivalentMutantsCount,
-                MutationScore = mutationScore,
+                MutationScore = _mutationScore,
             });
         }
 
@@ -68,7 +74,7 @@
 
         public async Task TestOneMutant(Mutant mutant)
         {
-            mutant.State = MutantResultState.Creating;
+            
 
             TestingMutant testingMutant = _mutantTestingFactory.CreateWithParams(_sessionEventsSubject, mutant);
 
@@ -77,8 +83,8 @@
                 await testingMutant.RunAsync();
                 lock (this)
                 {
-                    double mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
-                    RaiseTestingProgress(mutationScore);
+                    _mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
+                    RaiseTestingProgress();
                 }
             }
             catch (Exception e)

@@ -50,7 +50,7 @@
             
             IMutantsContainer mutantsContainer
             )
-            : this(new MutationSessionChoices(), new DisabledWhiteCache(), mutantsContainer)
+            : this(new MutationSessionChoices(), null, mutantsContainer)
         {
         }
 

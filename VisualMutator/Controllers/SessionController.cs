@@ -37,7 +37,6 @@
 
     public class SessionController
     {
-        public IFactory<CreationController> MutantsCreationFactory { get; set; }
         private readonly IMutantsContainer _mutantsContainer;
 
         private readonly CommonServices _svc;
@@ -45,11 +44,7 @@
 
         private readonly ITestsContainer _testsContainer;
        
-        private readonly IMutantsCache _mutantsCache;
-
-
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
-        private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private readonly IFactory<TestingProcess> _testingProcessFactory;
         private readonly IFactory<TestingMutant> _testingMutantFactory;
         private readonly MutationSessionChoices _choices;
@@ -77,29 +72,21 @@
             MutantDetailsController mutantDetailsController,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
-            IMutantsCache mutantsCache,
-            IFactory<CreationController> mutantsCreationFactory,
             IFactory<ResultsSavingController> resultsSavingFactory,
-            ICodeDifferenceCreator codeDifferenceCreator,
             IFactory<TestingProcess> testingProcessFactory,
             IFactory<TestingMutant> testingMutantFactory,
             MutationSessionChoices choices)
         {
-            MutantsCreationFactory = mutantsCreationFactory;
             _svc = svc;
             _mutantDetailsController = mutantDetailsController;
             _mutantsContainer = mutantsContainer;
             _testsContainer = testsContainer;
-            _mutantsCache = mutantsCache;
-
-
             _resultsSavingFactory = resultsSavingFactory;
-            _codeDifferenceCreator = codeDifferenceCreator;
             _testingProcessFactory = testingProcessFactory;
             _testingMutantFactory = testingMutantFactory;
             _choices = choices;
-            _sessionState = SessionState.NotStarted;
 
+            _sessionState = SessionState.NotStarted;
             _sessionEventsSubject = new Subject<SessionEventArgs>();
             _subscriptions = new List<IDisposable>();
 
@@ -264,6 +251,7 @@
             _log.Info("Finishing mutation session.");
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
+            _currentSession.MutationScore = _testingProcess.MutationScore;
             if (_testingProcessExtensionOptions != null)
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();

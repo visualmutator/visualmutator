@@ -23,10 +23,11 @@ namespace VisualMutator.Model.StoringMutants
         private BlockingCollection<IList<string>> _paths;
         private ProjectFilesClone _assembliesPaths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly int _lowerBound;
+        private readonly int _maxCount;
         private readonly Queue<TaskCompletionSource<CciModuleSource>> _clients;
         private List<ProjectFilesClone> _filesPool;
         private readonly int _threadsCount;
+        private bool _paused;
 
         public WhiteCache(
             IFileSystemManager fileManager,
@@ -38,7 +39,7 @@ namespace VisualMutator.Model.StoringMutants
             _threadsCount = threadsCount;
             _whiteCache = new BlockingCollection<CciModuleSource>(20);
             _clients = new Queue<TaskCompletionSource<CciModuleSource>>();
-            _lowerBound = 16;
+            _maxCount = 8;
             _paths = new BlockingCollection<IList<string>>();
         }
 
@@ -64,7 +65,7 @@ namespace VisualMutator.Model.StoringMutants
                 foreach (IList<string> item in _paths.GetConsumingEnumerable())
                 {
                     Monitor.Enter(this);
-                    while (_whiteCache.Count >= _lowerBound)
+                    while (_whiteCache.Count >= _maxCount || _paused)
                     {
                         Monitor.Wait(this);
                     }
@@ -79,13 +80,6 @@ namespace VisualMutator.Model.StoringMutants
                 }
 
             }).Start();
-        }
-
-        public void Initialize(IList<string> assembliesPaths)
-        {
-            
-          
-           
         }
 
         private void NotifyClients()
@@ -172,12 +166,18 @@ namespace VisualMutator.Model.StoringMutants
         public void Dispose()
         {
             _paths.CompleteAdding();
-
+            _assembliesPaths.Dispose();
             foreach (var projectFilesClone in _filesPool)
             {
                 projectFilesClone.Dispose();
             }
 
+        }
+
+        public bool Paused
+        {
+            get { return _paused; }
+            set { _paused = value; }
         }
     }
 }

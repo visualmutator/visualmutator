@@ -52,7 +52,7 @@
                   Content="Enable mutant code cache"
                   IsChecked="{Binding Options.MutantsCacheEnabled}" />
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Source files processing threads:" />
-        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="16" Minimum="1"
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="16" Minimum="0"
                                   Value="{Binding Options.WhiteCacheThreadsCount, Mode=TwoWay}" />
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Mutant processing threads:" />
         <xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Maximum="16" Minimum="1"

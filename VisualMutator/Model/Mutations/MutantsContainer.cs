@@ -45,13 +45,7 @@
         private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
 
-        private bool _debugConfig ;
-
-        public bool DebugConfig
-        {
-            get { return _debugConfig; }
-            set { _debugConfig = value; }
-        }
+        public bool DebugConfig { get; set; }
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private MutantsCreationOptions _options;
@@ -63,7 +57,6 @@
             ICciModuleSource cci, 
             IWhiteCache whiteCache,
             IOperatorUtils operatorUtils
-        
             )
         {
             _cci = cci;
@@ -136,8 +129,6 @@
                 assNodes.Add(assemblyNode);
                 percentCompleted.Progress();
             }
-
-           // var classes = operatorsWithTargets.
 
 
             root.State = MutantResultState.Untested;

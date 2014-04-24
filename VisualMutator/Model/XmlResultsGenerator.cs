@@ -116,8 +116,6 @@
                 optionalElements.Add(CreateDetailedTestingResults(mutants));
             }
 
-            long totalTimeMs = 0;//session.MutantsGrouped.Sum(oper => oper.MutationTimeMiliseconds)
-                         //   + mutants.Sum(m => m.MutantTestSession.TestingTimeMiliseconds);
             return
                 new XDocument(
                     new XElement("MutationTestingSession",
@@ -127,7 +125,6 @@
                         new XAttribute("SessionRunTimeSeconds", (_sessionController.SessionEndTime
                         - _sessionController.SessionStartTime).TotalSeconds),
                         new XAttribute("MutationScore", session.MutationScore),
-                        new XAttribute("TotalTimeSeconds", totalTimeMs/1000),
                         mutantsNode,
                         optionalElements));
             

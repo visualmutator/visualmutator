@@ -9,6 +9,7 @@ namespace VisualMutator.Model.StoringMutants
     using System.Linq;
     using System.Reflection;
     using Exceptions;
+    using Infrastructure;
     using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.Ast;
@@ -16,27 +17,26 @@ namespace VisualMutator.Model.StoringMutants
 
     public class DisabledWhiteCache : IWhiteCache
     {
-        private IList<string> _assembliesPaths;
+        private readonly IFileSystemManager _fileManager;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private ProjectFilesClone _assemblies;
+        private List<string> _paths;
 
-        public DisabledWhiteCache()
+        public DisabledWhiteCache(IFileSystemManager fileManager)
         {
+            _fileManager = fileManager;
         }
 
         public void Initialize()
         {
-            
+            _assemblies = _fileManager.CreateClone("WhiteCache-");
+            _paths = _assemblies.Assemblies.Select(_ => _.Path).ToList();
         }
 
-        public void Initialize(IList<string> assembliesPaths)
-        {
-            _assembliesPaths = assembliesPaths;
-           
-        }
 
         public CciModuleSource GetWhiteModules()
         {
-            return CreateSource(_assembliesPaths);
+            return CreateSource(_paths);
 
         }
 
@@ -47,13 +47,15 @@ namespace VisualMutator.Model.StoringMutants
 
         public Task<CciModuleSource> GetWhiteModulesAsync()
         {
-            return Task.FromResult(CreateSource(_assembliesPaths));
+            return Task.FromResult(CreateSource(_paths));
         }
 
         public void Dispose()
         {
-            
+            _assemblies.Dispose();
         }
+
+        public bool Paused { get; set; }
 
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {

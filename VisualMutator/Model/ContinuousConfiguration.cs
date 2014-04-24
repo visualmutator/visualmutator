@@ -7,15 +7,20 @@
 
     public class ContinuousConfiguration : IDisposable
     {
-        private readonly IBindingFactory<SessionConfiguration> _sessionConfigurationFactory;
+        private readonly IFileSystemManager _fileManager;
+        private readonly IRootFactory<SessionConfiguration> _sessionConfigurationFactory;
         private readonly IWhiteCache _whiteCache;
 
         public ContinuousConfiguration(
+             IFileSystemManager fileManager,
             IOptionsManager optionsManager,
-            IBindingFactory<SessionConfiguration> sessionConfigurationFactory,
-            IFactory<WhiteCache> whiteCacheFactory)
+            IRootFactory<SessionConfiguration> sessionConfigurationFactory,
+            IFactory<WhiteCache> whiteCacheFactory,
+            IFactory<DisabledWhiteCache> disabledCacheFactory)
         {
+            _fileManager = fileManager;
             _sessionConfigurationFactory = sessionConfigurationFactory;
+
             OptionsModel options = optionsManager.ReadOptions();
             if (options.WhiteCacheThreadsCount != 0)
             {
@@ -23,7 +28,7 @@
             }
             else
             {
-                _whiteCache = new DisabledWhiteCache();
+                _whiteCache = disabledCacheFactory.Create();
             }
         }
 

@@ -6,10 +6,10 @@
     public interface IWhiteCache
     {
         void Initialize();
-        void Initialize(IList<string> assembliesPaths);
         CciModuleSource GetWhiteModules();
         void Reinitialize(List<string> assembliesPaths);
         Task<CciModuleSource> GetWhiteModulesAsync();
         void Dispose();
+        bool Paused {  set; }
     }
 }

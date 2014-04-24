@@ -131,6 +131,7 @@
             {
                 ch0.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
                 ch0.Bind<WhiteCache>().ToSelf().AndFromFactory();
+                ch0.Bind<DisabledWhiteCache>().ToSelf().AndFromFactory();
 
                 ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 =>
                 {
@@ -153,9 +154,7 @@
                     
                         ch2.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
 
-                    
                         ch2.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
-
                     
                         ch2.Bind<AstFormatter>().ToSelf();
                         ch2.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
