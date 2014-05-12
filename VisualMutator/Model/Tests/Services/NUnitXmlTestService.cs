@@ -27,32 +27,23 @@
 
     public class NUnitXmlTestService : NUnitTestService
     {
-        private readonly INUnitExternal _nUnitExternal;
         private readonly IFactory<NUnitTester> _nUnitTesterFactory;
+        private readonly ISettingsManager _settingsManager;
         private readonly CommonServices _svc;
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private string _assemblyPath;
-        private string _nunitConsolePath;
-
-
-        public string NUnitConsoleAltPath { get; set; }
-        public string NUnitConsolePath { get; set; }
+        private readonly string _nunitConsolePath;
 
         public NUnitXmlTestService(
             INUnitWrapper nUnitWrapper, 
-            INUnitExternal nUnitExternal,
             IFactory<NUnitTester> nUnitTesterFactory,
+            ISettingsManager settingsManager,
             CommonServices svc)
             : base(nUnitWrapper, svc.Logging)
         {
-            _nUnitExternal = nUnitExternal;
             _nUnitTesterFactory = nUnitTesterFactory;
+            _settingsManager = settingsManager;
             _svc = svc;
-
-            var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-            NUnitConsoleAltPath = Path.Combine(Path.GetDirectoryName(localPath), "nunit-console.exe");
-            NUnitConsolePath = Path.Combine(Path.GetDirectoryName(localPath), "nunit-console-x86.exe");
 
             _nunitConsolePath = FindConsolePath();
             _log.Info("Set NUnit Console path: " + _nunitConsolePath);
@@ -61,28 +52,22 @@
 
         public override May<TestsLoadContext> LoadTests(string assemblyPath)
         {
-            _assemblyPath = assemblyPath;
             May<TestsLoadContext> loadTests = base.LoadTests(assemblyPath);
 
             UnloadTests();
             return loadTests;
         }
+
         private string FindConsolePath()
         {
-            string runPath;
-            if (_svc.FileSystem.File.Exists(NUnitConsolePath))
+            var nUnitDirPath = _settingsManager["NUnitConsoleDirPath"];
+            var nUnitConsolePath = Path.Combine(nUnitDirPath, "nunit-console-x86.exe");
+            
+            if (!_svc.FileSystem.File.Exists(nUnitConsolePath))
             {
-                runPath = NUnitConsolePath;
+                throw new FileNotFoundException(nUnitConsolePath + " file was found.");
             }
-            else if (_svc.FileSystem.File.Exists(NUnitConsoleAltPath))
-            {
-                runPath = NUnitConsoleAltPath;
-            }
-            else
-            {
-                throw new FileNotFoundException(NUnitConsolePath + " nor " + NUnitConsoleAltPath + " file was found.");
-            }
-            return runPath;
+            return nUnitConsolePath;
         }
 
         public NUnitTester SpawnTester(TestsRunContext arg)

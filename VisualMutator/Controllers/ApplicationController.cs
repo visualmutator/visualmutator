@@ -4,6 +4,8 @@
 
     using System;
     using System.Diagnostics;
+    using System.IO;
+    using System.IO.Compression;
     using System.Reflection;
     using System.Windows;
     using System.Windows.Controls;
@@ -80,9 +82,28 @@
             _hostEnviroment.Initialize();
             _settingsManager.Initialize();
 
+            LocateNUnitConsole();
+
             _operatorsManager.GetOperators();
         }
-       
+
+        private void LocateNUnitConsole()
+        {
+            const string key = "NUnitConsoleDirPath";
+            if (!_settingsManager.ContainsKey(key) || !Directory.Exists(_settingsManager[key]))
+            {
+                var localDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+                var nUnitConsoleZipPath = Path.Combine(localDir, "nunitconsole.zip");
+                var nUnitConsoleDirPath = Path.Combine(localDir, "nunitconsole");
+                if (Directory.Exists(nUnitConsoleDirPath))
+                {
+                    Directory.Delete(nUnitConsoleDirPath, recursive:true);
+                }
+                ZipFile.ExtractToDirectory(nUnitConsoleZipPath, localDir);
+                _settingsManager[key] = nUnitConsoleDirPath;
+            }
+        }
+
 
         private void BuildEvents_OnBuildBegin()
         {

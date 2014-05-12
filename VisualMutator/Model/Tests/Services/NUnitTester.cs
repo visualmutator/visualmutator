@@ -26,14 +26,17 @@
         private readonly string _nUnitConsolePath;
         private readonly TestsRunContext _context;
         private readonly CancellationTokenSource _cancellationTokenSource;
+        private OptionsModel _options;
 
         public NUnitTester(
+            OptionsManager optionsManager,
             NUnitResultsParser parser,
             IProcesses processes,
             CommonServices svc,
             string nUnitConsolePath,
             TestsRunContext context)
         {
+            _options = optionsManager.ReadOptions();
             _parser = parser;
             _processes = processes;
             _svc = svc;
@@ -60,10 +63,8 @@
 
         public void CancelRun()
         {
-            
             _cancellationTokenSource.Cancel();
             _log.Debug("Requested cancellation for testing for " + _cancellationTokenSource.GetHashCode());
-
         }
 
         public async Task<MutantTestResults> RunTests(string nunitConsolePath,
@@ -77,8 +78,9 @@
                 ProcessResults results = await RunNUnitConsole(nunitConsolePath, inputFile, outputFile, selectedTests);
                 if (!_svc.FileSystem.File.Exists(outputFile))
                 {
-                    _log.Error("Test results in file: " + outputFile + " not found.");
-                    return new MutantTestResults();
+                    
+                    throw new Exception("Test results in file: " + outputFile + " not found. Output: "+
+                        results.StandardOutput.Aggregate((a,b)=>a+"\n"+b));
                 }
                 else
                 {
@@ -102,11 +104,7 @@
                 _log.Error("Test run cancelled.");
                 return new MutantTestResults(cancelled: true);
             }
-            catch (Exception e)
-            {
-                _log.Error(e);
-                return new MutantTestResults();
-            }
+         
             
         }
 
@@ -129,7 +127,12 @@
                          + testToRun
                          + " /xml \"" + outputFile + "\" /nologo -trace=Verbose /noshadow /nothread";
 
-            _log.Info("Running " + nunitConsolePath + " with args: " + arg);
+            if(_options.ForceNUnitDotNedVer.Length != 0)
+            {
+                arg += (" /framework:" + _options.ForceNUnitDotNedVer);
+            }
+
+            _log.Info("Running " + nunitConsolePath + arg);
             var startInfo = new ProcessStartInfo
             {
                 Arguments = arg,

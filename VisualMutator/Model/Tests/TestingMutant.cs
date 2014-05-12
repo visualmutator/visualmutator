@@ -88,7 +88,7 @@
             }
         }
 
-        public Task RunTestsForMutant(MutantsTestingOptions options, StoredMutantInfo storedMutantInfo)
+        public async Task RunTestsForMutant(MutantsTestingOptions options, StoredMutantInfo storedMutantInfo)
         {
             _mutant.State = MutantResultState.Tested;
 
@@ -111,31 +111,29 @@
               Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
               .Subscribe(e => CancelTestRun());
 
-            var task = Task.WhenAll(_nUnitTesters.Select(t => t.RunTests()));
-            return task.ContinueWith(t =>
+            try
+            {
+                await Task.WhenAll(_nUnitTesters.Select(t => t.RunTests()));
+                
+                _log.Debug("Finished waiting for tests. ");
+                _mutant.TestRunContexts = contexts;
+
+                ResolveMutantState(contexts.Select(c => c.TestResults));
+
+                _mutant.MutantTestSession.IsComplete = true;
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                SetError(e);
+            }
+            finally
             {
                 timoutDisposable.Dispose();
-                if (t.Exception == null)
-                {
-                    _log.Debug("Finished waiting for tests. ");
-                    _mutant.TestRunContexts = contexts;
-
-                    ResolveMutantState(contexts.Select( c => c.TestResults));
-
-                    _mutant.MutantTestSession.IsComplete = true;
-                }
-            }).ContinueWith(t =>
-            {
-                if (t.Exception != null)
-                {
-                    SetError(t.Exception.InnerException);
-                }
                 sw.Stop();
                 _mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
                 _mutant.MutantTestSession.TestingEndRelative = DateTime.Now - _sessionStartTime;
-            });
-
-           
+            }
         }
 
 

@@ -32,7 +32,7 @@
             }
         }
 
-        public SessionConfiguration CreateSessionConfiguration()
+        public IObjectRoot<SessionConfiguration> CreateSessionConfiguration()
         {
             return _sessionConfigurationFactory.CreateWithBindings(_whiteCache);
         }

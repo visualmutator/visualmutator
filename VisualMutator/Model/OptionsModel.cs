@@ -10,6 +10,7 @@
             WhiteCacheThreadsCount = Environment.ProcessorCount + 1;
             MutantsCacheEnabled = true;
             ProcessingThreadsCount = Environment.ProcessorCount + 1;
+            ForceNUnitDotNedVer = "";
         }
 
         private bool _mutantsCacheEnabled;
@@ -49,5 +50,20 @@
                 SetAndRise(ref _processingThreadsCount, value, () => ProcessingThreadsCount);
             }
         }
+
+        private string _forceNUnitDotNedVer;
+        public string ForceNUnitDotNedVer
+        {
+            get
+            {
+                return _forceNUnitDotNedVer;
+            }
+            set
+            {
+                SetAndRise(ref _forceNUnitDotNedVer, value, () => ForceNUnitDotNedVer);
+            }
+        }
+        
+
     }
 }

@@ -36,7 +36,7 @@
         private readonly Subject<ControlEvent> _controlSource;
         private IObjectRoot<SessionController> _currentSessionController;
         private IObjectRoot<ContinuousConfiguration> _continuousConfiguration;
-        private SessionConfiguration _sessionConfiguration;
+        private IObjectRoot<SessionConfiguration> _sessionConfiguration;
 
 
         public MainController(
@@ -109,7 +109,7 @@
             try
             {
                 IObjectRoot<SessionController> sessionController = 
-                    await _sessionConfiguration.CreateSession(methodIdentifier);
+                    await _sessionConfiguration.Get.CreateSession(methodIdentifier);
 
                 Clean();
                 _currentSessionController = sessionController;
