@@ -65,7 +65,12 @@ public static string ErrorBadMethodSelected()
     return
         @"Method you selected to mutate is a test. You must select a non-test method.";
 }
-
+        
+public static string ErrorNoFilesToMutate()
+{
+    return
+        @"No files to mutate were found.";
+}
         public static string ErrorStrongNameSignedAssembly()
         {
             return

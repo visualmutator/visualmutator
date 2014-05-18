@@ -254,14 +254,18 @@
     <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Controllers\OptionsController.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
+    <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\IExpandableNode.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
+    <Compile Include="Infrastructure\NinjectModules\ViewsModule - Copy.cs" />
+    <Compile Include="Infrastructure\NinjectModules\InfrastructureModule.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
     <Compile Include="Infrastructure\PathsExt.cs" />
     <Compile Include="Infrastructure\Processes.cs" />
     <Compile Include="Infrastructure\ProjectFilesClone.cs" />
+    <Compile Include="Infrastructure\Reporting.cs" />
     <Compile Include="Infrastructure\TaskErrors.cs" />
     <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
@@ -572,6 +576,8 @@
     <Resource Include="Views\images\button_stop_unpressed.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Infrastructure\NinjectModules\NewFolder1\" />
+    <Folder Include="Infrastructure\NinjectModules\NewFolder2\" />
     <Folder Include="Views\Themes\" />
   </ItemGroup>
   <ItemGroup>

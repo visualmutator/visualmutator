@@ -43,7 +43,7 @@
     {
         public static object MainControl;
 
-        private readonly Bootstrapper _bootstrapper;
+        private readonly VisualStudioPackageBootstrapper _bootstrapper;
 
         /// <summary>
         ///   Default constructor of the package.
@@ -59,14 +59,14 @@
                     CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
 
             
-                _bootstrapper = new Bootstrapper(this);
+                _bootstrapper = new VisualStudioPackageBootstrapper(this);
             
         }
 
         private void CommandMutateAndTest(object sender, EventArgs e)
         {
             Trace.WriteLine("CommandMutateAndTest");
-            _bootstrapper.Kernel.Get<MainController>().RunMutationSessionForCurrentPosition();
+            _bootstrapper.Boot.AppController.MainController.RunMutationSessionForCurrentPosition();
         }
 
         /// <summary>
@@ -125,7 +125,7 @@
 
             try
             {
-                _bootstrapper.InitializePackage(this);
+                _bootstrapper.Initialize();
             }
             catch (Exception e)
             {

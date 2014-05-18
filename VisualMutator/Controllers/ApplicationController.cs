@@ -12,6 +12,7 @@
     using System.Windows.Threading;
     using Infrastructure;
     using log4net;
+    using Model;
     using Model.Mutations.Operators;
     using UsefulTools.Core;
     using UsefulTools.Switches;
@@ -21,7 +22,8 @@
 
     public class ApplicationController
     {
-        private readonly MainController _mutationResultsController;
+        private readonly MainController _mainController;
+        private readonly IOptionsManager _optionsManager;
         private readonly IOperatorsManager _operatorsManager;
 
         private readonly IHostEnviromentConnection _hostEnviroment;
@@ -35,15 +37,27 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private IDisposable _disp;
 
+        public MainController MainController
+        {
+            get { return _mainController; }
+        }
+
+        public IOptionsManager OptionsManager
+        {
+            get { return _optionsManager; }
+        }
+
         public ApplicationController(
-            MainController mutationResultsController,
+            MainController mainController,
+            IOptionsManager optionsManager,
             IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             ISettingsManager settingsManager,
             IMessageService messageService,
             IEventService eventService)
         {
-            _mutationResultsController = mutationResultsController;
+            _mainController = mainController;
+            _optionsManager = optionsManager;
             _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _settingsManager = settingsManager;
@@ -61,7 +75,7 @@
         {
             get
             {
-                return (UserControl) _mutationResultsController.ViewModel.View;
+                return (UserControl) _mainController.ViewModel.View;
             }
         }
 
@@ -117,8 +131,10 @@
         public void HookGlobalExceptionHandlers()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
-            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+            if (Application.Current != null)
+            {
+                Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+            }
         }
 
         private void Current_DispatcherUnhandledException(
@@ -140,11 +156,11 @@
 
         private void ActivateOnSolutionOpened()
         {
-            _mutationResultsController.Initialize();
+            _mainController.Initialize();
         }
         private void DeactivateOnSolutionClosed()
         {
-            _mutationResultsController.Deactivate();
+            _mainController.Deactivate();
         }
 
 

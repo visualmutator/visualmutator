@@ -52,8 +52,8 @@
 
               //  System.Configuration.Se
 
-ConfigurationManager.AppSettings.
-                VisualMutator_VSPackagePackage.MainControl = Shell;
+//ConfigurationManager.AppSettings.
+             //   VisualMutator_VSPackagePackage.MainControl = Shell;
 
 
 
@@ -89,7 +89,7 @@ ConfigurationManager.AppSettings.
             var modules = new INinjectModule[]
             {
                 new VisualMutatorModule(), 
-                new GuiNinjectModule(new VisualStudioConnection(_package)), 
+             //   new GuiNinjectModule(new VisualStudioConnection(_package)), 
             };
            
 

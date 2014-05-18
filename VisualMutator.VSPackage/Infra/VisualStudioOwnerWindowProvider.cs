@@ -12,9 +12,9 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 
     public class VisualStudioOwnerWindowProvider : IOwnerWindowProvider
     {
-        private readonly IHostEnviromentConnection _hostEnviroment;
+        private readonly VisualStudioConnection _hostEnviroment;
 
-        public VisualStudioOwnerWindowProvider(IHostEnviromentConnection hostEnviroment)
+        public VisualStudioOwnerWindowProvider(VisualStudioConnection hostEnviroment)
         {
             _hostEnviroment = hostEnviroment;
         }

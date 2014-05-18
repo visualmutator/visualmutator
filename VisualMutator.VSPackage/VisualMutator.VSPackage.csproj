@@ -172,7 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
-    <Compile Include="Infra\Bootstrapper.cs" />
+    <Compile Include="Infra\VisualStudioPackageBootstrapper.cs" />
     <Compile Include="Infra\VisualStudioCodeSearcher.cs" />
     <Compile Include="Infra\VisualStudioProjectCollector.cs" />
     <Compile Include="Infra\VSNinjectModule.cs" />

@@ -21,6 +21,7 @@
         private readonly TestsLoader _testLoader;
         private readonly ITypesManager _typesManager;
         private readonly IFactory<CreationController> _creationControllerFactory;
+        private readonly IFactory<AutoCreationController> _autoCreationControllerFactory;
         private readonly IRootFactory<SessionController> _sessionFactory;
         private readonly ProjectFilesClone _originalFilesClone;
         private readonly ProjectFilesClone _testsClone;
@@ -30,12 +31,14 @@
             TestsLoader testLoader,
             ITypesManager typesManager,
             IFactory<CreationController> creationControllerFactory,
+            IFactory<AutoCreationController> autoCreationControllerFactory,
             IRootFactory<SessionController> sessionFactory,
             IWhiteCache whiteCache)
         {
             _testLoader = testLoader;
             _typesManager = typesManager;
             _creationControllerFactory = creationControllerFactory;
+            _autoCreationControllerFactory = autoCreationControllerFactory;
             _sessionFactory = sessionFactory;
 
             fileManager.Initialize();
@@ -85,6 +88,16 @@
             }
 
             return tcs.Task;
+        }
+        public async Task<IObjectRoot<SessionController>> CreateSessionAuto(MethodIdentifier methodIdentifier)
+        {
+            var tcs = new TaskCompletionSource<IObjectRoot<SessionController>>();
+
+            AutoCreationController creationController = _autoCreationControllerFactory.Create();
+            var choices = await creationController.Run(methodIdentifier);
+            return _sessionFactory.CreateWithBindings(choices);
+           
+
         }
     }
 }

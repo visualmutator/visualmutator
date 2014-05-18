@@ -128,18 +128,7 @@
             return Path.GetTempPath();
         }
 
-        public IEnumerable<DirectoryPathAbsolute> GetProjectPaths()
-        {
-
-            return from project in _dte.Solution.Cast<Project>()
-                   let confManager = project.ConfigurationManager
-                   where confManager != null
-                         && confManager.ActiveConfiguration != null
-                         && confManager.ActiveConfiguration.IsBuildable
-                   let values = project.Properties.Cast<Property>().ToDictionary(prop => prop.Name)
-                   where values.ContainsKey("LocalPath")
-                   select values["LocalPath"].Value.CastTo<string>().ToDirPathAbs();
-        }
+     
 
         public void Test()
         {

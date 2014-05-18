@@ -288,7 +288,6 @@
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
                 MainOptions = _optionsManager.ReadOptions(),
-                MutantsCreationFolderPath = _viewModel.MutantsGenerationPath
             };
             _viewModel.Close();
         }

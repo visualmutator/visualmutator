@@ -34,70 +34,25 @@
         public override void Load()
         {
             Views();
-            Infrastructure();
             MutantsCreation();
-            Tests();
-            Results();
         }
-        private void Infrastructure()
-        {
-            Bind<IMessageService>().To<MessageService>().InSingletonScope();
-            Bind<IEventService>().To<EventService>().InSingletonScope();
-            Bind<IThreading>().To<Threading>().InSingletonScope();
-            Bind<CommonServices>().ToSelf().InSingletonScope();
-            Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
-            Bind<IProcesses>().To<Processes>().InSingletonScope();
-            Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
-
-            var exe = new DispatcherExecute();
-            exe.InitializeWithDispatcher();
-            Bind<IDispatcherExecute>().ToConstant(exe);
-
-            Kernel.InjectFuncFactory(() => DateTime.Now);
-
-
-        }
+       
         private void Views()
         {
 
             //VIEWS
-
-            Bind<IMutationResultsView>().To<MutationResultsView>();
             Bind<MainViewModel>().ToSelf();
-
             Bind<MutantsSavingController>().ToSelf().AndFromFactory();
             Bind<MutantsSavingViewModel>().ToSelf();
-            Bind<IMutantsSavingView>().To<MutantsSavingView>();
-
             Bind<CreationViewModel>().ToSelf();
-            Bind<ISessionCreationView>().To<SessionCreationView>();
-
             Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
-            Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
-
             Bind<MutantDetailsViewModel>().ToSelf();
-            Bind<IMutantDetailsView>().To<MutantDetailsView>();
-
-            Bind<IResultsSavingView>().To<ResultsSavingView>();
             Bind<ResultsSavingViewModel>().ToSelf();
-
-            Bind<IMutantsCreationOptionsView>().To<MutantsCreationOptionsView>();
             Bind<MutantsCreationOptionsViewModel>().ToSelf();
-
-            Bind<IMutantsTestingOptionsView>().To<MutantsTestingOptionsView>();
             Bind<MutantsTestingOptionsViewModel>().ToSelf();
-
-            Bind<ITypesTreeView>().To<TypesTree>();
             Bind<TypesTreeViewModel>().ToSelf();
-
-            Bind<IMutationsTreeView>().To<MutationsTree>();
             Bind<MutationsTreeViewModel>().ToSelf();
-
-            Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
             Bind<TestsSelectableTreeViewModel>().ToSelf();
-
-
-            Bind<IOptionsView>().To<OptionsView>();
             Bind<OptionsViewModel>().ToSelf();
         }
 
@@ -105,8 +60,8 @@
         public void MutantsCreation()
         {
 
-            Kernel.Load(new NamedScopeModule());
-            Kernel.Load(new ContextPreservationModule());
+          //  Kernel.Load(new NamedScopeModule());
+         //   Kernel.Load(new ContextPreservationModule());
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().InSingletonScope();
@@ -136,6 +91,8 @@
                 ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 =>
                 {
                     ch1.Bind<CreationController>().ToSelf().AndFromFactory();
+                    ch1.Bind<SessionCreator>().ToSelf().AndFromFactory();
+                    ch1.Bind<AutoCreationController>().ToSelf().AndFromFactory();
 
                     ch1.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                     ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
@@ -171,18 +128,8 @@
 
         }
 
-        public void Tests()
-        {
-
-         
-           
-        }
-
-        public void Results()
-        {
-           
-        }
-
+       
+        
      
 
     }

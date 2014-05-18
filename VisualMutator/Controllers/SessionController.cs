@@ -163,10 +163,7 @@
                     throw new NoTestsSelectedException();
                 }
 
-             
-
                 _log.Info("Initializing test environment...");
-                
                 
                 _log.Info("Creating pure mutant for initial checks...");
                 AssemblyNode assemblyNode;
