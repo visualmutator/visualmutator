@@ -1,46 +1,58 @@
-﻿namespace VisualMutator.GUI
+﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
 {
-    #region Usings
+    #region
 
     using System;
-    using System.Configuration;
+    using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Windows;
+    using log4net;
     using Ninject;
     using Ninject.Activation.Strategies;
     using Ninject.Modules;
+    using UsefulTools.Core;
     using VisualMutator.Controllers;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;
 
     #endregion
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class Bootstrapper
     {
-    
+        private readonly IList<INinjectModule> _dependentModules;
         private readonly ApplicationController _appController;
 
         private IKernel _kernel;
 
-        private static log4net.ILog _log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        public IKernel Kernel
+        {
+            get { return _kernel; }
+        }
+
+        public ApplicationController AppController
+        {
+            get { return _appController; }
+        }
+
+        private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
         static Bootstrapper()
         {
             Log4NetConfig.Execute();
-            EnsureApplication();
-
         }
  
 
-        public Bootstrapper()
+        public Bootstrapper(IList<INinjectModule> dependentModules)
         {
-         
+            _dependentModules = dependentModules;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string version = fvi.FileVersion;
+            _log.Info("Starting VisualMutator version: " + version);
             _log.Info("Starting bootstrapper.");
-
-   
             try
             {
 
@@ -49,13 +61,6 @@
 
                 _log.Info("Executing dependency injection.");
                 _appController = _kernel.Get<ApplicationController>();
-
-              //  System.Configuration.Se
-
-//ConfigurationManager.AppSettings.
-             //   VisualMutator_VSPackagePackage.MainControl = Shell;
-
-
 
             }
             catch (Exception e)
@@ -67,41 +72,20 @@
                 }
                 else
                 {
-                    MessageBox.Show(e.ToString());
+                    if(_kernel != null)
+                    {
+                        _kernel.Get<IMessageService>().ShowFatalError(e);
+                    }
+                   // MessageBox.Show(e.ToString());
                 }
             }
-
-
-            
         }
-        public static void EnsureApplication()
-        {
-            if (Application.Current == null)
-            {
-                new Application();
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+       
         public void SetupDependencyInjection()
         {
-
-            var modules = new INinjectModule[]
-            {
-                new VisualMutatorModule(), 
-             //   new GuiNinjectModule(new VisualStudioConnection(_package)), 
-            };
-           
-
-
             _kernel = new StandardKernel();
             _kernel.Components.Add<IActivationStrategy, MyMonitorActivationStrategy>();
-
-
-
-
-            _kernel.Load(modules);
-
+            _kernel.Load(_dependentModules);
         }
    
 
@@ -115,9 +99,7 @@
 
         public void Initialize()
         {
-           
             _appController.Initialize();
-           
         }
     }
 }

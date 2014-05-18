@@ -99,6 +99,8 @@
 
             var modules = new INinjectModule[]
             {
+                new ViewsModule(), 
+                new InfrastructureModule(), 
                 new VisualMutatorModule(), 
                 new VSNinjectModule(new VisualStudioConnection(_package)), 
             };

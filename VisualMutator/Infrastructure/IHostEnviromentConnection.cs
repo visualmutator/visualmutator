@@ -20,21 +20,13 @@ namespace VisualMutator.Infrastructure
     }
     public interface IHostEnviromentConnection
     {
-        
         void Initialize();
 
         IObservable<EventType> Events { get; }
 
-        NativeWindowInfo WindowInfo
-        {
-            get;
-        }
-        IWin32Window GetWindow();
-
         IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths();
         string GetTempPath();
     
-        IEnumerable<DirectoryPathAbsolute> GetProjectPaths();
         void Test();
         bool GetCurrentClassAndMethod(out MethodIdentifier methodIdentifier);
         void Build();

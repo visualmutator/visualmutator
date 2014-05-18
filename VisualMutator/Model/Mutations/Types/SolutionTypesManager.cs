@@ -13,6 +13,7 @@
     using Infrastructure;
     using log4net;
     using Microsoft.Cci;
+    using MutantsTree;
     using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
@@ -152,14 +153,22 @@
             }
             return assemblyNode;
         }
-        public void RemoveFromParentIfEmpty(TypeNamespaceNode node)
+        public void RemoveFromParentIfEmpty(MutationNode node)
         {
-            while(node.Children.OfType<TypeNamespaceNode>().Any())
+            var children = node.Children.ToList();
+            while (children.OfType<TypeNamespaceNode>().Any())
             {
                 TypeNamespaceNode typeNamespaceNode = node.Children.OfType<TypeNamespaceNode>().First();
                 RemoveFromParentIfEmpty(typeNamespaceNode);
+                children.Remove(typeNamespaceNode);
             }
-            if(!node.Children.Any())
+            while (children.OfType<TypeNode>().Any())
+            {
+                TypeNode typeNamespaceNode = node.Children.OfType<TypeNode>().First();
+                RemoveFromParentIfEmpty(typeNamespaceNode);
+                children.Remove(typeNamespaceNode);
+            }
+            if (!node.Children.Any())
             {
                 node.Parent.Children.Remove(node);
                 node.Parent = null;

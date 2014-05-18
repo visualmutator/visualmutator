@@ -2,7 +2,7 @@ namespace VisualMutator.GUI
 {
     using System.Windows;
     using System.Windows.Interop;
-    using CommonUtilityInfrastructure.WpfUtils;
+    using UsefulTools.Wpf;
     using IWin32Window = System.Windows.Forms.IWin32Window;
 
     public class WindowProvider : IOwnerWindowProvider

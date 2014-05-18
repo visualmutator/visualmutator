@@ -2,7 +2,9 @@
 {
     #region
 
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Extensibility;
 
@@ -56,7 +58,10 @@
                 list.Add(package);
             }
             root.IsIncluded = true;
-
+            if(!root.Children.Any())
+            {
+                throw new InvalidOperationException("No mutation operators were found.");
+            }
             return root;
         }
 

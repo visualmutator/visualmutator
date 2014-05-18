@@ -97,7 +97,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
-    <Compile Include="EnvironmentConnection.cs" />
     <Compile Include="GuiNinjectModule.cs" />
     <Compile Include="WindowProvider.cs" />
     <Page Include="MainWindow.xaml">

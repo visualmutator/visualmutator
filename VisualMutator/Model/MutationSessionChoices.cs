@@ -29,8 +29,6 @@ namespace VisualMutator.Model
         public IList<IMutationOperator> SelectedOperators { get; set; }
         public IList<DirectoryPathAbsolute> ProjectPaths { get; set; }
         public MutationFilter Filter { get; set; }
-        //only valid when creating mutants on disk
-        public string MutantsCreationFolderPath { get; set; }
         public MutantsTestingOptions MutantsTestingOptions { get; set; }
         public MutantsCreationOptions MutantsCreationOptions { get; set; }
         public IList<TestNodeAssembly> TestAssemblies { get; set; }

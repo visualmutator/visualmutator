@@ -31,69 +31,188 @@
     using UsefulTools.Wpf;
     using ViewModels;
 
-    #endregion
+    public static class TupleExtensions
+    {
+        public static async Task<Tuple<T1, T2, T3, T4>> WhenAll<T1, T2, T3, T4>
+            (this Tuple<Task<T1>, Task<T2>, Task<T3>, Task<T4>> tasks)
+        {
+            await Task.WhenAll(tasks.Item1, tasks.Item2, tasks.Item3, tasks.Item4);
+            return Tuple.Create(tasks.Item1.Result, tasks.Item2.Result, tasks.Item3.Result, tasks.Item4.Result);
+        }
+        public static async Task<Tuple<T1, T2, T3>> WhenAll<T1, T2, T3>
+            (this Tuple<Task<T1>, Task<T2>, Task<T3>> tasks)
+        {
+            await Task.WhenAll(tasks.Item1, tasks.Item2, tasks.Item3);
+            return Tuple.Create(tasks.Item1.Result, tasks.Item2.Result, tasks.Item3.Result);
+        }
+        public static async Task<Tuple<T1, T2>> WhenAll<T1, T2>
+            (this Tuple<Task<T1>, Task<T2>> tasks)
+        {
+            await Task.WhenAll(tasks.Item1, tasks.Item2);
+            return Tuple.Create(tasks.Item1.Result, tasks.Item2.Result);
+        }
+    }
 
-    public class AutoCreationController : Controller
+    #endregion
+    public class SessionCreator
+    {
+        private readonly ITypesManager _typesManager;
+        private readonly IOperatorsManager _operatorsManager;
+        private readonly CommonServices _svc;
+        private readonly IReporting _reporting;
+
+        public SessionCreator(
+            ITypesManager typesManager,
+            IOperatorsManager operatorsManager,
+            CommonServices svc,
+            IReporting reporting)
+        {
+            _typesManager = typesManager;
+            _operatorsManager = operatorsManager;
+            _svc = svc;
+            _reporting = reporting;
+            Events = new Subject<object>();
+        }
+
+        public Subject<object> Events { get; set; }
+
+        public async Task<List<MethodIdentifier>> FindCoveringTests(Task<IList<IModule>> assembliesTask, ICodePartsMatcher matcher)
+        {
+            var finder = new CoveringTestsFinder();
+            IList<IModule> modules = await assembliesTask;
+            return await Task.WhenAll(modules.Select(module =>
+                Task.Run(() => finder.FindCoveringTests(module, matcher))))
+                    .ContinueWith(t => t.Result.Flatten().ToList());
+        }
+        public async Task<OperatorPackagesRoot> GetOperators()
+        {
+            try
+            {
+                OperatorPackagesRoot root = await _operatorsManager.GetOperators();
+                return root;
+            }
+            catch (Exception e)
+            {
+                _reporting.LogError(e.ToString());
+                throw;
+            }
+            //Events.OnNext(root);
+            
+        }
+
+        public async Task<List<TestNodeAssembly>> BuildTestTree(Task<List<MethodIdentifier>> coveringTask, Task<object> testsTask, bool constrainedMutation)
+        {
+
+            var result = await Tuple.Create(coveringTask, testsTask).WhenAll();
+
+            var coveringTests = result.Item1;
+            var testsRootNode = (TestsRootNode)result.Item2;
+
+            if (constrainedMutation)
+            {
+                SelectOnlyCoveredTests(testsRootNode, coveringTests);
+            }
+
+            if (_typesManager.IsAssemblyLoadError)
+            {
+                _reporting.LogWarning(UserMessages.WarningAssemblyNotLoaded());
+            }
+            if (constrainedMutation)
+            {
+                ExpandLoneNodes(testsRootNode);
+            }
+            //Events.OnNext(testsRootNode.TestNodeAssemblies.ToList());
+            return testsRootNode.TestNodeAssemblies.ToList();
+        }
+
+        public async Task<List<AssemblyNode>> BuildAssemblyTree(Task<IList<IModule>> assembliesTask,
+            bool constrainedMutation, ICodePartsMatcher matcher)
+        {
+            var result = await assembliesTask;
+            IList<IModule> modules = (IList<IModule>)result;
+            var assemblies = _typesManager.CreateNodesFromAssemblies(modules, matcher)
+                .Where(a => a.Children.Count > 0).ToList();
+
+            if (constrainedMutation)
+            {
+                var root = new CheckedNode("");
+                root.Children.AddRange(assemblies);
+                ExpandLoneNodes(root);
+            }
+            if(assemblies.Count == 0)
+            {
+                throw new InvalidOperationException(UserMessages.ErrorNoFilesToMutate());
+            }
+          //  _reporting.LogError(UserMessages.ErrorNoFilesToMutate());
+            return assemblies;
+            //Events.OnNext(assemblies);
+        }
+
+        private void ExpandLoneNodes(CheckedNode tests)
+        {
+            var allTests = tests.Children
+                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                    n => n.IsIncluded == null || n.IsIncluded == true)
+                .Cast<IExpandableNode>();
+            foreach (var testNode in allTests)
+            {
+                testNode.IsExpanded = true;
+            }
+        }
+
+        private void SelectOnlyCoveredTests(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
+        {
+            rootNode.IsIncluded = false;
+            var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
+                .OfType<TestNodeMethod>()
+                .Where(t => coveredTests.Contains(t.Identifier));
+            foreach (var testNodeMethod in toSelect)
+            {
+                testNodeMethod.IsIncluded = true;
+            }
+        }
+
+
+    }
+    public class AutoCreationController 
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        private readonly IOperatorsManager _operatorsManager;
-        private readonly ITypesManager _typesManager;
-        private readonly TestsLoader _testsLoader;
-
-        private readonly IHostEnviromentConnection _hostEnviroment;
-        private readonly IFileSystemManager _fileManager;
         private readonly SessionConfiguration _sessionConfiguration;
-        private readonly IWhiteCache _whiteCache;
         private readonly IOptionsManager _optionsManager;
+        private readonly IFactory<SessionCreator> _sessionCreatorFactory;
 
         private readonly CommonServices _svc;
-        private readonly IBindingFactory<SessionController> _sessionFactory;
-        private readonly IDispatcherExecute _dispatcher;
         private readonly CreationViewModel _viewModel;
-
+        private readonly ITypesManager _typesManager;
+        private Subject<object> Events; 
 
         public MutationSessionChoices Result { get; protected set; }
 
 
         public AutoCreationController(
-            IDispatcherExecute dispatcher,
             CreationViewModel viewModel,
             ITypesManager typesManager,
-            IOperatorsManager operatorsManager,
-            IHostEnviromentConnection hostEnviroment,
-            TestsLoader testsLoader,
-            IFileSystemManager fileManager,
             SessionConfiguration sessionConfiguration,
             IOptionsManager optionsManager,
+            IFactory<SessionCreator> sessionCreatorFactory,
             CommonServices svc)
         {
-            _dispatcher = dispatcher;
             _viewModel = viewModel;
-
             _typesManager = typesManager;
-            _operatorsManager = operatorsManager;
-            _hostEnviroment = hostEnviroment;
-            _testsLoader = testsLoader;
-            _fileManager = fileManager;
+
             _sessionConfiguration = sessionConfiguration;
             _optionsManager = optionsManager;
+            _sessionCreatorFactory = sessionCreatorFactory;
             _svc = svc;
 
-
-            _viewModel.CommandCreateMutants = new SmartCommand(AcceptChoices,
-                () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
-                      && _viewModel.TypesTreeToTest.TestAssemblies!=null && _viewModel.TypesTreeToTest.TestAssemblies.Count != 0
-                      && _viewModel.MutationsTree.MutationPackages.Count != 0)
-                .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
-                .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.TestAssemblies)
-                .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
-
-
+            
         }
 
-        public void Run(MethodIdentifier singleMethodToMutate)
+       
+
+        public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate)
         {
             SessionCreationWindowShowTime = DateTime.Now;
 
@@ -101,116 +220,69 @@
             {
                 _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
             }
-            
-//
-//            _fileManager.Initialize();
-//
-//            ProjectFilesClone originalFilesList = _fileManager.CreateClone("Mutants");
-//
-//            _whiteCache.Initialize(_optionsManager.ReadOptions(), 
-//                originalFilesList.Assemblies.AsStrings().ToList());
-//
-//            ProjectFilesClone originalFilesListForTests = _fileManager.CreateClone("Tests");
-//            if (originalFilesList.IsIncomplete || originalFilesListForTests.IsIncomplete
-//                || originalFilesListForTests.Assemblies.Count == 0)
-//            {
-//                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), null);
-//            }
 
+            var r = new Reporting(_svc.Logging, _viewModel.View);
+
+            SessionCreator sessionCreator = _sessionCreatorFactory.CreateWithParams(r);
+
+           // sessionCreator.Events.OfType<List<TestNodeAssembly>>()
 
             ICodePartsMatcher matcher = new CciMethodMatcher(singleMethodToMutate);
             bool constrainedMutation = true;
 
-
-            _operatorsManager.GetOperators().ContinueWith(t =>
-            {
-                _viewModel.MutationsTree.MutationPackages
-                    = new ReadOnlyCollection<PackageNode>(t.Result.Packages);
-            }, _dispatcher.GuiScheduler);
-
-           // _svc.Threading.ScheduleAsync(() => _operatorsManager.LoadOperators(),
-            //    root => _viewModel.MutationsTree.MutationPackages
-              //      = new ReadOnlyCollection<PackageNode>(root.Packages));
-            var finder = new CoveringTestsFinder();
            
-           // List<MethodIdentifier> coveredTests = null;
             Task<IList<IModule>> assembliesTask = _sessionConfiguration.LoadAssemblies();
 
+            Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
 
-            var coveringTask = assembliesTask.ContinueWith((task) =>
+            Task<object> testsTask = _sessionConfiguration.LoadTests();
+
+            var t1 = sessionCreator.GetOperators();
+
+            var t2 = sessionCreator.BuildAssemblyTree(assembliesTask, constrainedMutation, matcher);
+
+
+            var t3 = sessionCreator.BuildTestTree(coveringTask, testsTask, constrainedMutation);
+
+            t1.ContinueWith(task =>
             {
-                
-                IList<IModule> modules = (IList<IModule>)task.Result;
-                return Task.WhenAll(modules.Select(module =>
-                    Task.Run(() => finder.FindCoveringTests(module, matcher))))
-                    .ContinueWith(t =>
-                    {
-                        return (object) t.Result.Flatten().ToList();
-                    });
-                
-            }, TaskContinuationOptions.NotOnFaulted).Unwrap();
-            
-
-            assembliesTask.ContinueWith((result) =>
+                _viewModel.MutationsTree.MutationPackages
+                    = new ReadOnlyCollection<PackageNode>(task.Result.Packages);
+            }, TaskContinuationOptions.NotOnFaulted);
+            t2.ContinueWith(task =>
             {
-                if (result.Exception == null)
-                {
-                    IList<IModule> modules = (IList<IModule>) result.Result;
-                    var assemblies = _typesManager.CreateNodesFromAssemblies(modules, matcher)
-                                .Where(a => a.Children.Count > 0).ToList();
+                _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
+            }, TaskContinuationOptions.NotOnFaulted);
+            t3.ContinueWith(task =>
+            {
+                _viewModel.TypesTreeToTest.TestAssemblies
+                                = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
+            }, TaskContinuationOptions.NotOnFaulted);
 
-                    if (constrainedMutation)
-                    {
-                        var root = new CheckedNode("");
-                        root.Children.AddRange(assemblies);
-                        ExpandLoneNodes(root);
-                    }
-                    _svc.Threading.PostOnGui(() =>
-                    {
-                        _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assemblies);
-                    });
-                }
-            }).ContinueWith(CheckError);
-
-
-            var testsTask = _sessionConfiguration.LoadTests();
-
-            Task.WhenAll(coveringTask, testsTask).ContinueWith( 
-                (Task<object[]> result) =>
-                {
-                    if (result.Exception == null)
-                    {
-                        var coveringTests = (List<MethodIdentifier>)result.Result[0];
-                        var testsRootNode = (TestsRootNode)result.Result[1];
-
-                        if (constrainedMutation)
-                        {
-                            
-
-                            SelectOnlyCoveredTests(testsRootNode, coveringTests);
-                        }
-
-                        _svc.Threading.PostOnGui(() =>
-                        {
-                            if (_typesManager.IsAssemblyLoadError)
-                            {
-                                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
-                            }
-                            if (singleMethodToMutate != null)
-                            {
-                                ExpandLoneNodes(testsRootNode);
-                            }
-
-                            _viewModel.TypesTreeToTest.TestAssemblies 
-                                = new ReadOnlyCollection<TestNodeAssembly>(testsRootNode.TestNodeAssemblies.ToList());
-
-                        });
-                    }
-                }).ContinueWith(CheckError);
-
-            _viewModel.ShowDialog();
+            try
+            {
+                await Task.WhenAll(t1, t2, t3);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            Result = new MutationSessionChoices
+            {
+                SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
+                   .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
+                Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
+                TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
+                MutantsCreationOptions = _viewModel.MutantsCreation.Options,
+                MutantsTestingOptions = _viewModel.MutantsTesting.Options,
+                MainOptions = _optionsManager.ReadOptions(),
+            };
+            //  await 
+            return Result;
         }
 
+      
         public DateTime SessionCreationWindowShowTime { get; set; }
 
         private void CheckError(Task result)
@@ -253,30 +325,7 @@
             }
         }
 
-        private void ExpandLoneNodes(CheckedNode tests)
-        {
-            var allTests = tests.Children
-                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
-                    n => n.IsIncluded == null || n.IsIncluded == true)
-                .Cast<IExpandableNode>();
-            foreach (var testNode in allTests)
-            {
-                testNode.IsExpanded = true;
-            }
-        }
-
-        private void SelectOnlyCoveredTests(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
-        {
-            rootNode.IsIncluded = false;
-            var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
-                .OfType<TestNodeMethod>()
-                .Where(t => coveredTests.Contains(t.Identifier));
-            foreach (var testNodeMethod in toSelect)
-            {
-                testNodeMethod.IsIncluded = true;
-            }
-        }
-
+      
 
 
         protected void AcceptChoices()
@@ -290,7 +339,6 @@
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
                 MainOptions = _optionsManager.ReadOptions(),
-                MutantsCreationFolderPath = _viewModel.MutantsGenerationPath
             };
             _viewModel.Close();
         }

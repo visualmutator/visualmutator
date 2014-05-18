@@ -127,8 +127,40 @@
             }
        
         }
-    
-     
+        public async void RunMutationSessionAuto(MethodIdentifier methodIdentifier)
+        {
+            _host.Build();
+            _log.Info("Showing mutation session window.");
+
+            _continuousConfiguration = _continuousConfigurator.GetConfiguration();
+            _sessionConfiguration = _continuousConfiguration.Get.CreateSessionConfiguration();
+
+            try
+            {
+                IObjectRoot<SessionController> sessionController =
+                    await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
+
+                Clean();
+                _currentSessionController = sessionController;
+
+                _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
+
+                Subscribe(_currentSessionController.Get);
+
+                _log.Info("Starting mutation session...");
+                _currentSessionController.Get.RunMutationSession(_controlSource);
+            }
+            catch (TaskCanceledException)
+            {
+                // cancelled by user
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
 
         public void PauseOperations()
         {

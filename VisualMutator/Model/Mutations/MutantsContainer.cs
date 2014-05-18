@@ -15,6 +15,7 @@
     using MutantsTree;
     using Operators;
     using StoringMutants;
+    using Strilanc.Value;
     using Types;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
@@ -149,6 +150,8 @@
         public AssemblyNode FindTargets(IModule module)
         {
             _log.Info("Finding targets for module: " + module.Name.Value);
+            _log.Info("Using mutation operators: " + _mutOperators.Select(_=>_.Info.Id)
+                .MayAggregate((a,b)=>a+","+b).Else("None"));
 
             var mergedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
