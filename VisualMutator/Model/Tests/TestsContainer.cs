@@ -44,7 +44,7 @@
     {
         private readonly IMutantsFileManager _mutantsFileManager;
         private readonly IMutantsCache _mutantsCache;
-        private readonly IFileSystemManager _fileManager;
+        private readonly IProjectClonesManager _fileManager;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
 
@@ -57,7 +57,7 @@
         public TestsContainer(
             IMutantsFileManager mutantsFileManager,
             IMutantsCache mutantsCache,
-            IFileSystemManager fileManager,
+            IProjectClonesManager fileManager,
             IAssemblyVerifier assemblyVerifier)
         {
             _mutantsFileManager = mutantsFileManager;
@@ -75,6 +75,8 @@
             {
                 testNodeAssembly.TestsLoadContext.SelectedTests = 
                     testsSelector.GetIncludedTests(testNodeAssembly);
+
+                _log.Debug("Created tests to run: "+ testNodeAssembly.TestsLoadContext.SelectedTests.TestsDescription);
             }
         }
 

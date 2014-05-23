@@ -40,7 +40,7 @@
              var testsSelector = new TestsSelector();
              string minimalTreeId = testsSelector.MinimalTreeId(a, n => n.Name, n => n.Children);
 
-             minimalTreeId.ShouldEqual(" ABA ABBA ");
+             minimalTreeId.ShouldEqual("ABA ABBA");
          }
     }
 }

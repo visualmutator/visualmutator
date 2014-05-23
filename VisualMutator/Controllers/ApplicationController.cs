@@ -140,16 +140,17 @@
         private void Current_DispatcherUnhandledException(
             object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            _messageService.ShowError(e.Exception.ToString());
-            e.Handled = true;
+          //  _messageService.ShowError(e.Exception.ToString());
+          //  e.Handled = true;
+            _log.Warn("Current_DispatcherUnhandledException: "+e.Exception.Message);
         }
 
         private void CurrentDomain_UnhandledException(
             object sender, UnhandledExceptionEventArgs e)
         {
             var exception = (Exception)e.ExceptionObject;
-
-            _messageService.ShowError(exception.ToString());
+            _log.Warn("CurrentDomain_UnhandledException: " + exception.Message);
+            // _messageService.ShowError(exception.ToString());
 
         }
 

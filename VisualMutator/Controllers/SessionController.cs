@@ -430,10 +430,11 @@
         {
             _mutantDetailsController.CleanDetails();
         }
-        public void SaveResults()
+        public ResultsSavingController SaveResults()
         {
             var resultsSavingController = _resultsSavingFactory.Create();
             resultsSavingController.Run(_currentSession);
+            return resultsSavingController;
         }
 
         

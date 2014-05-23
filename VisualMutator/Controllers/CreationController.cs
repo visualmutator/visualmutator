@@ -137,15 +137,15 @@
 
             var coveringTask = assembliesTask.ContinueWith((task) =>
             {
-                
-                IList<IModule> modules = (IList<IModule>)task.Result;
+
+                IList<IModule> modules = (IList<IModule>) task.Result;
                 return Task.WhenAll(modules.Select(module =>
                     Task.Run(() => finder.FindCoveringTests(module, matcher))))
                     .ContinueWith(t =>
                     {
                         return (object) t.Result.Flatten().ToList();
                     });
-                
+
             }, TaskContinuationOptions.NotOnFaulted).Unwrap();
             
 
@@ -279,6 +279,11 @@
 
         protected void AcceptChoices()
         {
+            if(_viewModel.TypesTreeToTest.TestAssemblies.All(a=>a.IsIncluded == false))
+            {
+                _svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
+                return;
+            }
             Result = new MutationSessionChoices
             {
                 SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)

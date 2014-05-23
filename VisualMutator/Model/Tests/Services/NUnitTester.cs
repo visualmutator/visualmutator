@@ -127,9 +127,9 @@
                          + testToRun
                          + " /xml \"" + outputFile + "\" /nologo -trace=Verbose /noshadow /nothread";
 
-            if(_options.ForceNUnitDotNedVer.Length != 0)
+            if(_options.ParsedParams.NUnitNetVersion.Length != 0)
             {
-                arg += (" /framework:" + _options.ForceNUnitDotNedVer);
+                arg += (" /framework:" + _options.OtherParams);
             }
 
             _log.Info("Running " + nunitConsolePath + arg);

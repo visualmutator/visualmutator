@@ -186,7 +186,6 @@
         private readonly CommonServices _svc;
         private readonly CreationViewModel _viewModel;
         private readonly ITypesManager _typesManager;
-        private Subject<object> Events; 
 
         public MutationSessionChoices Result { get; protected set; }
 
@@ -249,10 +248,12 @@
                 _viewModel.MutationsTree.MutationPackages
                     = new ReadOnlyCollection<PackageNode>(task.Result.Packages);
             }, TaskContinuationOptions.NotOnFaulted);
+
             t2.ContinueWith(task =>
             {
                 _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
             }, TaskContinuationOptions.NotOnFaulted);
+
             t3.ContinueWith(task =>
             {
                 _viewModel.TypesTreeToTest.TestAssemblies

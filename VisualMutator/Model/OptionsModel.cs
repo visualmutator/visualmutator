@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Model
 {
     using System;
+    using CommandLine;
     using UsefulTools.Core;
 
     public class OptionsModel : ModelElement
@@ -10,7 +11,7 @@
             WhiteCacheThreadsCount = Environment.ProcessorCount + 1;
             MutantsCacheEnabled = true;
             ProcessingThreadsCount = Environment.ProcessorCount + 1;
-            ForceNUnitDotNedVer = "";
+            OtherParams = "";
         }
 
         private bool _mutantsCacheEnabled;
@@ -51,19 +52,60 @@
             }
         }
 
-        private string _forceNUnitDotNedVer;
-        public string ForceNUnitDotNedVer
+        private string _otherParams;
+        public string OtherParams
         {
             get
             {
-                return _forceNUnitDotNedVer;
+                return _otherParams;
             }
             set
             {
-                SetAndRise(ref _forceNUnitDotNedVer, value, () => ForceNUnitDotNedVer);
+                SetAndRise(ref _otherParams, value, () => OtherParams);
             }
         }
         
+        public OtherParams ParsedParams
+        {
+            get
+            {
+                var options = new OtherParams();
+                if (CommandLine.Parser.Default.ParseArguments(OtherParams.Split(' '), options))
+                {
+                    return options;
+                }
+                else
+                {
+                    throw new Exception("Invalid params string in options.");
+                }
+            }
+        }
+
+        
+    }
+    public class OtherParams
+    {
+
+        [Option('l', "loglevel", DefaultValue = "DEBUG", HelpText = "")]
+        public string LogLevel
+        {
+            get; set;
+        }
+        [Option('d', "debugfiles", DefaultValue = false, HelpText = "")]
+        public bool DebugFiles
+        {
+            get; set;
+        }
+        [Option('n', "nunitnetversion", DefaultValue = "", HelpText = "")]
+        public string NUnitNetVersion
+        {
+            get; set;
+        }
+        [ParserState]
+        public IParserState LastParserState
+        {
+            get; set;
+        }
 
     }
 }

@@ -34,10 +34,15 @@
 
         private List<IDisposable> _subscriptions;
         private readonly Subject<ControlEvent> _controlSource;
+        private readonly Subject<String> _sessionFinished;
         private IObjectRoot<SessionController> _currentSessionController;
         private IObjectRoot<ContinuousConfiguration> _continuousConfiguration;
         private IObjectRoot<SessionConfiguration> _sessionConfiguration;
 
+        public Subject<string> SessionFinishedEvents
+        {
+            get { return _sessionFinished; }
+        }
 
         public MainController(
             IFactory<OptionsController> optionsController,
@@ -50,7 +55,7 @@
             _viewModel = viewModel;
             _continuousConfigurator = continuousConfigurator;
             _host = host;
-
+            _sessionFinished = new Subject<string>();
             _controlSource = new Subject<ControlEvent>();
             _svc = svc;
 
@@ -137,11 +142,15 @@
 
             try
             {
-                IObjectRoot<SessionController> sessionController =
-                    await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
+                for (int i = 0; i < 100; i++)
+                {
+                    IObjectRoot<SessionController> sessionController =
+                        await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
+
+                }
 
                 Clean();
-                _currentSessionController = sessionController;
+                _currentSessionController = null;
 
                 _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
 
@@ -198,6 +207,8 @@
         private void SessionFinished()
         {
             _continuousConfiguration.Get.Dispose();
+            SessionFinishedEvents.OnNext("");
+            SessionFinishedEvents.OnCompleted();
         }
 
         private void Clean()
@@ -283,7 +294,7 @@
                 sessionController.SessionEventsObservable
                  .OfType<MutationFinishedEventArgs>()
                  .Subscribe(args => _viewModel.MutantAssemblies.ReplaceRange(args.MutantsGrouped)),
-
+                 
                 sessionController.SessionEventsObservable
                  .OfType<TestingProgressEventArgs>()
                  .Subscribe(args =>
@@ -310,7 +321,12 @@
                _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).Where(i => !(i is Mutant))
                    .Subscribe(x => sessionController.CleanDetails()),
                _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).Where(i => !(i is Mutant))
-                   .Subscribe(x => sessionController.CleanDetails())
+                   .Subscribe(x => sessionController.CleanDetails()),
+
+                sessionController.SessionEventsObservable.Subscribe((e) => { }, (e) => { }, () =>
+                {
+                    
+                }),
             };
 
         }
@@ -323,6 +339,14 @@
             }
         }
 
-       
+
+        public void SaveResultsAuto(string resultsPath)
+        {
+            ResultsSavingController resultsSavingController = _currentSessionController.Get.SaveResults();
+            resultsSavingController.ViewModel.IncludeCodeDifferenceListings = false;
+            resultsSavingController.ViewModel.IncludeDetailedTestResults = false;
+            resultsSavingController.ViewModel.TargetPath = resultsPath;
+            resultsSavingController.SaveResults();
+        }
     }
 }

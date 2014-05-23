@@ -193,11 +193,11 @@
             }
             var assemblyNode = BuildMutantsTree(module, mergedTargets);
                 
-            _log.Info("Found total of: " + mergedTargets.Count() + " mutation targets.");
+            _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in "+assemblyNode.Name);
             return assemblyNode;
 
             
-
+            
         }
 
         private AssemblyNode BuildMutantsTree(IModule module, 

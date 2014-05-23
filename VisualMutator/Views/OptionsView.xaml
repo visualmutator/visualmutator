@@ -26,6 +26,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="25" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -59,8 +60,8 @@
         <xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Maximum="16" Minimum="1"
                                   Value="{Binding Options.ProcessingThreadsCount, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Force NUnit .NET version:" />
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Options.ForceNUnitDotNedVer, Mode=TwoWay}"></TextBox>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Other Params:" />
+        <TextBox Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding Options.OtherParams, Mode=TwoWay}"></TextBox>
         
         <DockPanel Grid.Row="5" HorizontalAlignment="Right" Grid.ColumnSpan="2">
             <Button Content="OK" Command="{Binding CommandSave}" />

@@ -7,12 +7,12 @@
 
     public class ContinuousConfiguration : IDisposable
     {
-        private readonly IFileSystemManager _fileManager;
+        private readonly IProjectClonesManager _fileManager;
         private readonly IRootFactory<SessionConfiguration> _sessionConfigurationFactory;
         private readonly IWhiteCache _whiteCache;
 
         public ContinuousConfiguration(
-             IFileSystemManager fileManager,
+             IProjectClonesManager fileManager,
             IOptionsManager optionsManager,
             IRootFactory<SessionConfiguration> sessionConfigurationFactory,
             IFactory<WhiteCache> whiteCacheFactory,

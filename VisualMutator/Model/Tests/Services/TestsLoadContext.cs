@@ -7,7 +7,6 @@
     {
         private readonly Dictionary<string /*testName*/, TestNodeMethod> _testMap;
         private readonly List<TestNodeClass> _classNodes;
-        //public TestNodeAssembly TestNodeAssembly { get; set; }
 
         public TestsLoadContext()
         {
@@ -16,13 +15,7 @@
         }
 
         public string AssemblyPath { get; set; }
-//        public IDictionary<string, TestNodeMethod> TestMap
-//        {
-//            get
-//            {
-//                return _testMap;
-//            }
-//        }
+
 
         public List<TestNodeClass> ClassNodes
         {

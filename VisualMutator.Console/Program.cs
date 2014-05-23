@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-
 using System.IO;
 
 
@@ -106,7 +104,7 @@ namespace VisualMutator.Console
 
 
 
-        private static ICollection<TestId> _selectedTests;
+     //   private static ICollection<TestId> _selectedTests;
 
         private async Task<object> L1()
         {
@@ -131,12 +129,11 @@ namespace VisualMutator.Console
         }
         private static void Main(string[] args)
         {
-            //new Program();
-            if (args.Length >= 2)
+            if (args.Length >= 3)
             {
                 var parser = new CommandLineParser(args);
                 var connection = new EnvironmentConnection(parser);
-                var boot = new ConsoleBootstrapper(connection);
+                var boot = new ConsoleBootstrapper(connection, parser);
                 boot.Initialize();
             }
             else
@@ -146,32 +143,5 @@ namespace VisualMutator.Console
         }
 
        
-    }
-    public class CommandLineParser
-    {
-        private readonly List<string> _assembliesPaths;
-        private readonly string _methodIdentifier;
-
-        public CommandLineParser(string[] args)
-        {
-            _assembliesPaths = args[0].Split(';').ToList();
-            _methodIdentifier = args[1];
-        }
-
-        public string MethodIdentifier
-        {
-            get
-            {
-                return _methodIdentifier;
-            }
-        }
-
-        public List<string> AssembliesPaths
-        {
-            get
-            {
-                return _assembliesPaths;
-            }
-        }
     }
 }

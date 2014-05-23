@@ -53,7 +53,8 @@
             else
             {
                 var strings = childExtractor(node)
-                    .Select(n => MinimalTreeId(n, nameExtractor, childExtractor));
+                    .Select(n => MinimalTreeId(n, nameExtractor, childExtractor))
+                    .Where(n => !string.IsNullOrWhiteSpace(n));
                 return string.Join(" ", strings);
             }
 

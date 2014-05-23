@@ -71,6 +71,11 @@ public static string ErrorNoFilesToMutate()
     return
         @"No files to mutate were found.";
 }
+public static string ErrorNoTestsToRun()
+{
+    return
+        @"Select at least one test to run.";
+}
         public static string ErrorStrongNameSignedAssembly()
         {
             return

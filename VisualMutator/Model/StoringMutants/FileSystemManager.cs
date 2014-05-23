@@ -14,14 +14,14 @@
     using UsefulTools.FileSystem;
     using UsefulTools.Paths;
 
-    public interface IFileSystemManager : IDisposable
+    public interface IProjectClonesManager : IDisposable
     {
         ProjectFilesClone CreateClone(string name);
         void Initialize();
         Task<ProjectFilesClone> CreateCloneAsync(string name);
     }
 
-    public class FileSystemManager : IFileSystemManager
+    public class ProjectClonesManager : IProjectClonesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -31,21 +31,26 @@
         private IEnumerable<FilePathAbsolute> _referencedFiles;
         private ProjectFilesClone _mainClone;
         private readonly IList<ProjectFilesClone> _clones;
+        private readonly FilesManager _filesManager;
 
-        public FileSystemManager(
+        public ProjectClonesManager(
             IHostEnviromentConnection hostEnviroment,
+            FilesManager filesManager,
             IFileSystem fs)
         {
             _hostEnviroment = hostEnviroment;
+            _filesManager = filesManager;
             _fs = fs;
 
             _clones = new List<ProjectFilesClone>();
         }
 
-        ~FileSystemManager()
+        ~ProjectClonesManager()
         {
             Dispose(false);
         }
+
+   
 
 
         public void Initialize()
@@ -53,7 +58,9 @@
             _originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
             _referencedFiles = GetReferencedAssemblyPaths(_originalProjectFiles).Select(s => s.ToFilePathAbs());
 
-            _mainClone = CreateProjectClone(_referencedFiles, _originalProjectFiles, "MainClone").Result;
+            FilePathAbsolute tmp = CreateTmpDir("VisualMutator-MainClone-");
+            _mainClone = _filesManager.CreateProjectClone(_referencedFiles, _originalProjectFiles, tmp).Result;
+            _clones.Add(_mainClone);
         }
         public void Dispose()
         {
@@ -81,58 +88,14 @@
 
         public async Task<ProjectFilesClone> CreateCloneAsync(string name)
         {
-            ProjectFilesClone clone = await CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies, name);
+            FilePathAbsolute tmp = CreateTmpDir("VisualMutator-" + name + "-");
+            ProjectFilesClone clone = await _filesManager.CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies, tmp);
+            _clones.Add(clone);
             clone.IsIncomplete |= _mainClone.IsIncomplete;
             return clone;
         }
-        private async Task<ProjectFilesClone> CreateProjectClone(IEnumerable<FilePathAbsolute> referencedFiles, 
-            IEnumerable<FilePathAbsolute> projectFiles, string name)
-        {
 
-            FilePathAbsolute tmp = CreateTmpDir("VisualMutator-" + name + "-");
-            var clone = new ProjectFilesClone(tmp, _fs);
-            foreach (var referenced in referencedFiles)
-            {
-                try
-                {
-                    var destination = (FilePathAbsolute) tmp.AsChild(referenced);
-                    await CopyOverwriteAsync(referenced, destination);
-                    clone.Referenced.Add(destination);
-                }
-                catch (Exception e)
-                {
-                    _log.Warn("Could not copy file : " +e.Message);
-                    clone.IsIncomplete = true;
-                }
-            }
-            foreach (var projFile in projectFiles)
-            {
-                try
-                {
-                    var destination = (FilePathAbsolute) tmp.AsChild(projFile);
-                    await CopyOverwriteAsync(projFile, destination);
-                    clone.Assemblies.Add(destination);
-                }
-                catch (Exception e)
-                {
-                    _log.Warn("Could not copy file : " + e.Message);
-                    clone.IsIncomplete = true;
-                }
-            }
-            _clones.Add(clone);
-            return clone;
-        }
-        private Task<object> CopyOverwriteAsync(FilePath src, FilePath dst)
-        {
-            using (FileStream sourceStream = File.Open(src.Path, FileMode.Open))
-            {
-                using (FileStream destinationStream = File.Create(dst.Path))
-                {
-                    sourceStream.CopyTo(destinationStream);
-                    return Task.FromResult(new object());
-                }
-            }
-        }
+
         private FilePathAbsolute CreateTmpDir(string s)
         {
             string tmpDirectoryPath = Path.Combine(_hostEnviroment.GetTempPath(), s+Path.GetRandomFileName());

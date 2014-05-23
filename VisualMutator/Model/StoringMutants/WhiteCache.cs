@@ -18,7 +18,7 @@ namespace VisualMutator.Model.StoringMutants
 
     public class WhiteCache : IDisposable, IWhiteCache
     {
-        private readonly IFileSystemManager _fileManager;
+        private readonly IProjectClonesManager _fileManager;
         private readonly BlockingCollection<CciModuleSource> _whiteCache;
         private BlockingCollection<IList<string>> _paths;
         private ProjectFilesClone _assembliesPaths;
@@ -30,7 +30,7 @@ namespace VisualMutator.Model.StoringMutants
         private bool _paused;
 
         public WhiteCache(
-            IFileSystemManager fileManager,
+            IProjectClonesManager fileManager,
             // ------
             int threadsCount
             )

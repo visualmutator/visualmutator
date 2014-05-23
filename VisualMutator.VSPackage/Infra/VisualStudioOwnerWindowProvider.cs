@@ -22,7 +22,7 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 
         public IWin32Window GetWindow()
         {
-            throw new System.NotImplementedException();
+            return _hostEnviroment.GetWindow();
         }
 
         public void SetOwnerFor(Window window)

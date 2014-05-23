@@ -17,12 +17,12 @@ namespace VisualMutator.Model.StoringMutants
 
     public class DisabledWhiteCache : IWhiteCache
     {
-        private readonly IFileSystemManager _fileManager;
+        private readonly IProjectClonesManager _fileManager;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ProjectFilesClone _assemblies;
         private List<string> _paths;
 
-        public DisabledWhiteCache(IFileSystemManager fileManager)
+        public DisabledWhiteCache(IProjectClonesManager fileManager)
         {
             _fileManager = fileManager;
         }

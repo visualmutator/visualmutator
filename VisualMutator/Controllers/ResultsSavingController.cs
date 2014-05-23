@@ -37,7 +37,7 @@
             _svc = svc;
             _generator = generator;
 
-            _viewModel.CommandSaveResults = new SmartCommand(SaveResults);
+            _viewModel.CommandSaveResults = new SmartCommand(() => SaveResults());
 
             _viewModel.CommandClose = new SmartCommand(Close);
             _viewModel.CommandBrowse = new SmartCommand(BrowsePath);
@@ -49,7 +49,11 @@
            
         }
 
-        
+        public ResultsSavingViewModel ViewModel
+        {
+            get { return _viewModel; }
+        }
+
         public void Run(MutationTestingSession currentSession)
         {
             _currentSession = currentSession;
@@ -77,37 +81,42 @@
 
 
         }
-        public void SaveResults()
+        public void SaveResults(string path = null)
         {
-            if (string.IsNullOrEmpty(_viewModel.TargetPath)
-                || !Path.IsPathRooted(_viewModel.TargetPath))
+            if(path == null)
             {
-                _svc.Logging.ShowError("Invalid path");
-                return;
+                if (string.IsNullOrEmpty(_viewModel.TargetPath)
+                || !Path.IsPathRooted(_viewModel.TargetPath))
+                {
+                    _svc.Logging.ShowError("Invalid path");
+                    return;
+                }
+                path = _viewModel.TargetPath;
             }
+            
 
             XDocument document = _generator.GenerateResults(_currentSession, 
                 _viewModel.IncludeDetailedTestResults, _viewModel.IncludeCodeDifferenceListings);
 
             try
             {
-                using (var writer = _fs.File.CreateText(_viewModel.TargetPath))
+                using (var writer = _fs.File.CreateText(path))
                 {
                     writer.Write(document.ToString());
                 }
-                _svc.Settings["MutationResultsFilePath"] = _viewModel.TargetPath;
+                _svc.Settings["MutationResultsFilePath"] = path;
 
                 _viewModel.Close();
 
 
                 var p = new Process();
 
-                p.StartInfo.FileName = _viewModel.TargetPath;
+                p.StartInfo.FileName = path;
                 p.Start();
             }
             catch (IOException)
             {
-                _svc.Logging.ShowError("Cannot write file: " + _viewModel.TargetPath);
+                _svc.Logging.ShowError("Cannot write file: " + path);
             }
             
         }

@@ -57,7 +57,7 @@
             var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache( container);
-            cache.WhiteCache.Initialize(new[]{filePath});
+          //  cache.WhiteCache.Initialize(new[]{filePath});
             IModule module = cci.AppendFromFile(filePath);
 
 
@@ -84,7 +84,7 @@
             var container = new MutantsContainer(cci, null, utils);
             var visualizer = new CodeVisualizer(cci);
             var cache = new MutantsCache(container);
-            cache.WhiteCache.Initialize(new[] { filePath });
+           // cache.WhiteCache.Initialize(new[] { filePath });
             IModule module = cci.AppendFromFile(filePath);
 
 
@@ -193,7 +193,7 @@
             var visualizer = new CodeVisualizer(ccii);
             var cache = new MutantsCache(container);
             cache.setDisabled(disableCache: false);
-            cache.WhiteCache.Initialize(ccii.ModulesInfo.Select(m => m.FilePath).ToList());
+            //cache.WhiteCache.Initialize(ccii.ModulesInfo.Select(m => m.FilePath).ToList());
             diff = new CodeDifferenceCreator(cache, visualizer);
             container.DebugConfig = true;
 

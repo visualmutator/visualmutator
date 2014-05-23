@@ -144,14 +144,14 @@
 
         private MutantTestResults GetResults(string assembly, SelectedTests selected)
         {
-            string path = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
+           // string path = @"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe";
             var parser = new NUnitResultsParser();
             var context = new TestsRunContext();
             context.AssemblyPath = assembly;
             context.SelectedTests = selected;
-            var service = new NUnitTester(parser, kernel.Get<IProcesses>(), kernel.Get<CommonServices>(), path, context);
+           // var service = new NUnitTester(parser, kernel.Get<IProcesses>(), kernel.Get<CommonServices>(), path, context);
 
-            service.RunTests().Wait();
+          //  service.RunTests().Wait();
 
             return context.TestResults;
         }

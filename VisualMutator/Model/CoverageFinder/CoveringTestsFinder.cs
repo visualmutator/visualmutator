@@ -27,6 +27,12 @@
                 ". Scanned total: " + visitor.ScannedMethods + " methods and "+
                 visitor.ScannedMethodCalls+" method calls.");
 
+            _log.Debug("Listing found tests: ");
+            foreach (var methodIdentifier in visitor.FoundTests)
+            {
+                _log.Debug("Test: "+ methodIdentifier);
+            }
+
             if (visitor.IsChoiceError)
             {
                 throw new TestWasSelectedToMutateException();

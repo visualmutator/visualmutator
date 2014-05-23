@@ -27,7 +27,7 @@
         private readonly ProjectFilesClone _testsClone;
 
         public SessionConfiguration(
-            IFileSystemManager fileManager,
+            IProjectClonesManager fileManager,
             TestsLoader testLoader,
             ITypesManager typesManager,
             IFactory<CreationController> creationControllerFactory,

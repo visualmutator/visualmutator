@@ -153,13 +153,26 @@
             if(methodAtCaret != null)
             {
                 var parameters = methodAtCaret.Parameters.Cast<CodeParameter2>().ToList();
-                var names = parameters.Select(p => GetKindString(p) + p.Type.AsFullName).ToList();
+                var names = parameters.Select(p => GetKindString(p) 
+                    + (string.IsNullOrEmpty(p.Type.AsFullName) ? TranslateTypeName(p.Type.AsString)
+                    : p.Type.AsFullName)).ToList();
 
                 methodIdentifier = new VisualStudioCodeElementsFormatter()
                     .CreateIdentifier(methodAtCaret.FullName, names);
                 return true;
             }
             return false;
+        }
+
+        private string TranslateTypeName(string asString)
+        {
+
+            return asString
+                .Replace("byte[]", "System.Byte[]")
+                .Replace("char[]", "System.Char[]")
+                .Replace("int[]", "System.Int32[]")
+                .Replace("long[]", "System.Int64[]")
+                .Replace("short[]", "System.Int16[]");
         }
 
         private string GetKindString(CodeParameter2 codeParameter)

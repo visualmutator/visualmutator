@@ -11,7 +11,6 @@
     using Model;
     using Moq;
     using Ninject.Modules;
-    using PiotrTrzpil.VisualMutator_VSPackage.Infrastructure;
     using UsefulTools.Core;
     using UsefulTools.FileSystem;
     using UsefulTools.Threading;
@@ -80,14 +79,16 @@
     public class ConsoleBootstrapper
     {
         private readonly EnvironmentConnection _connection;
+        private readonly CommandLineParser _parser;
         private static ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly Bootstrapper _boot;
 
  
 
-        public ConsoleBootstrapper(EnvironmentConnection connection)
+        public ConsoleBootstrapper(EnvironmentConnection connection, CommandLineParser parser)
         {
             _connection = connection;
+            _parser = parser;
             _boot = new Bootstrapper(new List<INinjectModule>() {
                 new VisualMutatorModule(),
                 new ConsoleInfrastructureModule(),
@@ -117,6 +118,11 @@
                 optionsModel.ProcessingThreadsCount = 2;
                 _boot.AppController.OptionsManager.WriteOptions(optionsModel);
                 _boot.AppController.MainController.RunMutationSessionAuto(methodIdentifier);
+
+                _boot.AppController.MainController.SessionFinishedEvents.Subscribe(_ =>
+                {
+                    _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsPath);
+                });
                 Console.ReadLine();
             }
             catch (Exception e)

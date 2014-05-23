@@ -84,7 +84,9 @@
 
             Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 =>
             {
-                ch0.Bind<IFileSystemManager>().To<FileSystemManager>().InSingletonScope();
+                ch0.Bind<IProjectClonesManager>().To<ProjectClonesManager>().InSingletonScope();
+                ch0.Bind<ProjectFilesClone>().ToSelf().AndFromFactory();
+                ch0.Bind<FilesManager>().ToSelf().InSingletonScope();
                 ch0.Bind<WhiteCache>().ToSelf().AndFromFactory();
                 ch0.Bind<DisabledWhiteCache>().ToSelf().AndFromFactory();
 
