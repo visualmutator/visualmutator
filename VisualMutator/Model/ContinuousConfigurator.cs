@@ -8,17 +8,21 @@
 
     public class ContinuousConfigurator
     {
+        private readonly IOptionsManager _optionsManager;
         private readonly IRootFactory<ContinuousConfiguration> _continuousConfigurationFactory;
 
         public ContinuousConfigurator(
+            IOptionsManager optionsManager,
             IRootFactory<ContinuousConfiguration> continuousConfigurationFactory)
         {
+            _optionsManager = optionsManager;
             _continuousConfigurationFactory = continuousConfigurationFactory;
         }
 
         public IObjectRoot<ContinuousConfiguration> GetConfiguration()
         {
-            return _continuousConfigurationFactory.Create();
+            var optionsModel = _optionsManager.ReadOptions();
+            return _continuousConfigurationFactory.CreateWithBindings(optionsModel);
         }
 
 

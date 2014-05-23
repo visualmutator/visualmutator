@@ -257,6 +257,7 @@
     <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Controllers\OptionsController.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
+    <Compile Include="Infrastructure\TupleExtensions.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
     <Compile Include="Infrastructure\IExpandableNode.cs" />

@@ -34,7 +34,7 @@
 
         private List<IDisposable> _subscriptions;
         private readonly Subject<ControlEvent> _controlSource;
-        private readonly Subject<String> _sessionFinished;
+        private readonly Subject<string> _sessionFinished;
         private IObjectRoot<SessionController> _currentSessionController;
         private IObjectRoot<ContinuousConfiguration> _continuousConfiguration;
         private IObjectRoot<SessionConfiguration> _sessionConfiguration;
@@ -208,7 +208,6 @@
         {
             _continuousConfiguration.Get.Dispose();
             SessionFinishedEvents.OnNext("");
-            SessionFinishedEvents.OnCompleted();
         }
 
         private void Clean()

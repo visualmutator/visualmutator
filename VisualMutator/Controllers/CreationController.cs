@@ -39,10 +39,10 @@
 
 
         private readonly IOperatorsManager _operatorsManager;
+        private readonly OptionsModel _options;
         private readonly ITypesManager _typesManager;
 
         private readonly SessionConfiguration _sessionConfiguration;
-        private readonly IOptionsManager _optionsManager;
 
         private readonly CommonServices _svc;
         private readonly IDispatcherExecute _dispatcher;
@@ -57,8 +57,8 @@
             CreationViewModel viewModel,
             ITypesManager typesManager,
             IOperatorsManager operatorsManager,
+            OptionsModel options,
             SessionConfiguration sessionConfiguration,
-            IOptionsManager optionsManager,
             CommonServices svc)
         {
             _dispatcher = dispatcher;
@@ -66,8 +66,8 @@
 
             _typesManager = typesManager;
             _operatorsManager = operatorsManager;
+            _options = options;
             _sessionConfiguration = sessionConfiguration;
-            _optionsManager = optionsManager;
             _svc = svc;
 
 
@@ -292,7 +292,7 @@
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
-                MainOptions = _optionsManager.ReadOptions(),
+                MainOptions = _options
             };
             _viewModel.Close();
         }

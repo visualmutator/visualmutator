@@ -31,28 +31,6 @@
     using UsefulTools.Wpf;
     using ViewModels;
 
-    public static class TupleExtensions
-    {
-        public static async Task<Tuple<T1, T2, T3, T4>> WhenAll<T1, T2, T3, T4>
-            (this Tuple<Task<T1>, Task<T2>, Task<T3>, Task<T4>> tasks)
-        {
-            await Task.WhenAll(tasks.Item1, tasks.Item2, tasks.Item3, tasks.Item4);
-            return Tuple.Create(tasks.Item1.Result, tasks.Item2.Result, tasks.Item3.Result, tasks.Item4.Result);
-        }
-        public static async Task<Tuple<T1, T2, T3>> WhenAll<T1, T2, T3>
-            (this Tuple<Task<T1>, Task<T2>, Task<T3>> tasks)
-        {
-            await Task.WhenAll(tasks.Item1, tasks.Item2, tasks.Item3);
-            return Tuple.Create(tasks.Item1.Result, tasks.Item2.Result, tasks.Item3.Result);
-        }
-        public static async Task<Tuple<T1, T2>> WhenAll<T1, T2>
-            (this Tuple<Task<T1>, Task<T2>> tasks)
-        {
-            await Task.WhenAll(tasks.Item1, tasks.Item2);
-            return Tuple.Create(tasks.Item1.Result, tasks.Item2.Result);
-        }
-    }
-
     #endregion
     public class SessionCreator
     {
@@ -84,6 +62,8 @@
                 Task.Run(() => finder.FindCoveringTests(module, matcher))))
                     .ContinueWith(t => t.Result.Flatten().ToList());
         }
+
+
         public async Task<OperatorPackagesRoot> GetOperators()
         {
             try
@@ -180,7 +160,7 @@
 
 
         private readonly SessionConfiguration _sessionConfiguration;
-        private readonly IOptionsManager _optionsManager;
+        private readonly OptionsModel _options;
         private readonly IFactory<SessionCreator> _sessionCreatorFactory;
 
         private readonly CommonServices _svc;
@@ -194,7 +174,7 @@
             CreationViewModel viewModel,
             ITypesManager typesManager,
             SessionConfiguration sessionConfiguration,
-            IOptionsManager optionsManager,
+            OptionsModel options,
             IFactory<SessionCreator> sessionCreatorFactory,
             CommonServices svc)
         {
@@ -202,7 +182,7 @@
             _typesManager = typesManager;
 
             _sessionConfiguration = sessionConfiguration;
-            _optionsManager = optionsManager;
+            _options = options;
             _sessionCreatorFactory = sessionCreatorFactory;
             _svc = svc;
 
@@ -277,7 +257,7 @@
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
-                MainOptions = _optionsManager.ReadOptions(),
+                MainOptions = _options
             };
             //  await 
             return Result;
@@ -339,7 +319,7 @@
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
-                MainOptions = _optionsManager.ReadOptions(),
+                MainOptions = _options
             };
             _viewModel.Close();
         }

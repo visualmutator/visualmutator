@@ -24,7 +24,6 @@
     {
         private readonly MainController _mainController;
         private readonly IOptionsManager _optionsManager;
-        private readonly IOperatorsManager _operatorsManager;
 
         private readonly IHostEnviromentConnection _hostEnviroment;
 
@@ -35,7 +34,7 @@
         private readonly IEventService _eventService;
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IDisposable _disp;
+        private IDisposable _disp;//TODO:
 
         public MainController MainController
         {
@@ -50,7 +49,6 @@
         public ApplicationController(
             MainController mainController,
             IOptionsManager optionsManager,
-            IOperatorsManager operatorsManager,
             IHostEnviromentConnection hostEnviroment,
             ISettingsManager settingsManager,
             IMessageService messageService,
@@ -58,7 +56,6 @@
         {
             _mainController = mainController;
             _optionsManager = optionsManager;
-            _operatorsManager = operatorsManager;
             _hostEnviroment = hostEnviroment;
             _settingsManager = settingsManager;
             _messageService = messageService;
@@ -98,7 +95,7 @@
 
             LocateNUnitConsole();
 
-            _operatorsManager.GetOperators();
+           
         }
 
         private void LocateNUnitConsole()

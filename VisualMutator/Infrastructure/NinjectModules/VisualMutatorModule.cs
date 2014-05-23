@@ -73,25 +73,26 @@
 
             Bind<INUnitWrapper>().To<NUnitWrapper>();
 
-            Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
+            Bind<INUnitExternal>().To<NUnitResultsParser>();
 
 
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
-            Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-            Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
-
+            
+            
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
 
-            Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 =>
+            Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 => // on solution opened / rebuild
             {
+                ch0.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
+                ch0.Bind<IOperatorLoader>().To<MEFOperatorLoader>();
                 ch0.Bind<IProjectClonesManager>().To<ProjectClonesManager>().InSingletonScope();
                 ch0.Bind<ProjectFilesClone>().ToSelf().AndFromFactory();
                 ch0.Bind<FilesManager>().ToSelf().InSingletonScope();
                 ch0.Bind<WhiteCache>().ToSelf().AndFromFactory();
                 ch0.Bind<DisabledWhiteCache>().ToSelf().AndFromFactory();
 
-                ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 =>
-                {
+                ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 => // on session creation
+                {   
                     ch1.Bind<CreationController>().ToSelf().AndFromFactory();
                     ch1.Bind<SessionCreator>().ToSelf().AndFromFactory();
                     ch1.Bind<AutoCreationController>().ToSelf().AndFromFactory();
@@ -100,7 +101,7 @@
                     ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
 
-                    ch1.BindObjectRoot<SessionController>().ToSelf(ch2 =>
+                    ch1.BindObjectRoot<SessionController>().ToSelf(ch2 => // on session starting
                     {
                         ch2.Bind<TestingProcess>().ToSelf().AndFromFactory();
                         ch2.Bind<TestingMutant>().ToSelf().AndFromFactory();
