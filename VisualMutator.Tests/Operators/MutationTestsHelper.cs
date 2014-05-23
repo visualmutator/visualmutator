@@ -149,11 +149,6 @@
             var path = CompileCodeToFile(code);
             return new CciModuleSource().AppendFromFile(path);
         }
-        public static List<IModule> CreateModulesFromCode(string code)
-        {
-            var path = CompileCodeToFile(code);
-            return CreateModulesFromCode(path, new CciModuleSource());
-        }
 
         public static List<MutMod> CreateMutants(IMutationOperator operatorr, MutantsContainer container,
             CciModuleSource ccii, MutantsCache cache, int numberOfMutants)
@@ -209,13 +204,6 @@
             return assemblyNodes.Single().Children.SelectManyRecursive(
                 g => g.Children??new NotifyingCollection<CheckedNode>()).OfType<Mutant>().ToList();
 
-        }
-        public static List<IModule> CreateModulesFromCode(string filePath, CciModuleSource cci)
-        {
-            cci.AppendFromFile(filePath);
-            _log.Info("Copying modules...");
-            List<IModule> copiedModules = cci.Modules.Select(cci.Copy).Cast<IModule>().ToList();
-            return copiedModules;
         }
     }
      public class MutMod

@@ -29,21 +29,19 @@
         List<IModule> Modules { get; }
         void Cleanup();
         IModule AppendFromFile(string filePath);
-        Module Copy(IModule module);
         void WriteToFile(IModule module, string filePath);
         void WriteToStream(IModule module, Stream stream);
         MetadataReaderHost Host { get; }
         List<CciModuleSource.ModuleInfo> ModulesInfo { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
         CciModuleSource.ModuleInfo FindModuleInfo(IModule module);
-        CciModuleSource.ModuleInfo DecompileCopy(IModule module);
     }
 
     public class CciModuleSource : IDisposable, ICciModuleSource, IModuleSource
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
         public List<IModule> Modules
@@ -87,7 +85,6 @@
         public SourceEmitter GetSourceEmitter(CodeLanguage lang, IModule module,SourceEmitterOutputString output)
         {
              var reader = FindModuleInfo(module).PdbReader;
-          //  SourceEmitterOutputString sourceEmitterOutput = new SourceEmitterOutputString();
              return new VisualSourceEmitter(output, _host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
         }
 
@@ -100,7 +97,7 @@
                 throw new AssemblyReadException(filePath + " is not a PE file containing a CLR module or assembly.");
             }
 
-            PdbReader /*?*/ pdbReader = null;
+            PdbReader pdbReader = null;
             string pdbFile = Path.ChangeExtension(module.Location, "pdbx");
             if (File.Exists(pdbFile))
             {
@@ -120,20 +117,7 @@
                 FilePath = filePath
             };
         }
-
-        public ModuleInfo DecompileCopy(IModule module)
-        {
-            ModuleInfo info = FindModuleInfo(module);
-            var cci = new CciModuleSource();
-            ModuleInfo moduleCopy = cci.DecompileFile(info.FilePath);
-            moduleCopy.SubCci = cci;
-            return moduleCopy;
-        }
-
-        public void Append(ModuleInfo info)
-        {
-            _moduleInfoList.Add(info);
-        }
+      
         public IModule AppendFromFile(string filePath)
         {
             _log.Info("CommonCompilerInfra.AppendFromFile:" + filePath);
@@ -142,14 +126,6 @@
             {
                 _moduleInfoList.Add(module);
             }
-            
-         /*   int i = 0;
-            while (i++ < 10)
-            {
-                var copy = Copy(decompiledModule);
-                WriteToFile(copy, @"D:\PLIKI\" + Path.GetFileName(filePath));
-            }
-           */
             return module.Module;
         }
 
@@ -158,19 +134,7 @@
         {
             return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
-        public Module Copy(IModule module)
-        {
-           // _log.Info("CommonCompilerInfra.Module:" + module.Name);
-            var info = FindModuleInfo(module);
-            var copier = new CodeDeepCopier(_host, info.SourceLocationProvider);
-            return copier.Copy(module);
-        }
-        public Module Copy(ModuleInfo module)
-        {
-
-            var copier = new CodeDeepCopier(_host, module.SourceLocationProvider);
-            return copier.Copy(module.Module);
-        }
+  
         public void WriteToFile(IModule module, string filePath)
         {
             _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
@@ -193,21 +157,11 @@
             
         }
 
-     
-
         public void WriteToStream(IModule module, Stream stream )
         {
             PeWriter.WritePeToStream(module, _host, stream);
-
         }
 
-        public void Merge(List<IModule> mutatedModules)
-        {
-            foreach (var mutatedModule in mutatedModules)
-            {
-                FindModuleInfo(mutatedModule).Module = mutatedModule;
-            }
-        }
 
         #region Nested type: ModuleInfo
 
