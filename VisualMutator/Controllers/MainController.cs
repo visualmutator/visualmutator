@@ -142,16 +142,15 @@
 
             try
             {
-                for (int i = 0; i < 100; i++)
-                {
-                    IObjectRoot<SessionController> sessionController =
-                        await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
-
-                }
-
+//                for (int i = 0; i < 1000; i++)
+//                {
+//                    IObjectRoot<SessionController> sessionController =
+//                        await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
+//
+//                }
+//                
                 Clean();
-                _currentSessionController = null;
-
+                _currentSessionController = await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
                 _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
 
                 Subscribe(_currentSessionController.Get);

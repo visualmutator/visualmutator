@@ -117,6 +117,7 @@
             {
                 foreach (INamedTypeDefinition typeDefinition in leafTypes)
                 {
+                   // _log.Debug("For types: matching: ");
                     if (matcher.Matches(typeDefinition))
                     {
                         var type = new TypeNode(parent, typeDefinition.Name.Value);

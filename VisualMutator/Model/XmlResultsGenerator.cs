@@ -21,13 +21,13 @@
 
     public class XmlResultsGenerator
     {
-        private readonly CreationController _creationController;
+        private readonly AutoCreationController _creationController;
         private readonly SessionController _sessionController;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
 
         public XmlResultsGenerator(
-            CreationController creationController,
+            AutoCreationController creationController,
             SessionController sessionController,
             ICodeDifferenceCreator codeDifferenceCreator)
         {

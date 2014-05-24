@@ -11,6 +11,7 @@
     using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
+    using System.Threading;
     using System.Threading.Tasks;
     using Infrastructure;
     using log4net;
@@ -35,18 +36,15 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-
         private readonly SessionConfiguration _sessionConfiguration;
         private readonly OptionsModel _options;
         private readonly IFactory<SessionCreator> _sessionCreatorFactory;
         private readonly IDispatcherExecute _execute;
-
         private readonly CommonServices _svc;
         private readonly CreationViewModel _viewModel;
         private readonly ITypesManager _typesManager;
 
         public MutationSessionChoices Result { get; protected set; }
-
 
         public AutoCreationController(
             CreationViewModel viewModel,
@@ -59,24 +57,25 @@
         {
             _viewModel = viewModel;
             _typesManager = typesManager;
-
             _sessionConfiguration = sessionConfiguration;
             _options = options;
             _sessionCreatorFactory = sessionCreatorFactory;
             _execute = execute;
             _svc = svc;
-
             
             _viewModel.CommandCreateMutants = new SmartCommand(AcceptChoices,
                () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
                      && _viewModel.TypesTreeToTest.TestAssemblies != null && _viewModel.TypesTreeToTest.TestAssemblies.Count != 0
                      && _viewModel.MutationsTree.MutationPackages.Count != 0)
-               .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
-               .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.TestAssemblies)
-               .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
+                   .UpdateOnChanged(_viewModel.TypesTreeMutate, _ => _.Assemblies)
+                   .UpdateOnChanged(_viewModel.TypesTreeToTest, _ => _.TestAssemblies)
+                   .UpdateOnChanged(_viewModel.MutationsTree, _ => _.MutationPackages);
         }
 
-       
+        public DateTime SessionCreationWindowShowTime
+        {
+            get; set;
+        }
 
         public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate = null, bool auto = false)
         {
@@ -99,7 +98,6 @@
                 matcher = new AllMatcher();
             }
 
-
             SessionCreator sessionCreator = _sessionCreatorFactory.Create();
 
             Task<IModuleSource> assembliesTask = _sessionConfiguration.LoadAssemblies();
@@ -118,26 +116,26 @@
             {
                 _viewModel.MutationsTree.MutationPackages
                     = new ReadOnlyCollection<PackageNode>(task.Result.Packages);
-            }, TaskContinuationOptions.NotOnFaulted);
+            },CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
             t2.ContinueWith(task =>
             {
                 _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
-            }, TaskContinuationOptions.NotOnFaulted);
+            }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
             t3.ContinueWith(task =>
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
-            }, TaskContinuationOptions.NotOnFaulted);
+            }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
             try
             {
-                var tt = Task.WhenAll(t1, t2, t3).ContinueWith(t =>
+                var mainTask = Task.WhenAll(t1, t2, t3).ContinueWith(t =>
                 {
-                    if (t1.Exception != null)
+                    if (t.Exception != null)
                     {
-                        ShowError(t1.Exception);
+                        ShowError(t.Exception);
                         _viewModel.Close();
                     }
                     else
@@ -148,9 +146,11 @@
                         }
                     }
                 }, _execute.GuiScheduler);
-
-                _viewModel.ShowDialog();
-                await tt;
+                if (!auto)
+                {
+                    _viewModel.ShowDialog();
+                }
+                await mainTask;
                 return Result;
               
             }
@@ -182,26 +182,7 @@
             _viewModel.Close();
         }
 
-        public DateTime SessionCreationWindowShowTime { get; set; }
-
-        private void CheckError(Task result)
-        {
-            if (result.Exception != null)
-            {
-                ShowErrorAndExit(result.Exception);
-            }
-        }
-
-        private void ShowErrorAndExit(AggregateException exception)
-        {
-            _log.Error(exception);
-            _svc.Threading.PostOnGui(() =>
-            {
-                ShowError(exception);
-                _viewModel.Close();
-            });
-        }
-
+      
         private void ShowError(Exception exc)
         {
             var aggregate = exc as AggregateException;
@@ -220,7 +201,7 @@
             }
             else
             {
-                _svc.Logging.ShowError(exc, _viewModel.View);
+                _svc.Logging.ShowError(innerException, _viewModel.View);
             }
         }
 
