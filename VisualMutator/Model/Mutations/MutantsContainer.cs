@@ -147,9 +147,9 @@
         }
 
 
-        public AssemblyNode FindTargets(IModule module)
+        public AssemblyNode FindTargets(IModuleInfo module)
         {
-            _log.Info("Finding targets for module: " + module.Name.Value);
+            _log.Info("Finding targets for module: " + module.Name);
             _log.Info("Using mutation operators: " + _mutOperators.Select(_=>_.Info.Id)
                 .MayAggregate((a,b)=>a+","+b).Else("None"));
 
@@ -165,11 +165,11 @@
                     operatorVisitor.OperatorUtils = _operatorUtils;
                     operatorVisitor.Initialize();
 
-                    var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module);
+                    var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module.Module);
 
                     var traverser = new VisualCodeTraverser(_filter, visitor);
 
-                    traverser.Traverse(module);
+                    traverser.Traverse(module.Module);
                     visitor.PostProcess();
 
                     IEnumerable<MutationTarget> mutations = LimitMutationTargets(visitor.MutationTargets);
@@ -200,11 +200,11 @@
             
         }
 
-        private AssemblyNode BuildMutantsTree(IModule module, 
+        private AssemblyNode BuildMutantsTree(IModuleInfo module, 
             MultiDictionary<IMutationOperator, MutationTarget> mutationTargets)
         {
 
-            var assemblyNode = new AssemblyNode(module.Name.Value, module);
+            var assemblyNode = new AssemblyNode(module.Name, module);
 
             System.Action<CheckedNode, ICollection<MutationTarget>> typeNodeCreator = (parent, targets) =>
                 {
@@ -263,15 +263,15 @@
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
-                var mutatedModules = new List<IModule>();
+                var mutatedModules = new List<IModuleInfo>();
                 foreach (var module in moduleSource.Modules)
                 {
                     percentCompleted.Progress();
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
                          _sharedTargets.GetValues(mutationOperator, returnEmptySet: true), 
-                         module, mutationOperator.Info.Id);
+                         module.Module, mutationOperator.Info.Id);
                     var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
-                    traverser2.Traverse(module);
+                    traverser2.Traverse(module.Module);
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
@@ -283,14 +283,14 @@
                     
                     operatorCodeRewriter.NameTable = _cci.Host.NameTable;
                     operatorCodeRewriter.Host = _cci.Host;
-                    operatorCodeRewriter.Module = module;
+                    operatorCodeRewriter.Module = module.Module;
                     operatorCodeRewriter.OperatorUtils = _operatorUtils;
                     operatorCodeRewriter.Initialize();
 
-                    var rewrittenModule = (Assembly) rewriter.Rewrite(module);
+                    var rewrittenModule = (Assembly) rewriter.Rewrite(module.Module);
 
                     rewriter.CheckForUnfoundObjects();
-                    mutatedModules.Add(rewrittenModule);
+                    mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
                 }
                // moduleSource.Merge(mutatedModules);
               ////  return moduleSource;

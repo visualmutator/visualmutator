@@ -12,7 +12,6 @@
     using Decompilation;
     using Decompilation.PeToText;
     using Exceptions;
-    using JetBrains.Annotations;
     using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
@@ -24,29 +23,28 @@
 
     #endregion
 
-    public interface ICciModuleSource
+    public interface ICciModuleSource : IModuleSource
     {
-        List<IModule> Modules { get; }
         void Cleanup();
-        IModule AppendFromFile(string filePath);
-        void WriteToFile(IModule module, string filePath);
-        void WriteToStream(IModule module, Stream stream);
+        IModuleInfo AppendFromFile(string filePath);
+        void WriteToFile(IModuleInfo module, string filePath);
+        void WriteToStream(IModuleInfo module, Stream stream);
         MetadataReaderHost Host { get; }
-        List<CciModuleSource.ModuleInfo> ModulesInfo { get; }
+        List<ModuleInfo> ModulesInfo { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
-        CciModuleSource.ModuleInfo FindModuleInfo(IModule module);
+        //ModuleInfo FindModuleInfo(IModule module);
     }
 
-    public class CciModuleSource : IDisposable, ICciModuleSource, IModuleSource
+    public class CciModuleSource : IDisposable, ICciModuleSource
     {
         private readonly MetadataReaderHost _host;
         private readonly List<ModuleInfo> _moduleInfoList;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public List<IModule> Modules
+        public List<IModuleInfo> Modules
         {
-            get { return _moduleInfoList.Select(_ => _.Module).ToList(); }
+            get { return _moduleInfoList.Cast<IModuleInfo>().ToList(); }
         }
         public List<ModuleInfo> ModulesInfo
         {
@@ -82,9 +80,10 @@
             _moduleInfoList.Clear();
         }
 
-        public SourceEmitter GetSourceEmitter(CodeLanguage lang, IModule module,SourceEmitterOutputString output)
+        public SourceEmitter GetSourceEmitter(CodeLanguage lang, IModule module, SourceEmitterOutputString output)
         {
-             var reader = FindModuleInfo(module).PdbReader;
+            var moduleInfo = _moduleInfoList.Single(m => m.Module.Name.UniqueKey == module.Name.UniqueKey);
+            var reader = moduleInfo.PdbReader;
              return new VisualSourceEmitter(output, _host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
         }
 
@@ -108,17 +107,15 @@
             Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
             ISourceLocationProvider sourceLocationProvider = pdbReader;
             ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
-            return new ModuleInfo
+            return new ModuleInfo(decompiledModule, filePath)
             {
-                Module = decompiledModule,
                 PdbReader = pdbReader,
                 LocalScopeProvider = localScopeProvider,
                 SourceLocationProvider = sourceLocationProvider,
-                FilePath = filePath
             };
         }
       
-        public IModule AppendFromFile(string filePath)
+        public IModuleInfo AppendFromFile(string filePath)
         {
             _log.Info("CommonCompilerInfra.AppendFromFile:" + filePath);
             ModuleInfo module = DecompileFile(filePath);
@@ -126,63 +123,47 @@
             {
                 _moduleInfoList.Add(module);
             }
-            return module.Module;
+            return module;
         }
 
 
-        public ModuleInfo FindModuleInfo(IModule module)
+        public IModuleInfo FindModuleInfo(IModule module)
         {
             return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
   
-        public void WriteToFile(IModule module, string filePath)
+        public void WriteToFile(IModuleInfo moduleInfo, string filePath)
         {
+            var module = (ModuleInfo) moduleInfo;
             _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
-            var info = FindModuleInfo(module);
+            var info = FindModuleInfo(module.Module);
             using (FileStream peStream = File.Create(filePath))
             {
-                if (info.PdbReader == null)
+                if (module.PdbReader == null)
                 {
-                    PeWriter.WritePeToStream(module, _host, peStream);
+                    PeWriter.WritePeToStream(module.Module, _host, peStream);
                 }
                 else
                 {
-                    using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), info.PdbReader))
+                    using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
                     {
-                        PeWriter.WritePeToStream(module, _host, peStream, info.SourceLocationProvider,
-                                                 info.LocalScopeProvider, pdbWriter);
+                        PeWriter.WritePeToStream(module.Module, _host, peStream, module.SourceLocationProvider,
+                                                 module.LocalScopeProvider, pdbWriter);
                     }
                 }
             }
             
         }
 
-        public void WriteToStream(IModule module, Stream stream )
+        public void WriteToStream(IModuleInfo module, Stream stream )
         {
-            PeWriter.WritePeToStream(module, _host, stream);
+            PeWriter.WritePeToStream(module.Module, _host, stream);
         }
 
 
         #region Nested type: ModuleInfo
 
-        public class ModuleInfo
-        {
-            public IModule Module { get; set; }
-            public string FilePath { get; set; }
-
-            [CanBeNull]
-            public PdbReader PdbReader { get; set; }
-            [CanBeNull]
-            public ILocalScopeProvider LocalScopeProvider { get; set; }
-            [CanBeNull]
-            public ISourceLocationProvider SourceLocationProvider
-            {
-                get;
-                set;
-            }
-            [CanBeNull]
-            public CciModuleSource SubCci { get; set; }
-        }
+       
 
         #endregion
 

@@ -45,7 +45,7 @@
         }
         private void Infrastructure()
         {
-            Bind<IMessageService>().To<MessageService>().InSingletonScope();
+            Bind<IMessageService>().To<ConsoleMessageService>().InSingletonScope();
             Bind<IEventService>().To<EventService>().InSingletonScope();
             Bind<IThreading>().To<Threading>().InSingletonScope();
             Bind<CommonServices>().ToSelf().InSingletonScope();

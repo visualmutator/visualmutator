@@ -26,28 +26,19 @@
             return (test.Tests ?? new List<ITest>()).Cast<ITest>();
         }
     }
-    public class NUnitTestService : ITestService
+    public abstract class NUnitTestService : ITestService
     {
         private readonly INUnitWrapper _nUnitWrapper;
 
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public NUnitTestService(INUnitWrapper nUnitWrapper, IMessageService messageService)
+        public NUnitTestService(INUnitWrapper nUnitWrapper)
         {
             _nUnitWrapper = nUnitWrapper;
 
         }
-
-        public INUnitWrapper TestLoader
-        {
-            get
-            {
-                return _nUnitWrapper;
-            }
-        }
-
 
         public virtual May<TestsLoadContext> LoadTests(string assemblyPath)
         {
@@ -63,6 +54,8 @@
             return context;
         }
 
+        public abstract void Cancel();
+
         public static IList<T> ConvertToListOf<T>(IList iList)
         {
             IList<T> result = new List<T>();
@@ -76,41 +69,10 @@
 
             return result;
         }
-        public virtual Task RunTests(TestsRunContext testsRunContext)
-        {
-//            Task<TestResult> runTests = TestLoader.RunTests();
-//
-//            return runTests.ContinueWith(testResult =>
-//            {
-//                var list = new List<TmpTestNodeMethod>();
-//                if(testResult.Exception != null)
-//                {
-//                    _log.Error(testResult.Exception);
-//                }
-//                else
-//                {
-//                    _subscription = TestLoader.TestFinished.Subscribe(result =>
-//                    {
-//                        TmpTestNodeMethod node = new TmpTestNodeMethod(result.Test.TestName.FullName);
-//                        //TestNodeMethod node = context.TestMap[result.Test.TestName.FullName];
-//                        node.State = result.IsSuccess ? TestNodeState.Success : TestNodeState.Failure;
-//                        node.Message = result.Message + "\n" + result.StackTrace;
-//                        list.Add(node);
-//                    }, () =>
-//                    {
-//
-//                        
-//                    });
-//                    _subscription.Dispose();
-//                }
-//                return list;
-//            });
-            throw new NotImplementedException();
-        }
+       
 
         public void UnloadTests()
         {
-            
             _nUnitWrapper.UnloadProject();
         }
 
@@ -187,14 +149,6 @@
                 }
             }
         }
-
-
-        public void Cancel()
-        {
-            _nUnitWrapper.Cancel();
-        }
-
-
 
 
 

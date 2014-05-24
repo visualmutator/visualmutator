@@ -132,19 +132,14 @@
             var finder = new CoveringTestsFinder();
            
            // List<MethodIdentifier> coveredTests = null;
-            Task<IList<IModule>> assembliesTask = _sessionConfiguration.LoadAssemblies();
+            Task<IModuleSource> assembliesTask = _sessionConfiguration.LoadAssemblies();
 
 
             var coveringTask = assembliesTask.ContinueWith((task) =>
             {
 
-                IList<IModule> modules = (IList<IModule>) task.Result;
-                return Task.WhenAll(modules.Select(module =>
-                    Task.Run(() => finder.FindCoveringTests(module, matcher))))
-                    .ContinueWith(t =>
-                    {
-                        return (object) t.Result.Flatten().ToList();
-                    });
+                IModuleSource modules = task.Result;
+                return finder.FindCoveringTests(modules, matcher);
 
             }, TaskContinuationOptions.NotOnFaulted).Unwrap();
             
@@ -153,7 +148,7 @@
             {
                 if (result.Exception == null)
                 {
-                    IList<IModule> modules = (IList<IModule>) result.Result;
+                    IModuleSource modules = result.Result;
                     var assemblies = _typesManager.CreateNodesFromAssemblies(modules, matcher)
                                 .Where(a => a.Children.Count > 0).ToList();
 

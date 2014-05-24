@@ -42,12 +42,7 @@
                // new VisualMutatorModule(), 
             };
 
-
-
             kernel = new StandardKernel();
-
-
-
 
             kernel.Load(modules);
             BasicConfigurator.Configure(

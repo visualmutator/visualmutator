@@ -52,11 +52,11 @@
         {
             //CciModuleSource cciModuleSource = _mutantsCache.WhiteCache.GetWhiteModules();
 
-            foreach (IModule module in assembliesProvider.Modules)
+            foreach (var module in assembliesProvider.Modules)
             {
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(info.Directory, module.Name.Value + ".dll");
+                string file = Path.Combine(info.Directory, module.Name + ".dll");
                 
               //  ((CciModuleSource) assembliesProvider).WriteToFile(module, file);
                 _moduleSource.WriteToFile(module, file);

@@ -24,28 +24,22 @@
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
     {
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly IMutantsCache _mutantsCache;
 
         private readonly ICodeVisualizer _codeVisualizer;
-        private CciModuleSource _originalModules;
 
-        public CodeDifferenceCreator(IMutantsCache mutantsCache, ICodeVisualizer codeVisualizer)
+        public CodeDifferenceCreator(ICodeVisualizer codeVisualizer)
         {
-            _mutantsCache = mutantsCache;
             _codeVisualizer = codeVisualizer;
-
-            
         }
+
         public string GetWhiteCodeFor(CodeLanguage language, IMethodDefinition method)
         {
-            if (_originalModules == null)
-            {
-                _originalModules = _mutantsCache.WhiteCache.GetWhiteModules();
-            }
-            return _codeVisualizer.Visualize(language, method, _originalModules);
+            
+            return _codeVisualizer.Visualize(language, method);
         }
+
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
         {
             var diff = new StringBuilder();
@@ -60,11 +54,11 @@
         public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant)
         {
             _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
-            IModuleSource moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
+           // IModuleSource moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
             try
             {
                 
-                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, moduleDefinitions);
+                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated);
                 CodePair pair = new CodePair
                 {
                     OriginalCode = GetWhiteCodeFor(language, mutant.MutationTarget.MethodRaw),

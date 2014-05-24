@@ -256,6 +256,7 @@
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Controllers\OptionsController.cs" />
+    <Compile Include="Controllers\SessionCreator.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
     <Compile Include="Infrastructure\TupleExtensions.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
@@ -284,6 +285,7 @@
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
     <Compile Include="Model\Exceptions\StrongNameSignedAssemblyException.cs" />
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
+    <Compile Include="Model\ModuleInfo.cs" />
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />

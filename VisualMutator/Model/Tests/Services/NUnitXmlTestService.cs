@@ -31,7 +31,7 @@
         private readonly ISettingsManager _settingsManager;
         private readonly CommonServices _svc;
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly string _nunitConsolePath;
 
         public NUnitXmlTestService(
@@ -39,7 +39,7 @@
             IFactory<NUnitTester> nUnitTesterFactory,
             ISettingsManager settingsManager,
             CommonServices svc)
-            : base(nUnitWrapper, svc.Logging)
+            : base(nUnitWrapper)
         {
             _nUnitTesterFactory = nUnitTesterFactory;
             _settingsManager = settingsManager;
@@ -56,6 +56,11 @@
 
             UnloadTests();
             return loadTests;
+        }
+
+        public override void Cancel()
+        {
+            
         }
 
         private string FindConsolePath()

@@ -28,9 +28,9 @@
         bool IsAssemblyLoadError { get; set; }
 
 
-        IList<IModule> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths);
+        IModuleSource LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths);
 
-        IList<AssemblyNode> CreateNodesFromAssemblies(IList<IModule> modules,
+        IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
             ICodePartsMatcher constraints);
         MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies);
     }
@@ -65,12 +65,12 @@
         }
       
 
-        public IList<AssemblyNode> CreateNodesFromAssemblies(IList<IModule> modules,
+        public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
             ICodePartsMatcher constraints)
         {
             var matcher = constraints.Join(new ProperlyNamedMatcher());
 
-            List<AssemblyNode> assemblyNodes = modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
+            List<AssemblyNode> assemblyNodes = modules.Modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
             var root = new RootNode();
             root.Children.AddRange(assemblyNodes);
             root.IsIncluded = true;
@@ -80,19 +80,18 @@
 
 
 
-        public IList<IModule> LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
+        public IModuleSource LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
         {
-            var assemblyTreeNodes = new List<IModule>();
             foreach (FilePathAbsolute assemblyPath in assembliesPaths)
             {
                 try
                 {
-                    IModule module = _moduleSource.AppendFromFile((string)assemblyPath);
-                    if(module.StrongNameSigned)
-                    {
-                       // throw new StrongNameSignedAssemblyException();
-                    }
-                    assemblyTreeNodes.Add(module);
+                    //TODO:leak
+                    _moduleSource.AppendFromFile((string)assemblyPath);
+//                    if(module.StrongNameSigned)
+//                    {
+//                       // throw new StrongNameSignedAssemblyException();
+//                    }
                 }
                 catch (AssemblyReadException e)
                 {
@@ -105,14 +104,14 @@
                     IsAssemblyLoadError = true;
                 }
             } 
-            return assemblyTreeNodes;
+            return _moduleSource;
         }
 
 
-        public AssemblyNode CreateAssemblyNode(IModule module, 
+        public AssemblyNode CreateAssemblyNode(IModuleInfo module, 
             ICodePartsMatcher matcher)
         {
-            var assemblyNode = new AssemblyNode(module.Name.Value, module);
+            var assemblyNode = new AssemblyNode(module.Name, module);
 
             System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
             {
@@ -141,7 +140,7 @@
                     namespaceExtractor,
                     (parent, name) => new TypeNamespaceNode(parent, name),
                     typeNodeCreator,
-                        module.GetAllTypes().ToList());
+                        module.Module.GetAllTypes().ToList());
 
 
             //remove empty amespaces. 

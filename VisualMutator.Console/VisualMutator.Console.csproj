@@ -156,6 +156,7 @@
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="CommandLineParser.cs" />
+    <Compile Include="ConsoleMessageService.cs" />
     <Compile Include="ConsoleNinjectModule.cs" />
     <Compile Include="EnvironmentConnection.cs" />
     <Compile Include="GuiNinjectModule.cs" />

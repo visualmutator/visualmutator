@@ -15,17 +15,14 @@
     {
 
 
-        string Visualize(CodeLanguage language, IMethodDefinition method, IModuleSource modules);
+        string Visualize(CodeLanguage language, IMethodDefinition method);
         string Visualize(CodeLanguage language, IModuleSource modules);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
         private readonly ICciModuleSource _cci;
-        
-
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public CodeVisualizer(ICciModuleSource cci)
         {
@@ -40,15 +37,15 @@
             foreach (var assembly in modules.Modules)
             {
                 var sourceEmitterOutput = new SourceEmitterOutputString();
-                var sourceEmitter = _cci.GetSourceEmitter(language, assembly, sourceEmitterOutput);
-                sourceEmitter.Traverse(assembly);
+                var sourceEmitter = _cci.GetSourceEmitter(language, assembly.Module, sourceEmitterOutput);
+                sourceEmitter.Traverse(assembly.Module);
                 sb.Append(sourceEmitterOutput.Data);
             }  
   
             return sb.ToString();
         }
         
-        public string Visualize(CodeLanguage language, IMethodDefinition method, IModuleSource modules)
+        public string Visualize(CodeLanguage language, IMethodDefinition method)
         {
             if (method == null)
             {
@@ -64,9 +61,6 @@
             sourceEmitter.Traverse(method);
        
             sb.Append(sourceEmitterOutput.Data);
-
-               
-
             return sb.ToString();
         }
       

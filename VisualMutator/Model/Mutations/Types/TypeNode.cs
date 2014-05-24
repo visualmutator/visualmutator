@@ -5,6 +5,7 @@
     using System.Text;
     using Microsoft.Cci;
     using MutantsTree;
+    using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
@@ -12,16 +13,16 @@
     #endregion
     public class AssemblyNode : MutationNode
     {
-        private IModule _assemblyDefinition;
+        private readonly IModuleInfo _assemblyDefinition;
 
 
-        public AssemblyNode(string name, IModule assemblyDefinition)
+        public AssemblyNode(string name, IModuleInfo assemblyDefinition)
             : base( name, true)
         {
             _assemblyDefinition = assemblyDefinition;
         }
 
-        public IModule AssemblyDefinition
+        public IModuleInfo AssemblyDefinition
         {
             get
             {

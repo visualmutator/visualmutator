@@ -57,7 +57,7 @@
 
         public bool AssemblyLoadProblem { get; set; }
 
-        public Task<IList<IModule>> LoadAssemblies()
+        public Task<IModuleSource> LoadAssemblies()
         {
             return Task.Run(() => _typesManager.LoadAssemblies(
                     _originalFilesClone.Assemblies));
