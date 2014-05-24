@@ -7,9 +7,11 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Threading.Tasks;
     using DiffLib;
     using log4net;
     using Microsoft.Cci;
+    using Mutations;
     using Mutations.MutantsTree;
     using StoringMutants;
     using UsefulTools.Switches;
@@ -19,7 +21,7 @@
     public interface ICodeDifferenceCreator
     {
 
-        CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant);
+        Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant);
     }
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
@@ -28,16 +30,12 @@
 
 
         private readonly ICodeVisualizer _codeVisualizer;
+        private readonly IMutantsCache _mutantsCache;
 
-        public CodeDifferenceCreator(ICodeVisualizer codeVisualizer)
+        public CodeDifferenceCreator(ICodeVisualizer codeVisualizer, IMutantsCache mutantsCache)
         {
             _codeVisualizer = codeVisualizer;
-        }
-
-        public string GetWhiteCodeFor(CodeLanguage language, IMethodDefinition method)
-        {
-            
-            return _codeVisualizer.Visualize(language, method);
+            _mutantsCache = mutantsCache;
         }
 
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
@@ -51,17 +49,17 @@
             };
         }
 
-        public CodeWithDifference CreateDifferenceListing(CodeLanguage language, Mutant mutant)
+        public async Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant)
         {
             _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
-           // IModuleSource moduleDefinitions = _mutantsCache.GetMutatedModules(mutant);
+            MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
             try
             {
-                
-                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated);
+                var whiteCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, mutationResult);
+                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, mutationResult);
                 CodePair pair = new CodePair
                 {
-                    OriginalCode = GetWhiteCodeFor(language, mutant.MutationTarget.MethodRaw),
+                    OriginalCode = whiteCode,
                     MutatedCode = mutatedCode
                 };
                 return GetDiff(language, pair.OriginalCode, pair.MutatedCode);
@@ -75,19 +73,17 @@
                     LineChanges = Enumerable.Empty<LineChange>().ToList()
                 };
             }
-
-            
         }
+
         public string GetListing(CodeLanguage language, IModuleSource modules)
         {
             return _codeVisualizer.Visualize(language, modules);
-
         }
+
         private LineChange NewLineChange(LineChangeType type, 
             StringBuilder diff, int startIndex, int endIndex)
         {
             string text = diff.ToString().Substring(startIndex, endIndex - startIndex - 2);
-
             return new LineChange(type, text);
         }
 
@@ -144,7 +140,6 @@
                         break;
                 }
             }
-
             return list;
         }
 

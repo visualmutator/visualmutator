@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
     using Controllers;
     using Decompilation;
@@ -108,7 +109,7 @@
             if (includeCodeDifferenceListings)
             {
 
-                optionalElements.Add(CreateCodeDifferenceListings(mutants));
+                optionalElements.Add(CreateCodeDifferenceListings(mutants).Result);
             }
 
             if (includeDetailedTestResults)
@@ -129,18 +130,22 @@
                         optionalElements));
             
         }
-        public XElement CreateCodeDifferenceListings(List<Mutant> mutants)
+        public async Task<XElement> CreateCodeDifferenceListings(List<Mutant> mutants)
         {
-
-            return new XElement("CodeDifferenceListings",
-                from mutant in mutants
-                select new XElement("MutantCodeListing",
+            var list = new List<XElement>();
+            foreach (var mutant in mutants)
+            {
+                var diff = await _codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp,
+                    mutant);
+                var el = new XElement("MutantCodeListing",
                     new XAttribute("MutantId", mutant.Id),
-                    new XElement("Code", 
-                        Environment.NewLine+_codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp, 
-                        mutant).Code)
-                        )
-                    );
+
+                    new XElement("Code",
+                        Environment.NewLine + diff.Code));
+                list.Add(el);
+            }
+            return new XElement("CodeDifferenceListings", list);
+
 
         }
 

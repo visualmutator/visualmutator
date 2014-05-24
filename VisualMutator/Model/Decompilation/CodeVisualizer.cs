@@ -7,6 +7,7 @@
     using CSharpSourceEmitter;
     using log4net;
     using Microsoft.Cci;
+    using Mutations;
     using StoringMutants;
 
     #endregion
@@ -15,7 +16,7 @@
     {
 
 
-        string Visualize(CodeLanguage language, IMethodDefinition method);
+        string Visualize(CodeLanguage language, IMethodDefinition method, MutationResult cci);
         string Visualize(CodeLanguage language, IModuleSource modules);
     }
 
@@ -32,7 +33,6 @@
         public string Visualize(CodeLanguage language, IModuleSource modules)
         {
             var sb = new StringBuilder();
-     
             
             foreach (var assembly in modules.Modules)
             {
@@ -45,23 +45,20 @@
             return sb.ToString();
         }
         
-        public string Visualize(CodeLanguage language, IMethodDefinition method)
+        public string Visualize(CodeLanguage language, IMethodDefinition method, MutationResult result)
         {
             if (method == null)
             {
                 return "No method to visualize.";
             }
-
-            var sb = new StringBuilder();
             _log.Info("Visualize: " + method);
             var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
             var sourceEmitterOutput = new SourceEmitterOutputString();
 
-            var sourceEmitter = _cci.GetSourceEmitter(language, module, sourceEmitterOutput);
+            var sourceEmitter = result.WhiteModules.GetSourceEmitter(language, module, sourceEmitterOutput);
             sourceEmitter.Traverse(method);
        
-            sb.Append(sourceEmitterOutput.Data);
-            return sb.ToString();
+            return sourceEmitterOutput.Data;
         }
       
     }

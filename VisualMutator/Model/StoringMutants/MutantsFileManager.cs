@@ -10,6 +10,7 @@
     using Infrastructure;
     using log4net;
     using Microsoft.Cci;
+    using Mutations;
     using Mutations.MutantsTree;
     using Mutations.Types;
     using UsefulTools.CheckboxedTree;
@@ -22,7 +23,7 @@
 
     public interface IMutantsFileManager
     {
-        void StoreMutant(StoredMutantInfo directory, IModuleSource mutant);
+        void StoreMutant(StoredMutantInfo directory, MutationResult mutant);
 
     }
 
@@ -48,18 +49,18 @@
             _fs = fs;
         }
 
-        public void StoreMutant(StoredMutantInfo info, IModuleSource assembliesProvider)
+        public void StoreMutant(StoredMutantInfo info, MutationResult mutationResult)
         {
             //CciModuleSource cciModuleSource = _mutantsCache.WhiteCache.GetWhiteModules();
 
-            foreach (var module in assembliesProvider.Modules)
+            foreach (var module in mutationResult.MutatedModules.Modules)
             {
                 
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                 string file = Path.Combine(info.Directory, module.Name + ".dll");
-                
-              //  ((CciModuleSource) assembliesProvider).WriteToFile(module, file);
-                _moduleSource.WriteToFile(module, file);
+
+                //  ((CciModuleSource) assembliesProvider).WriteToFile(module, file);
+                mutationResult.WhiteModules.WriteToFile(module, file);
                 info.AssembliesPaths.Add(file);
             }
         }

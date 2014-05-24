@@ -34,7 +34,7 @@
 
         void SaveMutantsToDisk(MutationTestingSession currentSession);
 
-        IModuleSource ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, CciModuleSource moduleSource);
+        MutationResult ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, CciModuleSource moduleSource);
 
 
         IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted);
@@ -253,7 +253,7 @@
 
         }
 
-        public IModuleSource ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
+        public MutationResult ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
             CciModuleSource moduleSource)
         {
             _log.Debug("ExecuteMutation in object: " +ToString()+ GetHashCode());
@@ -294,7 +294,7 @@
                 }
                // moduleSource.Merge(mutatedModules);
               ////  return moduleSource;
-                return new SimpleModuleSource(mutatedModules.ToList());
+                return new MutationResult(new SimpleModuleSource(mutatedModules.ToList()), moduleSource);
             }
             catch (Exception e)
             {
@@ -328,7 +328,16 @@
             }
 
         }
+    }
+    public class MutationResult
+    {
+        public MutationResult(IModuleSource mutatedModules, ICciModuleSource whiteModules)
+        {
+            MutatedModules = mutatedModules;
+            WhiteModules = whiteModules;
+        }
 
-
+        public ICciModuleSource WhiteModules { get; private set; }
+        public IModuleSource MutatedModules { get; private set; }
     }
 }

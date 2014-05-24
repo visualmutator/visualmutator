@@ -33,7 +33,6 @@
             return _identifier.ClassName == name;
         }
 
-
         public static MethodIdentifier CreateIdentifier(IMethodReference method)
         {
             method = MemberHelper.UninstantiateAndUnspecialize(method);

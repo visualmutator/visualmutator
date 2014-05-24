@@ -2,15 +2,19 @@
 {
     #region
 
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Reflection;
     using System.Runtime.Caching;
     using System.Threading.Tasks;
+    using System.Windows.Documents;
     using log4net;
     using Mutations;
     using Mutations.MutantsTree;
     using Ninject;
     using UsefulTools.Core;
+    using Wintellect.PowerCollections;
 
     #endregion
 
@@ -18,13 +22,12 @@
     {
         void setDisabled( bool disableCache = false);
 
-        IModuleSource GetMutatedModules(Mutant mutant);
         IWhiteCache WhiteCache
         {
             get;
         }
 
-        Task<IModuleSource> GetMutatedModulesAsync(Mutant mutant);
+        Task<MutationResult> GetMutatedModulesAsync(Mutant mutant);
     }
 
     public class MutantsCache : IMutantsCache
@@ -39,6 +42,7 @@
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private bool _disableCache;
+        private ConcurrentDictionary<string, ConcurrentBag<TaskCompletionSource<MutationResult>>> _map;
 
         //private IDictionary<Mutant, IList<IModule>> 
         public IWhiteCache WhiteCache
@@ -71,6 +75,8 @@
             config.Add("cacheMemoryLimitMegabytes", "256");
 
             _cache = new MemoryCache("CustomCache", config);
+
+            _map = new ConcurrentDictionary<string, ConcurrentBag<TaskCompletionSource<MutationResult>>>();
         }
 
         public void setDisabled(bool disableCache = false)
@@ -78,43 +84,62 @@
             _disableCache = disableCache;
         }
 
-        public IModuleSource GetMutatedModules(Mutant mutant)
-        {
-            _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
-            _log.Info("Request to cache for mutant: "+mutant.Id);
-            
-            IModuleSource result;
-            if (_disableCache || !_cache.Contains(mutant.Id))
-            {
-                result = _mutantsContainer.ExecuteMutation(mutant, 
-                    ProgressCounter.Inactive(), _whiteCache.GetWhiteModules());
-
-                _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
-            }
-            else
-            {
-                result = (IModuleSource)_cache.Get(mutant.Id);
-            }
-            return result;
-        }
-        public async Task<IModuleSource> GetMutatedModulesAsync(Mutant mutant)
+    
+        public async Task<MutationResult> GetMutatedModulesAsync(Mutant mutant)
         {
             _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
             _log.Info("Request to cache for mutant: " + mutant.Id);
-
-            IModuleSource result;
+            bool creating = false;
+            MutationResult result;
             if (_disableCache || !_cache.Contains(mutant.Id))
             {
-                CciModuleSource source = await _whiteCache.GetWhiteModulesAsync();
-                result = _mutantsContainer.ExecuteMutation(mutant,
-                    ProgressCounter.Inactive(), source);
+                Task<MutationResult> resultTask;
+                lock (this)
+                {
+                    ConcurrentBag<TaskCompletionSource<MutationResult>> val;
+                    if (_map.TryGetValue(mutant.Id, out val))
+                    {
+                        var tcs = new TaskCompletionSource<MutationResult>();
+                        val.Add(tcs);
+                        resultTask = tcs.Task;
+                    }
+                    else
+                    {
+                        _map.TryAdd(mutant.Id, new ConcurrentBag<TaskCompletionSource<MutationResult>>());
+                        resultTask = CreateNew(mutant);
+                        creating = true;
+                    }
+                }
+                result = await resultTask;
 
-                _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
+                if (creating)
+                {
+                    lock(this)
+                    {
+                        ConcurrentBag<TaskCompletionSource<MutationResult>> awaiters;
+                        _map.TryRemove(mutant.Id, out awaiters);
+                        foreach (var tcs in awaiters)
+                        {
+                            tcs.SetResult(result);
+                        }
+                    }
+                }
+              
+                return result;
             }
             else
             {
-                result = (IModuleSource)_cache.Get(mutant.Id);
+                result = (MutationResult) _cache.Get(mutant.Id);
             }
+            return result;
+        }
+        private async Task<MutationResult> CreateNew(Mutant mutant)
+        {
+            CciModuleSource source = await _whiteCache.GetWhiteModulesAsync();
+            var result = await Task.Run(() => _mutantsContainer.ExecuteMutation(mutant,
+                ProgressCounter.Inactive(), source));
+
+            _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
             return result;
         }
     }
