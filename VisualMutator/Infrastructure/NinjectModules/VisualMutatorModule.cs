@@ -79,7 +79,7 @@
                 {   
                     ch1.Bind<SessionCreator>().ToSelf().AndFromFactory();
                     ch1.Bind<AutoCreationController>().ToSelf().AndFromFactory();
-                    ch1.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
+                    //ch1.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                     ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
                     ch1.BindObjectRoot<SessionController>().ToSelf(ch2 => // on session starting
@@ -90,7 +90,6 @@
                         ch2.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
                         ch2.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
                         ch2.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
-                        ch2.Bind<IMutantsFileManager>().To<MutantsFileManager>().InSingletonScope();
                         ch2.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
                         ch2.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
                         ch2.Bind<AstFormatter>().ToSelf();

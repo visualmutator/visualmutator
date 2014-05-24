@@ -83,8 +83,8 @@
         {
             _disableCache = disableCache;
         }
-
     
+        //TODO:test error behaviour
         public async Task<MutationResult> GetMutatedModulesAsync(Mutant mutant)
         {
             _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
@@ -124,7 +124,6 @@
                         }
                     }
                 }
-              
                 return result;
             }
             else
@@ -133,6 +132,7 @@
             }
             return result;
         }
+
         private async Task<MutationResult> CreateNew(Mutant mutant)
         {
             CciModuleSource source = await _whiteCache.GetWhiteModulesAsync();

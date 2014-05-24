@@ -17,8 +17,6 @@
     using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
-    using UsefulTools.Paths;
-    using MethodIdentifier = Model.MethodIdentifier;
 
     #endregion
 
@@ -26,9 +24,6 @@
     {
 
         bool IsAssemblyLoadError { get; set; }
-
-
-        IModuleSource LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths);
 
         IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
             ICodePartsMatcher constraints);
@@ -46,14 +41,11 @@
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ICciModuleSource _moduleSource;
 
         public bool IsAssemblyLoadError { get; set; }
    
-        public SolutionTypesManager(
-            ICciModuleSource moduleSource)
+        public SolutionTypesManager()
         {
-            _moduleSource = moduleSource;
         }
 
         public MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies)
@@ -63,7 +55,6 @@
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
             return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new Extensibility.MethodIdentifier(m)).ToList());
         }
-      
 
         public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
             ICodePartsMatcher constraints)
@@ -78,35 +69,7 @@
             return assemblyNodes;
         }
 
-
-
-        public IModuleSource LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
-        {
-            foreach (FilePathAbsolute assemblyPath in assembliesPaths)
-            {
-                try
-                {
-                    //TODO:leak
-                    _moduleSource.AppendFromFile((string)assemblyPath);
-//                    if(module.StrongNameSigned)
-//                    {
-//                       // throw new StrongNameSignedAssemblyException();
-//                    }
-                }
-                catch (AssemblyReadException e)
-                {
-                    _log.Error("ReadAssembly failed. ", e);
-                    IsAssemblyLoadError = true;
-                }
-                catch (Exception e)
-                {
-                    _log.Error("ReadAssembly failed. ", e);
-                    IsAssemblyLoadError = true;
-                }
-            } 
-            return _moduleSource;
-        }
-
+     
 
         public AssemblyNode CreateAssemblyNode(IModuleInfo module, 
             ICodePartsMatcher matcher)

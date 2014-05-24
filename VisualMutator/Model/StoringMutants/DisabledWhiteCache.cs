@@ -47,7 +47,7 @@ namespace VisualMutator.Model.StoringMutants
 
         public Task<CciModuleSource> GetWhiteModulesAsync()
         {
-            return Task.FromResult(CreateSource(_paths));
+            return Task.Run(() => CreateSource(_paths));
         }
 
         public void Dispose()

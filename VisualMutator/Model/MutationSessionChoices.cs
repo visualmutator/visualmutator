@@ -8,6 +8,7 @@ namespace VisualMutator.Model
     using Microsoft.Cci;
     using Mutations;
     using Mutations.Types;
+    using StoringMutants;
     using Tests;
     using Tests.TestsTree;
     using UsefulTools.Paths;
@@ -33,5 +34,6 @@ namespace VisualMutator.Model
         public MutantsCreationOptions MutantsCreationOptions { get; set; }
         public IList<TestNodeAssembly> TestAssemblies { get; set; }
         public OptionsModel MainOptions { get; set; }
+        public CciModuleSource WhiteSource { get; set; }
     }
 }

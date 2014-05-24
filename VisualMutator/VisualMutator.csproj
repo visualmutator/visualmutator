@@ -322,7 +322,6 @@
     <Compile Include="Model\Mutations\MutantsTree\MutantGroup.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutationRootNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
-    <Compile Include="Model\StoringMutants\MutantsFileManager.cs" />
     <Compile Include="Model\StoringMutants\DisabledWhiteCache.cs" />
     <Compile Include="Model\StoringMutants\WhiteCache.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />

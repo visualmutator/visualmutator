@@ -42,7 +42,7 @@
 
     public class MutantsContainer : IMutantsContainer
     {
-        private readonly ICciModuleSource _cci;
+        private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
 
@@ -55,12 +55,12 @@
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutantsContainer(
-            ICciModuleSource cci, 
+            MutationSessionChoices choices,
             IWhiteCache whiteCache,
             IOperatorUtils operatorUtils
             )
         {
-            _cci = cci;
+            _choices = choices;
             _whiteCache = whiteCache;
             _operatorUtils = operatorUtils;
 
@@ -161,7 +161,7 @@
                 {
                     var ded = mutationOperator.CreateVisitor();
                     IOperatorCodeVisitor operatorVisitor = ded;
-                    operatorVisitor.Host = _cci.Host;
+                    operatorVisitor.Host = _choices.WhiteSource.Host;
                     operatorVisitor.OperatorUtils = _operatorUtils;
                     operatorVisitor.Initialize();
 
@@ -275,14 +275,14 @@
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
-                    var rewriter = new VisualCodeRewriter(_cci.Host, visitorBack.TargetAstObjects,
+                    var rewriter = new VisualCodeRewriter(moduleSource.Host, visitorBack.TargetAstObjects,
                         visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
                     
-                    operatorCodeRewriter.NameTable = _cci.Host.NameTable;
-                    operatorCodeRewriter.Host = _cci.Host;
+                    operatorCodeRewriter.NameTable = moduleSource.Host.NameTable;
+                    operatorCodeRewriter.Host = moduleSource.Host;
                     operatorCodeRewriter.Module = module.Module;
                     operatorCodeRewriter.OperatorUtils = _operatorUtils;
                     operatorCodeRewriter.Initialize();

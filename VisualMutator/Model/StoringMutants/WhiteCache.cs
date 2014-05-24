@@ -28,6 +28,7 @@ namespace VisualMutator.Model.StoringMutants
         private List<ProjectFilesClone> _filesPool;
         private readonly int _threadsCount;
         private bool _paused;
+        private Exception _error;
 
         public WhiteCache(
             IProjectClonesManager fileManager,
@@ -39,12 +40,13 @@ namespace VisualMutator.Model.StoringMutants
             _threadsCount = threadsCount;
             _whiteCache = new BlockingCollection<CciModuleSource>(20);
             _clients = new Queue<TaskCompletionSource<CciModuleSource>>();
-            _maxCount = 8;
+            _maxCount = 5;
             _paths = new BlockingCollection<IList<string>>();
         }
 
         public async void Initialize()
         {
+            _error = null;
             _assembliesPaths = _fileManager.CreateClone("WhiteCache-" );
             _paths = new BlockingCollection<IList<string>>();
             _paths.Add(_assembliesPaths.Assemblies.Select(_ => _.Path).ToList());
@@ -58,25 +60,33 @@ namespace VisualMutator.Model.StoringMutants
             {
                 _paths.Add(projectFilesClone.Assemblies.Select(_ => _.Path).ToList());
             }
-                       
-
+            
             new Thread(() =>
             {
-                foreach (IList<string> item in _paths.GetConsumingEnumerable())
+                try
                 {
-                    Monitor.Enter(this);
-                    while (_whiteCache.Count >= _maxCount || _paused)
+                    foreach (IList<string> item in _paths.GetConsumingEnumerable())
                     {
-                        Monitor.Wait(this);
+                        Monitor.Enter(this);
+                        while (_whiteCache.Count >= _maxCount || _paused)
+                        {
+                            Monitor.Wait(this);
+                        }
+                        Monitor.Exit(this);
+                        IList<string> item1 = item;
+                        Task.Run(() => _whiteCache.TryAdd(CreateSource(item1)))
+                            .ContinueWith(task =>
+                            {
+                                _paths.TryAdd(item1);
+                                NotifyClients();
+                            }).LogErrors();
                     }
-                    Monitor.Exit(this);
-                    IList<string> item1 = item;
-                    Task.Run(() => _whiteCache.TryAdd(CreateSource(item1)))
-                        .ContinueWith(task =>
-                    {
-                        _paths.TryAdd(item1);
-                        NotifyClients();
-                    }).LogErrors();
+                }
+                catch (Exception e)
+                {
+                    _log.Error("Read assembly failed. ", e);
+                    _error = e;
+                    _paths.CompleteAdding();
                 }
 
             }).Start();
@@ -104,11 +114,11 @@ namespace VisualMutator.Model.StoringMutants
             Monitor.Pulse(this);
             Monitor.Exit(this);
             return cciModuleSource;
-
         }
 
         public Task<CciModuleSource> GetWhiteModulesAsync()
         {
+
             CciModuleSource cciModuleSource = TryTake();
             if (cciModuleSource != null)
             {
@@ -117,9 +127,16 @@ namespace VisualMutator.Model.StoringMutants
             else
             {
                 var tcs = new TaskCompletionSource<CciModuleSource>();
-                lock(this)
+                if (_error != null)
                 {
-                    _clients.Enqueue(tcs);
+                    tcs.SetException(_error);
+                }
+                else
+                {
+                    lock (this)
+                    {
+                        _clients.Enqueue(tcs);
+                    }
                 }
                 return tcs.Task;
             }
@@ -127,7 +144,7 @@ namespace VisualMutator.Model.StoringMutants
         private CciModuleSource TryTake()
         {
             CciModuleSource cciModuleSource;
-            if (_whiteCache.TryTake(out cciModuleSource))
+            if (_whiteCache.TryTake(out cciModuleSource, TimeSpan.FromMilliseconds(10)))
             {
                 Monitor.Enter(this);
                 Monitor.Pulse(this);
@@ -146,19 +163,7 @@ namespace VisualMutator.Model.StoringMutants
             var moduleSource = new CciModuleSource();
             foreach (var assembliesPath in assembliesPaths)
             {
-                try
-                {
-                    moduleSource.AppendFromFile(assembliesPath);
-                }
-                catch (AssemblyReadException e)
-                {
-                    _log.Warn("ReadAssembly failed. ", e);
-                }
-                catch (Exception e)
-                {
-                    _log.Warn("ReadAssembly failed. ", e);
-                }
-
+                moduleSource.AppendFromFile(assembliesPath);
             }
             return moduleSource;
         }
@@ -171,7 +176,6 @@ namespace VisualMutator.Model.StoringMutants
             {
                 projectFilesClone.Dispose();
             }
-
         }
 
         public bool Paused

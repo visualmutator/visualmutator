@@ -43,6 +43,7 @@
         private readonly CommonServices _svc;
         private readonly CreationViewModel _viewModel;
         private readonly ITypesManager _typesManager;
+        private CciModuleSource _whiteSource;
 
         public MutationSessionChoices Result { get; protected set; }
 
@@ -100,7 +101,7 @@
 
             SessionCreator sessionCreator = _sessionCreatorFactory.Create();
 
-            Task<IModuleSource> assembliesTask = _sessionConfiguration.LoadAssemblies();
+            Task<CciModuleSource> assembliesTask = _sessionConfiguration.LoadAssemblies();
 
             Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
 
@@ -133,6 +134,7 @@
             {
                 var mainTask = Task.WhenAll(t1, t2, t3).ContinueWith(t =>
                 {
+                    _whiteSource = assembliesTask.Result;
                     if (t.Exception != null)
                     {
                         ShowError(t.Exception);
@@ -176,7 +178,8 @@
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
-                MainOptions = _options
+                MainOptions = _options,
+                WhiteSource = _whiteSource 
             };
 
             _viewModel.Close();

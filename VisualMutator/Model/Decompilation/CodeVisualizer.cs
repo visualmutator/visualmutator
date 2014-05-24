@@ -17,27 +17,22 @@
 
 
         string Visualize(CodeLanguage language, IMethodDefinition method, MutationResult cci);
-        string Visualize(CodeLanguage language, IModuleSource modules);
+        string Visualize(CodeLanguage language, ICciModuleSource modules);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly ICciModuleSource _cci;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public CodeVisualizer(ICciModuleSource cci)
-        {
-            _cci = cci;
-        }
 
-        public string Visualize(CodeLanguage language, IModuleSource modules)
+        public string Visualize(CodeLanguage language, ICciModuleSource modules)
         {
             var sb = new StringBuilder();
             
             foreach (var assembly in modules.Modules)
             {
                 var sourceEmitterOutput = new SourceEmitterOutputString();
-                var sourceEmitter = _cci.GetSourceEmitter(language, assembly.Module, sourceEmitterOutput);
+                var sourceEmitter = modules.GetSourceEmitter(language, assembly.Module, sourceEmitterOutput);
                 sourceEmitter.Traverse(assembly.Module);
                 sb.Append(sourceEmitterOutput.Data);
             }  

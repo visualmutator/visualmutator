@@ -22,6 +22,7 @@
         private readonly ITypesManager _typesManager;
         private readonly IFactory<AutoCreationController> _autoCreationControllerFactory;
         private readonly IRootFactory<SessionController> _sessionFactory;
+        private readonly IWhiteCache _whiteCache;
         private readonly ProjectFilesClone _originalFilesClone;
         private readonly ProjectFilesClone _testsClone;
 
@@ -37,6 +38,7 @@
             _typesManager = typesManager;
             _autoCreationControllerFactory = autoCreationControllerFactory;
             _sessionFactory = sessionFactory;
+            _whiteCache = whiteCache;
 
             fileManager.Initialize();
 
@@ -54,10 +56,9 @@
 
         public bool AssemblyLoadProblem { get; set; }
 
-        public Task<IModuleSource> LoadAssemblies()
+        public Task<CciModuleSource> LoadAssemblies()
         {
-            return Task.Run(() => _typesManager.LoadAssemblies(
-                    _originalFilesClone.Assemblies));
+            return _whiteCache.GetWhiteModulesAsync();
         }
         public Task<object> LoadTests()
         {

@@ -36,7 +36,7 @@
 
         public Subject<object> Events { get; set; }
 
-        public async Task<List<MethodIdentifier>> FindCoveringTests(Task<IModuleSource> assembliesTask, ICodePartsMatcher matcher)
+        public async Task<List<MethodIdentifier>> FindCoveringTests(Task<CciModuleSource> assembliesTask, ICodePartsMatcher matcher)
         {
             var finder = new CoveringTestsFinder();
             IModuleSource modules = await assembliesTask;
@@ -85,7 +85,7 @@
             return testsRootNode.TestNodeAssemblies.ToList();
         }
 
-        public async Task<List<AssemblyNode>> BuildAssemblyTree(Task<IModuleSource> assembliesTask,
+        public async Task<List<AssemblyNode>> BuildAssemblyTree(Task<CciModuleSource> assembliesTask,
             bool constrainedMutation, ICodePartsMatcher matcher)
         {
             var modules = await assembliesTask;

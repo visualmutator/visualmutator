@@ -75,7 +75,7 @@
             }
         }
 
-        public string GetListing(CodeLanguage language, IModuleSource modules)
+        public string GetListing(CodeLanguage language, ICciModuleSource modules)
         {
             return _codeVisualizer.Visualize(language, modules);
         }

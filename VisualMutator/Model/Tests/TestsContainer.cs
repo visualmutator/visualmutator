@@ -42,7 +42,6 @@
 
     public class TestsContainer : ITestsContainer
     {
-        private readonly IMutantsFileManager _mutantsFileManager;
         private readonly IMutantsCache _mutantsCache;
         private readonly IProjectClonesManager _fileManager;
 
@@ -55,12 +54,10 @@
         private readonly TestResultTreeCreator _testResultTreeCreator;
 
         public TestsContainer(
-            IMutantsFileManager mutantsFileManager,
             IMutantsCache mutantsCache,
             IProjectClonesManager fileManager,
             IAssemblyVerifier assemblyVerifier)
         {
-            _mutantsFileManager = mutantsFileManager;
             _mutantsCache = mutantsCache;
             _fileManager = fileManager;
             _assemblyVerifier = assemblyVerifier;
@@ -121,8 +118,15 @@
         {
             var clone = await _fileManager.CreateCloneAsync("InitTestEnvironment");
             var info = new StoredMutantInfo(clone);
-            var modules = await _mutantsCache.GetMutatedModulesAsync(mutant);
-            _mutantsFileManager.StoreMutant(info, modules);
+            var mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
+            foreach (var module in mutationResult.MutatedModules.Modules)
+            {
+                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                string file = Path.Combine(info.Directory, module.Name + ".dll");
+
+                mutationResult.WhiteModules.WriteToFile(module, file);
+                info.AssembliesPaths.Add(file);
+            }
             return info;
         }
 
