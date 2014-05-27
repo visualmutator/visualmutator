@@ -62,9 +62,8 @@
 
         public async Task<List<TestNodeAssembly>> BuildTestTree(Task<List<MethodIdentifier>> coveringTask, Task<object> testsTask, bool constrainedMutation)
         {
-
+            
             var result = await Tuple.Create(coveringTask, testsTask).WhenAll();
-
             var coveringTests = result.Item1;
             var testsRootNode = (TestsRootNode)result.Item2;
 

@@ -73,7 +73,7 @@
 
         public void UnloadTests()
         {
-            _nUnitWrapper.UnloadProject();
+           // _nUnitWrapper.UnloadProject();
         }
 
         private void BuildTestTree(ITest test, TestsLoadContext context)

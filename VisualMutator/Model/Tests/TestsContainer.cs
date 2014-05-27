@@ -124,7 +124,7 @@
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                 string file = Path.Combine(info.Directory, module.Name + ".dll");
 
-                mutationResult.WhiteModules.WriteToFile(module, file);
+                await Task.Run( () => mutationResult.WhiteModules.WriteToFile(module, file));
                 info.AssembliesPaths.Add(file);
             }
             return info;

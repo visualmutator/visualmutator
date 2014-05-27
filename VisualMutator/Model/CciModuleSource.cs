@@ -66,10 +66,26 @@
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        public void Dispose(bool disposing)
+        {
+            foreach (var moduleInfo in _moduleInfoList)
+            {
+                if (moduleInfo.PdbReader != null)
+                {
+                    moduleInfo.PdbReader.Dispose();
+                }
+            }
+            _moduleInfoList.Clear();
             _host.Dispose();
         }
+        ~CciModuleSource()
+        {
+            Dispose(false);
+        }
 
-      
         public void Cleanup()
         {
             foreach (var moduleInfo in _moduleInfoList)
@@ -131,28 +147,35 @@
         {
             return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
-  
+
         public void WriteToFile(IModuleInfo moduleInfo, string filePath)
         {
-            var module = (ModuleInfo) moduleInfo;
-            _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
-            var info = FindModuleInfo(module.Module);
-            using (FileStream peStream = File.Create(filePath))
+            lock (this)
             {
-                if (module.PdbReader == null)
+                var module = (ModuleInfo)moduleInfo;
+                _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
+                MemoryStream stream = new MemoryStream();
+                using (FileStream peStream = File.Create(filePath))
                 {
-                    PeWriter.WritePeToStream(module.Module, _host, peStream);
-                }
-                else
-                {
-                    using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
+                    if (module.PdbReader == null)
                     {
-                        PeWriter.WritePeToStream(module.Module, _host, peStream, module.SourceLocationProvider,
-                                                 module.LocalScopeProvider, pdbWriter);
+                        PeWriter.WritePeToStream(module.Module, _host, peStream);
+                    }
+                    else
+                    {
+                        using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
+                        {
+                            PeWriter.WritePeToStream(module.Module, _host, peStream, module.SourceLocationProvider,
+                                module.LocalScopeProvider, pdbWriter);
+                        }
                     }
                 }
             }
-            
+           
+//            using (FileStream peStream = File.Create(filePath))
+//            {
+//                stream.CopyTo(peStream);
+//            }
         }
 
         public void WriteToStream(IModuleInfo module, Stream stream )

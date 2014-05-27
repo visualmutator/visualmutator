@@ -113,18 +113,18 @@
 
             var t3 = sessionCreator.BuildTestTree(coveringTask, testsTask, constrainedMutation);
 
-            t1.ContinueWith(task =>
+            var t11 = t1.ContinueWith(task =>
             {
                 _viewModel.MutationsTree.MutationPackages
                     = new ReadOnlyCollection<PackageNode>(task.Result.Packages);
             },CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            t2.ContinueWith(task =>
+            var t22 = t2.ContinueWith(task =>
             {
                 _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            t3.ContinueWith(task =>
+            var t33 = t3.ContinueWith(task =>
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
@@ -132,17 +132,19 @@
 
             try
             {
-                var mainTask = Task.WhenAll(t1, t2, t3).ContinueWith(t =>
+                var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33).ContinueWith(t =>
                 {
-                    _whiteSource = assembliesTask.Result;
+                    
                     if (t.Exception != null)
                     {
                         ShowError(t.Exception);
                         _viewModel.Close();
+                        throw t.Exception;
                     }
                     else
                     {
-                        if(auto)
+                        _whiteSource = assembliesTask.Result;
+                        if (auto)
                         {
                             AcceptChoices();
                         }

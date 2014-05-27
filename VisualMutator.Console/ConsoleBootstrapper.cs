@@ -61,18 +61,18 @@
     {
         public override void Load()
         {
-            Bind<IMutationResultsView>().ToConstant(new Mock<IMutationResultsView>().Object);
-            Bind<IMutantsSavingView>().ToConstant(new Mock<IMutantsSavingView>().Object);
-            Bind<ISessionCreationView>().ToConstant(new Mock<ISessionCreationView>().Object);
-            Bind<IChooseTestingExtensionView>().ToConstant(new Mock<IChooseTestingExtensionView>().Object);
-            Bind<IMutantDetailsView>().ToConstant(new Mock<IMutantDetailsView>().Object);
-            Bind<IResultsSavingView>().ToConstant(new Mock<IResultsSavingView>().Object);
-            Bind<ITestsSelectableTree>().ToConstant(new Mock<ITestsSelectableTree>().Object);
-            Bind<IMutantsCreationOptionsView>().ToConstant(new Mock<IMutantsCreationOptionsView>().Object);
-            Bind<IMutantsTestingOptionsView>().ToConstant(new Mock<IMutantsTestingOptionsView>().Object);
-            Bind<IMutationsTreeView>().ToConstant(new Mock<IMutationsTreeView>().Object);
-            Bind<ITypesTreeView>().ToConstant(new Mock<ITypesTreeView>().Object);
-            Bind<IOptionsView>().ToConstant(new Mock<IOptionsView>().Object);
+            Bind<IMutationResultsView>().ToMethod(c => new Mock<IMutationResultsView>().Object);
+            Bind<IMutantsSavingView>().ToMethod(c => new Mock<IMutantsSavingView>().Object);
+            Bind<ISessionCreationView>().ToMethod(c => new Mock<ISessionCreationView>().Object);
+            Bind<IChooseTestingExtensionView>().ToMethod(c => new Mock<IChooseTestingExtensionView>().Object);
+            Bind<IMutantDetailsView>().ToMethod(c => new Mock<IMutantDetailsView>().Object);
+            Bind<IResultsSavingView>().ToMethod(c => new Mock<IResultsSavingView>().Object);
+            Bind<ITestsSelectableTree>().ToMethod(c => new Mock<ITestsSelectableTree>().Object);
+            Bind<IMutantsCreationOptionsView>().ToMethod(c => new Mock<IMutantsCreationOptionsView>().Object);
+            Bind<IMutantsTestingOptionsView>().ToMethod(c => new Mock<IMutantsTestingOptionsView>().Object);
+            Bind<IMutationsTreeView>().ToMethod(c => new Mock<IMutationsTreeView>().Object);
+            Bind<ITypesTreeView>().ToMethod(c => new Mock<ITypesTreeView>().Object);
+            Bind<IOptionsView>().ToMethod(c => new Mock<IOptionsView>().Object);
 
         }
     }
@@ -117,7 +117,11 @@
                 optionsModel.WhiteCacheThreadsCount = 0;
                 optionsModel.ProcessingThreadsCount = 2;
                 _boot.AppController.OptionsManager.WriteOptions(optionsModel);
-                _boot.AppController.MainController.RunMutationSessionAuto(methodIdentifier);
+                for (int i = 0; i < 1000; i++)
+                {
+                    _boot.AppController.MainController.RunMutationSessionAuto2(methodIdentifier);
+                }
+               
 
                 _boot.AppController.MainController.SessionFinishedEvents.Subscribe(_ =>
                 {

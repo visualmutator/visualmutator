@@ -35,5 +35,6 @@ namespace VisualMutator.Model
         public IList<TestNodeAssembly> TestAssemblies { get; set; }
         public OptionsModel MainOptions { get; set; }
         public CciModuleSource WhiteSource { get; set; }
+
     }
 }

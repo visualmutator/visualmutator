@@ -79,11 +79,11 @@
                 {   
                     ch1.Bind<SessionCreator>().ToSelf().AndFromFactory();
                     ch1.Bind<AutoCreationController>().ToSelf().AndFromFactory();
-                    //ch1.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                     ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
 
                     ch1.BindObjectRoot<SessionController>().ToSelf(ch2 => // on session starting
                     {
+                        ch2.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                         ch2.Bind<TestingProcess>().ToSelf().AndFromFactory();
                         ch2.Bind<TestingMutant>().ToSelf().AndFromFactory();
                         ch2.Bind<MutantDetailsController>().ToSelf().AndFromFactory();

@@ -45,6 +45,7 @@
         private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
+        private readonly ICciModuleSource _cci;
 
         public bool DebugConfig { get; set; }
 
@@ -57,13 +58,14 @@
         public MutantsContainer(
             MutationSessionChoices choices,
             IWhiteCache whiteCache,
-            IOperatorUtils operatorUtils
+            IOperatorUtils operatorUtils,
+            ICciModuleSource cci
             )
         {
             _choices = choices;
             _whiteCache = whiteCache;
             _operatorUtils = operatorUtils;
-
+            _cci = cci;
         }
 
         public void Initialize(ICollection<IMutationOperator> mutOperators, 
@@ -246,7 +248,13 @@
                 (parent, name) => new TypeNamespaceNode(parent, name), 
                 typeNodeCreator,
                 mutationTargets.Values.SelectMany(a => a).ToList());
-          
+
+
+            foreach (var node in assemblyNode.Children.Where(n=>n.Children.Count == 0).ToList())
+            {
+                assemblyNode.Children.Remove(node);
+            }
+
 
             return assemblyNode;
 
@@ -259,7 +267,7 @@
             _log.Debug("ExecuteMutation in object: " +ToString()+ GetHashCode());
             IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null? new IdentityOperator() : 
                 _mutOperators.Single(m => mutant.MutationTarget.OperatorId == m.Info.Id);
-                
+            var cci = moduleSource;
             try
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
@@ -275,14 +283,14 @@
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
-                    var rewriter = new VisualCodeRewriter(moduleSource.Host, visitorBack.TargetAstObjects,
+                    var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
                         visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
                     
-                    operatorCodeRewriter.NameTable = moduleSource.Host.NameTable;
-                    operatorCodeRewriter.Host = moduleSource.Host;
+                    operatorCodeRewriter.NameTable = cci.Host.NameTable;
+                    operatorCodeRewriter.Host = cci.Host;
                     operatorCodeRewriter.Module = module.Module;
                     operatorCodeRewriter.OperatorUtils = _operatorUtils;
                     operatorCodeRewriter.Initialize();
@@ -294,7 +302,7 @@
                 }
                // moduleSource.Merge(mutatedModules);
               ////  return moduleSource;
-                return new MutationResult(new SimpleModuleSource(mutatedModules.ToList()), moduleSource);
+                return new MutationResult(new SimpleModuleSource(mutatedModules.ToList()), cci);
             }
             catch (Exception e)
             {

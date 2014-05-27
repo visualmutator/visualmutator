@@ -56,8 +56,7 @@
             ServiceManager.Services.AddService(new AddinManager());
             ServiceManager.Services.AddService(new TestAgency());
 
-            _testRunner = new SimpleTestRunner();
-            _testRunner.Unload();
+           
         }
 
        
@@ -66,22 +65,27 @@
 
             try
             {
+                var testRunner = new SimpleTestRunner();
+                
                 var enumerable = assemblies as IList<string> ?? assemblies.ToList();
                 _log.Debug("Creating NUnit package for files " + string.Join(", ", enumerable));
                 var package = new TestPackage("", enumerable.ToList());
                 package.Settings["RuntimeFramework"] = new RuntimeFramework(RuntimeType.Net, Environment.Version);
                 package.Settings["UseThreadedRunner"] = false;
 
-                Monitor.Enter(this);
-                _log.Debug("Loading NUnit package: " + package);
-                bool load = _testRunner.Load(package);
-                if(!load)
-                {
-                    throw new Exception("Tests load result: false.");
-                }
-                var t =_testRunner.Test;
-                Monitor.Exit(this);
-                return t;
+//                lock (this)
+//                {
+                    _log.Debug("Loading NUnit package: " + package);
+                    bool load = testRunner.Load(package);
+                    if (!load)
+                    {
+                        throw new Exception("Tests load result: false.");
+                    }
+                    var t = testRunner.Test;
+                    testRunner.Unload();
+                    return t;
+//                }
+               
             }
             catch (Exception e)
             {

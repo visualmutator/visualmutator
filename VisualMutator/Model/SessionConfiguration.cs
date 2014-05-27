@@ -76,14 +76,9 @@
         }
         public async Task<IObjectRoot<SessionController>> CreateSessionAuto(MethodIdentifier methodIdentifier)
         {
-
             AutoCreationController creationController = _autoCreationControllerFactory.Create();
             var choices = await creationController.Run(methodIdentifier, true);
             return _sessionFactory.CreateWithBindings(choices);
-           
-
         }
-
-        
     }
 }

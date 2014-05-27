@@ -82,13 +82,11 @@
 
             _viewModel.CommandOptions = new SmartCommand(ShowOptions);
             _viewModel.CommandTest = new SmartCommand(Test);
-
         }
 
         private void ShowOptions()
         {
             _optionsController.Create().Run();
-
         }
 
         public void RunMutationSessionForCurrentPosition()
@@ -99,7 +97,6 @@
                 _log.Info("Showing mutation session window for: " + methodIdentifier);
 
                 RunMutationSession(methodIdentifier);
-
             }
         }
 
@@ -142,13 +139,13 @@
 
             try
             {
-//                for (int i = 0; i < 1000; i++)
-//                {
-//                    IObjectRoot<SessionController> sessionController =
-//                        await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
-//
-//                }
-//                
+                for (int i = 0; i < 1000; i++)
+                {
+                    IObjectRoot<SessionController> sessionController =
+                         _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier).Result;
+                    GC.Collect();
+                }
+                
                 Clean();
                 _currentSessionController = await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
                 _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
@@ -168,7 +165,32 @@
                 throw;
             }
         }
+        public async void RunMutationSessionAuto2(MethodIdentifier methodIdentifier)
+        {
+            _host.Build();
+            _log.Info("Showing mutation session window.");
 
+            _continuousConfiguration = _continuousConfigurator.GetConfiguration();
+            _sessionConfiguration = _continuousConfiguration.Get.CreateSessionConfiguration();
+
+            try
+            {
+                IObjectRoot<SessionController> sessionController = await
+                         _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
+                GC.Collect();
+
+               
+            }
+            catch (TaskCanceledException)
+            {
+                // cancelled by user
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
 
         public void PauseOperations()
         {

@@ -102,7 +102,7 @@
         {
             _kernel = kernel;
             _childBindingAction = childBindings;
-            bindAction = (IKernel k) => k.Bind<TObject>().ToSelf().InSingletonScope();
+            bindAction = k => k.Bind<TObject>().ToSelf().InSingletonScope();
         }
         public IObjectRoot<TObject> CreateWithBindings<T1>(T1 param1)
         {
@@ -157,7 +157,7 @@
 
         public NinjectChildFactory<TObject> AndBindToInterface<T, TObject2>() where TObject2 : T
         {
-            bindAction = (IKernel kernel) => kernel.Bind<T>().To<TObject2>().InSingletonScope();
+            bindAction = kernel => kernel.Bind<T>().To<TObject2>().InSingletonScope();
             return this;
         }
     }
@@ -172,7 +172,7 @@
 
     public class ObjectRoot<TObject> : IObjectRoot<TObject>, IDisposable
     {
-        private readonly IKernel _kernel; //only for keeping
+        private IKernel _kernel; //only for keeping
         private readonly TObject _obj;
 
         public IKernel Kernel
@@ -206,6 +206,7 @@
             if (_kernel != null)
             {
                 _kernel.Dispose();
+                _kernel = null;
             }
         }
 

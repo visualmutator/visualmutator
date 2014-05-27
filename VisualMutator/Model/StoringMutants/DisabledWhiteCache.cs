@@ -45,9 +45,9 @@ namespace VisualMutator.Model.StoringMutants
             
         }
 
-        public Task<CciModuleSource> GetWhiteModulesAsync()
+        public async Task<CciModuleSource> GetWhiteModulesAsync()
         {
-            return Task.Run(() => CreateSource(_paths));
+            return await Task.Run(() => CreateSource(_paths));
         }
 
         public void Dispose()
@@ -62,20 +62,7 @@ namespace VisualMutator.Model.StoringMutants
             var moduleSource = new CciModuleSource();
             foreach (var assembliesPath in assembliesPaths)
             {
-                try
-                {
-                    moduleSource.AppendFromFile(assembliesPath);
-
-                }
-                catch (AssemblyReadException e)
-                {
-                    _log.Warn("ReadAssembly failed. ", e);
-                }
-                catch (Exception e)
-                {
-                    _log.Warn("ReadAssembly failed. ", e);
-                }
-
+                moduleSource.AppendFromFile(assembliesPath);
             }
             return moduleSource;
         }
