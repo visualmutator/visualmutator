@@ -66,7 +66,7 @@
         private void CommandMutateAndTest(object sender, EventArgs e)
         {
             Trace.WriteLine("CommandMutateAndTest");
-            _bootstrapper.Kernel.Get<MainController>().RunMutationSessionForCurrentPosition();
+            _bootstrapper.RunMutationSessionForCurrentPosition();
         }
 
         /// <summary>

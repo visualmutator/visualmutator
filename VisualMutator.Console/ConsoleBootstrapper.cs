@@ -106,22 +106,24 @@
         }
 
 
-        public void Initialize()
+        public async void Initialize()
         {
             try
             {
                 _boot.Initialize();
+                _connection.Build();
                 MethodIdentifier methodIdentifier;
                 _connection.GetCurrentClassAndMethod(out methodIdentifier);
                 OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
                 optionsModel.WhiteCacheThreadsCount = 0;
                 optionsModel.ProcessingThreadsCount = 2;
                 _boot.AppController.OptionsManager.WriteOptions(optionsModel);
-                for (int i = 0; i < 1000; i++)
-                {
-                    _boot.AppController.MainController.RunMutationSessionAuto2(methodIdentifier);
-                }
-               
+
+                _boot.AppController.MainController.RunMutationSession(methodIdentifier, true);
+                //                for (int i = 0; i < 1000; i++)
+                //                {
+                //                    _boot.AppController.MainController.RunMutationSessionAuto2(methodIdentifier);
+                //                }
 
                 _boot.AppController.MainController.SessionFinishedEvents.Subscribe(_ =>
                 {
@@ -131,8 +133,9 @@
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _log.Error(e);
             }
+            Console.ReadLine();
         }
     }
 }

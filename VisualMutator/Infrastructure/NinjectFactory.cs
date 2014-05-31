@@ -69,20 +69,20 @@
         public virtual TObject CreateWithBindings<T1>(T1 param1)
         {
             _kernel.Bind<T1>().ToConstant(param1);
-            return Uti.CreateWithParams<TObject>(_kernel, param1);
+            return Uti.CreateWithParams<TObject>(_kernel);
         }
         public virtual TObject CreateWithBindings<T1, T2>(T1 param1, T2 param2)
         {
             _kernel.Bind<T1>().ToConstant(param1);
             _kernel.Bind<T2>().ToConstant(param2);
-            return Uti.CreateWithParams<TObject>(_kernel, param1, param2);
+            return Uti.CreateWithParams<TObject>(_kernel);
         }
         public virtual TObject CreateWithBindings<T1, T2, T3>(T1 param1, T2 param2, T3 param3)
         {
             _kernel.Bind<T1>().ToConstant(param1);
             _kernel.Bind<T2>().ToConstant(param2);
             _kernel.Bind<T3>().ToConstant(param3);
-            return Uti.CreateWithParams<TObject>(_kernel, param1, param2, param3);
+            return Uti.CreateWithParams<TObject>(_kernel);
         }
 
         public virtual TObject CreateWithParams(params object[] parameters)

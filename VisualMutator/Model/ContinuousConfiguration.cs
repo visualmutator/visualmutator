@@ -8,22 +8,20 @@
 
     public class ContinuousConfiguration : IDisposable
     {
-        private readonly IProjectClonesManager _fileManager;
         private readonly OperatorsManager _operatorsManager;
         private readonly IRootFactory<SessionConfiguration> _sessionConfigurationFactory;
         private readonly OptionsModel _optionsModel;
         private readonly IWhiteCache _whiteCache;
 
         public ContinuousConfiguration(
-             IProjectClonesManager fileManager,
             OperatorsManager operatorsManager,
+            IProjectClonesManager fileManager,
             IRootFactory<SessionConfiguration> sessionConfigurationFactory,
             IFactory<WhiteCache> whiteCacheFactory,
             IFactory<DisabledWhiteCache> disabledCacheFactory,
             //------
             OptionsModel optionsModel)
         {
-            _fileManager = fileManager;
             _operatorsManager = operatorsManager;
             _sessionConfigurationFactory = sessionConfigurationFactory;
             _optionsModel = optionsModel;
@@ -36,7 +34,8 @@
             {
                 _whiteCache = disabledCacheFactory.Create();
             }
-
+            fileManager.Initialize();
+            _whiteCache.Initialize();
             _operatorsManager.GetOperators();
         }
 

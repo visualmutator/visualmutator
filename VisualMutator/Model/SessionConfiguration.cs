@@ -40,11 +40,9 @@
             _sessionFactory = sessionFactory;
             _whiteCache = whiteCache;
 
-            fileManager.Initialize();
+            
 
             _originalFilesClone = fileManager.CreateClone("Mutants");
-
-            whiteCache.Initialize();
 
             _testsClone = fileManager.CreateClone("Tests");
             if (_originalFilesClone.IsIncomplete || _testsClone.IsIncomplete
@@ -56,9 +54,17 @@
 
         public bool AssemblyLoadProblem { get; set; }
 
-        public Task<CciModuleSource> LoadAssemblies()
+        public async Task<CciModuleSource> LoadAssemblies()
         {
-            return _whiteCache.GetWhiteModulesAsync();
+            try
+            {
+                return await _whiteCache.GetWhiteModulesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         public Task<object> LoadTests()
         {
@@ -67,18 +73,22 @@
         }
 
 
-        public async Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier = null)
+        public async Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier, bool auto)
         {
-            AutoCreationController creationController = _autoCreationControllerFactory.Create();
-            var choices = await creationController.Run(methodIdentifier) ;
-            return _sessionFactory.CreateWithBindings(choices);
+            _whiteCache.Pause(true);
+            try
+            {
+                AutoCreationController creationController = _autoCreationControllerFactory.Create();
+                var choices = await creationController.Run(methodIdentifier, auto);
+                return _sessionFactory.CreateWithBindings(choices);
+            }
+            finally
+            {
+                _whiteCache.Pause(false);
+            }
+            
 
-        }
-        public async Task<IObjectRoot<SessionController>> CreateSessionAuto(MethodIdentifier methodIdentifier)
-        {
-            AutoCreationController creationController = _autoCreationControllerFactory.Create();
-            var choices = await creationController.Run(methodIdentifier, true);
-            return _sessionFactory.CreateWithBindings(choices);
+            
         }
     }
 }

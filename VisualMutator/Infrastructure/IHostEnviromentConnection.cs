@@ -16,7 +16,9 @@ namespace VisualMutator.Infrastructure
     public enum EventType
     {
         HostOpened,
-        HostClosed
+        HostClosed,
+        BuildBegin,
+        BuildDone
     }
     public interface IHostEnviromentConnection
     {

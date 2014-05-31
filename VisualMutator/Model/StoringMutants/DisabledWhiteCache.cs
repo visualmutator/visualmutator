@@ -20,7 +20,6 @@ namespace VisualMutator.Model.StoringMutants
         private readonly IProjectClonesManager _fileManager;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ProjectFilesClone _assemblies;
-        private List<string> _paths;
 
         public DisabledWhiteCache(IProjectClonesManager fileManager)
         {
@@ -30,24 +29,27 @@ namespace VisualMutator.Model.StoringMutants
         public void Initialize()
         {
             _assemblies = _fileManager.CreateClone("WhiteCache-");
-            _paths = _assemblies.Assemblies.Select(_ => _.Path).ToList();
         }
 
 
         public CciModuleSource GetWhiteModules()
         {
-            return CreateSource(_paths);
+            return new CciModuleSource(_assemblies);
 
         }
 
-        public void Reinitialize(List<string> assembliesPaths)
-        {
-            
-        }
-
+   
         public async Task<CciModuleSource> GetWhiteModulesAsync()
         {
-            return await Task.Run(() => CreateSource(_paths));
+            try
+            {
+                return await Task.Run(() => GetWhiteModules());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public void Dispose()
@@ -55,16 +57,28 @@ namespace VisualMutator.Model.StoringMutants
             _assemblies.Dispose();
         }
 
-        public bool Paused { get; set; }
+        public void Pause(bool paused)
+        {
+            
+        }
 
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {
-            var moduleSource = new CciModuleSource();
-            foreach (var assembliesPath in assembliesPaths)
+            try
             {
-                moduleSource.AppendFromFile(assembliesPath);
+                var moduleSource = new CciModuleSource();
+                foreach (var assembliesPath in assembliesPaths)
+                {
+                    moduleSource.AppendFromFile(assembliesPath);
+                }
+                return moduleSource;
             }
-            return moduleSource;
+            catch(Exception e)
+            {
+                _log.Error(e);
+                throw;
+
+            }
         }
     }
 }

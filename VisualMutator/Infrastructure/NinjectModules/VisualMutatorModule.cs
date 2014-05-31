@@ -55,7 +55,7 @@
          //   Kernel.Load(new ContextPreservationModule());
 
             Bind<ApplicationController>().ToSelf().InSingletonScope();
-            Bind<MainController>().ToSelf().InSingletonScope();
+            
             Bind<OptionsController>().ToSelf().AndFromFactory();
             Bind<NUnitXmlTestService>().ToSelf();
             Bind<NUnitTestService>().To<NUnitXmlTestService>();
@@ -64,11 +64,12 @@
             Bind<INUnitExternal>().To<NUnitResultsParser>();
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
+            Bind<MainController>().ToSelf().AndFromFactory();
 
             Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 => // on solution opened / rebuild
             {
                 ch0.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
-                ch0.Bind<IOperatorLoader>().To<MEFOperatorLoader>();
+                ch0.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
                 ch0.Bind<IProjectClonesManager>().To<ProjectClonesManager>().InSingletonScope();
                 ch0.Bind<ProjectFilesClone>().ToSelf().AndFromFactory();
                 ch0.Bind<FilesManager>().ToSelf().InSingletonScope();

@@ -47,7 +47,6 @@
                 _events.OnNext(EventType.Loaded);
                 return new OptionsModel();
             }
-            
         }
 
         public void WriteOptions(OptionsModel options)

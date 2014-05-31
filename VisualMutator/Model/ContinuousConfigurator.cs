@@ -10,6 +10,7 @@
     {
         private readonly IOptionsManager _optionsManager;
         private readonly IRootFactory<ContinuousConfiguration> _continuousConfigurationFactory;
+        private IObjectRoot<ContinuousConfiguration> _configuration;
 
         public ContinuousConfigurator(
             IOptionsManager optionsManager,
@@ -19,13 +20,28 @@
             _continuousConfigurationFactory = continuousConfigurationFactory;
         }
 
+
+
         public IObjectRoot<ContinuousConfiguration> GetConfiguration()
         {
-            var optionsModel = _optionsManager.ReadOptions();
-            return _continuousConfigurationFactory.CreateWithBindings(optionsModel);
+            return _configuration;
         }
 
 
+        public void CreateConfiguration()
+        {
+            DisposeConfiguration();
+            var optionsModel = _optionsManager.ReadOptions();
+            _configuration = _continuousConfigurationFactory.CreateWithBindings(optionsModel);
+        }
 
+        public void DisposeConfiguration()
+        {
+            if (_configuration != null)
+            {
+                _configuration.Get.Dispose();
+                _configuration = null;
+            }
+        }
     }
 }

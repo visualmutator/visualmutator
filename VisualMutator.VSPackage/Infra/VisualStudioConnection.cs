@@ -99,9 +99,8 @@
        
         public void Initialize()
         {
-     //      
-           // _buildEvents.OnBuildBegin += () => _subject.OnNext(EventType.HostClosed)
-          //  _buildEvents.OnBuildDone += _buildEvents_OnBuildDone;
+            _buildEvents.OnBuildBegin += delegate { _subject.OnNext(EventType.BuildBegin); };
+            _buildEvents.OnBuildDone += delegate { _subject.OnNext(EventType.BuildDone); };
 
             _solutionEvents.Opened += () => _subject.OnNext(EventType.HostOpened);
             _solutionEvents.AfterClosing += () => _subject.OnNext(EventType.HostClosed);

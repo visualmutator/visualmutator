@@ -11,18 +11,22 @@
     public class EnvironmentConnection : IHostEnviromentConnection
     {
         private readonly CommandLineParser _parser;
+        private Subject<EventType> _events;
 
         public EnvironmentConnection(CommandLineParser parser)
         {
             _parser = parser;
-            Events = Observable.Never<EventType>();
+            _events = new Subject<EventType>();
         }
 
         public void Initialize()
         {
         }
 
-        public IObservable<EventType> Events { get; private set; }
+        public IObservable<EventType> Events
+        {
+            get { return _events; }
+        }
 
         public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
         {
@@ -46,6 +50,7 @@
 
         public void Build()
         {
+            _events.OnNext(EventType.HostOpened);
         }
     }
 }

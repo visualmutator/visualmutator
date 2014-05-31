@@ -20,23 +20,23 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private readonly OptionsModel _options;
         private readonly NUnitResultsParser _parser;
         private readonly IProcesses _processes;
         private readonly CommonServices _svc;
         private readonly string _nUnitConsolePath;
         private readonly TestsRunContext _context;
         private readonly CancellationTokenSource _cancellationTokenSource;
-        private OptionsModel _options;
 
         public NUnitTester(
-            OptionsManager optionsManager,
+            OptionsModel options,
             NUnitResultsParser parser,
             IProcesses processes,
             CommonServices svc,
             string nUnitConsolePath,
             TestsRunContext context)
         {
-            _options = optionsManager.ReadOptions();
+            _options = options;
             _parser = parser;
             _processes = processes;
             _svc = svc;

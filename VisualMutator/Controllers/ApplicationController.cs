@@ -13,10 +13,7 @@
     using Infrastructure;
     using log4net;
     using Model;
-    using Model.Mutations.Operators;
     using UsefulTools.Core;
-    using UsefulTools.Switches;
-    using Switch = UsefulTools.Switches.Switch;
 
     #endregion
 
@@ -29,12 +26,10 @@
 
         private readonly ISettingsManager _settingsManager;
 
-        private readonly IMessageService _messageService;
 
         private readonly IEventService _eventService;
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private IDisposable _disp;//TODO:
 
         public MainController MainController
         {
@@ -47,25 +42,22 @@
         }
 
         public ApplicationController(
-            MainController mainController,
+            IBindingFactory<MainController> mainControllerFactory,
             IOptionsManager optionsManager,
             IHostEnviromentConnection hostEnviroment,
             ISettingsManager settingsManager,
-            IMessageService messageService,
             IEventService eventService)
         {
-            _mainController = mainController;
             _optionsManager = optionsManager;
             _hostEnviroment = hostEnviroment;
             _settingsManager = settingsManager;
-            _messageService = messageService;
             _eventService = eventService;
-
 
             HookGlobalExceptionHandlers();
 
             _eventService.Subscribe(this);
-         
+
+            _mainController = mainControllerFactory.CreateWithBindings(_hostEnviroment.Events);
         }
 
         public UserControl MainView
@@ -80,13 +72,6 @@
         {
             _log.Info("Initializing package VisualMutator...");
             _log.Debug("Debug Test...");
-            
-        
-            _disp = _hostEnviroment.Events.Subscribe(type =>
-                Switch.On(type)
-                .Case(EventType.HostOpened, ActivateOnSolutionOpened)
-                .Case(EventType.HostClosed, DeactivateOnSolutionClosed)
-                .ThrowIfNoMatch());
 
             Trace.Listeners.Add(new CustomTraceListener());
 
@@ -94,8 +79,6 @@
             _settingsManager.Initialize();
 
             LocateNUnitConsole();
-
-           
         }
 
         private void LocateNUnitConsole()
@@ -104,6 +87,7 @@
             if (!_settingsManager.ContainsKey(key) || !Directory.Exists(_settingsManager[key]))
             {
                 var localDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+                Debug.Assert(localDir != null, "localDir != null");
                 var nUnitConsoleZipPath = Path.Combine(localDir, "nunitconsole.zip");
                 var nUnitConsoleDirPath = Path.Combine(localDir, "nunitconsole");
                 if (Directory.Exists(nUnitConsoleDirPath))
@@ -115,16 +99,6 @@
             }
         }
 
-
-        private void BuildEvents_OnBuildBegin()
-        {
-         // _unitTestsController.
-        }
-        private void BuildEvents_OnBuildDone()
-        {
-           // _mutantsCreationController.RefreshTypes();
-            
-        }
         public void HookGlobalExceptionHandlers()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -132,6 +106,11 @@
             {
                 Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             }
+        }
+
+        public void RunMutationSessionForCurrentPosition()
+        {
+            MainController.RunMutationSessionForCurrentPosition();
         }
 
         private void Current_DispatcherUnhandledException(
@@ -150,17 +129,6 @@
             // _messageService.ShowError(exception.ToString());
 
         }
-
-
-        private void ActivateOnSolutionOpened()
-        {
-            _mainController.Initialize();
-        }
-        private void DeactivateOnSolutionClosed()
-        {
-            _mainController.Deactivate();
-        }
-
 
     }
 }

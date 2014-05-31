@@ -32,7 +32,8 @@
 
     public class MutantsCache : IMutantsCache
     {
-        private readonly MutationSessionChoices _choices;
+
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IWhiteCache _whiteCache;
         private readonly IMutantsContainer _mutantsContainer;
 
@@ -40,11 +41,9 @@
        
         private const int MaxLoadedModules = 5;
 
-        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private bool _disableCache;
         private ConcurrentDictionary<string, ConcurrentBag<TaskCompletionSource<MutationResult>>> _map;
 
-        //private IDictionary<Mutant, IList<IModule>> 
         public IWhiteCache WhiteCache
         {
             get { return _whiteCache; }
@@ -64,18 +63,17 @@
             IWhiteCache whiteCache,
             IMutantsContainer mutantsContainer)
         {
-            _choices = choices;
             _whiteCache = whiteCache;
             _mutantsContainer = mutantsContainer;
 
-            _disableCache = !_choices.MainOptions.MutantsCacheEnabled;
-            var config = new NameValueCollection();
- 
-            config.Add("physicalMemoryLimitPercentage", "50");
-            config.Add("cacheMemoryLimitMegabytes", "256");
+            _disableCache = !choices.MainOptions.MutantsCacheEnabled;
+            var config = new NameValueCollection
+                         {
+                             {"physicalMemoryLimitPercentage", "50"},
+                             {"cacheMemoryLimitMegabytes", "256"}
+                         };
 
             _cache = new MemoryCache("CustomCache", config);
-
             _map = new ConcurrentDictionary<string, ConcurrentBag<TaskCompletionSource<MutationResult>>>();
         }
 
@@ -138,8 +136,10 @@
             CciModuleSource source = await _whiteCache.GetWhiteModulesAsync();
             var result = await Task.Run(() => _mutantsContainer.ExecuteMutation(mutant,
                 ProgressCounter.Inactive(), source));
-
-            _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
+            if (!_disableCache)
+            {
+                _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
+            }
             return result;
         }
     }

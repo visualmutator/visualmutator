@@ -64,7 +64,7 @@
                 _log.Info("Executing dependency injection.");
                 _appController = _kernel.Get<ApplicationController>();
 
-                VisualMutator_VSPackagePackage.MainControl = Shell;
+                VisualMutator_VSPackagePackage.MainControl = _appController.MainView;
 
 
 
@@ -116,7 +116,10 @@
             _kernel.Load(modules);
 
         }
-   
+        internal void RunMutationSessionForCurrentPosition()
+        {
+            _appController.RunMutationSessionForCurrentPosition();
+        }
 
         public object Shell
         {

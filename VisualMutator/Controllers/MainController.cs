@@ -28,6 +28,7 @@
         private readonly IFactory<OptionsController> _optionsController;
         private readonly MainViewModel _viewModel;
         private readonly ContinuousConfigurator _continuousConfigurator;
+        private readonly IOptionsManager _optionsManager;
         private readonly IHostEnviromentConnection _host;
 
         private readonly CommonServices _svc;
@@ -36,8 +37,8 @@
         private readonly Subject<ControlEvent> _controlSource;
         private readonly Subject<string> _sessionFinished;
         private IObjectRoot<SessionController> _currentSessionController;
-        private IObjectRoot<ContinuousConfiguration> _continuousConfiguration;
         private IObjectRoot<SessionConfiguration> _sessionConfiguration;
+        private List<IDisposable> _disp;
 
         public Subject<string> SessionFinishedEvents
         {
@@ -45,15 +46,18 @@
         }
 
         public MainController(
+            IObservable<EventType> environmentEvents1,
             IFactory<OptionsController> optionsController,
             MainViewModel viewModel,
             ContinuousConfigurator continuousConfigurator,
+            IOptionsManager optionsManager,
             IHostEnviromentConnection host,
             CommonServices svc)
         {
             _optionsController = optionsController;
             _viewModel = viewModel;
             _continuousConfigurator = continuousConfigurator;
+            _optionsManager = optionsManager;
             _host = host;
             _sessionFinished = new Subject<string>();
             _controlSource = new Subject<ControlEvent>();
@@ -82,6 +86,41 @@
 
             _viewModel.CommandOptions = new SmartCommand(ShowOptions);
             _viewModel.CommandTest = new SmartCommand(Test);
+
+
+            _disp = new List<IDisposable>
+                    {
+                        environmentEvents1
+                            .Where(e => e == EventType.HostOpened)
+                            .Subscribe(type =>
+                            {
+                                Initialize();
+                                continuousConfigurator.CreateConfiguration();
+                            }),
+                        environmentEvents1
+                            .Where(e => e == EventType.HostClosed)
+                            .Subscribe(type =>
+                            {
+                                continuousConfigurator.DisposeConfiguration();
+                                Deactivate();
+                            }),
+                        environmentEvents1
+                            .Where(e => e == EventType.BuildBegin)
+                            .Subscribe(type => continuousConfigurator.DisposeConfiguration()),
+
+                        environmentEvents1
+                            .Where(e => e == EventType.BuildDone)
+                            .Subscribe(type => continuousConfigurator.CreateConfiguration()),
+
+                        _optionsManager.Events
+                            .Where(e => e == OptionsManager.EventType.Updated)
+                            .Subscribe(t =>
+                            {
+                                continuousConfigurator.DisposeConfiguration();
+                                continuousConfigurator.CreateConfiguration();
+                            }),
+                    };
+
         }
 
         private void ShowOptions()
@@ -100,20 +139,22 @@
             }
         }
 
-        public async void RunMutationSession(MethodIdentifier methodIdentifier = null)
+        public async void RunMutationSession(MethodIdentifier methodIdentifier = null, bool auto = false)
         {
             _host.Build();
             _log.Info("Showing mutation session window.");
 
-            _continuousConfiguration = _continuousConfigurator.GetConfiguration();
-            _sessionConfiguration = _continuousConfiguration.Get.CreateSessionConfiguration();
+            var continuousConfiguration = _continuousConfigurator.GetConfiguration();
+            var sessionConfiguration = continuousConfiguration.Get.CreateSessionConfiguration();
 
             try
             {
+
                 IObjectRoot<SessionController> sessionController = 
-                    await _sessionConfiguration.Get.CreateSession(methodIdentifier);
+                    await sessionConfiguration.Get.CreateSession(methodIdentifier, auto);
 
                 Clean();
+                _sessionConfiguration = sessionConfiguration;
                 _currentSessionController = sessionController;
 
                 _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
@@ -129,57 +170,20 @@
             }
        
         }
-        public async void RunMutationSessionAuto(MethodIdentifier methodIdentifier)
+       
+        public void RunMutationSessionAuto2(MethodIdentifier methodIdentifier)
         {
             _host.Build();
             _log.Info("Showing mutation session window.");
 
-            _continuousConfiguration = _continuousConfigurator.GetConfiguration();
-            _sessionConfiguration = _continuousConfiguration.Get.CreateSessionConfiguration();
+            _sessionConfiguration = _continuousConfigurator
+                .GetConfiguration().Get.CreateSessionConfiguration();
 
             try
             {
-                for (int i = 0; i < 1000; i++)
-                {
-                    IObjectRoot<SessionController> sessionController =
-                         _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier).Result;
-                    GC.Collect();
-                }
-                
-                Clean();
-                _currentSessionController = await _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
-                _viewModel.MutantDetailsViewModel = _currentSessionController.Get.MutantDetailsController.ViewModel;
 
-                Subscribe(_currentSessionController.Get);
+                var a = _sessionConfiguration.Get.CreateSession(methodIdentifier, true).Result;
 
-                _log.Info("Starting mutation session...");
-                _currentSessionController.Get.RunMutationSession(_controlSource);
-            }
-            catch (TaskCanceledException)
-            {
-                // cancelled by user
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-        public async void RunMutationSessionAuto2(MethodIdentifier methodIdentifier)
-        {
-            _host.Build();
-            _log.Info("Showing mutation session window.");
-
-            _continuousConfiguration = _continuousConfigurator.GetConfiguration();
-            _sessionConfiguration = _continuousConfiguration.Get.CreateSessionConfiguration();
-
-            try
-            {
-                IObjectRoot<SessionController> sessionController = await
-                         _sessionConfiguration.Get.CreateSessionAuto(methodIdentifier);
-                GC.Collect();
-
-               
             }
             catch (TaskCanceledException)
             {
@@ -227,7 +231,6 @@
 
         private void SessionFinished()
         {
-            _continuousConfiguration.Get.Dispose();
             SessionFinishedEvents.OnNext("");
         }
 

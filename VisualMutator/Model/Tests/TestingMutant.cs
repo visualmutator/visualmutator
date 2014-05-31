@@ -23,7 +23,6 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly TestsContainer _testsContainer;
-        private readonly OptionsManager _optionsManager;
         private readonly MutationSessionChoices _choices;
         private readonly NUnitXmlTestService _nunitService;
         private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
@@ -31,27 +30,26 @@
         private readonly Mutant _mutant;
         private StoredMutantInfo _storedMutantInfo;
         private ICollection<NUnitTester> _nUnitTesters;
-        private DateTime _sessionStartTime;
-        private OtherParams _options;
+        private readonly DateTime _sessionStartTime;
+        private readonly OptionsModel _options;
 
 
         public TestingMutant(
             SessionController sessionController,
             TestsContainer testsContainer,
-            OptionsManager optionsManager,
+            OptionsModel options,
             MutationSessionChoices choices,
             NUnitXmlTestService nunitService,
             ISubject<SessionEventArgs> sessionEventsSubject,
             Mutant mutant)
         {
             _testsContainer = testsContainer;
-            _optionsManager = optionsManager;
+            _options = options;
             _choices = choices;
             _nunitService = nunitService;
             _sessionEventsSubject = sessionEventsSubject;
             _mutant = mutant;
             _sessionStartTime = sessionController.SessionStartTime;
-            _options = _optionsManager.ReadOptions().ParsedParams;
         }
         public void Cancel()
         {
@@ -82,7 +80,7 @@
             if (!_mutant.IsEquivalent) //todo: somewhat non-threadsafe, but valid
             {
                 await RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo);
-                if (!_options.DebugFiles)
+                if (!_options.ParsedParams.DebugFiles)
                 {
                     _storedMutantInfo.Dispose();
                 }

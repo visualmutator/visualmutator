@@ -7,9 +7,8 @@
     {
         void Initialize();
         CciModuleSource GetWhiteModules();
-        void Reinitialize(List<string> assembliesPaths);
         Task<CciModuleSource> GetWhiteModulesAsync();
         void Dispose();
-        bool Paused {  set; }
+        void Pause(bool paused);
     }
 }
