@@ -2,6 +2,7 @@
 {
     #region
 
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Specialized;
@@ -18,7 +19,7 @@
 
     #endregion
 
-    public interface IMutantsCache
+    public interface IMutantsCache : IDisposable
     {
         void setDisabled( bool disableCache = false);
 
@@ -69,7 +70,7 @@
             _disableCache = !choices.MainOptions.MutantsCacheEnabled;
             var config = new NameValueCollection
                          {
-                             {"physicalMemoryLimitPercentage", "50"},
+                             {"physicalMemoryLimitPercentage", "40"},
                              {"cacheMemoryLimitMegabytes", "256"}
                          };
 
@@ -141,6 +142,11 @@
                 _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
             }
             return result;
+        }
+
+        public void Dispose()
+        {
+            _cache.Dispose();
         }
     }
 }

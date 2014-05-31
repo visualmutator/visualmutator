@@ -94,7 +94,7 @@
                         ch2.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
                         ch2.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
                         ch2.Bind<AstFormatter>().ToSelf();
-                        ch2.Bind<ITestsContainer>().To<TestsContainer>().AndFromFactory();
+                        ch2.Bind<ITestsContainer>().To<TestsContainer>().InSingletonScope();
                         ch2.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
                         ch2.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
                         ch2.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();

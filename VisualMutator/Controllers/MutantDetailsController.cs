@@ -24,7 +24,7 @@
     {
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutantDetailsViewModel _viewModel;
-        private readonly TestsContainer _testsContainer;
+        private readonly ITestsContainer _testsContainer;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
         private Mutant _currentMutant;
         private IDisposable _langObs;
@@ -32,7 +32,7 @@
 
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
-            TestsContainer testsContainer, 
+            ITestsContainer testsContainer, 
             ICodeDifferenceCreator codeDifferenceCreator)
         {
             _viewModel = viewModel;

@@ -21,6 +21,7 @@
             Module = module;
         }
 
+
         public IModule Module
         {
             get; set;

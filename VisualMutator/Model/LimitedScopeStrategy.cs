@@ -1,65 +1,60 @@
-﻿namespace VisualMutator.Model.Mutations.Types
+﻿namespace VisualMutator.Model
 {
-    #region
-
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
-    using Exceptions;
-    using Extensibility;
+    using System.Threading.Tasks;
     using Infrastructure;
-    using log4net;
     using Microsoft.Cci;
-    using MutantsTree;
+    using Mutations;
+    using Mutations.MutantsTree;
+    using Mutations.Types;
     using StoringMutants;
     using UsefulTools.CheckboxedTree;
+    using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
 
-    #endregion
-
-    public interface ITypesManager
+    interface IMutationSessionStrategy
     {
-
-        bool IsAssemblyLoadError { get; set; }
-
-        IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
-            ICodePartsMatcher constraints);
-        MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies);
+         
     }
-    public static class Helpers
-    {
-        public static string GetTypeFullName(this INamespaceTypeReference t)
-        {
-            var nsPart = TypeHelper.GetNamespaceName(t.ContainingUnitNamespace, NameFormattingOptions.None);
-            var typePart = t.Name.Value + (t.MangleName ? "`"+t.GenericParameterCount : "");
-            return nsPart + "." + typePart;
-        }
-    }
-    public class SolutionTypesManager : ITypesManager
-    {
-        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public bool IsAssemblyLoadError { get; set; }
-   
-        public SolutionTypesManager()
+    public class LimitedScopeStrategy : IMutationSessionStrategy
+    {
+        private readonly MethodIdentifier _singleMethod;
+        private CciMethodMatcher _matcher;
+
+        public LimitedScopeStrategy(MethodIdentifier singleMethod)
         {
+            _singleMethod = singleMethod;
+            _matcher = new CciMethodMatcher(singleMethod);
         }
 
-        public MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies)
+
+        public async Task<List<AssemblyNode>> BuildAssemblyTree(Task<CciModuleSource> assembliesTask,
+          bool constrainedMutation, ICodePartsMatcher matcher)
         {
-            var methods = assemblies
-                .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
-                .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
-            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new Extensibility.MethodIdentifier(m)).ToList());
+            var modules = await assembliesTask;
+            var assemblies = CreateNodesFromAssemblies(modules, matcher)
+                .Where(a => a.Children.Count > 0).ToList();
+
+            var root = new CheckedNode("");
+            root.Children.AddRange(assemblies);
+            ExpandLoneNodes(root);
+
+            if (assemblies.Count == 0)
+            {
+                throw new InvalidOperationException(UserMessages.ErrorNoFilesToMutate());
+            }
+            //  _reporting.LogError(UserMessages.ErrorNoFilesToMutate());
+            return assemblies;
+            //Events.OnNext(assemblies);
         }
 
         public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
-            ICodePartsMatcher constraints)
+          ICodePartsMatcher constraints)
         {
-            var matcher = constraints.Join(new ProperlyNamedMatcher());
+            var matcher = constraints.Join(new SolutionTypesManager.ProperlyNamedMatcher());
 
             List<AssemblyNode> assemblyNodes = modules.Modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
             var root = new RootNode();
@@ -69,9 +64,19 @@
             return assemblyNodes;
         }
 
-     
+        private void ExpandLoneNodes(CheckedNode tests)
+        {
+            var allTests = tests.Children
+                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                    n => n.IsIncluded == null || n.IsIncluded == true)
+                .Cast<IExpandableNode>();
+            foreach (var testNode in allTests)
+            {
+                testNode.IsExpanded = true;
+            }
+        }
 
-        public AssemblyNode CreateAssemblyNode(IModuleInfo module, 
+        public AssemblyNode CreateAssemblyNode(IModuleInfo module,
             ICodePartsMatcher matcher)
         {
             var assemblyNode = new AssemblyNode(module.Name);
@@ -80,7 +85,7 @@
             {
                 foreach (INamedTypeDefinition typeDefinition in leafTypes)
                 {
-                   // _log.Debug("For types: matching: ");
+                    // _log.Debug("For types: matching: ");
                     if (matcher.Matches(typeDefinition))
                     {
                         var type = new TypeNode(parent, typeDefinition.Name.Value);
@@ -135,22 +140,6 @@
             {
                 node.Parent.Children.Remove(node);
                 node.Parent = null;
-            }
-        }
-
-        public class ProperlyNamedMatcher : CodePartsMatcher
-        {
-            public override bool Matches(IMethodReference method)
-            {
-                return true;
-            }
-
-            public override bool Matches(ITypeReference typeReference)
-            {
-                INamedTypeReference named = typeReference as INamedTypeReference;
-                return named != null
-                       && !named.Name.Value.StartsWith("<")
-                       && !named.Name.Value.Contains("=");
             }
         }
 

@@ -45,7 +45,6 @@
         private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
-        private readonly ICciModuleSource _cci;
 
         public bool DebugConfig { get; set; }
 
@@ -58,14 +57,12 @@
         public MutantsContainer(
             MutationSessionChoices choices,
             IWhiteCache whiteCache,
-            IOperatorUtils operatorUtils,
-            ICciModuleSource cci
+            IOperatorUtils operatorUtils
             )
         {
             _choices = choices;
             _whiteCache = whiteCache;
             _operatorUtils = operatorUtils;
-            _cci = cci;
         }
 
         public void Initialize(ICollection<IMutationOperator> mutOperators, 
@@ -80,7 +77,7 @@
         {
             var op = new IdentityOperator();
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
-            assemblyNode = new AssemblyNode("All modules",null);
+            assemblyNode = new AssemblyNode("All modules");
             var nsNode = new TypeNamespaceNode(assemblyNode, "");
             assemblyNode.Children.Add(nsNode);
             var typeNode = new TypeNode(nsNode, "");
@@ -193,7 +190,7 @@
                     }
                 }
             }
-            var assemblyNode = BuildMutantsTree(module, mergedTargets);
+            var assemblyNode = BuildMutantsTree(module.Name, mergedTargets);
                 
             _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in "+assemblyNode.Name);
             return assemblyNode;
@@ -202,11 +199,11 @@
             
         }
 
-        private AssemblyNode BuildMutantsTree(IModuleInfo module, 
+        private AssemblyNode BuildMutantsTree(string moduleName,
             MultiDictionary<IMutationOperator, MutationTarget> mutationTargets)
         {
 
-            var assemblyNode = new AssemblyNode(module.Name, module);
+            var assemblyNode = new AssemblyNode(moduleName);
 
             System.Action<CheckedNode, ICollection<MutationTarget>> typeNodeCreator = (parent, targets) =>
                 {
@@ -288,7 +285,10 @@
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
+
                     
+
+
                     operatorCodeRewriter.NameTable = cci.Host.NameTable;
                     operatorCodeRewriter.Host = cci.Host;
                     operatorCodeRewriter.Module = module.Module;
@@ -298,11 +298,15 @@
                     var rewrittenModule = (Assembly) rewriter.Rewrite(module.Module);
 
                     rewriter.CheckForUnfoundObjects();
+
+                    mutant.MutationTarget.Variant.AstObjects = null; //TODO: refactor
                     mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
+                    
                 }
-               // moduleSource.Merge(mutatedModules);
-              ////  return moduleSource;
-                return new MutationResult(new SimpleModuleSource(mutatedModules.ToList()), cci);
+                var result = new MutationResult(new SimpleModuleSource(mutatedModules), cci, 
+                    mutant.MutationTarget.MethodMutated);
+                mutant.MutationTarget.MethodMutated = null; //TODO: refactor
+                return result;
             }
             catch (Exception e)
             {
@@ -339,13 +343,15 @@
     }
     public class MutationResult
     {
-        public MutationResult(IModuleSource mutatedModules, ICciModuleSource whiteModules)
+        public MutationResult(IModuleSource mutatedModules, ICciModuleSource whiteModules, IMethodDefinition methodMutated)
         {
             MutatedModules = mutatedModules;
             WhiteModules = whiteModules;
+            MethodMutated = methodMutated;
         }
 
         public ICciModuleSource WhiteModules { get; private set; }
+        public IMethodDefinition MethodMutated { get; set; }
         public IModuleSource MutatedModules { get; private set; }
     }
 }

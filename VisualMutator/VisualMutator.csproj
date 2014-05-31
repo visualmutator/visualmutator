@@ -284,6 +284,7 @@
     <Compile Include="Model\Exceptions\NoTestsSelectedException.cs" />
     <Compile Include="Model\Exceptions\StrongNameSignedAssemblyException.cs" />
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
+    <Compile Include="Model\LimitedScopeStrategy.cs" />
     <Compile Include="Model\ModuleInfo.cs" />
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />

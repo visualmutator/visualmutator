@@ -30,7 +30,6 @@
         private List<FilePathAbsolute> _originalProjectFiles;
         private IEnumerable<FilePathAbsolute> _referencedFiles;
         private ProjectFilesClone _mainClone;
-        private readonly IList<ProjectFilesClone> _clones;
         private readonly FilesManager _filesManager;
 
         public ProjectClonesManager(
@@ -41,17 +40,7 @@
             _hostEnviroment = hostEnviroment;
             _filesManager = filesManager;
             _fs = fs;
-
-            _clones = new List<ProjectFilesClone>();
         }
-
-        ~ProjectClonesManager()
-        {
-            Dispose(false);
-        }
-
-   
-
 
         public void Initialize()
         {
@@ -60,25 +49,15 @@
 
             FilePathAbsolute tmp = CreateTmpDir("VisualMutator-MainClone-");
             _mainClone = _filesManager.CreateProjectClone(_referencedFiles, _originalProjectFiles, tmp).Result;
-            _clones.Add(_mainClone);
         }
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
-        
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _mainClone.Dispose();
-                foreach (var projectFilesClone in _clones)
-                {
-                    projectFilesClone.Dispose();
-                }
-            }
+            _mainClone.Dispose();
         }
 
         public ProjectFilesClone CreateClone(string name)
@@ -90,11 +69,9 @@
         {
             FilePathAbsolute tmp = CreateTmpDir("VisualMutator-" + name + "-");
             ProjectFilesClone clone = await _filesManager.CreateProjectClone(_mainClone.Referenced, _mainClone.Assemblies, tmp);
-            _clones.Add(clone);
             clone.IsIncomplete |= _mainClone.IsIncomplete;
             return clone;
         }
-
 
         private FilePathAbsolute CreateTmpDir(string s)
         {
@@ -102,7 +79,6 @@
             _fs.Directory.CreateDirectory(tmpDirectoryPath);
             return new FilePathAbsolute(tmpDirectoryPath);
         }
-
 
         private IEnumerable<string> GetReferencedAssemblyPaths(IList<FilePathAbsolute> projects)
         {
@@ -116,7 +92,5 @@
             }
             return list;
         }
-
-       
     }
 }

@@ -38,6 +38,7 @@
 
    
         void CreateTestSelections(IList<TestNodeAssembly> testAssemblies);
+        IEnumerable<TestNodeNamespace> CreateMutantTestTree(Mutant mutant);
     }
 
     public class TestsContainer : ITestsContainer

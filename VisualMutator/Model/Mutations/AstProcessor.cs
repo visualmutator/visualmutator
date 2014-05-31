@@ -74,6 +74,8 @@
             mutationTarget.Variant.ObjectsIndices = mutationTarget.Variant
                 .AstObjects.MapValues((key, val) => AllAstIndices[val]);
 
+            mutationTarget.Variant.AstObjects = null; //TODO: refactor
+
             if (mutationTarget.ProcessingContext != null &&
                 mutationTarget.ProcessingContext.ModuleName == _traversedModule.Name.Value)
             {
@@ -121,15 +123,13 @@
                 if (mutationTarget.Variant.ObjectsIndices != null && AllAstObjects != null)
                 {
                     mutationTarget.Variant.AstObjects = mutationTarget.Variant.ObjectsIndices
-                    .MapValues((key, val) => AllAstObjects[val]);
-                    
+                        .MapValues((key, val) => AllAstObjects[val]);
+
                     mutationTarget.MethodMutated = (IMethodDefinition)AllAstObjects[
                         mutationTarget.ProcessingContext.Method.Context.Descriptor];
-
-                  
                 }
             }
-              return node;
+            return node;
         }
         public string ModuleName
         {

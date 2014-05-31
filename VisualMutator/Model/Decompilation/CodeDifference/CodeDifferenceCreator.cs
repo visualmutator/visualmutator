@@ -56,7 +56,7 @@
             try
             {
                 var whiteCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, mutationResult);
-                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, mutationResult);
+                var mutatedCode = _codeVisualizer.Visualize(language, mutationResult.MethodMutated, mutationResult);
                 CodePair pair = new CodePair
                 {
                     OriginalCode = whiteCode,

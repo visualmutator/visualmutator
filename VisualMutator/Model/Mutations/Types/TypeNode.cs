@@ -13,22 +13,15 @@
     #endregion
     public class AssemblyNode : MutationNode
     {
-        private readonly IModuleInfo _assemblyDefinition;
+     
 
 
-        public AssemblyNode(string name, IModuleInfo assemblyDefinition)
+        public AssemblyNode(string name)
             : base( name, true)
         {
-            _assemblyDefinition = assemblyDefinition;
+           
         }
 
-        public IModuleInfo AssemblyDefinition
-        {
-            get
-            {
-                return _assemblyDefinition;
-            }
-        }
 
         public FilePathAbsolute AssemblyPath
         {
