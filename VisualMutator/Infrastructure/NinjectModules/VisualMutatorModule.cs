@@ -36,7 +36,6 @@
             Bind<MutantsSavingController>().ToSelf().AndFromFactory();
             Bind<MutantsSavingViewModel>().ToSelf();
             Bind<CreationViewModel>().ToSelf();
-            Bind<ChooseTestingExtensionViewModel>().ToSelf().AndFromFactory();
             Bind<MutantDetailsViewModel>().ToSelf();
             Bind<ResultsSavingViewModel>().ToSelf();
             Bind<MutantsCreationOptionsViewModel>().ToSelf();

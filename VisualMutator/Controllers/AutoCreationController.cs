@@ -41,6 +41,7 @@
         private readonly IFactory<SessionCreator> _sessionCreatorFactory;
         private readonly IDispatcherExecute _execute;
         private readonly CommonServices _svc;
+        private readonly IDispatcherExecute _dispatcher;
         private readonly CreationViewModel _viewModel;
         private readonly ITypesManager _typesManager;
         private CciModuleSource _whiteSource;
@@ -48,6 +49,7 @@
         public MutationSessionChoices Result { get; protected set; }
 
         public AutoCreationController(
+            IDispatcherExecute dispatcher,
             CreationViewModel viewModel,
             ITypesManager typesManager,
             SessionConfiguration sessionConfiguration,
@@ -56,6 +58,7 @@
             IDispatcherExecute execute,
             CommonServices svc)
         {
+            _dispatcher = dispatcher;
             _viewModel = viewModel;
             _typesManager = typesManager;
             _sessionConfiguration = sessionConfiguration;
@@ -82,10 +85,7 @@
         {
             SessionCreationWindowShowTime = DateTime.Now;
 
-            if(_sessionConfiguration.AssemblyLoadProblem)
-            {
-                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
-            }
+            
 
             bool constrainedMutation = false;
             ICodePartsMatcher matcher;
@@ -130,9 +130,14 @@
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
+            var tcs = new TaskCompletionSource<object>();
+            if (auto)
+            {
+                tcs.TrySetResult(new object());
+            }
             try
             {
-                var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33).ContinueWith(t =>
+                var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33, tcs.Task).ContinueWith(t =>
                 {
                     
                     if (t.Exception != null)
@@ -150,10 +155,27 @@
                         }
                     }
                 }, _execute.GuiScheduler);
+
+                if (_sessionConfiguration.AssemblyLoadProblem)
+                {
+                    new TaskFactory(_dispatcher.GuiScheduler)
+                        .StartNew(() =>
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded()));
+                }
+
                 if (!auto)
                 {
                     _viewModel.ShowDialog();
+                    if(Result == null)
+                    {
+                        tcs.TrySetCanceled();
+                    }
+                    else
+                    {
+                        tcs.TrySetResult(new object());
+                    }
                 }
+
                 await mainTask;
                 return Result;
               

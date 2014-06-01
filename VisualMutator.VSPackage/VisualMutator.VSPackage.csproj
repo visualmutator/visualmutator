@@ -103,13 +103,13 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UsefulTools, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.0.9.4\lib\net45\UsefulTools.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.1.0.0\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
-    <Reference Include="UsefulTools.Wpf, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.Wpf.0.9.4\lib\net45\UsefulTools.Wpf.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.Wpf.1.0.0\lib\net45\UsefulTools.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
@@ -173,6 +173,7 @@
   <ItemGroup>
     <Compile Include="-\JetBrains\Annotations\CoreAnnotations.cs" />
     <Compile Include="Infra\Bootstrapper.cs" />
+    <Compile Include="Infra\NativeWindowInfo.cs" />
     <Compile Include="Infra\VisualStudioCodeSearcher.cs" />
     <Compile Include="Infra\VisualStudioProjectCollector.cs" />
     <Compile Include="Infra\VSNinjectModule.cs" />

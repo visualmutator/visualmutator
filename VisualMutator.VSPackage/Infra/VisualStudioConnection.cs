@@ -13,6 +13,7 @@
     using EnvDTE;
     using EnvDTE80;
     using Infra;
+    using Infra.UsefulTools.Wpf;
     using log4net;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;

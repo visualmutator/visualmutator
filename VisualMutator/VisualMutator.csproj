@@ -219,13 +219,13 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
-    <Reference Include="UsefulTools, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.0.9.4\lib\net45\UsefulTools.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.1.0.0\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
-    <Reference Include="UsefulTools.Wpf, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.Wpf.0.9.4\lib\net45\UsefulTools.Wpf.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.Wpf.1.0.0\lib\net45\UsefulTools.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock">
@@ -260,18 +260,15 @@
     <Compile Include="Infrastructure\TupleExtensions.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />
-    <Compile Include="Infrastructure\IExpandableNode.cs" />
     <Compile Include="Infrastructure\NinjectFactory.cs" />
     <Compile Include="Infrastructure\NinjectModules\LogStrategy.cs" />
     <Compile Include="Infrastructure\NinjectModules\ViewsModule - Copy.cs" />
     <Compile Include="Infrastructure\NinjectModules\InfrastructureModule.cs" />
     <Compile Include="Infrastructure\NinjectModules\VisualMutatorModule.cs" />
-    <Compile Include="Infrastructure\PathsExt.cs" />
     <Compile Include="Infrastructure\Processes.cs" />
     <Compile Include="Infrastructure\ProjectFilesClone.cs" />
     <Compile Include="Infrastructure\Reporting.cs" />
     <Compile Include="Infrastructure\TaskErrors.cs" />
-    <Compile Include="Infrastructure\TraceAttribute.cs" />
     <Compile Include="Infrastructure\VisualStudioCodeElementsFormatter.cs" />
     <Compile Include="Model\ContinuousConfiguration.cs" />
     <Compile Include="Model\ContinuousConfigurator.cs" />
@@ -317,7 +314,6 @@
     <Compile Include="Model\MutationSessionChoices.cs" />
     <Compile Include="Controllers\ResultsSavingController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
-    <Compile Include="Infrastructure\ToDo.cs" />
     <Compile Include="Infrastructure\UserMessages.cs" />
     <Compile Include="Model\Decompilation\CodeDifference\ILCodeLineEqualityComparer.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutantGroup.cs" />
@@ -361,7 +357,6 @@
     <Compile Include="Model\Mutations\MutantsTree\Mutant.cs" />
     <Compile Include="Controllers\MutantDetailsController.cs" />
     <Compile Include="Model\XmlResultsGenerator.cs" />
-    <Compile Include="ViewModels\ChooseTestingExtensionViewModel.cs" />
     <Compile Include="ViewModels\MutantsSavingViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\TestsSelectableTreeViewModel.cs" />
@@ -422,9 +417,6 @@
     <Compile Include="Views\Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\TestStatusToFillConverter.cs" />
     <Compile Include="Views\Converters\ValueConverterGroup.cs" />
-    <Compile Include="Views\ChooseTestingExtensionView.xaml.cs">
-      <DependentUpon>ChooseTestingExtensionView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MutantsSavingView.xaml.cs">
       <DependentUpon>MutantsSavingView.xaml</DependentUpon>
     </Compile>
@@ -449,9 +441,6 @@
     <Compile Include="Views\SessionCreationView.xaml.cs">
       <DependentUpon>SessionCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\OnlyMutantsCreationView.xaml.cs">
-      <DependentUpon>OnlyMutantsCreationView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ProgressControl.xaml.cs">
       <DependentUpon>ProgressControl.xaml</DependentUpon>
     </Compile>
@@ -469,10 +458,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\ChooseTestingExtensionView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\MutantsSavingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -502,10 +487,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SessionCreationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\OnlyMutantsCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

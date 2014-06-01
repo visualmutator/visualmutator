@@ -128,28 +128,34 @@
             _optionsController.Create().Run();
         }
 
-        public void RunMutationSessionForCurrentPosition()
+        public async void RunMutationSessionForCurrentPosition()
         {
             MethodIdentifier methodIdentifier;
             if (_host.GetCurrentClassAndMethod(out methodIdentifier) && methodIdentifier.MethodName != null)
             {
                 _log.Info("Showing mutation session window for: " + methodIdentifier);
 
-                RunMutationSession(methodIdentifier);
+                try
+                {
+                    await RunMutationSession(methodIdentifier);
+                }
+                catch (Exception e)
+                {
+                    _svc.Logging.ShowFatalError(e);
+                }
             }
         }
 
-        public async void RunMutationSession(MethodIdentifier methodIdentifier = null, bool auto = false)
+        public async Task RunMutationSession(MethodIdentifier methodIdentifier = null, bool auto = false)
         {
-            _host.Build();
+            //_host.Build();
             _log.Info("Showing mutation session window.");
 
             var continuousConfiguration = _continuousConfigurator.GetConfiguration();
-            var sessionConfiguration = continuousConfiguration.Get.CreateSessionConfiguration();
+            var sessionConfiguration = await Task.Run(() => continuousConfiguration.Get.CreateSessionConfiguration());
 
             try
             {
-
                 IObjectRoot<SessionController> sessionController = 
                     await sessionConfiguration.Get.CreateSession(methodIdentifier, auto);
 
@@ -161,19 +167,26 @@
 
                 Subscribe(_currentSessionController.Get);
 
-                _log.Info("Starting mutation session...");
-                _currentSessionController.Get.RunMutationSession(_controlSource);
+                try
+                {
+                    _log.Info("Starting mutation session...");
+                    await _currentSessionController.Get.RunMutationSession(_controlSource);
+                }
+                catch (TaskCanceledException e)
+                {
+                    _log.Info("Session cancelled.");
+                }
             }
             catch (TaskCanceledException)
             {
                 // cancelled by user
+                _log.Info("Session creation cancelled.");
             }
-       
         }
        
         public void RunMutationSessionAuto2(MethodIdentifier methodIdentifier)
         {
-            _host.Build();
+          //  _host.Build();
             _log.Info("Showing mutation session window.");
 
             _sessionConfiguration = _continuousConfigurator
@@ -260,40 +273,38 @@
 
         private void SetState(OperationsState state)
         {
-            _svc.Threading.InvokeOnGui(() =>
+            if (_viewModel.OperationsState != state)
             {
-                if (_viewModel.OperationsState != state)
-                {
-                    _viewModel.OperationsState = state;
-                    _viewModel.OperationsStateDescription = FunctionalExt.ValuedSwitch<OperationsState, string>(state)
-                        .Case(OperationsState.None, "")
-                        .Case(OperationsState.TestingPaused, "Paused")
-                        .Case(OperationsState.Finished, "Finished")
-                        .Case(OperationsState.PreCheck, "Pre-check...")
-                        .Case(OperationsState.Mutating, "Creating mutants...")
-                        .Case(OperationsState.Pausing, "Pausing...")
-                        .Case(OperationsState.Stopping, "Stopping...")
-                        .Case(OperationsState.SavingMutants, "Saving mutants...")
-                        .Case(OperationsState.Error, "Error occurred.")
-                        .GetResult();
-                }
-            });
+                _viewModel.OperationsState = state;
+                _viewModel.OperationsStateDescription = FunctionalExt.ValuedSwitch<OperationsState, string>(state)
+                    .Case(OperationsState.None, "")
+                    .Case(OperationsState.TestingPaused, "Paused")
+                    .Case(OperationsState.Finished, "Finished")
+                    .Case(OperationsState.PreCheck, "Pre-check...")
+                    .Case(OperationsState.Mutating, "Creating mutants...")
+                    .Case(OperationsState.Pausing, "Pausing...")
+                    .Case(OperationsState.Stopping, "Stopping...")
+                    .Case(OperationsState.SavingMutants, "Saving mutants...")
+                    .Case(OperationsState.Error, "Error occurred.")
+                    .GetResult();
+            }
         }
 
         public void Subscribe(SessionController sessionController)
         {
+            var events = sessionController.SessionEventsObservable
+                .ObserveOnDispatcher();
+
             _subscriptions = new List<IDisposable>
             {
-                sessionController.SessionEventsObservable
-                    .OfType<MinorSessionUpdateEventArgs>()
+                events.OfType<MinorSessionUpdateEventArgs>()
                     .Where(e => e.EventType == OperationsState.Finished 
                             || e.EventType == OperationsState.Error)
                     .Subscribe(args =>
                     {
                         SessionFinished();
                     }),
-                sessionController.SessionEventsObservable
-                    .OfType<MinorSessionUpdateEventArgs>()
+                events.OfType<MinorSessionUpdateEventArgs>()
                     .Subscribe(args =>
                     {
                         SetState(args.EventType);
@@ -314,16 +325,12 @@
                         
                     }),
 
-                sessionController.SessionEventsObservable
-                 .OfType<MutationFinishedEventArgs>()
+                events.OfType<MutationFinishedEventArgs>()
                  .Subscribe(args => _viewModel.MutantAssemblies.ReplaceRange(args.MutantsGrouped)),
-                 
-                sessionController.SessionEventsObservable
-                 .OfType<TestingProgressEventArgs>()
+
+                events.OfType<TestingProgressEventArgs>()
                  .Subscribe(args =>
                  {
-                     _svc.Threading.InvokeOnGui(()=>
-                     {
                          _viewModel.OperationsState = OperationsState.Testing;
                          _viewModel.OperationsStateDescription = "Running tests... ({0}/{1})"
                              .Formatted(args.NumberOfAllMutantsTested + 1,
@@ -332,7 +339,6 @@
                          _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllMutantsTested);
                          _viewModel.MutationScore = string.Format(@"Mutation score: {0}%", args.MutationScore.AsPercentageOf(1.0d));
                          _viewModel.Progress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
-                     });
                  }),
 
                _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
@@ -346,7 +352,7 @@
                _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).Where(i => !(i is Mutant))
                    .Subscribe(x => sessionController.CleanDetails()),
 
-                sessionController.SessionEventsObservable.Subscribe((e) => { }, (e) => { }, () =>
+                events.Subscribe((e) => { }, (e) => { }, () =>
                 {
                     
                 }),

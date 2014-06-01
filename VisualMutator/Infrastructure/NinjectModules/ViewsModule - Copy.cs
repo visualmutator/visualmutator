@@ -10,7 +10,6 @@
             Bind<IMutationResultsView>().To<MutationResultsView>();
             Bind<IMutantsSavingView>().To<MutantsSavingView>();
             Bind<ISessionCreationView>().To<SessionCreationView>();
-            Bind<IChooseTestingExtensionView>().To<ChooseTestingExtensionView>();
             Bind<IMutantDetailsView>().To<MutantDetailsView>();
             Bind<IResultsSavingView>().To<ResultsSavingView>();
             Bind<ITestsSelectableTree>().To<TestsSelectableTree>();

@@ -28,7 +28,6 @@ namespace VisualMutator.Console
     using Model.Tests.TestsTree;
     using Model.Verification;
     using Moq;
-    using Tests.Util;
     using UsefulTools.FileSystem;
     using UsefulTools.Paths;
     using Console = System.Console;

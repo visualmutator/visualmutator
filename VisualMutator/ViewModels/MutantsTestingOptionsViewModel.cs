@@ -13,35 +13,23 @@
 
     public class MutantsTestingOptionsViewModel : ViewModel<IMutantsTestingOptionsView>
     {
-        private readonly IFactory<ChooseTestingExtensionViewModel> _chooseTestingExtensionFactory;
 
         public MutantsTestingOptionsViewModel(
-            IMutantsTestingOptionsView view,
-            IFactory<ChooseTestingExtensionViewModel> chooseTestingExtensionFactory)
+            IMutantsTestingOptionsView view)
             : base(view)
         {
-            _chooseTestingExtensionFactory = chooseTestingExtensionFactory;
             Options = new MutantsTestingOptions
             {
                 TestingTimeoutSeconds = 5,
                 TestingProcessExtensionOptions = TestingProcessExtensionOptions.Default
             };
 
-            CommandChooseTestingExtension = new SmartCommand(ChooseTestingExtension);
         }
         public void Initialize(ISessionCreationView parent)
         {
             _parent = parent;
         }
-        private void ChooseTestingExtension()
-        {
-            var chooseTestingExtensionViewModel = _chooseTestingExtensionFactory.Create();
-            chooseTestingExtensionViewModel.Run(_parent, Options.TestingProcessExtensionOptions);
-            if (chooseTestingExtensionViewModel.HasResult)
-            {
-                Options.TestingProcessExtensionOptions = chooseTestingExtensionViewModel.Result;
-            }
-        }
+      
 
         private MutantsTestingOptions _options;
 

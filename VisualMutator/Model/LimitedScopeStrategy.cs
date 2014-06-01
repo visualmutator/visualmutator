@@ -32,7 +32,7 @@
 
 
         public async Task<List<AssemblyNode>> BuildAssemblyTree(Task<CciModuleSource> assembliesTask,
-          bool constrainedMutation, ICodePartsMatcher matcher)
+          bool constrainedMutation, CciMethodMatcher matcher)
         {
             var modules = await assembliesTask;
             var assemblies = CreateNodesFromAssemblies(modules, matcher)
@@ -52,11 +52,11 @@
         }
 
         public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
-          ICodePartsMatcher constraints)
+          CciMethodMatcher constraints)
         {
-            var matcher = constraints.Join(new SolutionTypesManager.ProperlyNamedMatcher());
+            
 
-            List<AssemblyNode> assemblyNodes = modules.Modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
+            List<AssemblyNode> assemblyNodes = modules.Modules.Select(m => CreateAssemblyNode(m, constraints)).ToList();
             var root = new RootNode();
             root.Children.AddRange(assemblyNodes);
             root.IsIncluded = true;
@@ -77,15 +77,15 @@
         }
 
         public AssemblyNode CreateAssemblyNode(IModuleInfo module,
-            ICodePartsMatcher matcher)
+            CciMethodMatcher methodMatcher)
         {
+            var matcher = methodMatcher.Join(new SolutionTypesManager.ProperlyNamedMatcher());
             var assemblyNode = new AssemblyNode(module.Name);
 
             System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
             {
                 foreach (INamedTypeDefinition typeDefinition in leafTypes)
                 {
-                    // _log.Debug("For types: matching: ");
                     if (matcher.Matches(typeDefinition))
                     {
                         var type = new TypeNode(parent, typeDefinition.Name.Value);
@@ -94,6 +94,7 @@
                             if (matcher.Matches(method))
                             {
                                 type.Children.Add(new MethodNode(type, method.Name.Value, method, false));
+                                return;
                             }
                         }
                         parent.Children.Add(type);

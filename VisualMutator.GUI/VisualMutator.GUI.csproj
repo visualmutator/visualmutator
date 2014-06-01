@@ -82,10 +82,7 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="UsefulTools">
-      <HintPath>..\packages\UsefulTools.0.9.4\lib\net45\UsefulTools.dll</HintPath>
-    </Reference>
-    <Reference Include="UsefulTools.Wpf">
-      <HintPath>..\packages\UsefulTools.Wpf.0.9.4\lib\net45\UsefulTools.Wpf.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.1.0.0\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />

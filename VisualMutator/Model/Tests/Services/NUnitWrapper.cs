@@ -3,24 +3,13 @@
     #region
 
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Security.AccessControl;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Exceptions;
     using log4net;
     using NUnit.Core;
-    using NUnit.Core.Filters;
-    using NUnit.Framework;
     using NUnit.Util;
-    using UsefulTools.Core;
-    using UsefulTools.ExtensionMethods;
-    using UsefulTools.Paths;
-    using UsefulTools.Threading;
 
     #endregion
 
@@ -34,7 +23,6 @@
     public class NUnitWrapper : INUnitWrapper
     {
 
-        private readonly TestRunner _testRunner;
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
      
@@ -97,7 +85,6 @@
        
         public void UnloadProject()
         {
-            _testRunner.Unload();
         }
 
      

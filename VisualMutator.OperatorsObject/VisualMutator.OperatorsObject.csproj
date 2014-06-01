@@ -132,9 +132,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
-    </Reference>
     <Reference Include="Roslyn.Compilers.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Roslyn.Compilers.CSharp.1.2.20906.2\lib\net45\Roslyn.Compilers.CSharp.dll</HintPath>
@@ -167,13 +164,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UsefulTools, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UsefulTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.0.9.4\lib\net45\UsefulTools.dll</HintPath>
-    </Reference>
-    <Reference Include="UsefulTools.Wpf, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.Wpf.0.9.4\lib\net45\UsefulTools.Wpf.dll</HintPath>
+      <HintPath>..\packages\UsefulTools.1.0.0\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

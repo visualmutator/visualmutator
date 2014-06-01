@@ -28,23 +28,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Run tests to first failed:" />
-
-        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding RunTestsToFirstFailed}"></CheckBox>
-
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Testing process extension: (?)"
-                   ToolTip="Custom extension to testing process operations." />
-
-
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" IsEnabled="False"
-                     Text="{Binding Path=Options.TestingProcessExtensionOptions.TestingProcessExtension.Name, Mode=OneWay}" />
-            <Button Grid.Column="1" Content="Choose..." Command="{Binding CommandChooseTestingExtension}" />
-        </Grid>
+     
 
 
     </Grid>
