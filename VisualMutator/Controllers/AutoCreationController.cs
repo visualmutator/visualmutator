@@ -48,6 +48,8 @@
 
         public MutationSessionChoices Result { get; protected set; }
 
+        TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+
         public AutoCreationController(
             IDispatcherExecute dispatcher,
             CreationViewModel viewModel,
@@ -67,7 +69,7 @@
             _execute = execute;
             _svc = svc;
             
-            _viewModel.CommandCreateMutants = new SmartCommand(AcceptChoices,
+            _viewModel.CommandCreateMutants = new SmartCommand(CommandOk,
                () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
                      && _viewModel.TypesTreeToTest.TestAssemblies != null && _viewModel.TypesTreeToTest.TestAssemblies.Count != 0
                      && _viewModel.MutationsTree.MutationPackages.Count != 0)
@@ -122,19 +124,22 @@
             var t22 = t2.ContinueWith(task =>
             {
                 _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
+                _whiteSource = assembliesTask.Result;
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
             var t33 = t3.ContinueWith(task =>
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
+                if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
+                {
+                   // _svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
+                    throw new Exception(UserMessages.ErrorNoTestsToRun());
+                }
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            var tcs = new TaskCompletionSource<object>();
-            if (auto)
-            {
-                tcs.TrySetResult(new object());
-            }
+            
+           
             try
             {
                 var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33, tcs.Task).ContinueWith(t =>
@@ -146,14 +151,14 @@
                         _viewModel.Close();
                         throw t.Exception;
                     }
-                    else
-                    {
-                        _whiteSource = assembliesTask.Result;
-                        if (auto)
-                        {
-                            AcceptChoices();
-                        }
-                    }
+//                    else
+//                    {
+//                        
+//                        if (auto)
+//                        {
+//                            AcceptChoices();
+//                        }
+//                    }
                 }, _execute.GuiScheduler);
 
                 if (_sessionConfiguration.AssemblyLoadProblem)
@@ -163,21 +168,24 @@
                         _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded()));
                 }
 
-                if (!auto)
-                {
-                    _viewModel.ShowDialog();
-                    if(Result == null)
-                    {
-                        tcs.TrySetCanceled();
-                    }
-                    else
-                    {
-                        tcs.TrySetResult(new object());
-                    }
-                }
+              
+                return await WaitForResult(auto, mainTask);
 
-                await mainTask;
-                return Result;
+                //                if (auto)
+                //                {
+                //                    tcs.TrySetResult(new object());
+                //                }
+                //                if (Result == null)
+                //                {
+                //                    tcs.TrySetCanceled();
+                //                }
+                //                else
+                //                {
+                //                    tcs.TrySetResult(new object());
+                //                }
+                
+             //   Result.WhiteSource = _whiteSource;
+              //  return Result;
               
             }
             catch (Exception e)
@@ -187,14 +195,29 @@
             }
         }
 
-        protected void AcceptChoices()
+        protected void CommandOk()
         {
-            if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
+            tcs.TrySetResult(new object());
+            _viewModel.Close();
+        }
+        private async Task<MutationSessionChoices> WaitForResult(bool auto, Task mainTask)
+        {
+            _viewModel.ShowDialog(); // blocking if gui
+            if (!auto && !tcs.Task.IsCompleted) //CommandOk was not called
             {
-                _svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
-                return;
+                tcs.TrySetCanceled();
             }
-            Result = new MutationSessionChoices
+            if (auto)
+            {
+                tcs.TrySetResult(new object());
+            }
+            await mainTask;
+            return AcceptChoices();
+        }
+        protected MutationSessionChoices AcceptChoices()
+        {
+            
+            return new MutationSessionChoices
             {
                 SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                     .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
@@ -206,7 +229,6 @@
                 WhiteSource = _whiteSource 
             };
 
-            _viewModel.Close();
         }
 
       
