@@ -287,6 +287,7 @@
     <Compile Include="Model\Mutations\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />
     <Compile Include="Model\Mutations\MutationFilter.cs" />
+    <Compile Include="Model\Mutations\MutationResult.cs" />
     <Compile Include="Model\Mutations\MutationTarget.cs" />
     <Compile Include="Model\Mutations\NamespaceGrouper.cs" />
     <Compile Include="Model\Mutations\ProcessingContext.cs" />

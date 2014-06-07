@@ -149,9 +149,6 @@
         }
         public async Task RunCore()
         {
-            _mutantsContainer.Initialize(_choices.SelectedOperators,
-                  _choices.MutantsCreationOptions, _choices.Filter);
-
             _mutantDetailsController.Initialize();
 
             _currentSession = new MutationTestingSession

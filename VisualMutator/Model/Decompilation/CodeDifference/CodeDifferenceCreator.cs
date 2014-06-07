@@ -31,11 +31,16 @@
 
         private readonly ICodeVisualizer _codeVisualizer;
         private readonly IMutantsCache _mutantsCache;
+        private readonly MutationSessionChoices _choices;
 
-        public CodeDifferenceCreator(ICodeVisualizer codeVisualizer, IMutantsCache mutantsCache)
+        public CodeDifferenceCreator(
+            ICodeVisualizer codeVisualizer, 
+            IMutantsCache mutantsCache,
+            MutationSessionChoices choices)
         {
             _codeVisualizer = codeVisualizer;
             _mutantsCache = mutantsCache;
+            _choices = choices;
         }
 
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
@@ -55,8 +60,8 @@
             MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
             try
             {
-                var whiteCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, mutationResult);
-                var mutatedCode = _codeVisualizer.Visualize(language, mutationResult.MethodMutated, mutationResult);
+                var whiteCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, _choices.WhiteSource);
+                var mutatedCode = _codeVisualizer.Visualize(language, mutationResult.MethodMutated, mutationResult.WhiteModules);
                 CodePair pair = new CodePair
                 {
                     OriginalCode = whiteCode,

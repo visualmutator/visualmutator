@@ -16,7 +16,7 @@
     {
 
 
-        string Visualize(CodeLanguage language, IMethodDefinition method, MutationResult cci);
+        string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource);
         string Visualize(CodeLanguage language, ICciModuleSource modules);
     }
 
@@ -40,7 +40,7 @@
             return sb.ToString();
         }
         
-        public string Visualize(CodeLanguage language, IMethodDefinition method, MutationResult result)
+        public string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource)
         {
             if (method == null)
             {
@@ -50,7 +50,7 @@
             var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
             var sourceEmitterOutput = new SourceEmitterOutputString();
 
-            var sourceEmitter = result.WhiteModules.GetSourceEmitter(language, module, sourceEmitterOutput);
+            var sourceEmitter = moduSource.GetSourceEmitter(language, module, sourceEmitterOutput);
             sourceEmitter.Traverse(method);
        
             return sourceEmitterOutput.Data;

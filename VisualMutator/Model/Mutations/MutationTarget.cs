@@ -5,8 +5,7 @@
 
     public class MutationTarget
     {
-        private MutationVariant _variant;
-
+        private readonly MutationVariant _variant;
 
 
         public MutationTarget(MutationVariant variant)
@@ -14,13 +13,11 @@
             _variant = variant;
         }
 
-       // public string CallTypeName { get; set; }
 
         public string Name { get; set; }
 
         public ProcessingContext ProcessingContext { get; set; }
 
-       // public string ModuleName { get; set; }
         public MutationVariant Variant
         {
             get { return _variant; }

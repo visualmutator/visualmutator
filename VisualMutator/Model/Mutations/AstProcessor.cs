@@ -84,7 +84,6 @@
                 mutationTarget.NamespaceName = type.ContainingUnitNamespace.Name.Value;
                 mutationTarget.TypeName = type.Name.Value;
             }
-            //REMOVE: mutationTarget.MethodIndex = AllAstIndices[mutationTarget.MethodRaw];
         }
 
         public AstNode PostProcessBack(MutationTarget mutationTarget)
@@ -106,17 +105,6 @@
                 node = new AstNode(new ProcessingContext(), new AstDescriptor());
             }
             
-            //    _log.Debug("Creating pair: " + TreeObjectsCounter + " " + Formatter.Format(obj) + " <===> " + target);
-         /*   if (target != null)
-            {
-                _targetAstObjects.Add(Tuple.Create(obj, target));
-            }
-
-            if (_sharedTargets.Any(t => t.CounterValue == TreeObjectsCounter))
-            {
-                _sharedAstObjects.Add(obj);
-            }
-              */
             if (mutationTarget.ProcessingContext != null && mutationTarget.ProcessingContext.ModuleName == _traversedModule.Name.Value)
             {
                 //TODO: do better. now they can be null for changeless mutant
@@ -131,6 +119,7 @@
             }
             return node;
         }
+
         public string ModuleName
         {
             get
@@ -138,6 +127,7 @@
                 return _traversedModule.Name.Value;
             }
         }
+
         private object Unspecialize(object value)
         {
             var methodDefinition = value as IMethodDefinition;

@@ -10,7 +10,6 @@
     using Exceptions;
     using Extensibility;
     using log4net;
-    using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using MutantsTree;
     using Operators;
@@ -27,31 +26,21 @@
 
     public interface IMutantsContainer
     {
-        void Initialize(ICollection<IMutationOperator> operators, MutantsCreationOptions options, MutationFilter filter);
-
-       
         Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode);
-
-        void SaveMutantsToDisk(MutationTestingSession currentSession);
-
         MutationResult ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, CciModuleSource moduleSource);
-
-
         IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
     {
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
-
-        public bool DebugConfig { get; set; }
-
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private MutantsCreationOptions _options;
-        private MutationFilter _filter;
-        private ICollection<IMutationOperator> _mutOperators;
+        private readonly MutantsCreationOptions _options;
+        private readonly MutationFilter _filter;
+        private readonly ICollection<IMutationOperator> _mutOperators;
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutantsContainer(
@@ -63,19 +52,15 @@
             _choices = choices;
             _whiteCache = whiteCache;
             _operatorUtils = operatorUtils;
+            _options = _choices.MutantsCreationOptions;
+            _filter = _choices.Filter;
+            _mutOperators = _choices.SelectedOperators;
         }
 
-        public void Initialize(ICollection<IMutationOperator> mutOperators, 
-            MutantsCreationOptions options, MutationFilter filter)
-        {
-            _options = options;
-            _filter = filter;
-            _mutOperators = mutOperators;
-        }
+ 
 
         public Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode)
         {
-            var op = new IdentityOperator();
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
             assemblyNode = new AssemblyNode("All modules");
             var nsNode = new TypeNamespaceNode(assemblyNode, "");
@@ -93,15 +78,8 @@
            
             group.Children.Add(mutant);
             methodNode.Children.Add(group);
-            //assemblyNode.UpdateDisplayedText();
             group.UpdateDisplayedText();
-            
             return mutant;
-        }
-
-        public void SaveMutantsToDisk(MutationTestingSession currentSession)
-        {
-            
         }
 
 
@@ -113,7 +91,7 @@
             int[] id = { 1 };
             Func<int> genId = () => id[0]++;
 
-            var originalModules = _whiteCache.GetWhiteModules();
+            var originalModules = _choices.WhiteSource;//_whiteCache.GetWhiteModules();
             percentCompleted.Initialize(originalModules.Modules.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
@@ -122,7 +100,6 @@
             var assNodes = new List<AssemblyNode>();
             foreach (var module in originalModules.Modules)
             {
-
                 sw.Restart();
 
                 AssemblyNode assemblyNode = FindTargets(module);
@@ -180,22 +157,13 @@
                 }
                 catch (Exception e)
                 {
-                    if (!DebugConfig)
-                    {
-                        throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutationOperator.Info.Name), e);
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutationOperator.Info.Name), e);
                 }
             }
             var assemblyNode = BuildMutantsTree(module.Name, mergedTargets);
                 
             _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in "+assemblyNode.Name);
             return assemblyNode;
-
-            
             
         }
 
@@ -251,11 +219,7 @@
             {
                 assemblyNode.Children.Remove(node);
             }
-
-
             return assemblyNode;
-
-
         }
 
         public MutationResult ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
@@ -286,8 +250,6 @@
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
 
-                    
-
 
                     operatorCodeRewriter.NameTable = cci.Host.NameTable;
                     operatorCodeRewriter.Host = cci.Host;
@@ -299,59 +261,19 @@
 
                     rewriter.CheckForUnfoundObjects();
 
-                    mutant.MutationTarget.Variant.AstObjects = null; //TODO: refactor
+                    mutant.MutationTarget.Variant.AstObjects = null; //TODO: saving memory. refactor
                     mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
                     
                 }
                 var result = new MutationResult(new SimpleModuleSource(mutatedModules), cci, 
                     mutant.MutationTarget.MethodMutated);
-                mutant.MutationTarget.MethodMutated = null; //TODO: refactor
+                mutant.MutationTarget.MethodMutated = null; //TODO: saving memory. refactor
                 return result;
             }
             catch (Exception e)
             {
-                if (!DebugConfig)
-                {
-                    throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutationOperator.Info.Name), e);
-                }
-                else
-                {
-                    throw;
-                }
-                
+                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutationOperator.Info.Name), e);
             }
         }
-        public class OperatorWithTargets
-        {
-            public List<MutationTarget> MutationTargets
-            {
-                get;
-                set;
-            }
-            public IMutationOperator Operator
-            {
-                get;
-                set;
-            }
-            public List<MutationTarget> CommonTargets
-            {
-                get;
-                set;
-            }
-
-        }
-    }
-    public class MutationResult
-    {
-        public MutationResult(IModuleSource mutatedModules, ICciModuleSource whiteModules, IMethodDefinition methodMutated)
-        {
-            MutatedModules = mutatedModules;
-            WhiteModules = whiteModules;
-            MethodMutated = methodMutated;
-        }
-
-        public ICciModuleSource WhiteModules { get; private set; }
-        public IMethodDefinition MethodMutated { get; set; }
-        public IModuleSource MutatedModules { get; private set; }
     }
 }
