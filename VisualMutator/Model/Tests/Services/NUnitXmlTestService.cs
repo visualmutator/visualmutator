@@ -25,23 +25,27 @@
 
     #endregion
 
-    public class NUnitXmlTestService : NUnitTestService
+    public class NUnitXmlTestService : ITestsService
     {
-        private readonly IFactory<NUnitTester> _nUnitTesterFactory;
+        private readonly NUnitTestLoader _testsLoader;
         private readonly ISettingsManager _settingsManager;
         private readonly CommonServices _svc;
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly string _nunitConsolePath;
 
+        public string NunitConsolePath
+        {
+            get { return _nunitConsolePath; }
+        }
+
         public NUnitXmlTestService(
-            INUnitWrapper nUnitWrapper, 
-            IFactory<NUnitTester> nUnitTesterFactory,
+            NUnitTestLoader testsLoader, 
             ISettingsManager settingsManager,
             CommonServices svc)
-            : base(nUnitWrapper)
+          
         {
-            _nUnitTesterFactory = nUnitTesterFactory;
+            _testsLoader = testsLoader;
             _settingsManager = settingsManager;
             _svc = svc;
 
@@ -49,16 +53,12 @@
             _log.Info("Set NUnit Console path: " + _nunitConsolePath);
         }
 
-
-        public override May<TestsLoadContext> LoadTests(string assemblyPath)
+        public May<TestsLoadContext> LoadTests(string assemblyPath)
         {
-            May<TestsLoadContext> loadTests = base.LoadTests(assemblyPath);
-
-            UnloadTests();
-            return loadTests;
+            return _testsLoader.LoadTests(assemblyPath);
         }
 
-        public override void Cancel()
+        public void Cancel()
         {
             
         }
@@ -75,9 +75,5 @@
             return nUnitConsolePath;
         }
 
-        public NUnitTester SpawnTester(TestsRunContext arg)
-        {
-            return _nUnitTesterFactory.CreateWithParams(_nunitConsolePath, arg);
-        }
     }
 }

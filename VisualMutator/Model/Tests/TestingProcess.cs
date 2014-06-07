@@ -17,7 +17,7 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly IFactory<TestingMutant> _mutantTestingFactory;
+        private readonly IRootFactory<TestingMutant> _mutantTestingFactory;
         private readonly Subject<SessionEventArgs> _sessionEventsSubject;
 
         private readonly int _allMutantsCount;
@@ -32,7 +32,7 @@
         }
 
         public TestingProcess(
-            IFactory<TestingMutant> mutantTestingFactory,
+            IRootFactory<TestingMutant> mutantTestingFactory,
             MutationSessionChoices choices,
             // ------- on creation
             Subject<SessionEventArgs> sessionEventsSubject,
@@ -75,12 +75,11 @@
         public async Task TestOneMutant(Mutant mutant)
         {
             
-
-            TestingMutant testingMutant = _mutantTestingFactory.CreateWithParams(_sessionEventsSubject, mutant);
-
             try
             {
-                await testingMutant.RunAsync();
+                IObjectRoot<TestingMutant> testingMutant = _mutantTestingFactory.CreateWithParams(_sessionEventsSubject, mutant);
+
+                await testingMutant.Get.RunAsync();
                 lock (this)
                 {
                     _mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
@@ -90,6 +89,7 @@
             catch (Exception e)
             {
                 _log.Error(e);
+                mutant.State = MutantResultState.Error;
             }
         }
 

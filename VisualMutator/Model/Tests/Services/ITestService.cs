@@ -11,7 +11,7 @@ namespace VisualMutator.Model.Tests.Services
 
     #endregion
 
-    public interface ITestService
+    public interface ITestsService
     {
         May<TestsLoadContext> LoadTests(string assemblyPath);
 

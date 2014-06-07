@@ -13,10 +13,25 @@ namespace VisualMutator.Model.Mutations.MutantsTree
     {
        
 
-        public MutantGroup(string name, CheckedNode parent)
+        public MutantGroup(string name, CheckedNode parent, IEnumerable<Mutant> mutants = null)
             : base( name, true)
         {
             Parent = parent;
+            if(mutants != null)
+            {
+                Children.AddRange(mutants);
+            }
+            UpdateDisplayedText();
+        }
+        public MutantGroup(string name, IEnumerable<Mutant> mutants)
+           : base(name, true)
+        {
+            Children.AddRange(mutants);
+            foreach (var child in Children)
+            {
+                child.Parent = this;
+            }
+
             UpdateDisplayedText();
         }
 

@@ -28,7 +28,7 @@
             var tasks = new Dictionary<string, Task<May<TestNodeAssembly>>>();
             var testsRootNode = new TestsRootNode();
 
-            ITestService service1 = _nunit;
+            ITestsService service1 = _nunit;
             foreach (var path in assembliesPaths)
             {
                 string path1 = path;

@@ -2,16 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using log4net;
 
-  
 
     public class WorkerCollection<T> where T : class 
     {
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly LinkedList<T> _toProcessList;
         private bool _requestedStop;
-        private readonly SemaphoreSlim _semaphore;
         private readonly int _maxCount;
         private int _currentCount;
         private readonly Func<T, Task> _workAction;
@@ -20,7 +22,6 @@
         {
             _maxCount = maxCount;
             _workAction = workAction;
-            _semaphore = new SemaphoreSlim(_maxCount);
             _toProcessList = new LinkedList<T>(items);
         }
 
@@ -53,6 +54,10 @@
                         _workAction(item)
                             .ContinueWith(t =>
                             {
+                                if(t.Exception != null)
+                                {
+                                    _log.Error(t.Exception);
+                                }
                                 lock (this)
                                 {
                                     _currentCount--;

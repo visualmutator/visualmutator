@@ -16,6 +16,7 @@
     using Tests;
     using Tests.Services;
     using Tests.TestsTree;
+    using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
 
     public class TestingMutant
@@ -26,12 +27,13 @@
         private readonly MutationSessionChoices _choices;
         private readonly NUnitXmlTestService _nunitService;
         private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
-        
+        private readonly IFactory<TestsRunContext> _testsRunContextFactory;
+
         private readonly Mutant _mutant;
         private StoredMutantInfo _storedMutantInfo;
-        private ICollection<NUnitTester> _nUnitTesters;
         private readonly DateTime _sessionStartTime;
         private readonly OptionsModel _options;
+        private List<TestsRunContext> _contexts;
 
 
         public TestingMutant(
@@ -40,6 +42,8 @@
             OptionsModel options,
             MutationSessionChoices choices,
             NUnitXmlTestService nunitService,
+            IFactory<TestsRunContext> testsRunContextFactory,
+            //--------
             ISubject<SessionEventArgs> sessionEventsSubject,
             Mutant mutant)
         {
@@ -48,6 +52,7 @@
             _choices = choices;
             _nunitService = nunitService;
             _sessionEventsSubject = sessionEventsSubject;
+            _testsRunContextFactory = testsRunContextFactory;
             _mutant = mutant;
             _sessionStartTime = sessionController.SessionStartTime;
         }
@@ -103,15 +108,14 @@
 
             _log.Info("Loading tests for mutant " + _mutant.Id);
 
-           
-
-            List<TestsRunContext> contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
+            _contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
                 _choices.TestAssemblies).ToList();
 
             _log.Info("Running tests for mutant " + _mutant.Id);
 
            
-            _nUnitTesters = contexts.Select(_nunitService.SpawnTester).ToList();
+       //     _nUnitTesters = contexts.Select(_nunitService.SpawnTester).ToList();
+         //   _nUnitTesterFactory.CreateWithParams(_nunitConsolePath, arg);
 
             IDisposable timoutDisposable =
               Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
@@ -119,12 +123,12 @@
 
             try
             {
-                await Task.WhenAll(_nUnitTesters.Select(t => t.RunTests()));
+                await Task.WhenAll(_contexts.Select(t => t.RunTests()));
                 
                 _log.Debug("Finished waiting for tests. ");
-                _mutant.TestRunContexts = contexts;
+                _mutant.TestRunContexts = _contexts;
 
-                ResolveMutantState(contexts.Select(c => c.TestResults));
+                ResolveMutantState(_contexts.Select(c => c.TestResults));
 
                 _mutant.MutantTestSession.IsComplete = true;
             }
@@ -145,7 +149,7 @@
 
         private void CancelTestRun()
         {
-            foreach (var nUnitTester in _nUnitTesters)
+            foreach (var nUnitTester in _contexts)
             {
                 nUnitTester.CancelRun();
             }
@@ -156,8 +160,6 @@
             List<string> mutatedPaths,
             IList<TestNodeAssembly> testAssemblies)
         {
-
-
             foreach (var testNodeAssembly in testAssemblies)
             {
                 //todo: get rid of this ungly thing
@@ -165,9 +167,7 @@
                     Path.GetFileName(testNodeAssembly.AssemblyPath));
 
                 var originalContext = testNodeAssembly.TestsLoadContext;
-                var context = new TestsRunContext();
-                context.SelectedTests = originalContext.SelectedTests;
-                context.AssemblyPath = mutatedPath;
+                var context = _testsRunContextFactory.CreateWithParams(originalContext.SelectedTests, mutatedPath);
 
                 yield return context;
             }

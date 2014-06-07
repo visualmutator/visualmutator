@@ -142,24 +142,18 @@
            
             try
             {
-                var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33, tcs.Task).ContinueWith(t =>
+                var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33).ContinueWith(t =>
                 {
                     
                     if (t.Exception != null)
                     {
                         ShowError(t.Exception);
                         _viewModel.Close();
-                        throw t.Exception;
+                        tcs.TrySetCanceled();
                     }
-//                    else
-//                    {
-//                        
-//                        if (auto)
-//                        {
-//                            AcceptChoices();
-//                        }
-//                    }
                 }, _execute.GuiScheduler);
+
+                var wrappedTask = Task.WhenAll(tcs.Task, mainTask);
 
                 if (_sessionConfiguration.AssemblyLoadProblem)
                 {
@@ -167,26 +161,7 @@
                         .StartNew(() =>
                         _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded()));
                 }
-
-              
-                return await WaitForResult(auto, mainTask);
-
-                //                if (auto)
-                //                {
-                //                    tcs.TrySetResult(new object());
-                //                }
-                //                if (Result == null)
-                //                {
-                //                    tcs.TrySetCanceled();
-                //                }
-                //                else
-                //                {
-                //                    tcs.TrySetResult(new object());
-                //                }
-                
-             //   Result.WhiteSource = _whiteSource;
-              //  return Result;
-              
+                return await WaitForResult(auto, wrappedTask);
             }
             catch (Exception e)
             {

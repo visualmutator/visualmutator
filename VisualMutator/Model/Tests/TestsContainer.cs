@@ -132,27 +132,6 @@
         }
 
 
-        public IEnumerable<TestsRunContext> CreateTestContexts(
-            List<string> mutatedPaths,
-            IList<TestNodeAssembly> testAssemblies)
-        {
-
-
-            foreach (var testNodeAssembly in testAssemblies)
-            {
-                //todo: get rid of this ungly thing
-                var mutatedPath = mutatedPaths.Single(p => Path.GetFileName(p) ==
-                    Path.GetFileName(testNodeAssembly.AssemblyPath));
-
-                var originalContext = testNodeAssembly.TestsLoadContext;
-                var context = new TestsRunContext();
-                context.SelectedTests = originalContext.SelectedTests;
-                context.AssemblyPath = mutatedPath;
-
-                yield return context;
-            }
-        }
-
     
         public void CancelAllTesting()
         {

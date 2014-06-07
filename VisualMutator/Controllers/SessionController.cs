@@ -48,7 +48,7 @@
        
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly IFactory<TestingProcess> _testingProcessFactory;
-        private readonly IFactory<TestingMutant> _testingMutantFactory;
+        private readonly IRootFactory<TestingMutant> _testingMutantFactory;
         private readonly MutationSessionChoices _choices;
 
 
@@ -77,7 +77,7 @@
             ITestsContainer testsContainer,
             IFactory<ResultsSavingController> resultsSavingFactory,
             IFactory<TestingProcess> testingProcessFactory,
-            IFactory<TestingMutant> testingMutantFactory,
+            IRootFactory<TestingMutant> testingMutantFactory,
             MutationSessionChoices choices)
         {
             _dispatcher = dispatcher;
@@ -190,10 +190,10 @@
                 });
 
 
-            TestingMutant testingMutant = _testingMutantFactory
+            IObjectRoot<TestingMutant> testingMutant = _testingMutantFactory
                 .CreateWithParams(_sessionEventsSubject, changelessMutant);
 
-            var result = await testingMutant.RunAsync();
+            var result = await testingMutant.Get.RunAsync();
 
             verifiEvents.Dispose();
             _choices.MutantsTestingOptions.TestingTimeoutSeconds

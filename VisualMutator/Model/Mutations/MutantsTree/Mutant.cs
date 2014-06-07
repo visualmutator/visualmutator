@@ -25,7 +25,14 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             Parent = parent;
             UpdateDisplayedText();
         }
-
+        public Mutant(string id, MutationTarget mutationTarget)
+           : base("Mutant", false)
+        {
+            _id = id;
+            _mutationTarget = mutationTarget;
+            _mutantTestSession = new MutantTestSession();
+            UpdateDisplayedText();
+        }
 
         private readonly string _id;
 
@@ -88,7 +95,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 return MutationTarget.Variant.Signature;
             }
         }
-        private MutantTestSession _mutantTestSession;
+        private readonly MutantTestSession _mutantTestSession;
 
         public MutantTestSession MutantTestSession
         {

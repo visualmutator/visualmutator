@@ -53,7 +53,7 @@
             var methods = assemblies
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
-            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new Extensibility.MethodIdentifier(m)).ToList());
+            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
 
         public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,

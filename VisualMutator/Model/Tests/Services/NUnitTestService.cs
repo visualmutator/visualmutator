@@ -26,7 +26,7 @@
             return (test.Tests ?? new List<ITest>()).Cast<ITest>();
         }
     }
-    public abstract class NUnitTestService : ITestService
+    public class NUnitTestLoader 
     {
         private readonly INUnitWrapper _nUnitWrapper;
 
@@ -34,7 +34,7 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        public NUnitTestService(INUnitWrapper nUnitWrapper)
+        public NUnitTestLoader(INUnitWrapper nUnitWrapper)
         {
             _nUnitWrapper = nUnitWrapper;
 
@@ -54,7 +54,6 @@
             return context;
         }
 
-        public abstract void Cancel();
 
         public static IList<T> ConvertToListOf<T>(IList iList)
         {

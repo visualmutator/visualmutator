@@ -56,16 +56,17 @@
             Bind<ApplicationController>().ToSelf().InSingletonScope();
             
             Bind<OptionsController>().ToSelf().AndFromFactory();
-            Bind<NUnitXmlTestService>().ToSelf();
-            Bind<NUnitTestService>().To<NUnitXmlTestService>();
-            Bind<NUnitTester>().ToSelf().AndFromFactory();
-            Bind<INUnitWrapper>().To<NUnitWrapper>();
-            Bind<INUnitExternal>().To<NUnitResultsParser>();
+            
+
+            Bind<ITestsService>().To<NUnitXmlTestService>().InSingletonScope();
+            Bind<NUnitTestLoader>().ToSelf().InSingletonScope();
+            Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
+
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().AndFromFactory();
 
-            Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 => // on solution opened / rebuild
+            Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 => // on solution opened / rebuilt
             {
                 ch0.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
                 ch0.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
@@ -83,9 +84,15 @@
 
                     ch1.BindObjectRoot<SessionController>().ToSelf(ch2 => // on session starting
                     {
-                        ch2.Bind<ICciModuleSource>().To<CciModuleSource>().InSingletonScope();
                         ch2.Bind<TestingProcess>().ToSelf().AndFromFactory();
-                        ch2.Bind<TestingMutant>().ToSelf().AndFromFactory();
+                      //  ch2.Bind<TestingMutant>().ToSelf();//.AndFromFactory();
+                        ch2.BindObjectRoot<TestingMutant>().ToSelf(ch3 => // on session starting
+                        {
+                            ch3.Bind<TestsRunContext>().ToSelf().AndFromFactory();
+                            ch3.Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
+                        });
+                        
+
                         ch2.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
                         ch2.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
                         ch2.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
