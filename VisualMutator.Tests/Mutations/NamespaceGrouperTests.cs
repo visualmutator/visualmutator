@@ -71,7 +71,7 @@
             var mt4 = new MutationTarget(null);
             mt4.NamespaceName = "Another.NamespaceName3";
 
-            var ass = new AssemblyNode("", null);
+            var ass = new AssemblyNode("");
             NamespaceGrouper<MutationTarget, CheckedNode>.
                 GroupTypes(ass, namespaceExtractor, 
                 (parent, name) => new TypeNamespaceNode(parent, name), typeNodeCreator,

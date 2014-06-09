@@ -14,7 +14,6 @@
     using Model.Mutations.Types;
     using NUnit.Core;
     using NUnit.Framework;
-    using Operators;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
@@ -87,7 +86,7 @@
                     Layout = new SimpleLayout()
                 });
 
-            _module = MutationTestsHelper.CreateModuleFromCode(code);
+            _module = null;//TODO MutationTestsHelper.CreateModuleFromCode(code);
 
         }
      

@@ -23,7 +23,7 @@
             var mutar = new MutationTarget(new MutationVariant());
 
 
-            var ass = new AssemblyNode("Ass", null);
+            var ass = new AssemblyNode("Assembly");
             muSession.MutantsGrouped.Add(ass);
             var nodeNamespace = new TypeNamespaceNode(ass, "Namespace");
             ass.Children.Add(nodeNamespace);
