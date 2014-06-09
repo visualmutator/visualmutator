@@ -41,6 +41,17 @@ namespace VisualMutator.Model.StoringMutants
             }
         }
 
+        private class MiniCache
+        {
+            private BlockingCollection<CciModuleSource> _cache;
+            private int _maxCount;
+
+
+
+
+        }
+
+
         private readonly IProjectClonesManager _fileManager;
         private readonly OptionsModel _options;
        // private readonly BlockingCollection<CciModuleSource> _whiteCache;
@@ -51,16 +62,18 @@ namespace VisualMutator.Model.StoringMutants
         private List<ProjectFilesClone> _filesPool;
         private readonly int _threadsCount;
         private Exception _error;
-        private Dictionary<string, string> _moduleNameToFileName;
-        private ConcurrentDictionary<string, BlockingCollection<CciModuleSource>> _whiteCaches;
+        private readonly Dictionary<string, string> _moduleNameToFileName;
+        private readonly ConcurrentDictionary<string, BlockingCollection<CciModuleSource>> _whiteCaches;
         private bool _initialized;
-        private int _fileCount;
+        private Task<CciModuleSource> _mainModules;
+        private readonly int _initialMaxCount;
 
         public WhiteCache(
             IProjectClonesManager fileManager,
             OptionsModel options,
             // ------
-            int threadsCount
+            int threadsCount,
+            int maxCount
             )
         {
             _fileManager = fileManager;
@@ -69,7 +82,8 @@ namespace VisualMutator.Model.StoringMutants
             _moduleNameToFileName = new Dictionary<string, string>();
             _whiteCaches = new ConcurrentDictionary<string, BlockingCollection<CciModuleSource>>();
             _clients = new Queue<WhiteClient>();
-            _maxCount = 3;
+            _maxCount = maxCount;
+            _initialMaxCount = maxCount;
             _paths = new BlockingCollection<ProjectFilesClone>();
         }
 
@@ -87,6 +101,13 @@ namespace VisualMutator.Model.StoringMutants
                 _paths.Add(projectFilesClone);
             }
 
+            ProjectFilesClone filesClone = _paths.Take();
+            _mainModules = Task.Run(() =>
+            {
+                var source = new CciModuleSource(filesClone);
+                _paths.Add(filesClone);
+                return source;
+            });
 //            try
 //            {
 //                await Task.Run(() => );
@@ -139,7 +160,6 @@ namespace VisualMutator.Model.StoringMutants
         private void InitializeModuleNames()
         {
             ProjectFilesClone projectFilesClone = _paths.Take();
-            _fileCount = projectFilesClone.Assemblies.Count;
             foreach (var path in projectFilesClone.Assemblies)
             {
                 var cci = new CciModuleSource(path.Path);
@@ -181,7 +201,7 @@ namespace VisualMutator.Model.StoringMutants
         }
         public Task<CciModuleSource> GetWhiteModulesAsync()
         {
-            return GetWhiteModulesAsync(_whiteCaches.Single().Key);
+            return _mainModules; //GetWhiteModulesAsync(_whiteCaches.Single().Key);
         }
 
         private CciModuleSource TryTake(string moduleName)
@@ -215,7 +235,7 @@ namespace VisualMutator.Model.StoringMutants
             {
                 if (!pause)
                 {
-                    _maxCount = 5;
+                    _maxCount = _initialMaxCount;
                     Pulse();
                 }
                 else
@@ -255,6 +275,7 @@ namespace VisualMutator.Model.StoringMutants
 
         public void Dispose()
         {
+            _log.Debug("Disposing white cache");
             _paths.CompleteAdding();
             foreach (var projectFilesClone in _filesPool)
             {

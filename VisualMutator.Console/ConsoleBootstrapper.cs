@@ -50,13 +50,15 @@
             try
             {
                 _boot.Initialize();
+                OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
+                optionsModel.WhiteCacheThreadsCount = 1;
+                optionsModel.ProcessingThreadsCount = 2;
+                _boot.AppController.OptionsManager.WriteOptions(optionsModel);
+
                 _connection.Build();
                 MethodIdentifier methodIdentifier;
                 _connection.GetCurrentClassAndMethod(out methodIdentifier);
-                OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
-                optionsModel.WhiteCacheThreadsCount = 0;
-                optionsModel.ProcessingThreadsCount = 2;
-                _boot.AppController.OptionsManager.WriteOptions(optionsModel);
+                
 
                 _boot.AppController.MainController.RunMutationSession(methodIdentifier, true);
                 //                for (int i = 0; i < 1000; i++)

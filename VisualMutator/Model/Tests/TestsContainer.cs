@@ -20,6 +20,7 @@
     using Strilanc.Value;
     using TestsTree;
     using UsefulTools.CheckboxedTree;
+    using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using Verification;
 
@@ -45,8 +46,10 @@
     {
         private readonly IMutantsCache _mutantsCache;
         private readonly IProjectClonesManager _fileManager;
+        private readonly MutationSessionChoices _choices;
 
         private readonly IAssemblyVerifier _assemblyVerifier;
+        private readonly CommonServices _svc;
 
 
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -57,11 +60,15 @@
         public TestsContainer(
             IMutantsCache mutantsCache,
             IProjectClonesManager fileManager,
-            IAssemblyVerifier assemblyVerifier)
+            MutationSessionChoices choices,
+            IAssemblyVerifier assemblyVerifier,
+            CommonServices svc)
         {
             _mutantsCache = mutantsCache;
             _fileManager = fileManager;
+            _choices = choices;
             _assemblyVerifier = assemblyVerifier;
+            _svc = svc;
             _testResultTreeCreator = new TestResultTreeCreator();
         }
        
@@ -120,18 +127,33 @@
             var clone = await _fileManager.CreateCloneAsync("InitTestEnvironment");
             var info = new StoredMutantInfo(clone);
             var mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
-            foreach (var module in mutationResult.MutatedModules.Modules)
-            {
-                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(info.Directory, module.Name + ".dll");
 
-                await Task.Run( () => mutationResult.WhiteModules.WriteToFile(module, file));
+            var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
+            if (singleMutated != null)
+            {
+                await WriteModule(singleMutated, info, mutationResult.WhiteModules);
+            }
+
+            var otherModules = _choices.WhiteSource.ModulesInfo
+                .Where(_ => singleMutated == null || _.Name != singleMutated.Name);
+
+            foreach (var otherModule in otherModules)
+            {
+                string file = Path.Combine(info.Directory, otherModule.Name + ".dll");
                 info.AssembliesPaths.Add(file);
             }
+
             return info;
         }
 
+        public async Task WriteModule(IModuleInfo module, StoredMutantInfo info, ICciModuleSource cci)
+        {
+            //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+            string file = Path.Combine(info.Directory, module.Name + ".dll");
+            await Task.Run(() => cci.WriteToFile(module, file));
+            info.AssembliesPaths.Add(file);
 
+        }
     
         public void CancelAllTesting()
         {

@@ -35,6 +35,7 @@
     {
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
         private readonly IMutantsContainer _mutantsContainer;
 
@@ -50,13 +51,6 @@
             get { return _whiteCache; }
         }
 
-        public MutantsCache(
-            
-            IMutantsContainer mutantsContainer
-            )
-            : this(new MutationSessionChoices(), null, mutantsContainer)
-        {
-        }
 
         [Inject]
         public MutantsCache(
@@ -64,6 +58,7 @@
             IWhiteCache whiteCache,
             IMutantsContainer mutantsContainer)
         {
+            _choices = choices;
             _whiteCache = whiteCache;
             _mutantsContainer = mutantsContainer;
 
@@ -134,12 +129,21 @@
 
         private async Task<MutationResult> CreateNew(Mutant mutant)
         {
-            CciModuleSource source = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
-            var result = await Task.Run(() => _mutantsContainer.ExecuteMutation(mutant,
-                ProgressCounter.Inactive(), source));
-            if (!_disableCache)
+            MutationResult result;
+            if (mutant.MutationTarget == null || mutant.MutationTarget.ProcessingContext == null)
             {
-                _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
+                result = new MutationResult(new SimpleModuleSource(new List<IModuleInfo>()), _choices.WhiteSource, null);
+            }
+            else
+            {
+                var source = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
+                result = await Task.Run(() => _mutantsContainer.ExecuteMutation(mutant,
+                        ProgressCounter.Inactive(), source));
+
+                if (!_disableCache)
+                {
+                    _cache.Add(new CacheItem(mutant.Id, result), new CacheItemPolicy());
+                }
             }
             return result;
         }

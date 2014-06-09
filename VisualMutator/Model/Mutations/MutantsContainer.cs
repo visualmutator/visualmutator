@@ -230,41 +230,39 @@
             {
                 _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
                 var mutatedModules = new List<IModuleInfo>();
-                foreach (var module in moduleSource.Modules)
-                {
-                    percentCompleted.Progress();
-                    var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                         _sharedTargets.GetValues(mutationOperator, returnEmptySet: true), 
-                         module.Module, mutationOperator.Info.Id);
-                    var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
-                    traverser2.Traverse(module.Module);
-                    visitorBack.PostProcess();
-                    var operatorCodeRewriter = mutationOperator.CreateRewriter();
+                var module = moduleSource.Modules.Single();
+                percentCompleted.Progress();
+                var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
+                        _sharedTargets.GetValues(mutationOperator, returnEmptySet: true), 
+                        module.Module, mutationOperator.Info.Id);
+                var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
+                traverser2.Traverse(module.Module);
+                visitorBack.PostProcess();
+                var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
-                    var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
+                var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
+                    visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
 
-                    operatorCodeRewriter.MutationTarget =
-                        new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
+                operatorCodeRewriter.MutationTarget =
+                    new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
 
 
-                    operatorCodeRewriter.NameTable = cci.Host.NameTable;
-                    operatorCodeRewriter.Host = cci.Host;
-                    operatorCodeRewriter.Module = module.Module;
-                    operatorCodeRewriter.OperatorUtils = _operatorUtils;
-                    operatorCodeRewriter.Initialize();
+                operatorCodeRewriter.NameTable = cci.Host.NameTable;
+                operatorCodeRewriter.Host = cci.Host;
+                operatorCodeRewriter.Module = module.Module;
+                operatorCodeRewriter.OperatorUtils = _operatorUtils;
+                operatorCodeRewriter.Initialize();
 
-                    var rewrittenModule = (Assembly) rewriter.Rewrite(module.Module);
+                var rewrittenModule = (Assembly) rewriter.Rewrite(module.Module);
 
-                    rewriter.CheckForUnfoundObjects();
+                rewriter.CheckForUnfoundObjects();
 
-                    mutant.MutationTarget.Variant.AstObjects = null; //TODO: saving memory. refactor
-                    mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
+                mutant.MutationTarget.Variant.AstObjects = null; //TODO: avoiding leaking memory. refactor
+                mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
                     
-                }
                 var result = new MutationResult(new SimpleModuleSource(mutatedModules), cci, 
                     mutant.MutationTarget.MethodMutated);
-                mutant.MutationTarget.MethodMutated = null; //TODO: saving memory. refactor
+                mutant.MutationTarget.MethodMutated = null; //TODO: avoiding leaking memory. refactor
                 return result;
             }
             catch (Exception e)

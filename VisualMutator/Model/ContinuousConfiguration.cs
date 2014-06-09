@@ -25,11 +25,11 @@
 
             if (_optionsModel.WhiteCacheThreadsCount != 0)
             {
-                _whiteCache = whiteCacheFactory.CreateWithParams(_optionsModel.WhiteCacheThreadsCount);
+                _whiteCache = whiteCacheFactory.CreateWithParams(_optionsModel.WhiteCacheThreadsCount, 3);
             }
             else
             {
-                _whiteCache = disabledCacheFactory.Create();
+                _whiteCache = whiteCacheFactory.CreateWithParams(1, 1);
             }
             _whiteCache.Initialize();
             operatorsManager.GetOperators();
