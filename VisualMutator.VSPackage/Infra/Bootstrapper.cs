@@ -102,6 +102,7 @@
                 new ViewsModule(), 
                 new InfrastructureModule(), 
                 new VisualMutatorModule(), 
+                new VisualMutatorViewsModule(), 
                 new VSNinjectModule(new VisualStudioConnection(_package)), 
             };
            

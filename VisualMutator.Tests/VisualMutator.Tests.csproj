@@ -215,6 +215,7 @@
     <Compile Include="Mutations\CciMethodMatchingTests.cs" />
     <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
+    <Compile Include="Mutations\WhiteCacheIntTests.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
@@ -227,6 +228,8 @@
     <Compile Include="SolutionTypesTests.cs" />
     <Compile Include="UnitTesting\TestContainerTests.cs" />
     <Compile Include="Util\LogMessageService.cs" />
+    <Compile Include="Util\TestInfrastructureModule.cs" />
+    <Compile Include="Util\TestProjects.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -17,7 +17,6 @@
     public interface IProjectClonesManager : IDisposable
     {
         ProjectFilesClone CreateClone(string name);
-        void Initialize();
         Task<ProjectFilesClone> CreateCloneAsync(string name);
     }
 
@@ -40,16 +39,14 @@
             _hostEnviroment = hostEnviroment;
             _filesManager = filesManager;
             _fs = fs;
-        }
 
-        public void Initialize()
-        {
             _originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
             _referencedFiles = GetReferencedAssemblyPaths(_originalProjectFiles).Select(s => s.ToFilePathAbs());
 
             FilePathAbsolute tmp = CreateTmpDir("VisualMutator-MainClone-");
             _mainClone = _filesManager.CreateProjectClone(_referencedFiles, _originalProjectFiles, tmp).Result;
         }
+
         public void Dispose()
         {
             Dispose(true);

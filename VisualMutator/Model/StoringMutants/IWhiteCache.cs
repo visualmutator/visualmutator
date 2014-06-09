@@ -5,10 +5,10 @@
 
     public interface IWhiteCache
     {
-        void Initialize();
-        CciModuleSource GetWhiteModules();
+        Task Initialize();
         Task<CciModuleSource> GetWhiteModulesAsync();
         void Dispose();
         void Pause(bool paused);
+        Task<CciModuleSource> GetWhiteModulesAsync(string moduleName);
     }
 }

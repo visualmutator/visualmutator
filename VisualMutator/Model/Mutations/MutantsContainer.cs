@@ -194,42 +194,13 @@
                             select new MutantGroup(byGroupGrouping.Key,
                                 from mutationTarget in byGroupGrouping
                                 select new Mutant(mutationTarget.Id, mutationTarget)
-                                )
                             )
-                        );
+                        )
+                    );
 
                 parent.Children.AddRange(typeNodes);
 
 
-//                foreach (var byTypeGrouping in targets
-//                        .OrderBy(t => t.TypeName)
-//                        .GroupBy(t => t.TypeName))
-//                    {
-//                        var type = new TypeNode(parent, byTypeGrouping.Key);
-//                        parent.Children.Add(type);
-//
-//                        var groupedByMethodTargets = byTypeGrouping.GroupBy(target => target.MethodRaw.Name.Value);
-//                        foreach (var byMethodGrouping in groupedByMethodTargets.OrderBy(g => g.Key))
-//                        {
-//                            var md = byMethodGrouping.First().MethodRaw;
-//                            var method = new MethodNode(type, md.Name.Value, md, true);
-//                            type.Children.Add(method);
-//
-//                            var groupedTargets = byMethodGrouping.GroupBy(target => target.GroupName);
-//                            foreach (var byGroupGrouping in groupedTargets.OrderBy(g => g.Key))
-//                            {
-//                                var group = new MutantGroup(byGroupGrouping.Key, method);
-//                                method.Children.Add(group);
-//                                foreach (var mutationTarget in byGroupGrouping)
-//                                {
-//                                    var mutant = new Mutant(mutationTarget.Id, group, mutationTarget);
-//                                    group.Children.Add(mutant);
-//
-//                                }
-//                                group.UpdateDisplayedText();
-//                            }
-//                        }
-//                    }
                 };
 
             Func<MutationTarget, string> namespaceExtractor = target => target.NamespaceName;

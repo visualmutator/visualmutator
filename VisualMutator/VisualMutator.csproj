@@ -302,7 +302,7 @@
     <Compile Include="Model\OptionsManager.cs" />
     <Compile Include="Model\SessionConfiguration.cs" />
     <Compile Include="Model\StoringMutants\FilesManager.cs" />
-    <Compile Include="Model\StoringMutants\FileSystemManager.cs" />
+    <Compile Include="Model\StoringMutants\ProjectClonesManager.cs" />
     <Compile Include="Model\StoringMutants\IWhiteCache.cs" />
     <Compile Include="Model\StoringMutants\IModuleSource.cs" />
     <Compile Include="Model\CciModuleSource.cs" />

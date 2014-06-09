@@ -64,7 +64,10 @@
                 AppendFromFile(assembliesPath.Path);
             }
         }
-
+        public CciModuleSource(string path) : this()
+        {
+            AppendFromFile(path);
+        }
         public MetadataReaderHost Host
         {
             get { return _host; }

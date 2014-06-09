@@ -26,30 +26,31 @@ namespace VisualMutator.Model.StoringMutants
             _fileManager = fileManager;
         }
 
-        public void Initialize()
+        public Task Initialize()
         {
             _assemblies = _fileManager.CreateClone("WhiteCache-");
+            return Task.FromResult(new object());
         }
 
 
-        public CciModuleSource GetWhiteModules()
-        {
-            return new CciModuleSource(_assemblies);
-
-        }
 
    
         public async Task<CciModuleSource> GetWhiteModulesAsync()
         {
             try
             {
-                return await Task.Run(() => GetWhiteModules());
+                return await Task.Run(() => new CciModuleSource(_assemblies));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public Task<CciModuleSource> GetWhiteModulesAsync(string moduleName)
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()
@@ -61,6 +62,8 @@ namespace VisualMutator.Model.StoringMutants
         {
             
         }
+
+      
 
         public CciModuleSource CreateSource(IList<string> assembliesPaths)
         {

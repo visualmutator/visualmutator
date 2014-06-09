@@ -134,7 +134,7 @@
 
         private async Task<MutationResult> CreateNew(Mutant mutant)
         {
-            CciModuleSource source = await _whiteCache.GetWhiteModulesAsync();
+            CciModuleSource source = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
             var result = await Task.Run(() => _mutantsContainer.ExecuteMutation(mutant,
                 ProgressCounter.Inactive(), source));
             if (!_disableCache)

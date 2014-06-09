@@ -18,20 +18,10 @@
     using ViewModels;
 
     #endregion
-
-    public class VisualMutatorModule : NinjectModule
+    public class VisualMutatorViewsModule : NinjectModule
     {
-
         public override void Load()
         {
-            Views();
-            MutantsCreation();
-        }
-       
-        private void Views()
-        {
-
-            //VIEWS
             Bind<MainViewModel>().ToSelf();
             Bind<MutantsSavingController>().ToSelf().AndFromFactory();
             Bind<MutantsSavingViewModel>().ToSelf();
@@ -45,18 +35,19 @@
             Bind<TestsSelectableTreeViewModel>().ToSelf();
             Bind<OptionsViewModel>().ToSelf();
         }
+    }
 
 
-        public void MutantsCreation()
+    public class VisualMutatorModule : NinjectModule
+    {
+
+        public override void Load()
         {
 
-          //  Kernel.Load(new NamedScopeModule());
-         //   Kernel.Load(new ContextPreservationModule());
-
             Bind<ApplicationController>().ToSelf().InSingletonScope();
-            
+
             Bind<OptionsController>().ToSelf().AndFromFactory();
-            
+
 
             Bind<ITestsService>().To<NUnitXmlTestService>().InSingletonScope();
             Bind<NUnitTestLoader>().ToSelf().InSingletonScope();
@@ -77,7 +68,7 @@
                 ch0.Bind<DisabledWhiteCache>().ToSelf().AndFromFactory();
 
                 ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 => // on session creation
-                {   
+                {
                     ch1.Bind<SessionCreator>().ToSelf().AndFromFactory();
                     ch1.Bind<AutoCreationController>().ToSelf().AndFromFactory();
                     ch1.Bind<ITypesManager>().To<SolutionTypesManager>().InSingletonScope();
@@ -85,13 +76,13 @@
                     ch1.BindObjectRoot<SessionController>().ToSelf(ch2 => // on session starting
                     {
                         ch2.Bind<TestingProcess>().ToSelf().AndFromFactory();
-                      //  ch2.Bind<TestingMutant>().ToSelf();//.AndFromFactory();
-                        ch2.BindObjectRoot<TestingMutant>().ToSelf(ch3 => // on session starting
+
+                        ch2.BindObjectRoot<TestingMutant>().ToSelf(ch3 => // on mutant testing
                         {
                             ch3.Bind<TestsRunContext>().ToSelf().AndFromFactory();
                             ch3.Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
                         });
-                        
+
 
                         ch2.Bind<MutantDetailsController>().ToSelf().AndFromFactory();
                         ch2.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
@@ -109,12 +100,8 @@
             });
 
 
-
         }
 
-       
-        
-     
 
     }
 }
