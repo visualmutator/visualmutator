@@ -57,11 +57,10 @@
         public async Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant)
         {
             _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
-            MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
             try
             {
-                var whiteCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, _choices.WhiteSource);
-                var mutatedCode = _codeVisualizer.Visualize(language, mutationResult.MethodMutated, mutationResult.WhiteModules);
+                var whiteCode = await _codeVisualizer.VisualizeOriginalCode(language, mutant);
+                var mutatedCode = await _codeVisualizer.VisualizeMutatedCode(language, mutant);
                 CodePair pair = new CodePair
                 {
                     OriginalCode = whiteCode,

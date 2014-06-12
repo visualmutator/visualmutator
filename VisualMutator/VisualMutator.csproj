@@ -60,12 +60,6 @@
     <Reference Include="DiffLib">
       <HintPath>..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.Decompiler">
-      <HintPath>..\packages\ICSharpCode.Decompiler.dll</HintPath>
-    </Reference>
-    <Reference Include="ILSpy">
-      <HintPath>..\packages\ILSpy.exe</HintPath>
-    </Reference>
     <Reference Include="LinqLib, Version=1.0.4.2, Culture=neutral, PublicKeyToken=100a413726ba3d7c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\LinqExtLibrary.1.0.4.2\lib\LinqLib.dll</HintPath>
@@ -286,6 +280,7 @@
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />
+    <Compile Include="Model\Mutations\MutationExecutor.cs" />
     <Compile Include="Model\Mutations\MutationFilter.cs" />
     <Compile Include="Model\Mutations\MutationResult.cs" />
     <Compile Include="Model\Mutations\MutationTarget.cs" />

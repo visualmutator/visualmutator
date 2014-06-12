@@ -37,7 +37,7 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutationSessionChoices _choices;
         private readonly IWhiteCache _whiteCache;
-        private readonly IMutantsContainer _mutantsContainer;
+        private readonly IMutationExecutor _mutationExecutor;
 
         private readonly MemoryCache _cache;
        
@@ -56,11 +56,11 @@
         public MutantsCache(
             MutationSessionChoices choices, 
             IWhiteCache whiteCache,
-            IMutantsContainer mutantsContainer)
+            IMutationExecutor mutationExecutor)
         {
             _choices = choices;
             _whiteCache = whiteCache;
-            _mutantsContainer = mutantsContainer;
+            _mutationExecutor = mutationExecutor;
 
             _disableCache = !choices.MainOptions.MutantsCacheEnabled;
             var config = new NameValueCollection
@@ -136,9 +136,7 @@
             }
             else
             {
-                var source = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
-                result = await Task.Run(() => _mutantsContainer.ExecuteMutation(mutant,
-                        ProgressCounter.Inactive(), source));
+                result = await _mutationExecutor.ExecuteMutation(mutant);
 
                 if (!_disableCache)
                 {

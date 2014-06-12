@@ -90,6 +90,7 @@
                         ch2.Bind<ResultsSavingController>().ToSelf().AndFromFactory();
                         ch2.Bind<XmlResultsGenerator>().ToSelf().InSingletonScope();
                         ch2.Bind<IMutantsContainer>().To<MutantsContainer>().InSingletonScope();
+                        ch2.Bind<IMutationExecutor>().To<MutationExecutor>().InSingletonScope();
                         ch2.Bind<IOperatorUtils>().To<OperatorUtils>().InSingletonScope();
                         ch2.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
                         ch2.Bind<AstFormatter>().ToSelf();

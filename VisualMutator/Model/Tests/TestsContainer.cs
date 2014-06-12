@@ -35,7 +35,6 @@
 
         bool VerifyMutant( StoredMutantInfo storedMutantInfo, Mutant mutant);
 
-        Task<StoredMutantInfo> StoreMutant(Mutant changelessMutant);
 
    
         void CreateTestSelections(IList<TestNodeAssembly> testAssemblies);
@@ -122,38 +121,7 @@
 
         }
 
-        public async Task<StoredMutantInfo> StoreMutant( Mutant mutant)
-        {
-            mutant.State = MutantResultState.Creating;
-            
-            var mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
-
-            mutant.State = MutantResultState.Writing;
-
-            var clone = await _fileManager.CreateCloneAsync("InitTestEnvironment");
-            var info = new StoredMutantInfo(clone);
-
-            var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
-            if (singleMutated != null)
-            {
-                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
-                await mutationResult.WhiteModules.WriteToFile(singleMutated, file);
-                info.AssembliesPaths.Add(file);
-            }
-
-            var otherModules = _choices.WhiteSource.ModulesInfo
-                .Where(_ => singleMutated == null || _.Name != singleMutated.Name);
-
-            foreach (var otherModule in otherModules)
-            {
-                string file = Path.Combine(info.Directory, otherModule.Name + ".dll");
-                info.AssembliesPaths.Add(file);
-            }
-
-            return info;
-        }
-
+   
     
         public void CancelAllTesting()
         {

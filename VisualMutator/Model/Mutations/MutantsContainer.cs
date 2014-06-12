@@ -7,6 +7,7 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Exceptions;
     using Extensibility;
     using log4net;
@@ -27,7 +28,6 @@
     public interface IMutantsContainer
     {
         Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode);
-        MutationResult ExecuteMutation(Mutant mutant, ProgressCounter percentCompleted, CciModuleSource moduleSource);
         IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted);
     }
 
@@ -35,20 +35,26 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private readonly IWhiteCache _whiteCache;
         private readonly MutationSessionChoices _choices;
         private readonly IOperatorUtils _operatorUtils;
+        private readonly IMutationExecutor _mutationExecutor;
         private readonly MutantsCreationOptions _options;
         private readonly MutationFilter _filter;
         private readonly ICollection<IMutationOperator> _mutOperators;
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutantsContainer(
+            IWhiteCache whiteCache,
             MutationSessionChoices choices,
-            IOperatorUtils operatorUtils
+            IOperatorUtils operatorUtils,
+            IMutationExecutor mutationExecutor
             )
         {
+            _whiteCache = whiteCache;
             _choices = choices;
             _operatorUtils = operatorUtils;
+            _mutationExecutor = mutationExecutor;
             _options = _choices.MutantsCreationOptions;
             _filter = _choices.Filter;
             _mutOperators = _choices.SelectedOperators;
@@ -58,7 +64,7 @@
 
         public Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode)
         {
-            _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
+            
             assemblyNode = new AssemblyNode("All modules");
             var nsNode = new TypeNamespaceNode(assemblyNode, "");
             assemblyNode.Children.Add(nsNode);
@@ -99,71 +105,20 @@
             {
                 sw.Restart();
 
-                AssemblyNode assemblyNode = FindTargets(module);
+                var mergedTargets = _mutationExecutor.FindTargets(module);
+                var assemblyNode = BuildMutantsTree(module.Name, mergedTargets);
+
+                _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in " + assemblyNode.Name);
+
                 assNodes.Add(assemblyNode);
                 percentCompleted.Progress();
             }
-
-
             root.State = MutantResultState.Untested;
 
             return assNodes;
         }
 
-        private IList<MutationTarget> LimitMutationTargets(IEnumerable<MutationTarget> targets)
-        {
-           // return targets.ToList();
-            var mapping = targets//.Shuffle()
-              //  .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
-                .Take(_options.MaxNumerOfMutantPerOperator).ToList();
-            return mapping;
-        }
-
-
-        public AssemblyNode FindTargets(IModuleInfo module)
-        {
-            _log.Info("Finding targets for module: " + module.Name);
-            _log.Info("Using mutation operators: " + _mutOperators.Select(_=>_.Info.Id)
-                .MayAggregate((a,b)=>a+","+b).Else("None"));
-
-            var mergedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
-            _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
-            foreach (var mutationOperator in _mutOperators)
-            {
-                try
-                {
-                    var ded = mutationOperator.CreateVisitor();
-                    IOperatorCodeVisitor operatorVisitor = ded;
-                    operatorVisitor.Host = _choices.WhiteSource.Host;
-                    operatorVisitor.OperatorUtils = _operatorUtils;
-                    operatorVisitor.Initialize();
-
-                    var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module.Module);
-
-                    var traverser = new VisualCodeTraverser(_filter, visitor);
-
-                    traverser.Traverse(module.Module);
-                    visitor.PostProcess();
-
-                    IEnumerable<MutationTarget> mutations = LimitMutationTargets(visitor.MutationTargets);
-
-
-                    mergedTargets.Add(mutationOperator, new HashSet<MutationTarget>(mutations));
-                    _sharedTargets.Add(mutationOperator, new HashSet<MutationTarget>(visitor.SharedTargets));
-                    
-                }
-                catch (Exception e)
-                {
-                    throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutationOperator.Info.Name), e);
-                }
-            }
-            var assemblyNode = BuildMutantsTree(module.Name, mergedTargets);
-                
-            _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in "+assemblyNode.Name);
-            return assemblyNode;
-            
-        }
-
+    
         private AssemblyNode BuildMutantsTree(string moduleName,
             MultiDictionary<IMutationOperator, MutationTarget> mutationTargets)
         {
@@ -196,9 +151,7 @@
                     );
 
                 parent.Children.AddRange(typeNodes);
-
-
-                };
+            };
 
             Func<MutationTarget, string> namespaceExtractor = target => target.NamespaceName;
 
@@ -216,56 +169,5 @@
             return assemblyNode;
         }
 
-        public MutationResult ExecuteMutation(Mutant mutant,  ProgressCounter percentCompleted, 
-            CciModuleSource moduleSource)
-        {
-            _log.Debug("ExecuteMutation in object: " +ToString()+ GetHashCode());
-            IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null? new IdentityOperator() : 
-                _mutOperators.Single(m => mutant.MutationTarget.OperatorId == m.Info.Id);
-            var cci = moduleSource;
-            try
-            {
-                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. " );
-                var mutatedModules = new List<IModuleInfo>();
-                var module = moduleSource.Modules.Single();
-                percentCompleted.Progress();
-                var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                        _sharedTargets.GetValues(mutationOperator, returnEmptySet: true), 
-                        module.Module, mutationOperator.Info.Id);
-                var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
-                traverser2.Traverse(module.Module);
-                visitorBack.PostProcess();
-                var operatorCodeRewriter = mutationOperator.CreateRewriter();
-
-                var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                    visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
-
-                operatorCodeRewriter.MutationTarget =
-                    new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
-
-
-                operatorCodeRewriter.NameTable = cci.Host.NameTable;
-                operatorCodeRewriter.Host = cci.Host;
-                operatorCodeRewriter.Module = module.Module;
-                operatorCodeRewriter.OperatorUtils = _operatorUtils;
-                operatorCodeRewriter.Initialize();
-
-                var rewrittenModule = (Assembly) rewriter.Rewrite(module.Module);
-
-                rewriter.CheckForUnfoundObjects();
-
-                mutant.MutationTarget.Variant.AstObjects = null; //TODO: avoiding leaking memory. refactor
-                mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
-                    
-                var result = new MutationResult(new SimpleModuleSource(mutatedModules), cci, 
-                    mutant.MutationTarget.MethodMutated);
-                mutant.MutationTarget.MethodMutated = null; //TODO: avoiding leaking memory. refactor
-                return result;
-            }
-            catch (Exception e)
-            {
-                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutationOperator.Info.Name), e);
-            }
-        }
     }
 }

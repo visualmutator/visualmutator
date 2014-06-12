@@ -96,6 +96,7 @@
                 }
                 ZipFile.ExtractToDirectory(nUnitConsoleZipPath, localDir);
                 _settingsManager[key] = nUnitConsoleDirPath;
+                _log.Debug("New nunitconsole path set to: "+ nUnitConsoleDirPath);
             }
         }
 

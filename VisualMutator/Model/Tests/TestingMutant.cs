@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Threading.Tasks;
     using Controllers;
+    using Decompilation;
     using Exceptions;
     using Infrastructure;
     using log4net;
@@ -24,6 +25,7 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly TestsContainer _testsContainer;
+        private readonly ICodeVisualizer _codeVisualizer;
         private readonly MutationSessionChoices _choices;
         private readonly NUnitXmlTestService _nunitService;
         private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
@@ -39,6 +41,7 @@
         public TestingMutant(
             SessionController sessionController,
             TestsContainer testsContainer,
+            ICodeVisualizer codeVisualizer,
             OptionsModel options,
             MutationSessionChoices choices,
             NUnitXmlTestService nunitService,
@@ -48,6 +51,7 @@
             Mutant mutant)
         {
             _testsContainer = testsContainer;
+            _codeVisualizer = codeVisualizer;
             _options = options;
             _choices = choices;
             _nunitService = nunitService;
@@ -66,7 +70,7 @@
             
             var sw = new Stopwatch();
             sw.Start();
-            _storedMutantInfo = await _testsContainer.StoreMutant(_mutant);
+            _storedMutantInfo = await _codeVisualizer.StoreMutant(_mutant);
             _sessionEventsSubject.OnNext(new MutantStoredEventArgs(_storedMutantInfo));
             if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
             {

@@ -190,5 +190,9 @@
             PeWriter.WritePeToStream(module.Module, _host, stream);
         }
 
+        public void ReplaceWith(IModule newMod)
+        {
+            _moduleInfoList.Single().Module = newMod;
+        }
     }
 }
