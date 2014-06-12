@@ -35,29 +35,16 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly IWhiteCache _whiteCache;
         private readonly MutationSessionChoices _choices;
-        private readonly IOperatorUtils _operatorUtils;
         private readonly IMutationExecutor _mutationExecutor;
-        private readonly MutantsCreationOptions _options;
-        private readonly MutationFilter _filter;
-        private readonly ICollection<IMutationOperator> _mutOperators;
-        private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutantsContainer(
-            IWhiteCache whiteCache,
             MutationSessionChoices choices,
-            IOperatorUtils operatorUtils,
             IMutationExecutor mutationExecutor
             )
         {
-            _whiteCache = whiteCache;
             _choices = choices;
-            _operatorUtils = operatorUtils;
             _mutationExecutor = mutationExecutor;
-            _options = _choices.MutantsCreationOptions;
-            _filter = _choices.Filter;
-            _mutOperators = _choices.SelectedOperators;
         }
 
  

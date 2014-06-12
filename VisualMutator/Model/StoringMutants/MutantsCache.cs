@@ -23,10 +23,6 @@
     {
         void setDisabled( bool disableCache = false);
 
-        IWhiteCache WhiteCache
-        {
-            get;
-        }
 
         Task<MutationResult> GetMutatedModulesAsync(Mutant mutant);
     }
@@ -36,7 +32,6 @@
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutationSessionChoices _choices;
-        private readonly IWhiteCache _whiteCache;
         private readonly IMutationExecutor _mutationExecutor;
 
         private readonly MemoryCache _cache;
@@ -46,20 +41,13 @@
         private bool _disableCache;
         private ConcurrentDictionary<string, ConcurrentBag<TaskCompletionSource<MutationResult>>> _map;
 
-        public IWhiteCache WhiteCache
-        {
-            get { return _whiteCache; }
-        }
-
 
         [Inject]
         public MutantsCache(
             MutationSessionChoices choices, 
-            IWhiteCache whiteCache,
             IMutationExecutor mutationExecutor)
         {
             _choices = choices;
-            _whiteCache = whiteCache;
             _mutationExecutor = mutationExecutor;
 
             _disableCache = !choices.MainOptions.MutantsCacheEnabled;
