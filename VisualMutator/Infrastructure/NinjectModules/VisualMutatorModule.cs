@@ -56,16 +56,18 @@
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().AndFromFactory();
+            Bind<WhiteCache>().ToSelf().AndFromFactory();
+
+            Bind<IProjectClonesManager>().To<ProjectClonesManager>().InSingletonScope();
+            Bind<ProjectFilesClone>().ToSelf().AndFromFactory();
+            Bind<FilesManager>().ToSelf().InSingletonScope();
 
             Kernel.BindObjectRoot<ContinuousConfiguration>().ToSelf(ch0 => // on solution opened / rebuilt
             {
                 ch0.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
                 ch0.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-                ch0.Bind<IProjectClonesManager>().To<ProjectClonesManager>().InSingletonScope();
-                ch0.Bind<ProjectFilesClone>().ToSelf().AndFromFactory();
-                ch0.Bind<FilesManager>().ToSelf().InSingletonScope();
-                ch0.Bind<WhiteCache>().ToSelf().AndFromFactory();
-                ch0.Bind<DisabledWhiteCache>().ToSelf().AndFromFactory();
+               
+                
 
                 ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 => // on session creation
                 {

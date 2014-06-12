@@ -96,15 +96,26 @@
         }
 
     
+        private void Guarded(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
 
+                _log.Error(e);
+            }
+        }
        
         public void Initialize()
         {
-            _buildEvents.OnBuildBegin += delegate { _subject.OnNext(EventType.BuildBegin); };
-            _buildEvents.OnBuildDone += delegate { _subject.OnNext(EventType.BuildDone); };
+            _buildEvents.OnBuildBegin += delegate {Guarded(() => _subject.OnNext(EventType.BuildBegin)); };
+            _buildEvents.OnBuildDone += delegate { Guarded(() => _subject.OnNext(EventType.BuildDone)); };
 
-            _solutionEvents.Opened += () => _subject.OnNext(EventType.HostOpened);
-            _solutionEvents.AfterClosing += () => _subject.OnNext(EventType.HostClosed);
+            _solutionEvents.Opened += () => Guarded(() => _subject.OnNext(EventType.HostOpened));
+            _solutionEvents.AfterClosing += () => Guarded(() => _subject.OnNext(EventType.HostClosed));
 
             _settingsManager = new ShellSettingsManager(_package);
 

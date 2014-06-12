@@ -124,14 +124,22 @@
 
         public async Task<StoredMutantInfo> StoreMutant( Mutant mutant)
         {
+            mutant.State = MutantResultState.Creating;
+            
+            var mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
+
+            mutant.State = MutantResultState.Writing;
+
             var clone = await _fileManager.CreateCloneAsync("InitTestEnvironment");
             var info = new StoredMutantInfo(clone);
-            var mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
 
             var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
             if (singleMutated != null)
             {
-                await WriteModule(singleMutated, info, mutationResult.WhiteModules);
+                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
+                await mutationResult.WhiteModules.WriteToFile(singleMutated, file);
+                info.AssembliesPaths.Add(file);
             }
 
             var otherModules = _choices.WhiteSource.ModulesInfo
@@ -146,14 +154,6 @@
             return info;
         }
 
-        public async Task WriteModule(IModuleInfo module, StoredMutantInfo info, ICciModuleSource cci)
-        {
-            //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-            string file = Path.Combine(info.Directory, module.Name + ".dll");
-            await Task.Run(() => cci.WriteToFile(module, file));
-            info.AssembliesPaths.Add(file);
-
-        }
     
         public void CancelAllTesting()
         {

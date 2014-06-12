@@ -22,6 +22,7 @@
 
         //Error occurred while testing
         Error,
-        
+
+        Writing
     }
 }

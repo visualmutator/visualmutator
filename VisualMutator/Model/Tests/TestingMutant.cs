@@ -63,7 +63,7 @@
 
         public async Task<MutantResultState> RunAsync()
         {
-            _mutant.State = MutantResultState.Creating;
+            
             var sw = new Stopwatch();
             sw.Start();
             _storedMutantInfo = await _testsContainer.StoreMutant(_mutant);

@@ -36,7 +36,6 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MutationSessionChoices _choices;
-        private readonly IWhiteCache _whiteCache;
         private readonly IOperatorUtils _operatorUtils;
         private readonly MutantsCreationOptions _options;
         private readonly MutationFilter _filter;
@@ -45,12 +44,10 @@
 
         public MutantsContainer(
             MutationSessionChoices choices,
-            IWhiteCache whiteCache,
             IOperatorUtils operatorUtils
             )
         {
             _choices = choices;
-            _whiteCache = whiteCache;
             _operatorUtils = operatorUtils;
             _options = _choices.MutantsCreationOptions;
             _filter = _choices.Filter;

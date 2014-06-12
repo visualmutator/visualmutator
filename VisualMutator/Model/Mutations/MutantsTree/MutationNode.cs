@@ -22,6 +22,7 @@
                 MutantResultState.Error,
                 MutantResultState.Tested,
                 MutantResultState.Creating,
+                MutantResultState.Writing,
                 MutantResultState.Live,
                 MutantResultState.Killed
             })

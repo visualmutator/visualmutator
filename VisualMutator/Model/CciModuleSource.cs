@@ -8,6 +8,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using CSharpSourceEmitter;
     using Decompilation;
     using Decompilation.PeToText;
@@ -27,7 +28,7 @@
     public interface ICciModuleSource : IModuleSource
     {
         IModuleInfo AppendFromFile(string filePath);
-        void WriteToFile(IModuleInfo module, string filePath);
+        Task WriteToFile(IModuleInfo module, string filePath);
         void WriteToStream(IModuleInfo module, Stream stream);
         MetadataReaderHost Host { get; }
         List<ModuleInfo> ModulesInfo { get; }
@@ -150,10 +151,10 @@
             return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
 
-        public void WriteToFile(IModuleInfo moduleInfo, string filePath)
+        public async Task WriteToFile(IModuleInfo moduleInfo, string filePath)
         {
-            lock (this)
-            {
+           //// lock (this)
+           // {
                 var module = (ModuleInfo)moduleInfo;
                 _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
                 MemoryStream stream = new MemoryStream();
@@ -161,7 +162,11 @@
                 {
                     if (module.PdbReader == null)
                     {
-                        PeWriter.WritePeToStream(module.Module, _host, peStream);
+                        //PeWriter.WritePeToStream(module.Module, _host, peStream);
+                        PeWriter.WritePeToStream(module.Module, _host, stream);
+                        stream.Position = 0;
+                        await stream.CopyToAsync(peStream);
+                       // peStream.Flush(true);
                     }
                     else
                     {
@@ -172,7 +177,7 @@
                         }
                     }
                 }
-            }
+        //    }
            
 //            using (FileStream peStream = File.Create(filePath))
 //            {
