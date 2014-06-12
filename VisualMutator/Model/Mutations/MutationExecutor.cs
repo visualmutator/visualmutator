@@ -23,14 +23,13 @@
     public interface IMutationExecutor
     {
         MultiDictionary<IMutationOperator, MutationTarget> FindTargets(IModuleInfo module);
-        Task<MutationResult> ExecuteMutation(Mutant mutant);
+        Task<MutationResult> ExecuteMutation(Mutant mutant, CciModuleSource moduleSource);
     }
 
     public class MutationExecutor : IMutationExecutor
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly IWhiteCache _whiteCache;
         private readonly MutationSessionChoices _choices;
         private readonly IOperatorUtils _operatorUtils;
         private readonly MutantsCreationOptions _options;
@@ -39,12 +38,10 @@
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutationExecutor(
-        IWhiteCache whiteCache,
         MutationSessionChoices choices,
         IOperatorUtils operatorUtils
         )
         {
-            _whiteCache = whiteCache;
             _choices = choices;
             _operatorUtils = operatorUtils;
             _options = _choices.MutantsCreationOptions;
@@ -106,10 +103,9 @@
 
 
 
-        public async Task<MutationResult> ExecuteMutation(Mutant mutant)
+        public async Task<MutationResult> ExecuteMutation(Mutant mutant, CciModuleSource moduleSource)
         {
-            var moduleSource = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
-
+            
 
             _log.Debug("ExecuteMutation in object: " + ToString() + GetHashCode());
             IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null ? new IdentityOperator() :

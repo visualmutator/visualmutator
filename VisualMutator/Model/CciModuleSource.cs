@@ -28,7 +28,7 @@
     public interface ICciModuleSource : IModuleSource
     {
         IModuleInfo AppendFromFile(string filePath);
-        Task WriteToFile(IModuleInfo module, string filePath);
+        MemoryStream WriteToStream(IModuleInfo module, string filePath);
         void WriteToStream(IModuleInfo module, Stream stream);
         MetadataReaderHost Host { get; }
         List<ModuleInfo> ModulesInfo { get; }
@@ -151,38 +151,28 @@
             return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
 
-        public async Task WriteToFile(IModuleInfo moduleInfo, string filePath)
+        public MemoryStream WriteToStream(IModuleInfo moduleInfo, string filePath)
         {
-           //// lock (this)
-           // {
-                var module = (ModuleInfo)moduleInfo;
-                _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
-                MemoryStream stream = new MemoryStream();
-                using (FileStream peStream = File.Create(filePath))
+            var module = (ModuleInfo)moduleInfo;
+            _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
+            MemoryStream stream = new MemoryStream();
+
+            if (module.PdbReader == null)
+            {
+                PeWriter.WritePeToStream(module.Module, _host, stream);
+                
+            }
+            else
+            {
+                using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
                 {
-                    if (module.PdbReader == null)
-                    {
-                        //PeWriter.WritePeToStream(module.Module, _host, peStream);
-                        PeWriter.WritePeToStream(module.Module, _host, stream);
-                        stream.Position = 0;
-                        await stream.CopyToAsync(peStream);
-                       // peStream.Flush(true);
-                    }
-                    else
-                    {
-                        using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
-                        {
-                            PeWriter.WritePeToStream(module.Module, _host, peStream, module.SourceLocationProvider,
-                                module.LocalScopeProvider, pdbWriter);
-                        }
-                    }
+                    PeWriter.WritePeToStream(module.Module, _host, stream, module.SourceLocationProvider,
+                        module.LocalScopeProvider, pdbWriter);
                 }
-        //    }
-           
-//            using (FileStream peStream = File.Create(filePath))
-//            {
-//                stream.CopyTo(peStream);
-//            }
+            }
+            stream.Position = 0;
+
+            return stream;
         }
 
         public void WriteToStream(IModuleInfo module, Stream stream )

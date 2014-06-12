@@ -25,12 +25,14 @@
 
 
         Task<MutationResult> GetMutatedModulesAsync(Mutant mutant);
+        void Release(MutationResult mutationResult);
     }
 
     public class MutantsCache : IMutantsCache
     {
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IWhiteCache _whiteCache;
         private readonly MutationSessionChoices _choices;
         private readonly IMutationExecutor _mutationExecutor;
 
@@ -44,9 +46,11 @@
 
         [Inject]
         public MutantsCache(
+             IWhiteCache whiteCache,
             MutationSessionChoices choices, 
             IMutationExecutor mutationExecutor)
         {
+            _whiteCache = whiteCache;
             _choices = choices;
             _mutationExecutor = mutationExecutor;
 
@@ -115,6 +119,11 @@
             return result;
         }
 
+        public void Release(MutationResult mutationResult)
+        {
+            
+        }
+
         private async Task<MutationResult> CreateNew(Mutant mutant)
         {
             MutationResult result;
@@ -124,7 +133,9 @@
             }
             else
             {
-                result = await _mutationExecutor.ExecuteMutation(mutant);
+                var moduleSource = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
+
+                result = await _mutationExecutor.ExecuteMutation(mutant, moduleSource);
 
                 if (!_disableCache)
                 {

@@ -53,7 +53,9 @@
         {
             MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
 
-            return Visualize(language, mutationResult.MethodMutated, mutationResult.WhiteModules);
+            var result = Visualize(language, mutationResult.MethodMutated, mutationResult.WhiteModules);
+            _mutantsCache.Release(mutationResult);
+            return result;
         }
 
         public string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource)
@@ -103,7 +105,15 @@
             {
                 //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                 string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
-                await mutationResult.WhiteModules.WriteToFile(singleMutated, file);
+
+                var memory = mutationResult.WhiteModules.WriteToStream(singleMutated, file);
+                _mutantsCache.Release(mutationResult);
+
+                using (FileStream peStream = File.Create(file))
+                {
+                    await memory.CopyToAsync(peStream);
+                }
+                
                 info.AssembliesPaths.Add(file);
             }
 
