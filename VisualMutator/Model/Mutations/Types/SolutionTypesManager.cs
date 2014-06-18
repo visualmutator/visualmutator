@@ -25,7 +25,7 @@
 
         bool IsAssemblyLoadError { get; set; }
 
-        IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
+        IList<AssemblyNode> CreateNodesFromAssemblies(List<CciModuleSource> modules,
             ICodePartsMatcher constraints);
         MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies);
     }
@@ -56,12 +56,11 @@
             return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
 
-        public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
-            ICodePartsMatcher constraints)
+        public IList<AssemblyNode> CreateNodesFromAssemblies(List<CciModuleSource> modules, ICodePartsMatcher constraints)
         {
             var matcher = constraints.Join(new ProperlyNamedMatcher());
 
-            List<AssemblyNode> assemblyNodes = modules.Modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
+            List<AssemblyNode> assemblyNodes = modules.Select(m => CreateAssemblyNode(m.Module, matcher)).ToList();
             var root = new RootNode();
             root.Children.AddRange(assemblyNodes);
             root.IsIncluded = true;

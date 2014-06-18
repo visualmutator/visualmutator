@@ -216,6 +216,7 @@
     <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
     <Compile Include="Mutations\WhiteCacheIntTests.cs" />
+    <Compile Include="Operators\MutationTestsHelper.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />

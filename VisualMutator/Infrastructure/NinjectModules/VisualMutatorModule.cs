@@ -15,6 +15,7 @@
     using Model.Tests;
     using Model.Tests.Services;
     using Model.Verification;
+    using Tests.Mutations;
     using ViewModels;
 
     #endregion
@@ -58,7 +59,8 @@
             Bind<MainController>().ToSelf().AndFromFactory();
             Bind<WhiteCache>().ToSelf().AndFromFactory();
 
-            Bind<IProjectClonesManager>().To<ProjectClonesManager>().InSingletonScope();
+            Bind<IProjectClonesManager>().To<ProjectClonesManager>().AndFromFactory();
+
             Bind<ProjectFilesClone>().ToSelf().AndFromFactory();
             Bind<FilesManager>().ToSelf().InSingletonScope();
 
@@ -66,7 +68,6 @@
             {
                 ch0.Bind<IOperatorsManager>().To<OperatorsManager>().InSingletonScope();
                 ch0.Bind<IOperatorLoader>().To<MEFOperatorLoader>().InSingletonScope();
-               
                 
 
                 ch0.BindObjectRoot<SessionConfiguration>().ToSelf(ch1 => // on session creation
@@ -98,6 +99,7 @@
                         ch2.Bind<IAssemblyVerifier>().To<AssemblyVerifier>().InSingletonScope();
                         ch2.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
                         ch2.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
+                        ch2.Bind<MutantMaterializer>().ToSelf().InSingletonScope();
                     });
                 });
             });

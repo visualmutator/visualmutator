@@ -28,7 +28,7 @@
     public interface IMutantsContainer
     {
         Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode);
-        IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted);
+        IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted, List<CciModuleSource> originalModules);
     }
 
     public class MutantsContainer : IMutantsContainer
@@ -73,7 +73,7 @@
         }
 
 
-        public IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted)
+        public IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted, List<CciModuleSource> originalModules)
         {
             var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
@@ -81,19 +81,19 @@
             int[] id = { 1 };
             Func<int> genId = () => id[0]++;
 
-            var originalModules = _choices.WhiteSource;//_whiteCache.GetWhiteModules();
-            percentCompleted.Initialize(originalModules.Modules.Count);
+            //var originalModules = _choices.WhiteSource;//_whiteCache.GetWhiteModules();
+            percentCompleted.Initialize(originalModules.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
             var assNodes = new List<AssemblyNode>();
-            foreach (var module in originalModules.Modules)
+            foreach (var module in originalModules)
             {
                 sw.Restart();
 
                 var mergedTargets = _mutationExecutor.FindTargets(module);
-                var assemblyNode = BuildMutantsTree(module.Name, mergedTargets);
+                var assemblyNode = BuildMutantsTree(module.Module.Name, mergedTargets);
 
                 _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in " + assemblyNode.Name);
 

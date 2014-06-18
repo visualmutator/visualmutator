@@ -312,7 +312,7 @@
         {
             var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.Mutating);
 
-            var mutantModules = _mutantsContainer.InitMutantsForOperators(counter);
+            var mutantModules = _mutantsContainer.InitMutantsForOperators(counter, _choices.WhiteSource);
             _currentSession.MutantsGrouped = mutantModules;
 
             _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)

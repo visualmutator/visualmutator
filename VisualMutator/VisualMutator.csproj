@@ -280,6 +280,7 @@
     <Compile Include="Model\Mutations\AstNode.cs" />
     <Compile Include="Model\Mutations\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />
+    <Compile Include="Model\Mutations\MutantMaterializer.cs" />
     <Compile Include="Model\Mutations\MutationExecutor.cs" />
     <Compile Include="Model\Mutations\MutationFilter.cs" />
     <Compile Include="Model\Mutations\MutationResult.cs" />
@@ -315,7 +316,6 @@
     <Compile Include="Model\Mutations\MutantsTree\MutantGroup.cs" />
     <Compile Include="Model\Mutations\MutantsTree\MutationRootNode.cs" />
     <Compile Include="Model\Mutations\Operators\OperatorUtils.cs" />
-    <Compile Include="Model\StoringMutants\DisabledWhiteCache.cs" />
     <Compile Include="Model\StoringMutants\WhiteCache.cs" />
     <Compile Include="Model\TestGeneration\AppDomainCreator.cs" />
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />

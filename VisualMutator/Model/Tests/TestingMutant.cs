@@ -19,6 +19,7 @@
     using Tests.TestsTree;
     using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
+    using VisualMutator.Tests.Mutations;
 
     public class TestingMutant
     {
@@ -26,6 +27,7 @@
 
         private readonly TestsContainer _testsContainer;
         private readonly ICodeVisualizer _codeVisualizer;
+        private readonly MutantMaterializer _mutantMaterializer;
         private readonly MutationSessionChoices _choices;
         private readonly NUnitXmlTestService _nunitService;
         private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
@@ -42,6 +44,7 @@
             SessionController sessionController,
             TestsContainer testsContainer,
             ICodeVisualizer codeVisualizer,
+            MutantMaterializer mutantMaterializer,
             OptionsModel options,
             MutationSessionChoices choices,
             NUnitXmlTestService nunitService,
@@ -52,6 +55,7 @@
         {
             _testsContainer = testsContainer;
             _codeVisualizer = codeVisualizer;
+            _mutantMaterializer = mutantMaterializer;
             _options = options;
             _choices = choices;
             _nunitService = nunitService;
@@ -70,7 +74,7 @@
             
             var sw = new Stopwatch();
             sw.Start();
-            _storedMutantInfo = await _codeVisualizer.StoreMutant(_mutant);
+            _storedMutantInfo = await _mutantMaterializer.StoreMutant(_mutant);
             _sessionEventsSubject.OnNext(new MutantStoredEventArgs(_storedMutantInfo));
             if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
             {

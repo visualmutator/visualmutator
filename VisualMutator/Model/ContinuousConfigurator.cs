@@ -40,7 +40,7 @@
             IWhiteCache whiteCache;
             if (optionsModel.WhiteCacheThreadsCount != 0)
             {
-                whiteCache = _whiteCacheFactory.CreateWithParams(optionsModel.WhiteCacheThreadsCount, 3);
+                whiteCache = _whiteCacheFactory.CreateWithParams(optionsModel.WhiteCacheThreadsCount, 1);
             }
             else
             {

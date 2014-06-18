@@ -28,7 +28,7 @@
     public interface ICciModuleSource : IModuleSource
     {
         IModuleInfo AppendFromFile(string filePath);
-        MemoryStream WriteToStream(IModuleInfo module, string filePath);
+        MemoryStream WriteToStream(IModuleInfo module);
         void WriteToStream(IModuleInfo module, Stream stream);
         MetadataReaderHost Host { get; }
         List<ModuleInfo> ModulesInfo { get; }
@@ -38,7 +38,7 @@
     public class CciModuleSource : IDisposable, ICciModuleSource
     {
         private readonly MetadataReaderHost _host;
-        private readonly List<ModuleInfo> _moduleInfoList;
+        private List<ModuleInfo> _moduleInfoList;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public List<IModuleInfo> Modules
@@ -57,22 +57,44 @@
             _host = new PeReader.DefaultHost();
             _moduleInfoList = new List<ModuleInfo>();
         }
-
+        public CciModuleSource(MetadataReaderHost host, List<ModuleInfo> moduleInfoList)
+        {
+            _host = host;
+            _moduleInfoList = moduleInfoList;
+        }
         public CciModuleSource(ProjectFilesClone filesClone) : this()
         {
             foreach (var assembliesPath in filesClone.Assemblies)
             {
-                AppendFromFile(assembliesPath.Path);
+                var sss = new CodeDeepCopier(Host);
+                var m = DecompileFile(assembliesPath.Path);
+                var copied = sss.Copy(m.Module);
+                m.Module = copied;
+                _moduleInfoList.Add(m);
             }
         }
         public CciModuleSource(string path) : this()
         {
-            AppendFromFile(path);
+            var sss = new CodeDeepCopier(this.Host);
+            var m = DecompileFile(path);
+            var copied = sss.Copy(m.Module);
+            m.Module = copied;
+            _moduleInfoList.Add(m);
         }
+
+        private CciModuleSource(MetadataReaderHost host, IModule module)
+        {
+            _host = host;
+            _moduleInfoList = new List<ModuleInfo>();
+            _moduleInfoList.Add(new ModuleInfo(module));
+        }
+
         public MetadataReaderHost Host
         {
             get { return _host; }
         }
+
+        public ModuleInfo Module { get { return (ModuleInfo) Modules.Single(); } }
 
         public void Dispose()
         {
@@ -125,6 +147,7 @@
                 pdbReader = new PdbReader(pdbStream, _host);
                 pdbStream.Close();
             }
+            
             Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
             ISourceLocationProvider sourceLocationProvider = pdbReader;
             ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
@@ -151,7 +174,7 @@
             return _moduleInfoList.First(m => m.Module.Name.Value == module.Name.Value);
         }
 
-        public MemoryStream WriteToStream(IModuleInfo moduleInfo, string filePath)
+        public MemoryStream WriteToStream(IModuleInfo moduleInfo)
         {
             var module = (ModuleInfo)moduleInfo;
             _log.Info("CommonCompilerInfra.WriteToFile:" + module.Name);
@@ -164,11 +187,12 @@
             }
             else
             {
-                using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
-                {
-                    PeWriter.WritePeToStream(module.Module, _host, stream, module.SourceLocationProvider,
-                        module.LocalScopeProvider, pdbWriter);
-                }
+                throw new NotImplementedException();
+//                using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
+//                {
+//                    PeWriter.WritePeToStream(module.Module, _host, stream, module.SourceLocationProvider,
+//                        module.LocalScopeProvider, pdbWriter);
+//                }
             }
             stream.Position = 0;
 
@@ -182,7 +206,41 @@
 
         public void ReplaceWith(IModule newMod)
         {
-            _moduleInfoList.Single().Module = newMod;
+         //   if(newMod)
+            var s = _moduleInfoList.SingleOrDefault(m => m.Name == newMod.Name.Value);
+            if (s != null)
+            {
+                s.Module = newMod;
+                _moduleInfoList = _moduleInfoList.Where(m => m == s).ToList();
+            }
+
+        }
+        public void ReplaceWith(List<IModule> modules)
+        {
+            foreach (var moduleInfo in _moduleInfoList)
+            {
+                moduleInfo.Module = modules.Single(m => m.Name.Value == moduleInfo.Name);
+            }
+        }
+        public CciModuleSource CloneWith(IModule newMod)
+        {
+            var cci = new CciModuleSource(Host, _moduleInfoList);
+            cci.ReplaceWith(newMod);
+            return cci;
+        }
+        public CciModuleSource Copy()
+        {
+            //ModuleInfo moduleInfo = (ModuleInfo) Modules.Single();
+            var host = new PeReader.DefaultHost();
+            var c = new CodeDeepCopier(host);//, moduleInfo.SourceLocationProvider, moduleInfo.LocalScopeProvider);
+            var newMod = c.Copy(Modules.Single().Module);
+            return new CciModuleSource(host, newMod);
+        }
+        public CodeDeepCopier CreateCopier()
+        {
+            //ModuleInfo moduleInfo = (ModuleInfo) Modules.Single();
+            return new CodeDeepCopier(Host);//, moduleInfo.SourceLocationProvider, moduleInfo.LocalScopeProvider);
+            
         }
     }
 }

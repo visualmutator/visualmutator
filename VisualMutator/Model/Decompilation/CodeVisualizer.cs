@@ -24,37 +24,34 @@
         string Visualize(CodeLanguage language, ICciModuleSource modules);
         Task<string> VisualizeOriginalCode(CodeLanguage language, Mutant mutant);
         Task<string> VisualizeMutatedCode(CodeLanguage language, Mutant mutant);
-        Task<StoredMutantInfo> StoreMutant(Mutant mutant);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly IProjectClonesManager _clonesManager;
         private readonly IMutantsCache _mutantsCache;
         private readonly MutationSessionChoices _choices;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public CodeVisualizer(
-            IProjectClonesManager clonesManager,
             IMutantsCache mutantsCache,
             MutationSessionChoices choices)
         {
-            _clonesManager = clonesManager;
             _mutantsCache = mutantsCache;
             _choices = choices;
         }
 
         public async Task<string> VisualizeOriginalCode(CodeLanguage language, Mutant mutant)
         {
-            var whiteCode = Visualize(language, mutant.MutationTarget.MethodRaw, _choices.WhiteSource);
+            var whiteCode = Visualize(language, mutant.MutationTarget.MethodRaw, _choices.WhiteSource.First());
             return whiteCode;
         }
+
         public async Task<string> VisualizeMutatedCode(CodeLanguage language, Mutant mutant)
         {
             MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
 
-            var result = Visualize(language, mutationResult.MethodMutated, mutationResult.WhiteModules);
-            _mutantsCache.Release(mutationResult);
+            var result = Visualize(language, mutationResult.MethodMutated, mutationResult.MutatedModules);
+          //  _mutantsCache.Release(mutationResult);
             return result;
         }
 
@@ -89,45 +86,7 @@
         }
 
 
-        public async Task<StoredMutantInfo> StoreMutant(Mutant mutant)
-        {
-            mutant.State = MutantResultState.Creating;
-
-            var mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
-
-            mutant.State = MutantResultState.Writing;
-
-            var clone = await _clonesManager.CreateCloneAsync("InitTestEnvironment");
-            var info = new StoredMutantInfo(clone);
-
-            var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
-            if (singleMutated != null)
-            {
-                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
-
-                var memory = mutationResult.WhiteModules.WriteToStream(singleMutated, file);
-                _mutantsCache.Release(mutationResult);
-
-                using (FileStream peStream = File.Create(file))
-                {
-                    await memory.CopyToAsync(peStream);
-                }
-                
-                info.AssembliesPaths.Add(file);
-            }
-
-            var otherModules = _choices.WhiteSource.ModulesInfo
-                .Where(_ => singleMutated == null || _.Name != singleMutated.Name);
-
-            foreach (var otherModule in otherModules)
-            {
-                string file = Path.Combine(info.Directory, otherModule.Name + ".dll");
-                info.AssembliesPaths.Add(file);
-            }
-
-            return info;
-        }
+      
 
 
     }

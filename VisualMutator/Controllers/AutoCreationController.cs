@@ -44,7 +44,7 @@
         private readonly IDispatcherExecute _dispatcher;
         private readonly CreationViewModel _viewModel;
         private readonly ITypesManager _typesManager;
-        private CciModuleSource _whiteSource;
+        private List<CciModuleSource> _whiteSource;
 
         public MutationSessionChoices Result { get; protected set; }
 
@@ -103,7 +103,7 @@
 
             SessionCreator sessionCreator = _sessionCreatorFactory.Create();
 
-            Task<CciModuleSource> assembliesTask = _sessionConfiguration.LoadAssemblies();
+            Task<List<CciModuleSource>> assembliesTask = _sessionConfiguration.LoadAssemblies();
 
             Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
 

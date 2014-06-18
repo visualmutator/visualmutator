@@ -6,11 +6,17 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Specialized;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Runtime.Caching;
     using System.Threading.Tasks;
     using System.Windows.Documents;
+    using Extensibility;
     using log4net;
+    using Microsoft.Cci;
+    using Microsoft.Cci.MutableCodeModel;
     using Mutations;
     using Mutations.MutantsTree;
     using Ninject;
@@ -121,21 +127,87 @@
 
         public void Release(MutationResult mutationResult)
         {
-            
+            var cci = (CciModuleSource)mutationResult.MutatedModules;
+                        _whiteCache.ReturnToCache(
+                            cci.Modules.Single().Name,
+                            cci);
+            //  var tt = mutationResult.WhiteModules.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Range");
+            //tt.ToString();
+            //  var type = cci.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Deque") as NamedTypeDefinition;
+            //  var method = type.Methods.Single(m => m.Name.Value == "EnqueueFront");
+            //
+            //            var whiteCci = _choices.WhiteSource;
+            //            var c = new CodeDeepCopier(whiteCci.Host);
+            //            c.
+            //            MethodDefinition methodDefinition = c.Copy(mutationResult.Mutant.MutationTarget.MethodRaw);
+            //            var v = new Viss(mutationResult.MutatedModules.Host, methodDefinition);
+            //            var modClean = v.Rewrite(mutationResult.MutatedModules.Modules.Single().Module);
+            //
+            //            var cci = (CciModuleSource) mutationResult.MutatedModules;
+            //            cci.ReplaceWith(modClean);
+            //            _whiteCache.ReturnToCache(
+            //                cci.Modules.Single().Name,
+            //                cci);
         }
 
+        public class Viss : CodeRewriter
+        {
+            private readonly IMethodDefinition _sourceMethod;
+
+            public Viss(IMetadataHost host, IMethodDefinition sourceMethod)
+                : base(host, false)
+            {
+                _sourceMethod = sourceMethod;
+            }
+
+            public override IMethodDefinition Rewrite(IMethodDefinition method)
+            {
+                
+                if (MemberHelper.GetMethodSignature(method) == MemberHelper.GetMethodSignature(_sourceMethod))
+                {
+                    return _sourceMethod;
+                }
+                return method;
+            }
+        }
         private async Task<MutationResult> CreateNew(Mutant mutant)
         {
             MutationResult result;
             if (mutant.MutationTarget == null || mutant.MutationTarget.ProcessingContext == null)
             {
-                result = new MutationResult(new SimpleModuleSource(new List<IModuleInfo>()), _choices.WhiteSource, null);
+                result = new MutationResult(mutant, new CciModuleSource(), null);
             }
             else
             {
-                var moduleSource = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
+                var cci = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
 
-                result = await _mutationExecutor.ExecuteMutation(mutant, moduleSource);
+                //  var cci = new CciModuleSource(filePath.Path);
+                // cci.CreateCopier().Copy()
+                //  var mod = cci.Modules.Single(m => m.Name == Path.GetFileNameWithoutExtension(filePath.Path));
+//                var copied3 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
+//                var copied4 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
+//
+//
+//                var copied5 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
+//
+//                var debug3 = new DebugOperatorCodeVisitor();
+//                new DebugCodeTraverser(debug3).Traverse(copied5);
+//                var thiss = debug3.ToString();
+//                string t = (_whiteCache as WhiteCache)._referenceStrings.FirstOrDefault(s => s == thiss);
+//                if(t == null)
+//                {
+//                                        Debugger.Break();
+//               //     throw new Exception();
+//                }
+//
+//             
+//                var cciNew = cci.CloneWith(copied5);
+
+
+
+                result = await _mutationExecutor.ExecuteMutation(mutant, cci);
+
+               
 
                 if (!_disableCache)
                 {

@@ -1,19 +1,32 @@
 ﻿namespace VisualMutator.Model.Mutations
 {
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.Cci;
+    using MutantsTree;
     using StoringMutants;
 
     public class MutationResult
     {
-        public MutationResult(IModuleSource mutatedModules, ICciModuleSource whiteModules, IMethodDefinition methodMutated)
+        private readonly Mutant _mutant;
+
+        public Mutant Mutant
         {
+            get { return _mutant; }
+        }
+
+        public MutationResult(Mutant mutant, ICciModuleSource mutatedModules, IMethodDefinition methodMutated)
+        {
+            _mutant = mutant;
             MutatedModules = mutatedModules;
-            WhiteModules = whiteModules;
             MethodMutated = methodMutated;
         }
 
-        public ICciModuleSource WhiteModules { get; private set; }
+        public ICciModuleSource MutatedModules { get; private set; }
         public IMethodDefinition MethodMutated { get; set; }
-        public IModuleSource MutatedModules { get; private set; }
+
+     
+
     }
 }

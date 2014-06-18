@@ -22,7 +22,7 @@
 
     public interface IMutationExecutor
     {
-        MultiDictionary<IMutationOperator, MutationTarget> FindTargets(IModuleInfo module);
+        MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module);
         Task<MutationResult> ExecuteMutation(Mutant mutant, CciModuleSource moduleSource);
     }
 
@@ -38,12 +38,11 @@
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutationExecutor(
-        MutationSessionChoices choices,
-        IOperatorUtils operatorUtils
+        MutationSessionChoices choices
         )
         {
             _choices = choices;
-            _operatorUtils = operatorUtils;
+            _operatorUtils = new OperatorUtils();
             _options = _choices.MutantsCreationOptions;
             _filter = _choices.Filter;
             _mutOperators = _choices.SelectedOperators;
@@ -61,9 +60,9 @@
         }
 
 
-        public MultiDictionary<IMutationOperator, MutationTarget> FindTargets(IModuleInfo module)
+        public MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module)
         {
-            _log.Info("Finding targets for module: " + module.Name);
+            _log.Info("Finding targets for module: " + module.Module.Name);
             _log.Info("Using mutation operators: " + _mutOperators.Select(_ => _.Info.Id)
                 .MayAggregate((a, b) => a + "," + b).Else("None"));
 
@@ -75,15 +74,15 @@
                 {
                     var ded = mutationOperator.CreateVisitor();
                     IOperatorCodeVisitor operatorVisitor = ded;
-                    operatorVisitor.Host = _choices.WhiteSource.Host;
+                    operatorVisitor.Host = module.Host;
                     operatorVisitor.OperatorUtils = _operatorUtils;
                     operatorVisitor.Initialize();
 
-                    var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module.Module);
+                    var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module.Module.Module);
 
                     var traverser = new VisualCodeTraverser(_filter, visitor);
 
-                    traverser.Traverse(module.Module);
+                    traverser.Traverse(module.Module.Module);
                     visitor.PostProcess();
 
                     IEnumerable<MutationTarget> mutations = LimitMutationTargets(visitor.MutationTargets);
@@ -119,7 +118,7 @@
 
                 var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
                         _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
-                        module.Module, mutationOperator.Info.Id);
+                        module.Module, mutationOperator.Info.Id, null);
                 var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
                 traverser2.Traverse(module.Module);
                 visitorBack.PostProcess();
@@ -145,7 +144,7 @@
                 mutant.MutationTarget.Variant.AstObjects = null; //TODO: avoiding leaking memory. refactor
                 mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
 
-                var result = new MutationResult(new SimpleModuleSource(mutatedModules), cci,
+                var result = new MutationResult(mutant, cci,
                     mutant.MutationTarget.MethodMutated);
                 mutant.MutationTarget.MethodMutated = null; //TODO: avoiding leaking memory. refactor
                 return result;

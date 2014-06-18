@@ -15,18 +15,13 @@
     }
     public class ModuleInfo : IModuleInfo
     {
-        public ModuleInfo(IModule module, string filePath)
+        public ModuleInfo(IModule module, string path = null)
         {
-            FilePath = filePath;
             Module = module;
         }
 
 
         public IModule Module
-        {
-            get; set;
-        }
-        public string FilePath
         {
             get; set;
         }

@@ -15,10 +15,11 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Task<List<MethodIdentifier>> FindCoveringTests(IModuleSource moduleSource, ICodePartsMatcher matcher)
+        public Task<List<MethodIdentifier>> FindCoveringTests(List<CciModuleSource> modules, ICodePartsMatcher matcher)
         {
-            return Task.WhenAll(moduleSource.Modules.Select(module =>
-                    Task.Run(() => FindCoveringTests(module, matcher))))
+            return Task.WhenAll(modules.Select(module => 
+                    module.Modules.Select(m => 
+                    Task.Run(() => FindCoveringTests(m, matcher)))).Flatten())
                         .ContinueWith(t => t.Result.Flatten().ToList());
         }
 

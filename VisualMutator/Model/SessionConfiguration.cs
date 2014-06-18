@@ -54,7 +54,7 @@
 
         public bool AssemblyLoadProblem { get; set; }
 
-        public async Task<CciModuleSource> LoadAssemblies()
+        public async Task<List<CciModuleSource>> LoadAssemblies()
         {
             try
             {

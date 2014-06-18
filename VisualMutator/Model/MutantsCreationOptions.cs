@@ -7,6 +7,9 @@ namespace VisualMutator.Model
         public MutantsCreationOptions()
         {
             AdditionalFilesToCopy = new NotifyingCollection<string>();
+            MaxNumerOfMutantPerOperator = 100;
+            IsMutantVerificationEnabled = false;
+            CreateMoreMutants = false;
         }
         private bool _createMoreMutants;
 

@@ -10,7 +10,7 @@
     public class AstProcessor
     {
         protected readonly IDictionary<object, AstDescriptor> AllAstIndices;
-        protected readonly IDictionary<AstDescriptor, object> AllAstObjects;
+        public IDictionary<AstDescriptor, object> AllAstObjects;
         protected readonly IList<AstNode> AllNodes;
         private AstNode _currentNode;
         private AstNode _currentMethod;
