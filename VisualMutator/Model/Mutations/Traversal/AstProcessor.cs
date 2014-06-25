@@ -1,9 +1,7 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Traversal
 {
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using Extensibility;
     using Microsoft.Cci;
     using UsefulTools.ExtensionMethods;
 

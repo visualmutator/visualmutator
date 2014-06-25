@@ -1,9 +1,7 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Traversal
 {
     #region
 
-    using System.Collections.Generic;
-    using Extensibility;
     using Microsoft.Cci;
 
     #endregion

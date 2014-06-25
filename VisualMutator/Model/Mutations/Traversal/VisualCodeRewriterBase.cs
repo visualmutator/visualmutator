@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Traversal
 {
     #region
 

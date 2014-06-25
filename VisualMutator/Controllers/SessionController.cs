@@ -274,18 +274,19 @@
         {
             _log.Info("Finishing mutation session.");
             _sessionState = SessionState.Finished;
-            RaiseMinorStatusUpdate(OperationsState.Finished, 100);
+            SessionEndTime = DateTime.Now;
+
+            
             _currentSession.MutationScore = _testingProcess.MutationScore;
             if (_testingProcessExtensionOptions != null)
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             }
-
+            RaiseMinorStatusUpdate(OperationsState.Finished, 100);
             foreach (var subscription in _subscriptions)
             {
                 subscription.Dispose();
             }
-            SessionEndTime = DateTime.Now;
             _subscriptions.Clear();
             _sessionEventsSubject.OnCompleted();
         }

@@ -1,8 +1,7 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Traversal
 {
     #region
 
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -11,7 +10,6 @@
     using Microsoft.Cci;
     using Microsoft.Cci.MutableCodeModel;
     using UsefulTools.ExtensionMethods;
-    using Xceed.Wpf.Toolkit.Core;
 
     #endregion
 

@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using log4net;
-
 
     public class WorkerCollection<T> where T : class 
     {
@@ -76,6 +75,7 @@
                 {
                     emptyStop = true;
                     _currentCount--;
+                    endCallback();
                     // _semaphore.Release();
                 }
             }

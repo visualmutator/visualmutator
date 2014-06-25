@@ -10,6 +10,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using CoverageFinder;
     using Exceptions;
     using log4net;
     using NUnit.Core;

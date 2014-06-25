@@ -1,16 +1,13 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Reflection;
     using System.Threading.Tasks;
     using Controllers;
     using Infrastructure;
     using log4net;
     using Mutations.MutantsTree;
-    using Tests;
-    using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
 
     public class TestingProcess
@@ -38,11 +35,14 @@
             Subject<SessionEventArgs> sessionEventsSubject,
             ICollection<Mutant> allMutants)
         {
+        
             _mutantTestingFactory = mutantTestingFactory;
             _sessionEventsSubject = sessionEventsSubject;
 
             _allMutantsCount = allMutants.Count;
             _testedNonEquivalentMutantsCount = 0;
+
+            _log.Info("Testing process: all:" + _allMutantsCount);
 
             _mutantsWorkers = new WorkerCollection<Mutant>(allMutants,
                 choices.MainOptions.ProcessingThreadsCount, TestOneMutant);

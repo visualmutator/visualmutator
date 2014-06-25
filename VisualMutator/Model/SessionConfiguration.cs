@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using System.Windows.Documents;
     using Controllers;
+    using CoverageFinder;
     using Infrastructure;
     using Microsoft.Cci;
     using Mutations.Types;

@@ -75,7 +75,6 @@
 
         public IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted, List<CciModuleSource> originalModules)
         {
-            var mutantsGroupedByOperators = new List<ExecutedOperator>();
             var root = new MutationRootNode();
 
             int[] id = { 1 };

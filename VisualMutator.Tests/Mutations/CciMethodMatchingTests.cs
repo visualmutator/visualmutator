@@ -11,6 +11,7 @@
     using Microsoft.Cci;
     using Microsoft.Cci.Ast;
     using Model;
+    using Model.CoverageFinder;
     using Model.Mutations.Types;
     using NUnit.Core;
     using NUnit.Framework;

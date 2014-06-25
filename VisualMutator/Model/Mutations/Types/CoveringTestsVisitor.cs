@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using CoverageFinder;
     using log4net;
     using Microsoft.Cci;
 

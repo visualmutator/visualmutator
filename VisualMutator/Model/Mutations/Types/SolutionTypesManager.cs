@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
+    using CoverageFinder;
     using Exceptions;
     using Extensibility;
     using Infrastructure;
@@ -17,6 +18,7 @@
     using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
+    using MethodIdentifier = Extensibility.MethodIdentifier;
 
     #endregion
 

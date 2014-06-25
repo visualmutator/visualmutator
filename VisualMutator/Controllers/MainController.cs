@@ -11,6 +11,7 @@
     using Infrastructure;
     using log4net;
     using Model;
+    using Model.CoverageFinder;
     using Model.Mutations.MutantsTree;
     using UsefulTools.Core;
     using UsefulTools.DependencyInjection;
@@ -153,7 +154,7 @@
 
             var continuousConfiguration = _continuousConfigurator.GetConfiguration();
             var sessionConfiguration = await Task.Run(() => continuousConfiguration.Get.CreateSessionConfiguration());
-
+            
             try
             {
                 IObjectRoot<SessionController> sessionController = 
@@ -297,7 +298,7 @@
 
             _subscriptions = new List<IDisposable>
             {
-                events.OfType<MinorSessionUpdateEventArgs>()
+                sessionController.SessionEventsObservable.OfType<MinorSessionUpdateEventArgs>()
                     .Where(e => e.EventType == OperationsState.Finished 
                             || e.EventType == OperationsState.Error)
                     .Subscribe(args =>

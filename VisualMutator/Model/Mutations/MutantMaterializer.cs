@@ -1,11 +1,11 @@
-﻿namespace VisualMutator.Tests.Mutations
+﻿namespace VisualMutator.Model.Mutations
 {
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Model;
-    using Model.Mutations.MutantsTree;
     using Model.StoringMutants;
+    using MutantsTree;
 
     public class MutantMaterializer
     {

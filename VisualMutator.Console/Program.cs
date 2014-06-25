@@ -128,12 +128,12 @@ namespace VisualMutator.Console
         }
         private static void Main(string[] args)
         {
-            if (args.Length >= 3)
+            if (args.Length >= 5)
             {
                 var parser = new CommandLineParser(args);
                 var connection = new EnvironmentConnection(parser);
                 var boot = new ConsoleBootstrapper(connection, parser);
-                boot.Initialize();
+                boot.Initialize().Wait();
             }
             else
             {

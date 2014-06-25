@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.Traversal
 {
     #region
 
@@ -9,7 +9,6 @@
     using log4net;
     using Microsoft.Cci;
     using Microsoft.Cci.UtilityDataStructures;
-    using UsefulTools.ExtensionMethods;
 
     #endregion
 

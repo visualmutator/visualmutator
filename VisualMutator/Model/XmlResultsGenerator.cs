@@ -5,11 +5,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using System.Xml.Linq;
     using Controllers;
     using Decompilation;
     using Decompilation.CodeDifference;
+    using log4net;
     using Mutations.MutantsTree;
     using Mutations.Types;
     using Tests.TestsTree;
@@ -22,6 +24,9 @@
 
     public class XmlResultsGenerator
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         private readonly AutoCreationController _creationController;
         private readonly SessionController _sessionController;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
@@ -41,6 +46,8 @@
             bool includeDetailedTestResults,
             bool includeCodeDifferenceListings)
         {
+            _log.Info("Generating session results to file.");
+
             List<Mutant> mutants = session.MutantsGrouped.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children, leafsOnly:true).OfType<Mutant>().ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();

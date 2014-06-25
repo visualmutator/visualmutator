@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Infrastructure;
     using Model;
+    using Model.CoverageFinder;
     using Model.Mutations.Operators;
     using Model.Mutations.Types;
     using Model.StoringMutants;
@@ -63,7 +64,7 @@
         public async Task<List<TestNodeAssembly>> BuildTestTree(Task<List<MethodIdentifier>> coveringTask, Task<object> testsTask, bool constrainedMutation)
         {
             
-            var result = await Tuple.Create(coveringTask, testsTask).WhenAll();
+            var result = await TupleExtensions.WhenAll(Tuple.Create(coveringTask, testsTask));
             var coveringTests = result.Item1;
             var testsRootNode = (TestsRootNode)result.Item2;
 

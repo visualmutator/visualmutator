@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.CoverageFinder
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -8,7 +8,6 @@
     using log4net;
     using Microsoft.Cci;
     using Mutations.Types;
-    using StoringMutants;
     using UsefulTools.ExtensionMethods;
 
     public class CoveringTestsFinder

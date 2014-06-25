@@ -1,10 +1,10 @@
-﻿namespace VisualMutator.Model.Mutations
+﻿namespace VisualMutator.Model.Mutations.MutantsTree
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Types;
     using UsefulTools.CheckboxedTree;
+
     public class Utilss
     {
         public void GroupTypes<T, Node>(Node parent,

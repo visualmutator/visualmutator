@@ -17,6 +17,7 @@
     using log4net;
     using Microsoft.Cci;
     using Model;
+    using Model.CoverageFinder;
     using Model.Exceptions;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;

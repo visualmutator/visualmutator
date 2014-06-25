@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Controllers
+﻿namespace VisualMutator.Infrastructure
 {
     using System;
     using System.Threading.Tasks;

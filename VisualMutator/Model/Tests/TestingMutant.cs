@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -9,17 +9,14 @@
     using System.Threading.Tasks;
     using Controllers;
     using Decompilation;
-    using Exceptions;
-    using Infrastructure;
     using log4net;
+    using Mutations;
     using Mutations.MutantsTree;
     using StoringMutants;
-    using Tests;
     using Tests.Services;
     using Tests.TestsTree;
     using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
-    using VisualMutator.Tests.Mutations;
 
     public class TestingMutant
     {

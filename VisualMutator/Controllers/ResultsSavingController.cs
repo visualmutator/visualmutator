@@ -4,7 +4,9 @@
 
     using System.Diagnostics;
     using System.IO;
+    using System.Reflection;
     using System.Xml.Linq;
+    using log4net;
     using Microsoft.Win32;
     using Model;
     using UsefulTools.Core;
@@ -16,6 +18,8 @@
 
     public class ResultsSavingController : Controller
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly ResultsSavingViewModel _viewModel;
 
         private readonly IFileSystem _fs;

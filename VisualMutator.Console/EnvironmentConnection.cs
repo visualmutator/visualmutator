@@ -6,6 +6,7 @@
     using System.Linq;
     using Infrastructure;
     using Model;
+    using Model.CoverageFinder;
     using UsefulTools.Paths;
 
     public class EnvironmentConnection : IHostEnviromentConnection
@@ -51,6 +52,11 @@
         public void Build()
         {
             _events.OnNext(EventType.HostOpened);
+        }
+
+        internal void End()
+        {
+            _events.OnNext(EventType.HostClosed);
         }
     }
 }

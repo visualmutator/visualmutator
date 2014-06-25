@@ -24,6 +24,7 @@
     using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
+    using VisualMutator.Model.CoverageFinder;
 
     #endregion
 

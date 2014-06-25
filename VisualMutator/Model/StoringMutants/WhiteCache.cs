@@ -168,7 +168,7 @@ namespace VisualMutator.Model.StoringMutants
                     foreach (ProjectFilesClone item in _paths.GetConsumingEnumerable())
                     {
                         Monitor.Enter(this);
-                        while (_whiteCaches.All(_ => _.Value.Count >= _maxCount))
+                        while (_whiteCaches.All(_ => _.Value.Count >= _maxCount) && !_paths.IsAddingCompleted)
                         {
                             Monitor.Wait(this);
                         }
