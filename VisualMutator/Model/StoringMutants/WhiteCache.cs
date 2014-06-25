@@ -167,12 +167,14 @@ namespace VisualMutator.Model.StoringMutants
 
                     foreach (ProjectFilesClone item in _paths.GetConsumingEnumerable())
                     {
-                        Monitor.Enter(this);
-                        while (_whiteCaches.All(_ => _.Value.Count >= _maxCount) && !_paths.IsAddingCompleted)
+                        lock(this)
                         {
-                            Monitor.Wait(this);
+                            while (_whiteCaches.All(_ => _.Value.Count >= _maxCount) && !_paths.IsAddingCompleted)
+                            {
+                                Monitor.Wait(this);
+                            }
                         }
-                        Monitor.Exit(this);
+                       
                         if(_paths.IsAddingCompleted)
                         {
                             return;
@@ -229,7 +231,7 @@ namespace VisualMutator.Model.StoringMutants
 
         private void NotifyClients()
         {
-            lock (this)
+            lock (_clients)
             {
                 if(_clients.Count > 0)
                 {
@@ -306,7 +308,7 @@ namespace VisualMutator.Model.StoringMutants
                 }
                 else
                 {
-                    lock (this)
+                    lock (_clients)
                     {
                         _clients.Enqueue(client);
                     }
