@@ -63,7 +63,7 @@ namespace VisualMutator.Model.StoringMutants
         private BlockingCollection<ProjectFilesClone> _paths;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private int _maxCount;
-        private readonly Queue<WhiteClient> _clients;
+        private readonly ConcurrentQueue<WhiteClient> _clients;
         private List<ProjectFilesClone> _filesPool;
         private readonly int _threadsCount;
         private Exception _error;
@@ -87,7 +87,7 @@ namespace VisualMutator.Model.StoringMutants
             _threadsCount = threadsCount;
             _moduleNameToFileName = new Dictionary<string, string>();
             _whiteCaches = new ConcurrentDictionary<string, BlockingCollection<CciModuleSource>>();
-            _clients = new Queue<WhiteClient>();
+            _clients = new ConcurrentQueue<WhiteClient>();
             _maxCount = maxCount;
             _initialMaxCount = maxCount;
             _paths = new BlockingCollection<ProjectFilesClone>();
@@ -231,15 +231,17 @@ namespace VisualMutator.Model.StoringMutants
 
         private void NotifyClients()
         {
-            lock (_clients)
+            WhiteClient client;
+            if(_clients.TryDequeue(out client))
             {
-                if(_clients.Count > 0)
+                CciModuleSource cciModuleSource = TryTake(client.Key);
+                if (cciModuleSource != null)
                 {
-                    CciModuleSource cciModuleSource = TryTake(_clients.Peek().Key);
-                    if(cciModuleSource != null)
-                    {
-                        _clients.Dequeue().Tcs.TrySetResult(cciModuleSource);
-                    }
+                    client.Tcs.TrySetResult(cciModuleSource);
+                }
+                else
+                {
+                    _clients.Enqueue(client);
                 }
             }
         }
@@ -308,10 +310,7 @@ namespace VisualMutator.Model.StoringMutants
                 }
                 else
                 {
-                    lock (_clients)
-                    {
-                        _clients.Enqueue(client);
-                    }
+                    _clients.Enqueue(client);
                 }
                 return client.Tcs.Task;
             }
@@ -331,9 +330,10 @@ namespace VisualMutator.Model.StoringMutants
         }
         private void Pulse()
         {
-            Monitor.Enter(this);
-            Monitor.Pulse(this);
-            Monitor.Exit(this);
+            lock (this)
+            {
+                Monitor.Pulse(this);
+            }
         }
     }
     public class Global
