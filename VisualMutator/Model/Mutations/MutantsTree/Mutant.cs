@@ -170,21 +170,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             DisplayedText = "{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
         }
     }
-    public enum StateSignal
-    {
-        //Not yet tested
-        Untested,
-        Creating,
-        //During testing
-        Tested,
-        //Any test failed or was inconclusive
-        Killed,
-        //All tests passed
-        Live,
-        //Error occurred while testing
-        Error,
-        Equivalent
-    }
+  
     public enum MutantKilledSubstate
     {
         Normal,

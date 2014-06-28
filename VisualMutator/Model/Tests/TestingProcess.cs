@@ -53,6 +53,7 @@
             _log.Info("Testing progress: all:"+ _allMutantsCount +
                 ", tested: "+ _testedNonEquivalentMutantsCount
                 +"killed: "+ _mutantsKilledCount);
+
             _sessionEventsSubject.OnNext(new TestingProgressEventArgs(OperationsState.Testing)
             {
                 NumberOfAllMutants = _allMutantsCount,
@@ -82,7 +83,7 @@
                 await testingMutant.Get.RunAsync();
                 lock (this)
                 {
-                    _mutationScore = UpdateMetricsAfterMutantTesting(mutant.State);
+                    UpdateMetricsAfterMutantTesting(mutant.State);
                     RaiseTestingProgress();
                 }
             }
@@ -93,18 +94,34 @@
             }
         }
 
-        private double UpdateMetricsAfterMutantTesting(MutantResultState state)
+        private void UpdateMetricsAfterMutantTesting(MutantResultState state)
         {
             _testedNonEquivalentMutantsCount++;
 
             _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(state == MutantResultState.Killed);
 
-            return ((double)_mutantsKilledCount) / _testedNonEquivalentMutantsCount;
+            _mutationScore =((double)_mutantsKilledCount) / _testedNonEquivalentMutantsCount;
         }
 
         public void TestWithHighPriority(Mutant mutant)
         {
            _mutantsWorkers.LockingMoveToFront(mutant);
+        }
+        public void MarkedAsEqivalent(bool equivalent)
+        {
+            lock (this)
+            {
+                if (equivalent)
+                {
+                    _testedNonEquivalentMutantsCount--;
+                }
+                else
+                {
+                    _testedNonEquivalentMutantsCount++;
+                }
+                _mutationScore = ((double)_mutantsKilledCount) / _testedNonEquivalentMutantsCount;
+                RaiseTestingProgress();
+            }
         }
     }
 }

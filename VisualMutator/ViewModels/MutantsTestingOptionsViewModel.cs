@@ -20,7 +20,7 @@
         {
             Options = new MutantsTestingOptions
             {
-                TestingTimeoutSeconds = 5,
+                TestingTimeoutSeconds = 20,
                 TestingProcessExtensionOptions = TestingProcessExtensionOptions.Default
             };
 

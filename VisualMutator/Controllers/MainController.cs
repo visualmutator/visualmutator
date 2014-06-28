@@ -332,7 +332,7 @@
                 events.OfType<TestingProgressEventArgs>()
                  .Subscribe(args =>
                  {
-                         _viewModel.OperationsState = OperationsState.Testing;
+                         //_viewModel.OperationsState = OperationsState.Testing;
                          _viewModel.OperationsStateDescription = "Running tests... ({0}/{1})"
                              .Formatted(args.NumberOfAllMutantsTested + 1,
                                  args.NumberOfAllMutants);

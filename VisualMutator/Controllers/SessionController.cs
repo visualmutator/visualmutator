@@ -101,6 +101,10 @@
                     .OnTestingOfMutantStarting(e.StoredMutantInfo.Directory, e.StoredMutantInfo.AssembliesPaths);
             });
             _subscriptions.Add(subs1);
+
+            
+
+
         }
 
         public IObservable<SessionEventArgs> SessionEventsObservable
@@ -328,6 +332,14 @@
                 .SelectManyRecursive(m => m.Children, leafsOnly: true).OfType<Mutant>().ToList();
 
             _testingProcess = _testingProcessFactory.CreateWithParams(_sessionEventsSubject, allMutants);
+
+            foreach (var allMutant in allMutants)
+            {
+                var subscription = allMutant
+                    .WhenPropertyChanged(m => m.IsEquivalent)
+                    .Subscribe(equivalent => _testingProcess.MarkedAsEqivalent(equivalent));
+                _subscriptions.Add(subscription);
+            }
 
             new Thread(RunTestsInternal).Start();
         }

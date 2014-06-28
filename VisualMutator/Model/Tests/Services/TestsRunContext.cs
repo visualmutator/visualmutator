@@ -73,7 +73,14 @@
 
         public void CancelRun()
         {
-            _cancellationTokenSource.Cancel();
+            try
+            {
+                _cancellationTokenSource.Cancel();
+            }
+            catch (Exception e)
+            {
+                _log.Warn("Exception while cancelling: "+e);
+            }
             _log.Debug("Requested cancellation for testing for " + _cancellationTokenSource.GetHashCode());
         }
 

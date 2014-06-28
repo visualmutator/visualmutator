@@ -132,11 +132,7 @@
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
-                if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
-                {
-                   // _svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
-                    throw new Exception(UserMessages.ErrorNoTestsToRun());
-                }
+               
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
             
@@ -173,6 +169,12 @@
 
         protected void CommandOk()
         {
+            if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
+            {
+                _svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
+                return;
+                //   throw new Exception(UserMessages.ErrorNoTestsToRun());
+            }
             tcs.TrySetResult(new object());
             _viewModel.Close();
         }
@@ -185,6 +187,11 @@
             }
             if (auto)
             {
+                if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
+                {
+                    //_svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
+                       throw new Exception(UserMessages.ErrorNoTestsToRun());
+                }
                 tcs.TrySetResult(new object());
             }
             await mainTask;

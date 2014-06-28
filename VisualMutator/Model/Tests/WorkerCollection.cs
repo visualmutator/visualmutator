@@ -76,7 +76,6 @@
                     emptyStop = true;
                     _currentCount--;
                     endCallback();
-                    // _semaphore.Release();
                 }
             }
         }

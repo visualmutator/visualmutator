@@ -97,11 +97,13 @@ namespace Ns
             var debug2 = new DebugOperatorCodeVisitor();
             new DebugCodeTraverser(debug).Traverse(cci.Modules.Single().Module);
             new DebugCodeTraverser(debug2).Traverse(cci2.Modules.Single().Module);
-              Console.WriteLine(debug);
-             Console.WriteLine(debug2);
+            File.WriteAllText(@"C:\PLIKI\tree1.txt", debug.ToString());
+            File.WriteAllText(@"C:\PLIKI\tree2.txt", debug2.ToString());
+           //   Console.WriteLine(debug);
+           //  Console.WriteLine(debug2);
             //  cci.ReplaceWith(executeMutation.MutatedModules.Modules.Single().Module);
 
-            var s2 = vis.Visualize(CodeLanguage.CSharp, cci2);
+        //    var s2 = vis.Visualize(CodeLanguage.CSharp, cci2);
           //  Console.WriteLine(s);
            // Console.WriteLine(s2);
             //       var viss = new Viss(cci2.Host, sourceMethod);
@@ -155,7 +157,22 @@ namespace Ns
         [Test]
         public void Test1()
         {
-            trace(@"C:\PLIKI\VisualMutator\Projekty do testów\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.dll");
+            var cci2 = new CciModuleSource(@"C:\PLIKI\VisualMutator\testprojects\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.dll");
+            var copied21 = cci2.CreateCopier().Copy(cci2.Modules.Single().Module);
+            var copied22 = cci2.CreateCopier().Copy(cci2.Modules.Single().Module);
+
+            var debug1 = new DebugOperatorCodeVisitor();
+            var debug2 = new DebugOperatorCodeVisitor();
+            new DebugCodeTraverser(debug1).Traverse(copied21);
+            new DebugCodeTraverser(debug2).Traverse(copied22);
+            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree1" + ".txt", debug1.ToStringBasicVisit(), Encoding.ASCII);
+            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree2" + ".txt", debug2.ToStringBasicVisit(), Encoding.ASCII);
+
+            //
+            //            foreach (var
+
+
+         //   trace(@"C:\PLIKI\VisualMutator\testprojects\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.dll");
 //            trace(@"C:\PLIKI\VisualMutator\Projekty do testów\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.UnitTests.dll");
 //            trace(@"C:\Users\Arego\AppData\Local\Microsoft\VisualStudio\11.0\Designer\ShadowCache\xr5pbts3.ul3\itvv4cbi.0l3\VisualMutator.dll");
 //            trace(@"C:\PLIKI\Programowanie\C#\CREAM\Cream\bin\x86\Debug\TestRunnerNunit.dll");
@@ -166,8 +183,8 @@ namespace Ns
            
             var cci = new CciModuleSource(file);
            // ModuleInfo mod = (ModuleInfo) cci.Modules.Single();
-            var copied = cci.CreateCopier().Copy(cci.Modules.Single().Module);
-            var copied2 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
+//            var copied = cci.CreateCopier().Copy(cci.Modules.Single().Module);
+//            var copied2 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
             var copied3 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
             var white = cci.CloneWith(copied3);
 
@@ -200,23 +217,26 @@ namespace Ns
             // ModuleInfo mod = (ModuleInfo) cci.Modules.Single();
             var copied21 = cci2.CreateCopier().Copy(cci2.Modules.Single().Module);
             var copied22 = cci2.CreateCopier().Copy(cci2.Modules.Single().Module);
-            
 
+            var debug1 = new DebugOperatorCodeVisitor();
+            var debug2 = new DebugOperatorCodeVisitor();
+            new DebugCodeTraverser(debug1).Traverse(copied21);
+            new DebugCodeTraverser(debug2).Traverse(copied22);
+            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree1" + ".txt", debug1.ToString(), Encoding.ASCII);
+            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree2" + ".txt", debug2.ToString(), Encoding.ASCII);
 
-            foreach (var mutant in mutants)
-            {
-                var copied23 = cci2.CreateCopier().Copy(cci.Modules.Single().Module);
-                var mutCci = cci2.CloneWith(copied23);
-                var debug2 = new DebugOperatorCodeVisitor();
-                new DebugCodeTraverser(debug2).Traverse(copied23);
-                File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\orig2" + ".txt", debug2.ToString(), Encoding.ASCII);
-
-                debug2.ToString().ShouldEqual(debug.ToString());
-
-
-                MutationResult executeMutation = exec.ExecuteMutation(mutant, mutCci).Result;
-
-            }
+//
+//            foreach (var mutant in mutants)
+//            {
+//                var copied23 = cci2.CreateCopier().Copy(cci.Modules.Single().Module);
+//                var mutCci = cci2.CloneWith(copied23);
+//                
+//              //  debug2.ToString().ShouldEqual(debug.ToString());
+//
+//
+//             //   MutationResult executeMutation = exec.ExecuteMutation(mutant, mutCci).Result;
+//
+//            }
 
 
 
