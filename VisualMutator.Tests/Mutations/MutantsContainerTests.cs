@@ -7,6 +7,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using DiffMatchPatch;
     using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MetadataReader;
@@ -165,18 +166,28 @@ namespace Ns
             var debug2 = new DebugOperatorCodeVisitor();
             new DebugCodeTraverser(debug1).Traverse(copied21);
             new DebugCodeTraverser(debug2).Traverse(copied22);
-            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree1" + ".txt", debug1.ToStringBasicVisit(), Encoding.ASCII);
-            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree2" + ".txt", debug2.ToStringBasicVisit(), Encoding.ASCII);
+           // File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree1" + ".txt", debug1.ToStringBasicVisit(), Encoding.ASCII);
+           // File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree2" + ".txt", debug2.ToStringBasicVisit(), Encoding.ASCII);
 
+            var dif = new diff_match_patch();
+            var diff = dif.diff_main(debug1.ToStringBasicVisit(), debug2.ToStringBasicVisit(), true);
+
+            var sb = new StringBuilder();
+            foreach (var diff1 in diff)
+            {
+                sb.AppendLine(diff1.ToString());
+            }
+            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\treediff", sb.ToString());
             //
+
             //            foreach (var
 
 
-         //   trace(@"C:\PLIKI\VisualMutator\testprojects\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.dll");
-//            trace(@"C:\PLIKI\VisualMutator\Projekty do testów\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.UnitTests.dll");
-//            trace(@"C:\Users\Arego\AppData\Local\Microsoft\VisualStudio\11.0\Designer\ShadowCache\xr5pbts3.ul3\itvv4cbi.0l3\VisualMutator.dll");
-//            trace(@"C:\PLIKI\Programowanie\C#\CREAM\Cream\bin\x86\Debug\TestRunnerNunit.dll");
-      //        trace(@"C:\PLIKI\Programowanie\C#\CREAM\Cream\bin\x86\Debug\MutationTools.dll");
+            //   trace(@"C:\PLIKI\VisualMutator\testprojects\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.dll");
+            //            trace(@"C:\PLIKI\VisualMutator\Projekty do testów\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.UnitTests.dll");
+            //            trace(@"C:\Users\Arego\AppData\Local\Microsoft\VisualStudio\11.0\Designer\ShadowCache\xr5pbts3.ul3\itvv4cbi.0l3\VisualMutator.dll");
+            //            trace(@"C:\PLIKI\Programowanie\C#\CREAM\Cream\bin\x86\Debug\TestRunnerNunit.dll");
+            //        trace(@"C:\PLIKI\Programowanie\C#\CREAM\Cream\bin\x86\Debug\MutationTools.dll");
         }
         public void trace(string file)
         {
