@@ -280,19 +280,12 @@
             _sessionState = SessionState.Finished;
             SessionEndTime = DateTime.Now;
 
-            
-            _currentSession.MutationScore = _testingProcess.MutationScore;
             if (_testingProcessExtensionOptions != null)
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             }
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
-            foreach (var subscription in _subscriptions)
-            {
-                subscription.Dispose();
-            }
-            _subscriptions.Clear();
-            _sessionEventsSubject.OnCompleted();
+            
         }
 
         public DateTime SessionEndTime { get; set; }
@@ -305,6 +298,10 @@
             {
                 _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
             }
+        }
+
+        public void Dispose()
+        {
             foreach (var subscription in _subscriptions)
             {
                 subscription.Dispose();
@@ -340,6 +337,14 @@
                     .Subscribe(equivalent => _testingProcess.MarkedAsEqivalent(equivalent));
                 _subscriptions.Add(subscription);
             }
+
+
+            _subscriptions.Add(
+            _sessionEventsSubject.OfType<MutationScoreInfoEventArgs>()
+                .Subscribe(args =>
+                {
+                    _currentSession.MutationScore = args.MutationScore;
+                }));
 
             new Thread(RunTestsInternal).Start();
         }

@@ -148,6 +148,28 @@
 
         }
     }
+
+    public class MutationScoreInfoEventArgs : SessionEventArgs
+    {
+        public MutationScoreInfoEventArgs(OperationsState eventType) : base(eventType)
+        {
+        }
+
+        public int NumberOfAllNonEquivalent { get; set; }
+        public double MutationScore
+        {
+            get
+            {
+                return ((double)NumberOfMutantsKilled) / NumberOfAllNonEquivalent;
+            }
+            
+        }
+        public int NumberOfMutantsKilled
+        {
+            get;
+            set;
+        }
+    }
     public class TestingProgressEventArgs : SessionEventArgs
     {
         public TestingProgressEventArgs(OperationsState eventType)
@@ -155,11 +177,7 @@
         {
         }
 
-        public int NumberOfMutantsKilled
-        {
-            get;
-            set;
-        }
+       
 
         public int NumberOfAllMutantsTested
         {
@@ -167,11 +185,7 @@
             set;
         }
 
-        public double MutationScore
-        {
-            get;
-            set;
-        }
+       
 
         public int NumberOfAllMutants
         {

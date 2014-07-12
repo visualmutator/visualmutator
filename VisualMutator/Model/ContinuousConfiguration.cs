@@ -8,11 +8,11 @@
 
     public class ContinuousConfiguration : IDisposable
     {
-        private readonly IWhiteCache _whiteCache;
+        private readonly IWhiteSource _whiteCache;
         private readonly IRootFactory<SessionConfiguration> _sessionConfigurationFactory;
 
         public ContinuousConfiguration(
-            IWhiteCache whiteCache,
+            IWhiteSource whiteCache,
             OperatorsManager operatorsManager,
             IRootFactory<SessionConfiguration> sessionConfigurationFactory)
         {

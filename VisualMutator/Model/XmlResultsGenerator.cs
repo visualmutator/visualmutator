@@ -14,6 +14,7 @@
     using log4net;
     using Mutations.MutantsTree;
     using Mutations.Types;
+    using Tests;
     using Tests.TestsTree;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
@@ -27,18 +28,21 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        private readonly AutoCreationController _creationController;
+        private readonly MutationSessionChoices _choices;
         private readonly SessionController _sessionController;
+        private readonly ITestsContainer _testsContainer;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
 
         public XmlResultsGenerator(
-            AutoCreationController creationController,
+            MutationSessionChoices choices,
             SessionController sessionController,
+            ITestsContainer testsContainer,
             ICodeDifferenceCreator codeDifferenceCreator)
         {
-            _creationController = creationController;
+            _choices = choices;
             _sessionController = sessionController;
+            _testsContainer = testsContainer;
             _codeDifferenceCreator = codeDifferenceCreator;
         }
 
@@ -60,8 +64,6 @@
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
-              //  new XAttribute("FindingMutationTargetsTotalTimeMiliseconds", session.MutantsGrouped
-              //      .Sum(oper => oper.FindTargetsTimeMiliseconds)),
 
                 
                 new XAttribute("AverageCreationTimeMiliseconds", testedMutants
@@ -70,15 +72,9 @@
                     .AverageOrZero(mut => mut.MutantTestSession.TestingTimeMiliseconds)),
                 from assemblyNode in session.MutantsGrouped
                 select new XElement("Assembly",
-                  //  new XAttribute("Identificator", oper.Identificator),
+
                     new XAttribute("Name", assemblyNode.Name),
-                   // new XAttribute("NumberOfMutants", oper.Children.Count),
-                  //  new XAttribute("NumberOfKilledMutants", oper.MutantGroups.SelectMany(m=>m.Mutants).Count(m=>m.State == MutantResultState.Killed)),
-                  //  new XAttribute("NumberOfLiveMutants", oper.MutantGroups.SelectMany(m => m.Mutants).Count(m => m.State == MutantResultState.Live)),
-                  //  new XAttribute("FindingMutationTargetsTimeMiliseconds", oper.FindTargetsTimeMiliseconds),
-                //    new XAttribute("TotalMutantsCreationTimeMiliseconds", oper.MutationTimeMiliseconds),
-                //    new XAttribute("AverageMutantCreationTimeMiliseconds", oper.Children.Count == 0 ? 0 :
-                 //       oper.MutationTimeMiliseconds / oper.Children.Count),
+
                     from type in assemblyNode.Children.SelectManyRecursive(
                         n => n.Children?? new NotifyingCollection<CheckedNode>())
                         .OfType<TypeNode>()
@@ -127,7 +123,7 @@
             return
                 new XDocument(
                     new XElement("MutationTestingSession",
-                        new XAttribute("SessionCreationWindowShowTime", _creationController.SessionCreationWindowShowTime),
+                        new XAttribute("SessionCreationWindowShowTime", _choices.SessionCreationWindowShowTime),
                         new XAttribute("SessionStartTime", _sessionController.SessionStartTime),
                         new XAttribute("SessionEndTime", _sessionController.SessionEndTime),
                         new XAttribute("SessionRunTimeSeconds", (_sessionController.SessionEndTime
@@ -152,50 +148,46 @@
                 list.Add(el);
             }
             return new XElement("CodeDifferenceListings", list);
-
-
         }
 
         public XElement CreateDetailedTestingResults(List<Mutant> mutants)
         {
-            return new XElement("DetailedTestingResults");/*,   
+            return new XElement("DetailedTestingResults",  
                 from mutant in mutants
                 where mutant.MutantTestSession.IsComplete
-                let groupedTests = mutant.MutantTestSession.TestsRootNode.TestNodeAssemblies 
-                .SelectMany(n => n.TestNamespaces)
-                .GroupBy(m => m.State).ToList()
+                let namespaces = _testsContainer.CreateMutantTestTree(mutant)
+                let groupedTests = namespaces.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
                     new XAttribute("MutantId", mutant.Id),
                     new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
-                    new XAttribute("LoadTestsTimeRawMiliseconds", mutant.MutantTestSession.LoadTestsTimeRawMiliseconds),
-                    new XAttribute("RunTestsTimeRawMiliseconds", mutant.MutantTestSession.RunTestsTimeRawMiliseconds),
                     new XElement("Tests",
-                    new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
-                    new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
-                    new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
-                    from testClass in mutant.MutantTestSession.TestsRootNode.TestNodeAssemblies
-                        .Cast<CheckedNode>().SelectManyRecursive(n => n.Children).OfType<TestNodeClass>()
-                    select new XElement("TestClass",
-                        new XAttribute("Name", testClass.Name),
-                        new XAttribute("FullName", testClass.FullName),
-                        from testMethod in testClass.Children.Cast<TestNodeMethod>()
-                        where testMethod.State == TestNodeState.Failure
-                        select new XElement("TestMethod",
-                            new XAttribute("Name", testMethod.Name),
-                            new XAttribute("Outcome", "Failed"),
-                            new XElement("Message", testMethod.Message)),
-                        from testMethod in testClass.Children.Cast<TestNodeMethod>()
-                        where testMethod.State.IsIn(TestNodeState.Success, TestNodeState.Inconclusive)
-                        select new XElement("TestMethod",
-                            new XAttribute("Name", testMethod.Name),
-                            new XAttribute("Outcome", FunctionalExt.ValuedSwitch<TestNodeState, string>(testMethod.State)
-                            .Case(TestNodeState.Success, "Passed")
-                            .Case(TestNodeState.Inconclusive, "Inconclusive")
-                            .GetResult())
+                        new XAttribute("NumberOfFailedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Failure).ToEmptyIfNull().Count()),
+                        new XAttribute("NumberOfPassedTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Success).ToEmptyIfNull().Count()),
+                        new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
+                        from testClass in namespaces
+                            .Cast<CheckedNode>().SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>()).OfType<TestNodeClass>()
+                        select new XElement("TestClass",
+                            new XAttribute("Name", testClass.Name),
+                            new XAttribute("FullName", testClass.FullName),
+                            from testMethod in testClass.Children.Cast<TestNodeMethod>()
+                            where testMethod.State == TestNodeState.Failure
+                            select new XElement("TestMethod",
+                                new XAttribute("Name", testMethod.Name),
+                                new XAttribute("Outcome", "Failed"),
+                                new XElement("Message", testMethod.Message)),
+                            from testMethod in testClass.Children.Cast<TestNodeMethod>()
+                            where testMethod.State.IsIn(TestNodeState.Success, TestNodeState.Inconclusive)
+                            select new XElement("TestMethod",
+                                new XAttribute("Name", testMethod.Name),
+                                new XAttribute("Outcome", FunctionalExt.ValuedSwitch<TestNodeState, string>(testMethod.State)
+                                .Case(TestNodeState.Success, "Passed")
+                                .Case(TestNodeState.Inconclusive, "Inconclusive")
+                                .GetResult())
+                                )
                             )
                         )
                     )
-                )); */
+                ); 
         }
            
     }

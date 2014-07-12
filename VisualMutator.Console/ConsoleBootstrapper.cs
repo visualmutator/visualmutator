@@ -55,6 +55,10 @@
                 OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
                 optionsModel.WhiteCacheThreadsCount = _parser.WhiteThreads;//1;
                 optionsModel.ProcessingThreadsCount = _parser.MutantThreads;
+                optionsModel.MutantsCacheEnabled = false;
+                optionsModel.OtherParams = _parser.OtherParams;
+                var strin = optionsModel.ParsedParams;
+                Console.WriteLine(strin.ToString());
                 _boot.AppController.OptionsManager.WriteOptions(optionsModel);
 
               //  _connection.Build();

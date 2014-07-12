@@ -51,9 +51,9 @@
             var cache = _kernel.GetFromFactory<WhiteCache>(2);
             cache.Initialize().Wait();
 
-            var a = cache.GetWhiteModulesAsync("Dsa.Test").Result;
-            var b = cache.GetWhiteModulesAsync("Dsa").Result;
-            var c = cache.GetWhiteModulesAsync("Dsa").Result;
+            var a = cache.GetWhiteSourceAsync("Dsa.Test").Result;
+            var b = cache.GetWhiteSourceAsync("Dsa").Result;
+            var c = cache.GetWhiteSourceAsync("Dsa").Result;
 
             a.Modules.Count.ShouldEqual(1);
             b.Modules.Count.ShouldEqual(1);

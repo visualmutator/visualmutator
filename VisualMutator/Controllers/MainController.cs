@@ -85,7 +85,9 @@
                 _viewModel.OperationsState == OperationsState.Finished)
                 .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
 
-            _viewModel.CommandOptions = new SmartCommand(ShowOptions);
+            _viewModel.CommandOptions = new SmartCommand(() => ShowOptions(),
+                () => _viewModel.OperationsState.IsIn(OperationsState.None, OperationsState.Finished, OperationsState.Error))
+                .UpdateOnChanged(_viewModel, () => _viewModel.OperationsState);
             _viewModel.CommandTest = new SmartCommand(Test);
 
 
@@ -337,11 +339,17 @@
                              .Formatted(args.NumberOfAllMutantsTested + 1,
                                  args.NumberOfAllMutants);
 
-                         _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllMutantsTested);
-                         _viewModel.MutationScore = string.Format(@"Mutation score: {0}%", args.MutationScore.AsPercentageOf(1.0d));
-                         _viewModel.Progress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
+                        _viewModel.Progress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
                  }),
-
+                 events.OfType<MutationScoreInfoEventArgs>()
+                 .Subscribe(args =>
+                 {
+            
+                         _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllNonEquivalent);
+                         _viewModel.MutationScore = string.Format(@"Mutation score: {0}%", args.MutationScore.AsPercentageOf(1.0d));
+                  
+            
+                 }),
                _viewModel.WhenPropertyChanged(vm => vm.SelectedMutationTreeItem).OfType<Mutant>()
                    .Subscribe(x =>
                    {

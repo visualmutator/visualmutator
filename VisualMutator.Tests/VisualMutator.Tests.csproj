@@ -228,7 +228,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolutionTypesTests.cs" />
     <Compile Include="UnitTesting\TestContainerTests.cs" />
-    <Compile Include="Util\DiffMatchPatch.cs" />
     <Compile Include="Util\LogMessageService.cs" />
     <Compile Include="Util\TestInfrastructureModule.cs" />
     <Compile Include="Util\TestProjects.cs" />

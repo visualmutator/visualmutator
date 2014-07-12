@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Model
 {
     using System;
+    using System.Linq;
     using CommandLine;
     using UsefulTools.Core;
 
@@ -53,6 +54,8 @@
         }
 
         private string _otherParams;
+        private bool _useLegacyCreationMode;
+
         public string OtherParams
         {
             get
@@ -76,28 +79,34 @@
                 }
                 else
                 {
-                    throw new Exception("Invalid params string in options.");
+                   // var str = options.LastParserState.Errors.Select(a=>a.ToString()).Aggregate((a, b) => a.ToString() + "n" + b.ToString());
+                    throw new Exception("Invalid params string in options.: ");
                 }
             }
         }
+       
 
-        
     }
     public class OtherParams
     {
 
-        [Option('l', "loglevel", DefaultValue = "DEBUG", HelpText = "")]
+        [Option("loglevel", DefaultValue = "DEBUG", HelpText = "")]
         public string LogLevel
         {
             get; set;
         }
-        [Option('d', "debugfiles", DefaultValue = false, HelpText = "")]
+        [Option( "debugfiles", DefaultValue = false, HelpText = "")]
         public bool DebugFiles
         {
             get; set;
         }
-        [Option('n', "nunitnetversion", DefaultValue = "", HelpText = "")]
+        [Option( "nunitnetversion", DefaultValue = "", HelpText = "")]
         public string NUnitNetVersion
+        {
+            get; set;
+        }
+        [Option("legacyCreation", DefaultValue = false, HelpText = "")]
+        public bool LegacyCreation
         {
             get; set;
         }
@@ -107,5 +116,9 @@
             get; set;
         }
 
+        public override string ToString()
+        {
+            return string.Format("LogLevel: {0}, DebugFiles: {1}, NUnitNetVersion: {2}, LegacyCreation: {3}, LastParserState: {4}", LogLevel, DebugFiles, NUnitNetVersion, LegacyCreation, LastParserState);
+        }
     }
 }

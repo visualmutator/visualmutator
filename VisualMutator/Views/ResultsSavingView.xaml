@@ -40,10 +40,10 @@
             <Button Grid.Column="2" Content="Browse..." Command="{Binding CommandBrowse}" />
         </Grid>
         <CheckBox Grid.Row="1" Style="{StaticResource checkstyle}"
-                  Content="Include detailed test results for each mutant"
+                  Content="Include detailed test results for each mutant (might be slow)"
                   IsChecked="{Binding IncludeDetailedTestResults}" />
         <CheckBox Grid.Row="2" Style="{StaticResource checkstyle}"
-                  Content="Include code difference listings for each mutant (very slow)"
+                  Content="Include code difference listings for each mutant (might be slow)"
                   IsChecked="{Binding IncludeCodeDifferenceListings}" />
 
         <DockPanel Grid.Row="4" HorizontalAlignment="Right">

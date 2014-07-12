@@ -128,7 +128,7 @@
             }
             while (children.OfType<TypeNode>().Any())
             {
-                TypeNode typeNamespaceNode = node.Children.OfType<TypeNode>().First();
+                TypeNode typeNamespaceNode = children.OfType<TypeNode>().First();
                 RemoveFromParentIfEmpty(typeNamespaceNode);
                 children.Remove(typeNamespaceNode);
             }

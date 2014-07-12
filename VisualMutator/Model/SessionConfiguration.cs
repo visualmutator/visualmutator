@@ -23,7 +23,7 @@
         private readonly ITypesManager _typesManager;
         private readonly IFactory<AutoCreationController> _autoCreationControllerFactory;
         private readonly IRootFactory<SessionController> _sessionFactory;
-        private readonly IWhiteCache _whiteCache;
+        private readonly IWhiteSource _whiteCache;
         private readonly ProjectFilesClone _originalFilesClone;
         private readonly ProjectFilesClone _testsClone;
 
@@ -33,7 +33,7 @@
             ITypesManager typesManager,
             IFactory<AutoCreationController> autoCreationControllerFactory,
             IRootFactory<SessionController> sessionFactory,
-            IWhiteCache whiteCache)
+            IWhiteSource whiteCache)
         {
             _testLoader = testLoader;
             _typesManager = typesManager;

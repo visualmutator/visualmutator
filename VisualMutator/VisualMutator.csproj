@@ -246,6 +246,7 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\ControlEvent.cs" />
     <Compile Include="Controllers\AutoCreationController.cs" />
+    <Compile Include="Controllers\ITestsSelectStrategy.cs" />
     <Compile Include="Controllers\OnlyMutantsCreationController.cs" />
     <Compile Include="Controllers\MutantsSavingController.cs" />
     <Compile Include="Controllers\OptionsController.cs" />
@@ -342,6 +343,7 @@
     <Compile Include="Model\Tests\TestsTree\TestsRootNode.cs" />
     <Compile Include="Model\Tests\TmpTestNodeMethod.cs" />
     <Compile Include="Model\Tests\WorkerCollection.cs" />
+    <Compile Include="Model\TreeUtils.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />
     <Compile Include="Model\Decompilation\CodeLanguage.cs" />

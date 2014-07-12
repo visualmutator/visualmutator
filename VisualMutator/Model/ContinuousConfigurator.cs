@@ -37,7 +37,7 @@
             var optionsModel = _optionsManager.ReadOptions();
 
 
-            IWhiteCache whiteCache;
+            IWhiteSource whiteCache;
             if (optionsModel.WhiteCacheThreadsCount != 0)
             {
                 whiteCache = _whiteCacheFactory.CreateWithParams(optionsModel.WhiteCacheThreadsCount, 1);

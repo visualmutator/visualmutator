@@ -58,7 +58,7 @@
                         if (reader.NodeType == XmlNodeType.EndElement)
                         {
                             isParametrizedTest = false;
-                            currentClass = null;
+                            //currentClass = null;
                         }
                         else if (reader.NodeType == XmlNodeType.Element)
                         {
@@ -69,8 +69,8 @@
                             if (reader.GetAttribute("type") == "TestFixture")
                             {
                                 isParametrizedTest = false;
-                                currentClass = new TestNodeClass(reader.GetAttribute("name"));
-                                currentClass.Namespace = nsStack.Aggregate((a, b) => a + "." + b);
+                                //currentClass = new TestNodeClass(reader.GetAttribute("name"));
+                                //currentClass.Namespace = nsStack.Aggregate((a, b) => a + "." + b);
                             }
                         }
                     }

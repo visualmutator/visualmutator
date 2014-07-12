@@ -2,6 +2,7 @@ namespace VisualMutator.Model
 {
     #region
 
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using Extensibility;
@@ -35,6 +36,6 @@ namespace VisualMutator.Model
         public IList<TestNodeAssembly> TestAssemblies { get; set; }
         public OptionsModel MainOptions { get; set; }
         public List<CciModuleSource> WhiteSource { get; set; }
-
+        public DateTime SessionCreationWindowShowTime { get; set; }
     }
 }

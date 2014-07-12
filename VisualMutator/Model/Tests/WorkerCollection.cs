@@ -34,6 +34,13 @@
             _requestedStop = false;
 
             bool emptyStop = false;
+
+            if(_toProcessList.Count == 0)
+            {
+                endCallback();
+                return;
+            }
+
             while (!emptyStop && !_requestedStop)
             {
                 lock (this)
@@ -75,7 +82,6 @@
                 {
                     emptyStop = true;
                     _currentCount--;
-                    endCallback();
                 }
             }
         }

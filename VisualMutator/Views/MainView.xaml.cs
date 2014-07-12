@@ -49,16 +49,25 @@
                 (item.ContextMenu.Items[0] as MenuItem).IsEnabled = true;
             }
          
-            if(mutant.IsEquivalent)
+            if(mutant.State == MutantResultState.Live)
             {
-                (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Visible;
-                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Collapsed;
+                if (mutant.IsEquivalent)
+                {
+                    (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Visible;
+                    (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Visible;
+                    (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
-                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Visible;
+                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Collapsed;
                 (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Collapsed;
             }
+            
 
         }
 

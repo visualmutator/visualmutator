@@ -33,31 +33,55 @@
             var clone = await _clonesManager.CreateCloneAsync("InitTestEnvironment");
             var info = new StoredMutantInfo(clone);
 
-            var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
-            if (singleMutated != null)
+
+            if(mutationResult.MutatedModules != null)
             {
-                //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
-
-                var memory = mutationResult.MutatedModules.WriteToStream(singleMutated);
-               // _mutantsCache.Release(mutationResult);
-
-                using (FileStream peStream = File.Create(file))
+                var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
+                if (singleMutated != null)
                 {
-                    await memory.CopyToAsync(peStream);
+                    //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                    string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
+
+                    var memory = mutationResult.MutatedModules.WriteToStream(singleMutated);
+                    // _mutantsCache.Release(mutationResult);
+
+                    using (FileStream peStream = File.Create(file))
+                    {
+                        await memory.CopyToAsync(peStream);
+                    }
+
+                    info.AssembliesPaths.Add(file);
                 }
 
-                info.AssembliesPaths.Add(file);
+                var otherModules = _choices.WhiteSource
+                    .Where(_ => singleMutated == null || _.Module.Name != singleMutated.Name);
+
+                foreach (var otherModule in otherModules)
+                {
+                    string file = Path.Combine(info.Directory, otherModule.Module.Name + ".dll");
+                    info.AssembliesPaths.Add(file);
+                }
             }
-
-            var otherModules = _choices.WhiteSource
-                .Where(_ => singleMutated == null || _.Module.Name != singleMutated.Name);
-
-            foreach (var otherModule in otherModules)
+            else
             {
-                string file = Path.Combine(info.Directory, otherModule.Module.Name + ".dll");
-                info.AssembliesPaths.Add(file);
+                foreach (var cciModuleSource in mutationResult.Old)
+                {
+                    var module = cciModuleSource.Modules.Single();
+                    //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                    string file = Path.Combine(info.Directory, module.Name + ".dll");
+
+                    var memory = cciModuleSource.WriteToStream(module);
+                    // _mutantsCache.Release(mutationResult);
+
+                    using (FileStream peStream = File.Create(file))
+                    {
+                        await memory.CopyToAsync(peStream);
+                    }
+
+                    info.AssembliesPaths.Add(file);
+                }
             }
+            
 
             return info;
         }

@@ -50,6 +50,7 @@
         public MutationSessionChoices Result { get; protected set; }
 
         TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+        private DateTime _sessionCreationWindowShowTime;
 
         public AutoCreationController(
             IDispatcherExecute dispatcher,
@@ -86,35 +87,40 @@
 
         public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate = null, bool auto = false)
         {
-            SessionCreationWindowShowTime = DateTime.Now;
+            _sessionCreationWindowShowTime = DateTime.Now;
 
-            
 
+           
+            SessionCreator sessionCreator = _sessionCreatorFactory.Create();
+
+            Task<List<CciModuleSource>> assembliesTask = _sessionConfiguration.LoadAssemblies();
+
+        
+           // Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
+
+            Task<object> testsTask = _sessionConfiguration.LoadTests();
+
+
+            ITestsSelectStrategy testsSelector;
             bool constrainedMutation = false;
             ICodePartsMatcher matcher;
             if (singleMethodToMutate != null)
             {
                 matcher = new CciMethodMatcher(singleMethodToMutate);
+                testsSelector = new CoveredTestsSelectStrategy(assembliesTask, matcher, testsTask);
                 constrainedMutation = true;
             }
             else
             {
+                testsSelector = new AllTestsSelectStrategy(testsTask);
                 matcher = new AllMatcher();
             }
 
-            SessionCreator sessionCreator = _sessionCreatorFactory.Create();
-
-            Task<List<CciModuleSource>> assembliesTask = _sessionConfiguration.LoadAssemblies();
-
-            Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
-
-            Task<object> testsTask = _sessionConfiguration.LoadTests();
+            var testsSelecting = testsSelector.SelectTests();
 
             var t1 = sessionCreator.GetOperators();
 
             var t2 = sessionCreator.BuildAssemblyTree(assembliesTask, constrainedMutation, matcher);
-
-            var t3 = sessionCreator.BuildTestTree(coveringTask, testsTask, constrainedMutation);
 
             var t11 = t1.ContinueWith(task =>
             {
@@ -124,22 +130,25 @@
 
             var t22 = t2.ContinueWith(task =>
             {
+                if (_typesManager.IsAssemblyLoadError)
+                {
+                    _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded());
+                }
                 _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
                 _whiteSource = assembliesTask.Result;
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            var t33 = t3.ContinueWith(task =>
+            var t33 = testsSelecting.ContinueWith(task =>
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
                
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            
-           
+              
             try
             {
-                var mainTask = Task.WhenAll(t1, t2, t3, t11, t22, t33).ContinueWith(t =>
+                var mainTask = Task.WhenAll(t1, t2, testsSelecting, t11, t22, t33).ContinueWith(t =>
                 {
                     
                     if (t.Exception != null)
@@ -187,14 +196,18 @@
             }
             if (auto)
             {
+                tcs.TrySetResult(new object());
+            }
+            await mainTask;
+            if (auto)
+            {
                 if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
                 {
                     //_svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
                        throw new Exception(UserMessages.ErrorNoTestsToRun());
                 }
-                tcs.TrySetResult(new object());
             }
-            await mainTask;
+            
             return AcceptChoices();
         }
         protected MutationSessionChoices AcceptChoices()
@@ -209,12 +222,13 @@
                 MutantsCreationOptions = _viewModel.MutantsCreation.Options,
                 MutantsTestingOptions = _viewModel.MutantsTesting.Options,
                 MainOptions = _options,
-                WhiteSource = _whiteSource 
+                WhiteSource = _whiteSource,
+                SessionCreationWindowShowTime = _sessionCreationWindowShowTime
             };
 
         }
 
-      
+        
         private void ShowError(Exception exc)
         {
             var aggregate = exc as AggregateException;

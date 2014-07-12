@@ -2,6 +2,7 @@
 {
     #region
 
+    using System;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
@@ -97,31 +98,39 @@
                 }
                 path = _viewModel.TargetPath;
             }
-            
-
-            XDocument document = _generator.GenerateResults(_currentSession, 
-                _viewModel.IncludeDetailedTestResults, _viewModel.IncludeCodeDifferenceListings);
 
             try
             {
-                using (var writer = _fs.File.CreateText(path))
+                XDocument document = _generator.GenerateResults(_currentSession,
+                _viewModel.IncludeDetailedTestResults, _viewModel.IncludeCodeDifferenceListings);
+                try
                 {
-                    writer.Write(document.ToString());
+
+                    using (var writer = _fs.File.CreateText(path))
+                    {
+                        writer.Write(document.ToString());
+                    }
+                    _svc.Settings["MutationResultsFilePath"] = path;
+
+                    _viewModel.Close();
+
+
+                    var p = new Process();
+
+                    p.StartInfo.FileName = path;
+                    p.Start();
                 }
-                _svc.Settings["MutationResultsFilePath"] = path;
-
-                _viewModel.Close();
-
-
-                var p = new Process();
-
-                p.StartInfo.FileName = path;
-                p.Start();
+                catch (IOException)
+                {
+                    _svc.Logging.ShowError("Cannot write file: " + path);
+                }
             }
-            catch (IOException)
+            catch (Exception e)
             {
-                _svc.Logging.ShowError("Cannot write file: " + path);
+                _svc.Logging.ShowError(e);
+                throw;
             }
+            
             
         }
         public void Close()

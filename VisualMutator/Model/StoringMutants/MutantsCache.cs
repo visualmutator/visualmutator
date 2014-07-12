@@ -38,7 +38,8 @@
     {
 
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IWhiteCache _whiteCache;
+        private readonly OptionsModel _options;
+        private readonly IWhiteSource _whiteCache;
         private readonly MutationSessionChoices _choices;
         private readonly IMutationExecutor _mutationExecutor;
 
@@ -52,10 +53,12 @@
 
         [Inject]
         public MutantsCache(
-             IWhiteCache whiteCache,
+            OptionsModel options,
+            IWhiteSource whiteCache,
             MutationSessionChoices choices, 
             IMutationExecutor mutationExecutor)
         {
+            _options = options;
             _whiteCache = whiteCache;
             _choices = choices;
             _mutationExecutor = mutationExecutor;
@@ -175,39 +178,29 @@
             MutationResult result;
             if (mutant.MutationTarget == null || mutant.MutationTarget.ProcessingContext == null)
             {
-                result = new MutationResult(mutant, new CciModuleSource(), null);
+                result = new MutationResult(mutant, new CciModuleSource(), null, null);
             }
             else
             {
-                var cci = await _whiteCache.GetWhiteModulesAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
-
-                //  var cci = new CciModuleSource(filePath.Path);
-                // cci.CreateCopier().Copy()
-                //  var mod = cci.Modules.Single(m => m.Name == Path.GetFileNameWithoutExtension(filePath.Path));
-//                var copied3 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
-//                var copied4 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
-//
-//
-//                var copied5 = cci.CreateCopier().Copy(cci.Modules.Single().Module);
-//
-//                var debug3 = new DebugOperatorCodeVisitor();
-//                new DebugCodeTraverser(debug3).Traverse(copied5);
-//                var thiss = debug3.ToString();
-//                string t = (_whiteCache as WhiteCache)._referenceStrings.FirstOrDefault(s => s == thiss);
-//                if(t == null)
-//                {
-//                                        Debugger.Break();
-//               //     throw new Exception();
-//                }
-//
-//             
-//                var cciNew = cci.CloneWith(copied5);
+            
+                if(_options.ParsedParams.LegacyCreation)
+                {
+                    var cci = await _whiteCache.GetWhiteModulesAsyncOld();
 
 
+                    result = await _mutationExecutor.ExecuteMutation(mutant, cci);
 
-                result = await _mutationExecutor.ExecuteMutation(mutant, cci);
+                }
+                else
+                {
+                    var cci = await _whiteCache.GetWhiteSourceAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
 
-               
+
+                    result = await _mutationExecutor.ExecuteMutation(mutant, cci);
+
+                }
+
+
 
                 if (!_disableCache)
                 {

@@ -168,6 +168,7 @@
             foreach (var testNodeAssembly in testAssemblies)
             {
                 //todo: get rid of this ungly thing
+
                 var mutatedPath = mutatedPaths.Single(p => Path.GetFileName(p) ==
                     Path.GetFileName(testNodeAssembly.AssemblyPath));
 

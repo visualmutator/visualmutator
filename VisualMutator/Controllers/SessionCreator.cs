@@ -23,7 +23,7 @@
         private readonly IMessageService _reporting;
 
         public SessionCreator(
-            ITypesManager typesManager,
+           ITypesManager typesManager,
             IOperatorsManager operatorsManager,
             CommonServices svc,
             IMessageService reporting)
@@ -61,30 +61,9 @@
             
         }
 
-        public async Task<List<TestNodeAssembly>> BuildTestTree(Task<List<MethodIdentifier>> coveringTask, Task<object> testsTask, bool constrainedMutation)
-        {
-            
-            var result = await TupleExtensions.WhenAll(Tuple.Create(coveringTask, testsTask));
-            var coveringTests = result.Item1;
-            var testsRootNode = (TestsRootNode)result.Item2;
+       
 
-            if (constrainedMutation)
-            {
-                SelectOnlyCoveredTests(testsRootNode, coveringTests);
-            }
-
-            if (_typesManager.IsAssemblyLoadError)
-            {
-                _reporting.ShowWarning(UserMessages.WarningAssemblyNotLoaded());
-            }
-            if (constrainedMutation)
-            {
-                ExpandLoneNodes(testsRootNode);
-            }
-            //Events.OnNext(testsRootNode.TestNodeAssemblies.ToList());
-            return testsRootNode.TestNodeAssemblies.ToList();
-        }
-
+       
         public async Task<List<AssemblyNode>> BuildAssemblyTree(Task<List<CciModuleSource>> assembliesTask,
             bool constrainedMutation, ICodePartsMatcher matcher)
         {
@@ -96,7 +75,7 @@
             {
                 var root = new CheckedNode("");
                 root.Children.AddRange(assemblies);
-                ExpandLoneNodes(root);
+                TreeUtils.ExpandLoneNodes(root);
             }
             if(assemblies.Count == 0)
             {
@@ -107,29 +86,7 @@
             //Events.OnNext(assemblies);
         }
 
-        private void ExpandLoneNodes(CheckedNode tests)
-        {
-            var allTests = tests.Children
-                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
-                    n => n.IsIncluded == null || n.IsIncluded == true)
-                .Cast<IExpandableNode>();
-            foreach (var testNode in allTests)
-            {
-                testNode.IsExpanded = true;
-            }
-        }
-
-        private void SelectOnlyCoveredTests(TestsRootNode rootNode, List<MethodIdentifier> coveredTests)
-        {
-            rootNode.IsIncluded = false;
-            var toSelect = rootNode.Children.SelectManyRecursive(n => n.Children, leafsOnly: true)
-                .OfType<TestNodeMethod>()
-                .Where(t => coveredTests.Contains(t.Identifier));
-            foreach (var testNodeMethod in toSelect)
-            {
-                testNodeMethod.IsIncluded = true;
-            }
-        }
+      
 
 
     }

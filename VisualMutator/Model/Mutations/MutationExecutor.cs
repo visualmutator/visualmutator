@@ -25,6 +25,7 @@
     {
         MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module);
         Task<MutationResult> ExecuteMutation(Mutant mutant, CciModuleSource moduleSource);
+        Task<MutationResult> ExecuteMutation(Mutant mutant, List<CciModuleSource> moduleSource);
     }
 
     public class MutationExecutor : IMutationExecutor
@@ -145,7 +146,7 @@
                 mutant.MutationTarget.Variant.AstObjects = null; //TODO: avoiding leaking memory. refactor
                 mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
 
-                var result = new MutationResult(mutant, cci,
+                var result = new MutationResult(mutant, cci, null,
                     mutant.MutationTarget.MethodMutated);
                 mutant.MutationTarget.MethodMutated = null; //TODO: avoiding leaking memory. refactor
                 return result;
@@ -155,6 +156,68 @@
                 throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutationOperator.Info.Name), e);
             }
         }
+
+
+        public async Task<MutationResult> ExecuteMutation(Mutant mutant, List<CciModuleSource> moduleSource)
+        {
+
+
+            _log.Debug("ExecuteMutation in object: " + ToString() + GetHashCode());
+            IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null ? new IdentityOperator() :
+                _mutOperators.Single(m => mutant.MutationTarget.OperatorId == m.Info.Id);
+         
+            try
+            {
+                _log.Info("Execute mutation of " + mutant.MutationTarget + " contained in " + mutant.MutationTarget.MethodRaw + " modules. ");
+                var mutatedModules = new List<IModuleInfo>();
+
+                foreach (var cci in moduleSource)
+                {
+                    var module = cci.Module;
+                    var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
+                            _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
+                            module.Module, mutationOperator.Info.Id, null);
+                    var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
+                    traverser2.Traverse(module.Module);
+                    visitorBack.PostProcess();
+                    var operatorCodeRewriter = mutationOperator.CreateRewriter();
+
+                    var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
+                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
+
+                    operatorCodeRewriter.MutationTarget =
+                        new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
+
+
+                    operatorCodeRewriter.NameTable = cci.Host.NameTable;
+                    operatorCodeRewriter.Host = cci.Host;
+                    operatorCodeRewriter.Module = module.Module;
+                    operatorCodeRewriter.OperatorUtils = _operatorUtils;
+                    operatorCodeRewriter.Initialize();
+
+                    var rewrittenModule = rewriter.Rewrite(module.Module);
+                    rewriter.CheckForUnfoundObjects();
+
+                }
+
+               
+
+                mutant.MutationTarget.Variant.AstObjects = null; //TODO: avoiding leaking memory. refactor
+               // mutatedModules.Add(new ModuleInfo(rewrittenModule, ""));
+
+                var result = new MutationResult(mutant, null, moduleSource,
+                    mutant.MutationTarget.MethodMutated);
+                mutant.MutationTarget.MethodMutated = null; //TODO: avoiding leaking memory. refactor
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw new MutationException("CreateMutants failed on operator: {0}.".Formatted(mutationOperator.Info.Name), e);
+            }
+        }
+
+
+
 
     }
 }

@@ -11,6 +11,7 @@
         private string _resultsPath;
         private int _whiteThreads;
         private int _mutantThreads;
+        private string _otherParams;
 
         public CommandLineParser(string[] args)
         {
@@ -19,6 +20,7 @@
             _methodIdentifier = args[2];
             _resultsPath = args[3];
             _assembliesPaths = args[4].Split(';').ToList();
+            _otherParams = args.Skip(5).Aggregate((a, b) => a + " "+b);
         }
 
         public string MethodIdentifier
@@ -50,6 +52,11 @@
         public int MutantThreads
         {
             get { return _mutantThreads; }
+        }
+
+        public string OtherParams
+        {
+            get { return _otherParams; }
         }
     }
 }
