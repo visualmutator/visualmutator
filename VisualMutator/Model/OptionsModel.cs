@@ -9,10 +9,11 @@
     {
         public OptionsModel()
         {
-            WhiteCacheThreadsCount = Environment.ProcessorCount + 1;
+            WhiteCacheThreadsCount = 2;
             MutantsCacheEnabled = true;
-            ProcessingThreadsCount = Environment.ProcessorCount + 1;
+            ProcessingThreadsCount = 3;
             OtherParams = "";
+            MaxNumerOfMutantPerOperator = 100;
         }
 
         private bool _mutantsCacheEnabled;
@@ -53,8 +54,21 @@
             }
         }
 
+        private int _maxNumerOfMutantPerOperator;
+        public int MaxNumerOfMutantPerOperator
+        {
+            get
+            {
+                return _maxNumerOfMutantPerOperator;
+            }
+            set
+            {
+                SetAndRise(ref _maxNumerOfMutantPerOperator, value, () => MaxNumerOfMutantPerOperator);
+            }
+        }
+        
+
         private string _otherParams;
-        private bool _useLegacyCreationMode;
 
         public string OtherParams
         {

@@ -32,13 +32,13 @@
         }
     }
 
-    public class CoveredTestsSelectStrategy : ITestsSelectStrategy
+    public class CoveringTestsSelectStrategy : ITestsSelectStrategy
     {
         private readonly Task<List<CciModuleSource>> _assembliesTask;
         private readonly ICodePartsMatcher _matcher;
         private readonly Task<object> _testsTask;
 
-        public CoveredTestsSelectStrategy(Task<List<CciModuleSource>> assembliesTask,
+        public CoveringTestsSelectStrategy(Task<List<CciModuleSource>> assembliesTask,
             ICodePartsMatcher matcher, Task<object> testsTask)
         {
             _assembliesTask = assembliesTask;

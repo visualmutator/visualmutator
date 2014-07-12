@@ -60,10 +60,20 @@
         <CheckBox Grid.Row="2" Style="{StaticResource checkstyle}"
                   Content="Enable mutant code cache"
                   IsChecked="{Binding Options.MutantsCacheEnabled}" />
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Other Params:" />
-        <TextBox Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding Options.OtherParams, Mode=TwoWay}"></TextBox>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Max number of mutants per operator:" />
+
+        <xctk:IntegerUpDown Grid.Row="3" Grid.Column="1" Maximum="1000" Minimum="1"
+                                  Value="{Binding Options.MaxNumerOfMutantPerOperator, Mode=TwoWay}" />
+
+
+
+
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Other Params:" />
+        <TextBox Grid.Row="5" Grid.ColumnSpan="2" Text="{Binding Options.OtherParams, Mode=TwoWay}"></TextBox>
         
-        <DockPanel Grid.Row="5" HorizontalAlignment="Right" Grid.ColumnSpan="2">
+        <DockPanel Grid.Row="6" HorizontalAlignment="Right" Grid.ColumnSpan="2">
             <Button Content="OK" Command="{Binding CommandSave}" />
             <Button Content="Cancel" Command="{Binding CommandClose}" />
         </DockPanel>

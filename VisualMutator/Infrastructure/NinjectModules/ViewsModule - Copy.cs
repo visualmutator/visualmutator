@@ -8,13 +8,10 @@
         public override void Load()
         {
             Bind<IMutationResultsView>().To<MutationResultsView>();
-            Bind<IMutantsSavingView>().To<MutantsSavingView>();
             Bind<ISessionCreationView>().To<SessionCreationView>();
             Bind<IMutantDetailsView>().To<MutantDetailsView>();
             Bind<IResultsSavingView>().To<ResultsSavingView>();
             Bind<ITestsSelectableTree>().To<TestsSelectableTree>();
-            Bind<IMutantsCreationOptionsView>().To<MutantsCreationOptionsView>();
-            Bind<IMutantsTestingOptionsView>().To<MutantsTestingOptionsView>();
             Bind<IMutationsTreeView>().To<MutationsTree>();
             Bind<ITypesTreeView>().To<TypesTree>();
             Bind<IOptionsView>().To<OptionsView>();

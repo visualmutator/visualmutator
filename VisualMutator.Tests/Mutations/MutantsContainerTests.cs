@@ -7,7 +7,6 @@
     using System.IO;
     using System.Linq;
     using System.Text;
-    using DiffMatchPatch;
     using Extensibility;
     using Microsoft.Cci;
     using Microsoft.Cci.MetadataReader;
@@ -54,7 +53,7 @@ namespace Ns
             var type = cci.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Deque") as NamedTypeDefinition;
             var method = type.Methods.Single(m => m.Name.Value == "EnqueueFront");
 
-            //   var cci = MutationTestsHelper.CreateModuleFromCode(code);
+               var cci3 = MutationTestsHelper.CreateModuleFromCode(code);
             var choices = new MutationSessionChoices
             {
                 Filter = new MutationFilter(
@@ -69,7 +68,7 @@ namespace Ns
             //  var method = type.Methods.Single(m => m.Name.Value == "Method1");
 
            
-            var exec = new MutationExecutor(choices);
+            var exec = new MutationExecutor(null, choices);
             var container = new MutantsContainer(choices, exec);
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive(), cci.InList());
 
@@ -132,7 +131,7 @@ namespace Ns
                               WhiteSource = cci.InList(),
                           };
 
-            var exec = new MutationExecutor(choices);
+            var exec = new MutationExecutor(null, choices);
             var container = new MutantsContainer(choices, exec);
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive(), cci.InList());
 
@@ -169,15 +168,13 @@ namespace Ns
            // File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree1" + ".txt", debug1.ToStringBasicVisit(), Encoding.ASCII);
            // File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\tree2" + ".txt", debug2.ToStringBasicVisit(), Encoding.ASCII);
 
-            var dif = new diff_match_patch();
-            var diff = dif.diff_main(debug1.ToStringBasicVisit(), debug2.ToStringBasicVisit(), true);
 
-            var sb = new StringBuilder();
-            foreach (var diff1 in diff)
-            {
-                sb.AppendLine(diff1.ToString());
-            }
-            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\treediff", sb.ToString());
+//            var sb = new StringBuilder();
+//            foreach (var diff1 in diff)
+//            {
+//                sb.AppendLine(diff1.ToString());
+//            }
+//            File.WriteAllText(@"C:\PLIKI\VisualMutator\trace\treediff", sb.ToString());
             //
 
             //            foreach (var
@@ -211,7 +208,7 @@ namespace Ns
                 WhiteSource = white.InList(),
             };
 
-            var exec = new MutationExecutor(choices);
+            var exec = new MutationExecutor(null, choices);
             var container = new MutantsContainer(choices, exec);
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive(), cci.InList());
 

@@ -73,11 +73,7 @@
             sw.Start();
             _storedMutantInfo = await _mutantMaterializer.StoreMutant(_mutant);
             _sessionEventsSubject.OnNext(new MutantStoredEventArgs(_storedMutantInfo));
-            if (_choices.MutantsCreationOptions.IsMutantVerificationEnabled)
-            {
-                bool verResult = _testsContainer.VerifyMutant(_storedMutantInfo, _mutant);
-                _sessionEventsSubject.OnNext(new MutantVerifiedEvent(_mutant, verResult));
-            }
+       
             sw.Stop();
             _mutant.CreationTimeMilis = sw.ElapsedMilliseconds;
             //                    CodeWithDifference diff = _codeDifferenceCreator.CreateDifferenceListing(

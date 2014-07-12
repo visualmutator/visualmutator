@@ -16,7 +16,7 @@
         [Test]
         public void Test()
         {
-             var gen = new XmlResultsGenerator(null,null,null);
+             var gen = new XmlResultsGenerator(null,null,null, null);
 
             var muSession = new MutationTestingSession();
             

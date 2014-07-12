@@ -107,7 +107,7 @@
             if (singleMethodToMutate != null)
             {
                 matcher = new CciMethodMatcher(singleMethodToMutate);
-                testsSelector = new CoveredTestsSelectStrategy(assembliesTask, matcher, testsTask);
+                testsSelector = new CoveringTestsSelectStrategy(assembliesTask, matcher, testsTask);
                 constrainedMutation = true;
             }
             else
@@ -219,9 +219,6 @@
                     .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
-                MutantsCreationOptions = _viewModel.MutantsCreation.Options,
-                MutantsTestingOptions = _viewModel.MutantsTesting.Options,
-                MainOptions = _options,
                 WhiteSource = _whiteSource,
                 SessionCreationWindowShowTime = _sessionCreationWindowShowTime
             };

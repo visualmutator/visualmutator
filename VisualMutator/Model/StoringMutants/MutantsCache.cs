@@ -63,7 +63,7 @@
             _choices = choices;
             _mutationExecutor = mutationExecutor;
 
-            _disableCache = !choices.MainOptions.MutantsCacheEnabled;
+            _disableCache = !_options.MutantsCacheEnabled;
             var config = new NameValueCollection
                          {
                              {"physicalMemoryLimitPercentage", "40"},

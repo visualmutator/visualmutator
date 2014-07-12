@@ -34,7 +34,6 @@ namespace VisualMutator.Model
         public MutantsTestingOptions MutantsTestingOptions { get; set; }
         public MutantsCreationOptions MutantsCreationOptions { get; set; }
         public IList<TestNodeAssembly> TestAssemblies { get; set; }
-        public OptionsModel MainOptions { get; set; }
         public List<CciModuleSource> WhiteSource { get; set; }
         public DateTime SessionCreationWindowShowTime { get; set; }
     }

@@ -14,6 +14,7 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private readonly OptionsModel _optionsModel;
         private readonly IRootFactory<TestingMutant> _mutantTestingFactory;
         private readonly Subject<SessionEventArgs> _sessionEventsSubject;
 
@@ -25,13 +26,13 @@
 
 
         public TestingProcess(
+            OptionsModel optionsModel,
             IRootFactory<TestingMutant> mutantTestingFactory,
-            MutationSessionChoices choices,
             // ------- on creation
             Subject<SessionEventArgs> sessionEventsSubject,
             ICollection<Mutant> allMutants)
         {
-        
+            _optionsModel = optionsModel;
             _mutantTestingFactory = mutantTestingFactory;
             _sessionEventsSubject = sessionEventsSubject;
 
@@ -42,7 +43,7 @@
             _log.Info("Testing process: all:" + _allMutantsCount);
 
             _mutantsWorkers = new WorkerCollection<Mutant>(allMutants,
-                choices.MainOptions.ProcessingThreadsCount, TestOneMutant);
+               _optionsModel.ProcessingThreadsCount, TestOneMutant);
         }
 
         public void RaiseTestingProgress()

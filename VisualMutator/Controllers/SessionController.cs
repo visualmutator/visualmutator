@@ -55,7 +55,7 @@
         private MutationTestingSession _currentSession;
 
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
         private RequestedHaltState? _requestedHaltState;
@@ -65,7 +65,6 @@
         private SessionState _sessionState;
 
 
-        private TestingProcessExtensionOptions _testingProcessExtensionOptions;
         private readonly List<IDisposable> _subscriptions;
         private TestingProcess _testingProcess;
 
@@ -93,16 +92,6 @@
             _sessionState = SessionState.NotStarted;
             _sessionEventsSubject = new Subject<SessionEventArgs>();
             _subscriptions = new List<IDisposable>();
-
-
-            var subs1 =_sessionEventsSubject.OfType<MutantStoredEventArgs>().Subscribe(e =>
-            {
-                _testingProcessExtensionOptions.TestingProcessExtension
-                    .OnTestingOfMutantStarting(e.StoredMutantInfo.Directory, e.StoredMutantInfo.AssembliesPaths);
-            });
-            _subscriptions.Add(subs1);
-
-            
 
 
         }
@@ -189,7 +178,6 @@
                         _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
                             changelessMutant.MutantTestSession.Exception.Message));
 
-                        _choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
                     }
                 });
 
@@ -220,7 +208,6 @@
                 SessionStartTime = DateTime.Now;
                 _sessionState = SessionState.Running;
                 RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
-                _testingProcessExtensionOptions = _choices.MutantsTestingOptions.TestingProcessExtensionOptions;
                 await RunCore();
             }
             catch (Exception e)
@@ -228,32 +215,7 @@
                 _log.Error(e);
                 FinishWithError();
             }
-            //            await Task.Run(async () =>
-       //     {
-                //                    _svc.Threading.PostOnGui(() =>
-                //                    {
-                //                        if (_requestedHaltState != null)
-                //                        {
-                //                            _sessionState = SessionState.NotStarted;
-                //                            _requestedHaltState = null;
-                //                        }
-                //                        else
-                //                        {
-                //                            bool canContinue = CheckForTestingErrors(changelessMutant);
-                //                            if (canContinue)
-                //                            {
-                //                                CreateMutants(continuation: RunTests);
-                //                            }
-                //                            else
-                //                            {
-                //                                FinishWithError();
-                //                            }
-                //                        }
-                //                    });
-       //     });
-            //
-            //onException:
-            //FinishWithError
+     
         }
 
         public DateTime SessionStartTime { get; set; }
@@ -280,10 +242,6 @@
             _sessionState = SessionState.Finished;
             SessionEndTime = DateTime.Now;
 
-            if (_testingProcessExtensionOptions != null)
-            {
-                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
-            }
             RaiseMinorStatusUpdate(OperationsState.Finished, 100);
             
         }
@@ -294,10 +252,6 @@
         {
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Error, 0);
-            if (_testingProcessExtensionOptions != null)
-            {
-                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
-            }
         }
 
         public void Dispose()
@@ -430,8 +384,7 @@
 
                 var testMethods =  changelessMutant.TestRunContexts 
                     .SelectMany(c => c.TestResults.ResultMethods).ToList();
-                //  MutantTestSession.TestsByAssembly.Values
-                //     .SelectMany(v => v.TestMap.Values)
+             
                 var test = testMethods.FirstOrDefault(t => t.State == TestNodeState.Failure);
 
                 string testName = null;

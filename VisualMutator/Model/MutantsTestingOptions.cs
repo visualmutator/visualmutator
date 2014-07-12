@@ -11,7 +11,7 @@ namespace VisualMutator.Model
     {
         public MutantsTestingOptions()
         {
-        TestingProcessExtensionOptions = new TestingProcessExtensionOptions();
+            TestingTimeoutSeconds = 30;
         }
         private int _testingTimeoutSeconds;
 
@@ -28,19 +28,6 @@ namespace VisualMutator.Model
         }
 
 
-        private TestingProcessExtensionOptions _testingProcessExtensionOptions;
-
-        public TestingProcessExtensionOptions TestingProcessExtensionOptions
-        {
-            get
-            {
-                return _testingProcessExtensionOptions;
-            }
-            set
-            {
-                SetAndRise(ref _testingProcessExtensionOptions, value, () => TestingProcessExtensionOptions);
-            }
-        }
       
 
     }

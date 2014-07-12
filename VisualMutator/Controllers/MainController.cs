@@ -175,7 +175,7 @@
                     _log.Info("Starting mutation session...");
                     await _currentSessionController.Get.RunMutationSession(_controlSource);
                 }
-                catch (TaskCanceledException e)
+                catch (TaskCanceledException)
                 {
                     _log.Info("Session cancelled.");
                 }

@@ -92,6 +92,7 @@
                                     new XAttribute("Id", mutant.Id),
                                     new XAttribute("Description", mutant.Description),
                                     new XAttribute("State", mutant.State),
+                                    new XAttribute("IsEquivalent", mutant.IsEquivalent),
                                     new XAttribute("CreationTimeMiliseconds", mutant.CreationTimeMilis),
                                     new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
                                     new XAttribute("TestingEndRelativeSeconds", mutant.MutantTestSession.TestingEndRelative.TotalSeconds),

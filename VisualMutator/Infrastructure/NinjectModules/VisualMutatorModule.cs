@@ -23,13 +23,9 @@
         public override void Load()
         {
             Bind<MainViewModel>().ToSelf();
-            Bind<MutantsSavingController>().ToSelf().AndFromFactory();
-            Bind<MutantsSavingViewModel>().ToSelf();
             Bind<CreationViewModel>().ToSelf();
             Bind<MutantDetailsViewModel>().ToSelf();
             Bind<ResultsSavingViewModel>().ToSelf();
-            Bind<MutantsCreationOptionsViewModel>().ToSelf();
-            Bind<MutantsTestingOptionsViewModel>().ToSelf();
             Bind<TypesTreeViewModel>().ToSelf();
             Bind<MutationsTreeViewModel>().ToSelf();
             Bind<TestsSelectableTreeViewModel>().ToSelf();

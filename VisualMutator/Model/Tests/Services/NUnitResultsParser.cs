@@ -39,7 +39,6 @@
 
             var nsStack = new Stack<String>();
             bool isParametrizedTest = false;
-            TestNodeClass currentClass = null;
             try
             {
                 while (reader.Read())

@@ -34,18 +34,19 @@
 
         private readonly MutationSessionChoices _choices;
         private readonly IOperatorUtils _operatorUtils;
-        private readonly MutantsCreationOptions _options;
+        private readonly OptionsModel _options;
         private readonly MutationFilter _filter;
         private readonly IList<IMutationOperator> _mutOperators;
         private MultiDictionary<IMutationOperator, MutationTarget> _sharedTargets;
 
         public MutationExecutor(
+            OptionsModel options,
         MutationSessionChoices choices
         )
         {
             _choices = choices;
             _operatorUtils = new OperatorUtils();
-            _options = _choices.MutantsCreationOptions;
+            _options = options;
             _filter = _choices.Filter;
             _mutOperators = _choices.SelectedOperators;
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
