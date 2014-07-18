@@ -334,7 +334,7 @@
                 events.OfType<TestingProgressEventArgs>()
                  .Subscribe(args =>
                  {
-                         //_viewModel.OperationsState = OperationsState.Testing;
+                         _viewModel.OperationsState = OperationsState.Testing;
                          _viewModel.OperationsStateDescription = "Running tests... ({0}/{1})"
                              .Formatted(args.NumberOfAllMutantsTested + 1,
                                  args.NumberOfAllMutants);
@@ -378,13 +378,13 @@
         }
 
 
-        public void SaveResultsAuto(string resultsPath)
+        public async Task SaveResultsAuto(string resultsPath)
         {
             ResultsSavingController resultsSavingController = _currentSessionController.Get.SaveResults();
             resultsSavingController.ViewModel.IncludeCodeDifferenceListings = false;
             resultsSavingController.ViewModel.IncludeDetailedTestResults = false;
             resultsSavingController.ViewModel.TargetPath = resultsPath;
-            resultsSavingController.SaveResults();
+            await resultsSavingController.SaveResults();
         }
     }
 }

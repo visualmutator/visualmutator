@@ -8,6 +8,7 @@
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Types;
     using NUnit.Framework;
+    using UsefulTools.Core;
 
 
     [TestFixture]
@@ -36,7 +37,7 @@
             var nodeMutant = new Mutant("m1", nodeGroup, mutar);
             nodeGroup.Children.Add(nodeMutant);
 
-            XDocument generateResults = gen.GenerateResults(muSession, false, false);
+            XDocument generateResults = gen.GenerateResults(muSession, false, false, ProgressCounter.Inactive());
 
             Console.WriteLine(generateResults.ToString());
             //gen.

@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Linq;
     using Controllers;
@@ -33,6 +34,17 @@
         private readonly ITestsContainer _testsContainer;
         private readonly ICodeDifferenceCreator _codeDifferenceCreator;
 
+        Func<CancellationToken, int> cancellationCheck = (token) =>
+            {
+                token.ThrowIfCancellationRequested();
+                return 0;
+            };
+        Func<ProgressCounter, CancellationToken,int> progressAction = (p, token) =>
+            {
+                token.ThrowIfCancellationRequested();
+                p.Progress();
+                return 0;
+            };
 
         public XmlResultsGenerator(
             MutationSessionChoices choices,
@@ -46,11 +58,25 @@
             _codeDifferenceCreator = codeDifferenceCreator;
         }
 
-        public XDocument GenerateResults(MutationTestingSession session, 
-            bool includeDetailedTestResults,
-            bool includeCodeDifferenceListings)
+        public async Task<XDocument> GenerateResults(MutationTestingSession session, 
+            bool includeDetailedTestResults, bool includeCodeDifferenceListings, 
+            ProgressCounter progress, CancellationToken token)
         {
             _log.Info("Generating session results to file.");
+
+
+      
+            int multiplier = 1;
+            if (includeDetailedTestResults)
+            {
+                multiplier++;
+            }
+            if (includeCodeDifferenceListings)
+            {
+                multiplier++;
+            }
+
+            
 
             List<Mutant> mutants = session.MutantsGrouped.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children, leafsOnly:true).OfType<Mutant>().ToList();
@@ -58,14 +84,14 @@
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
 
+            progress.Initialize(mutants.Count * multiplier);
+
             var mutantsNode = new XElement("Mutants",
                 new XAttribute("Total", mutants.Count),
                 new XAttribute("Live", live.Count),
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
-
-                
                 new XAttribute("AverageCreationTimeMiliseconds", testedMutants
                     .AverageOrZero(mut => mut.CreationTimeMilis)),
                 new XAttribute("AverageTestingTimeMiliseconds", testedMutants
@@ -88,6 +114,8 @@
                             select new XElement("MutantGroup",
                                 new XAttribute("Name", mutGroup.Name),
                                 from mutant in mutGroup.Mutants
+                                let s = progressAction(progress, token)
+                                
                                 select new XElement("Mutant",
                                     new XAttribute("Id", mutant.Id),
                                     new XAttribute("Description", mutant.Description),
@@ -112,13 +140,14 @@
 
             if (includeCodeDifferenceListings)
             {
-
-                optionalElements.Add(CreateCodeDifferenceListings(mutants).Result);
+                var res = await CreateCodeDifferenceListings(mutants, progress, token);
+                optionalElements.Add(res);
             }
 
             if (includeDetailedTestResults)
             {
-                optionalElements.Add(CreateDetailedTestingResults(mutants));
+                var res = await Task.Run(() => CreateDetailedTestingResults(mutants, progress, token));
+                optionalElements.Add(res);
             }
 
             return
@@ -134,11 +163,12 @@
                         optionalElements));
             
         }
-        public async Task<XElement> CreateCodeDifferenceListings(List<Mutant> mutants)
+        public async Task<XElement> CreateCodeDifferenceListings(List<Mutant> mutants, ProgressCounter progress, CancellationToken token)
         {
             var list = new List<XElement>();
             foreach (var mutant in mutants)
             {
+                progressAction(progress, token);
                 var diff = await _codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp,
                     mutant);
                 var el = new XElement("MutantCodeListing",
@@ -151,11 +181,12 @@
             return new XElement("CodeDifferenceListings", list);
         }
 
-        public XElement CreateDetailedTestingResults(List<Mutant> mutants)
+        public XElement CreateDetailedTestingResults(List<Mutant> mutants, ProgressCounter progress, CancellationToken token)
         {
             return new XElement("DetailedTestingResults",  
                 from mutant in mutants
                 where mutant.MutantTestSession.IsComplete
+                let x = progressAction(progress, token)
                 let namespaces = _testsContainer.CreateMutantTestTree(mutant)
                 let groupedTests = namespaces.GroupBy(m => m.State).ToList()
                 select new XElement("TestedMutant",
@@ -167,6 +198,7 @@
                         new XAttribute("NumberOfInconlusiveTests", groupedTests.SingleOrDefault(g => g.Key == TestNodeState.Inconclusive).ToEmptyIfNull().Count()),
                         from testClass in namespaces
                             .Cast<CheckedNode>().SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>()).OfType<TestNodeClass>()
+                        let xx = cancellationCheck(token)
                         select new XElement("TestClass",
                             new XAttribute("Name", testClass.Name),
                             new XAttribute("FullName", testClass.FullName),

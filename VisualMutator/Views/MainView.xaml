@@ -55,7 +55,6 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
-                <RowDefinition />
             </Grid.RowDefinitions>
 
 
@@ -104,7 +103,6 @@
                          IsIndeterminate="{Binding IsProgressIndeterminate}"
                          Value="{Binding Progress}" />
 
-            <TextBlock Grid.Row="3" Text="Mutants gruped by operators:" />
         </Grid>
 
 
@@ -113,7 +111,7 @@
 
             <TreeView.Resources>
                 <ContextMenu x:Key="ErrorMutantContextMenu" StaysOpen="true">
-                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" IsEnabled="false"/>
+                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" Visibility="Collapsed"/>
                     <MenuItem Header="Mark Equivalent" Click="MenuItemMarkEquivalent_Click" Visibility="Collapsed" />
                     <MenuItem Header="Unmark Equivalent" Click="MenuItemUnmarkEquivalent_Click" Visibility="Collapsed" />
                 </ContextMenu>

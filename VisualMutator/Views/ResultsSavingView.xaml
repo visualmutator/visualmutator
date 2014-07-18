@@ -46,6 +46,8 @@
                   Content="Include code difference listings for each mutant (might be slow)"
                   IsChecked="{Binding IncludeCodeDifferenceListings}" />
 
+        <ProgressBar Grid.Row="3" IsIndeterminate="False" Height="16" Margin="0, 4" Value="{Binding Progress}"  />
+        
         <DockPanel Grid.Row="4" HorizontalAlignment="Right">
             <Button Content="Save results" Command="{Binding CommandSaveResults}" />
             <Button Content="Cancel" Command="{Binding CommandClose}" />

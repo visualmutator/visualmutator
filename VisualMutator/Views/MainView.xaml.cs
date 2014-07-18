@@ -46,9 +46,12 @@
             item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
             if (mutant.State == MutantResultState.Error)
             {
-                (item.ContextMenu.Items[0] as MenuItem).IsEnabled = true;
+                (item.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Visible;
             }
-         
+            else
+            {
+                (item.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Collapsed;
+            }
             if(mutant.State == MutantResultState.Live)
             {
                 if (mutant.IsEquivalent)

@@ -76,7 +76,7 @@
 
                 await tcs.Task;
 
-                _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsPath);
+                await _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsPath);
                 //                for (int i = 0; i < 1000; i++)
                 //                {
                 //                    _boot.AppController.MainController.RunMutationSessionAuto2(methodIdentifier);

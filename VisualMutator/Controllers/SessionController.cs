@@ -387,6 +387,14 @@
              
                 var test = testMethods.FirstOrDefault(t => t.State == TestNodeState.Failure);
 
+                var allFailedTests = testMethods
+                    .Where(t => t.State == TestNodeState.Failure || t.State == TestNodeState.Inconclusive)
+                    .Select(_ => _.Name)
+                    .ToList();
+                
+                string allFailedString = allFailedTests.Aggregate((a, b) => a + "\n" + b);
+
+
                 string testName = null;
                 string testMessage = null;
                 if (test != null)
@@ -403,8 +411,11 @@
                     testName = testInconcl.Name;
                     testMessage = "Test was inconclusive.";
                 }
-
-                return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_TestsFailed(testName, testMessage));
+                bool disableAndContinue = _svc.Logging.ShowYesNoQuestion(
+                    UserMessages.ErrorPretest_TestsFailed(allFailedTests.Count.ToString(),
+                    allFailedString, testName, testMessage));
+                return disableAndContinue;
+                //return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_TestsFailed(testName, testMessage));
             }
             return true;
         }
