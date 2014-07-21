@@ -219,7 +219,6 @@
                     .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
-                WhiteSource = _whiteSource,
                 SessionCreationWindowShowTime = _sessionCreationWindowShowTime
             };
 

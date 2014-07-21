@@ -26,7 +26,7 @@
 
         public async Task<List<TestNodeAssembly>> SelectTests()
         {
-            var testsRootNode = (TestsRootNode)await _testsTask;
+            var testsRootNode = (TestsRootNode) await _testsTask;
             testsRootNode.IsIncluded = true;
             return testsRootNode.TestNodeAssemblies.ToList();
         }

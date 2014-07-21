@@ -15,6 +15,7 @@
     using log4net;
     using Mutations.MutantsTree;
     using Mutations.Types;
+    using StoringMutants;
     using Tests;
     using Tests.TestsTree;
     using UsefulTools.CheckboxedTree;
@@ -32,7 +33,8 @@
         private readonly MutationSessionChoices _choices;
         private readonly SessionController _sessionController;
         private readonly ITestsContainer _testsContainer;
-        private readonly ICodeDifferenceCreator _codeDifferenceCreator;
+        private readonly IMutantsCache _mutantsCache;
+        private readonly ICodeVisualizer _codeVisualizer;
 
         Func<CancellationToken, int> cancellationCheck = (token) =>
             {
@@ -50,12 +52,14 @@
             MutationSessionChoices choices,
             SessionController sessionController,
             ITestsContainer testsContainer,
-            ICodeDifferenceCreator codeDifferenceCreator)
+            IMutantsCache mutantsCache,
+            ICodeVisualizer codeVisualizer)
         {
             _choices = choices;
             _sessionController = sessionController;
             _testsContainer = testsContainer;
-            _codeDifferenceCreator = codeDifferenceCreator;
+            _mutantsCache = mutantsCache;
+            _codeVisualizer = codeVisualizer;
         }
 
         public async Task<XDocument> GenerateResults(MutationTestingSession session, 
@@ -79,7 +83,8 @@
             
 
             List<Mutant> mutants = session.MutantsGrouped.Cast<CheckedNode>()
-                .SelectManyRecursive(n => n.Children, leafsOnly:true).OfType<Mutant>().ToList();
+                .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>(),
+                leafsOnly:true).OfType<Mutant>().ToList();
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
@@ -110,26 +115,22 @@
                             from method in type.Children.Cast<MethodNode>()//TODO: what if nested type?
                             select new XElement("Method",
                             new XAttribute("Name", method.Name),
-                            from mutGroup in method.Children.Cast<MutantGroup>()
-                            select new XElement("MutantGroup",
-                                new XAttribute("Name", mutGroup.Name),
-                                from mutant in mutGroup.Mutants
-                                let s = progressAction(progress, token)
-                                
-                                select new XElement("Mutant",
-                                    new XAttribute("Id", mutant.Id),
-                                    new XAttribute("Description", mutant.Description),
-                                    new XAttribute("State", mutant.State),
-                                    new XAttribute("IsEquivalent", mutant.IsEquivalent),
-                                    new XAttribute("CreationTimeMiliseconds", mutant.CreationTimeMilis),
-                                    new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
-                                    new XAttribute("TestingEndRelativeSeconds", mutant.MutantTestSession.TestingEndRelative.TotalSeconds),
-                                    new XElement("ErrorInfo",
-                                            new XElement("Description", mutant.MutantTestSession.ErrorDescription),
-                                            new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
-                                    ).InArrayIf(mutant.State == MutantResultState.Error)
-                                )
+                            from mutant in method.Children.SelectManyRecursive(
+                                n=>n.Children ?? new NotifyingCollection<CheckedNode>()).OfType<Mutant>()
+                            select new XElement("Mutant",
+                                new XAttribute("Id", mutant.Id),
+                                new XAttribute("Description", mutant.Description),
+                                new XAttribute("State", mutant.State),
+                                new XAttribute("IsEquivalent", mutant.IsEquivalent),
+                                new XAttribute("CreationTimeMiliseconds", mutant.CreationTimeMilis),
+                                new XAttribute("TestingTimeMiliseconds", mutant.MutantTestSession.TestingTimeMiliseconds),
+                                new XAttribute("TestingEndRelativeSeconds", (mutant.MutantTestSession.TestingEnd - _sessionController.SessionStartTime).TotalSeconds),
+                                new XElement("ErrorInfo",
+                                        new XElement("Description", mutant.MutantTestSession.ErrorDescription),
+                                        new XElement("ExceptionMessage", mutant.MutantTestSession.ErrorMessage)
+                                ).InArrayIf(mutant.State == MutantResultState.Error)
                             )
+                            
                         )
                     )
                 )
@@ -158,7 +159,7 @@
                         new XAttribute("SessionEndTime", _sessionController.SessionEndTime),
                         new XAttribute("SessionRunTimeSeconds", (_sessionController.SessionEndTime
                         - _sessionController.SessionStartTime).TotalSeconds),
-                        new XAttribute("MutationScore", session.MutationScore),
+                        new XAttribute("MutationScore", ((int)(session.MutationScore*100)).ToString()),
                         mutantsNode,
                         optionalElements));
             
@@ -169,8 +170,9 @@
             foreach (var mutant in mutants)
             {
                 progressAction(progress, token);
-                var diff = await _codeDifferenceCreator.CreateDifferenceListing(CodeLanguage.CSharp,
-                    mutant);
+                var mutresult = await _mutantsCache.GetMutatedModulesAsync(mutant);
+                var diff = await _codeVisualizer.CreateDifferenceListing(CodeLanguage.CSharp,
+                    mutant, mutresult);
                 var el = new XElement("MutantCodeListing",
                     new XAttribute("MutantId", mutant.Id),
 

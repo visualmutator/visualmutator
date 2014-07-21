@@ -84,7 +84,7 @@
             Parent = parent;
         }
 
-        public MethodNode(string name, IMethodDefinition methodDefinition, IEnumerable<MutantGroup> children)
+        public MethodNode(string name, IMethodDefinition methodDefinition, IEnumerable<MutationNode> children)
            : base(name, true)
         {
             _methodDefinition = methodDefinition;

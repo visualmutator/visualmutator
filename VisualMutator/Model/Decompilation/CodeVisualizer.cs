@@ -2,11 +2,13 @@
 {
     #region
 
+    using System;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
+    using CodeDifference;
     using CSharpSourceEmitter;
     using log4net;
     using Microsoft.Cci;
@@ -22,33 +24,60 @@
 
         string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource);
         string Visualize(CodeLanguage language, ICciModuleSource modules);
-        Task<string> VisualizeOriginalCode(CodeLanguage language, Mutant mutant);
-        Task<string> VisualizeMutatedCode(CodeLanguage language, Mutant mutant);
+        Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant, MutationResult mutationResult);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly IMutantsCache _mutantsCache;
-        private readonly MutationSessionChoices _choices;
+        private readonly OriginalCodebase _originalCodebase;
+        private readonly ICodeDifferenceCreator _differenceCreator;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public CodeVisualizer(
-            IMutantsCache mutantsCache,
-            MutationSessionChoices choices)
+            OriginalCodebase originalCodebase,
+            ICodeDifferenceCreator differenceCreator)
         {
-            _mutantsCache = mutantsCache;
-            _choices = choices;
+            _originalCodebase = originalCodebase;
+            _differenceCreator = differenceCreator;
         }
+
+        public async Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant, MutationResult mutationResult)
+        {
+            _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
+            try
+            {
+                
+                var whiteCode = await VisualizeOriginalCode(language, mutant);
+                var mutatedCode = await VisualizeMutatedCode(language, mutationResult);
+                CodePair pair = new CodePair
+                {
+                    OriginalCode = whiteCode,
+                    MutatedCode = mutatedCode
+                };
+                return _differenceCreator.GetDiff(language, pair.OriginalCode, pair.MutatedCode);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                return new CodeWithDifference
+                {
+                    Code = "Exception occurred while decompiling: " + e,
+                    LineChanges = Enumerable.Empty<LineChange>().ToList()
+                };
+            }
+        }
+
 
         public async Task<string> VisualizeOriginalCode(CodeLanguage language, Mutant mutant)
         {
-            var whiteCode = Visualize(language, mutant.MutationTarget.MethodRaw, _choices.WhiteSource.First());
+            var whiteCode = Visualize(language, mutant.MutationTarget.MethodRaw,
+                _originalCodebase.Modules.Single(m => m.Module.Name == mutant.MutationTarget.ProcessingContext.ModuleName));
             return whiteCode;
         }
 
-        public async Task<string> VisualizeMutatedCode(CodeLanguage language, Mutant mutant)
+        public async Task<string> VisualizeMutatedCode(CodeLanguage language, MutationResult mutationResult)
         {
-            MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
+            
 
             var result = Visualize(language, mutationResult.MethodMutated, mutationResult.MutatedModules);
           //  _mutantsCache.Release(mutationResult);

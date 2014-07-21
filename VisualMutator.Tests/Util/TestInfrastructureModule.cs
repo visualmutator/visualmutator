@@ -27,7 +27,22 @@
             }
         }
     }
+    public class CommonIntegrationTestModule : NinjectModule
+    {
+        public override void Load()
+        {
+            Bind<IMessageService>().To<ConsoleMessageService>().InSingletonScope();
+            Bind<IEventService>().To<EventService>().InSingletonScope();
+            Bind<CommonServices>().ToSelf().InSingletonScope();
+            Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
+            Bind<IProcesses>().To<Processes>().InSingletonScope();
+            Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
 
+            var exe = new ImmediateExecute();
+            Bind<IDispatcherExecute>().ToConstant(exe);
+            Kernel.InjectFuncFactory(() => DateTime.Now);
+        }
+    }
     public class IntegrationTestModule : NinjectModule
     {
         public override void Load()

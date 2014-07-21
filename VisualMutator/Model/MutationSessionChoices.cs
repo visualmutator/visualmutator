@@ -21,20 +21,15 @@ namespace VisualMutator.Model
         public MutationSessionChoices()
         {
             SelectedOperators = new List<IMutationOperator>();
-            ProjectPaths = new List<DirectoryPathAbsolute>();
             MutantsTestingOptions= new MutantsTestingOptions();
-            MutantsCreationOptions= new MutantsCreationOptions();
             TestAssemblies = new List<TestNodeAssembly>();
             Filter = MutationFilter.AllowAll();
         }
 
         public IList<IMutationOperator> SelectedOperators { get; set; }
-        public IList<DirectoryPathAbsolute> ProjectPaths { get; set; }
         public MutationFilter Filter { get; set; }
         public MutantsTestingOptions MutantsTestingOptions { get; set; }
-        public MutantsCreationOptions MutantsCreationOptions { get; set; }
         public IList<TestNodeAssembly> TestAssemblies { get; set; }
-        public List<CciModuleSource> WhiteSource { get; set; }
         public DateTime SessionCreationWindowShowTime { get; set; }
     }
 }

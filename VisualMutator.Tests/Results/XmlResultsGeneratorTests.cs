@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Tests.Results
 {
     using System;
+    using System.Threading;
     using System.Xml.Linq;
     using Extensibility;
     using Model;
@@ -17,7 +18,7 @@
         [Test]
         public void Test()
         {
-             var gen = new XmlResultsGenerator(null,null,null, null);
+             var gen = new XmlResultsGenerator(null,null,null, null, null);
 
             var muSession = new MutationTestingSession();
             
@@ -37,7 +38,7 @@
             var nodeMutant = new Mutant("m1", nodeGroup, mutar);
             nodeGroup.Children.Add(nodeMutant);
 
-            XDocument generateResults = gen.GenerateResults(muSession, false, false, ProgressCounter.Inactive());
+            XDocument generateResults = gen.GenerateResults(muSession, false, false, ProgressCounter.Inactive(), CancellationToken.None).Result;
 
             Console.WriteLine(generateResults.ToString());
             //gen.

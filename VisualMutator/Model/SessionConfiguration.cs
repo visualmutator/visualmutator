@@ -9,6 +9,7 @@
     using CoverageFinder;
     using Infrastructure;
     using Microsoft.Cci;
+    using Mutations;
     using Mutations.Types;
     using NUnit.Util;
     using StoringMutants;
@@ -81,7 +82,8 @@
             {
                 AutoCreationController creationController = _autoCreationControllerFactory.Create();
                 var choices = await creationController.Run(methodIdentifier, auto);
-                return _sessionFactory.CreateWithBindings(choices);
+                var original = new OriginalCodebase(LoadAssemblies().Result);
+                return _sessionFactory.CreateWithBindings(choices, original);
             }
             finally
             {

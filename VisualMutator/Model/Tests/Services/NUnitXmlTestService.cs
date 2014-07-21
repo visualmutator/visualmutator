@@ -38,7 +38,7 @@
         {
             get { return _nunitConsolePath; }
         }
-
+        
         public NUnitXmlTestService(
             NUnitTestLoader testsLoader, 
             ISettingsManager settingsManager,

@@ -28,23 +28,23 @@
     public interface IMutantsContainer
     {
         Mutant CreateEquivalentMutant(out AssemblyNode assemblyNode);
-        IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted, List<CciModuleSource> originalModules);
+        IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted);
     }
 
     public class MutantsContainer : IMutantsContainer
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly MutationSessionChoices _choices;
         private readonly IMutationExecutor _mutationExecutor;
+        private readonly OriginalCodebase _originalCodebase;
 
         public MutantsContainer(
-            MutationSessionChoices choices,
-            IMutationExecutor mutationExecutor
+            IMutationExecutor mutationExecutor,
+            OriginalCodebase originalCodebase
             )
         {
-            _choices = choices;
             _mutationExecutor = mutationExecutor;
+            _originalCodebase = originalCodebase;
         }
 
  
@@ -73,7 +73,7 @@
         }
 
 
-        public IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted, List<CciModuleSource> originalModules)
+        public IList<AssemblyNode> InitMutantsForOperators(ProgressCounter percentCompleted)
         {
             var root = new MutationRootNode();
 
@@ -81,13 +81,13 @@
             Func<int> genId = () => id[0]++;
 
             //var originalModules = _choices.WhiteSource;//_whiteCache.GetWhiteModules();
-            percentCompleted.Initialize(originalModules.Count);
+            percentCompleted.Initialize(_originalCodebase.Modules.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
             var assNodes = new List<AssemblyNode>();
-            foreach (var module in originalModules)
+            foreach (var module in _originalCodebase.Modules)
             {
                 sw.Restart();
 
@@ -104,6 +104,21 @@
             return assNodes;
         }
 
+        private MutationNode GroupOrMutant(IGrouping<string, MutationTarget> byGroupGrouping)
+        {
+            if(byGroupGrouping.Count() == 1)
+            {
+                var mutationTarget = byGroupGrouping.First();
+                return new Mutant(mutationTarget.Id, mutationTarget);
+            }
+            else
+            {
+                return new MutantGroup(byGroupGrouping.Key,
+                    from mutationTarget in byGroupGrouping
+                    select new Mutant(mutationTarget.Id, mutationTarget)
+                    );
+            }
+        }
     
         private AssemblyNode BuildMutantsTree(string moduleName,
             MultiDictionary<IMutationOperator, MutationTarget> mutationTargets)
@@ -129,10 +144,7 @@
                             group gr by gr.GroupName
                             into byGroupGrouping
                             orderby byGroupGrouping.Key
-                            select new MutantGroup(byGroupGrouping.Key,
-                                from mutationTarget in byGroupGrouping
-                                select new Mutant(mutationTarget.Id, mutationTarget)
-                            )
+                            select GroupOrMutant(byGroupGrouping)
                         )
                     );
 

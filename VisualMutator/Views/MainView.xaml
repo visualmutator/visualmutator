@@ -62,15 +62,13 @@
                 <TextBlock Width="180" HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
 
                
-                <!--  <Button HorizontalAlignment="Right" Content="T"
-                        Command="{Binding CommandTest}" />
-                <Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_stop_unpressed.png"
                                       DisabledImage="/VisualMutator;component/Views/images/button_stop_disabled.png"
                                       HoverImage="/VisualMutator;component/Views/images/button_stop_mouseover.png"
                                       PressedImage="/VisualMutator;component/Views/images/button_stop_pressed.png"
                                       ImageSize="18" ToolTip="Stop"
+                                      ToolTipService.ShowOnDisabled="True"
                                       Command="{Binding CommandStop}" />
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_continue_unpressed.png"
@@ -78,6 +76,7 @@
                                       HoverImage="/VisualMutator;component/Views/images/button_continue_mouseover.png"
                                       PressedImage="/VisualMutator;component/Views/images/button_continue_pressed.png"
                                       ImageSize="18" ToolTip="Continue"
+                                      ToolTipService.ShowOnDisabled="True"
                                       Command="{Binding CommandContinue}" />
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_pause_unpressed.png"
@@ -85,6 +84,7 @@
                                       HoverImage="/VisualMutator;component/Views/images/button_pause_mouseover.png"
                                       PressedImage="/VisualMutator;component/Views/images/button_pause_pressed.png"
                                       ImageSize="18" ToolTip="Pause"
+                                      ToolTipService.ShowOnDisabled="True"
                                       Command="{Binding CommandPause}" />
                 <Button HorizontalAlignment="Right" Content="New session..."
                         Command="{Binding CommandCreateNewMutants}" />

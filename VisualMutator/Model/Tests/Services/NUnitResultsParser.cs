@@ -111,7 +111,7 @@
                 {
                     result.Success = test.Attribute("success").Value == "True";
                 }
-                _log.Debug("Found test case: " + testName + " with success: " + result.Success);
+                //_log.Debug("Found test case: " + testName + " with success: " + result.Success);
                 if (!result.Success)
                 {
                     result.Message = test.Descendants(XName.Get("message", "")).Single().Value;

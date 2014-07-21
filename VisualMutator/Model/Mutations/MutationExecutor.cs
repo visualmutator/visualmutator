@@ -10,6 +10,7 @@
     using Decompilation;
     using Exceptions;
     using Extensibility;
+    using LinqLib.Sequence;
     using log4net;
     using Microsoft.Cci;
     using MutantsTree;
@@ -56,7 +57,7 @@
         private IList<MutationTarget> LimitMutationTargets(IEnumerable<MutationTarget> targets)
         {
             // return targets.ToList();
-            var mapping = targets//.Shuffle()
+            var mapping = targets.Shuffle()
                                  //  .SelectMany(pair => pair.Item2.Select(t => Tuple.Create(pair.Item1, t))).Shuffle()
                 .Take(_options.MaxNumerOfMutantPerOperator).ToList();
             return mapping;

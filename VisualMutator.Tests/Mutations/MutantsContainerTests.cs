@@ -61,7 +61,6 @@ namespace Ns
                                   new MethodIdentifier(method).InList()),
                 //Filter = MutationFilter.AllowAll(),
                 SelectedOperators = new AOR_ArithmeticOperatorReplacement().InList<IMutationOperator>(),
-                WhiteSource = cci.InList(),
             };
 
             //   var type = cci.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Test") as NamedTypeDefinition;
@@ -69,8 +68,8 @@ namespace Ns
 
            
             var exec = new MutationExecutor(null, choices);
-            var container = new MutantsContainer(choices, exec);
-            IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive(), cci.InList());
+            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList()));
+            IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             var mut = assemblies.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>())
@@ -128,12 +127,11 @@ namespace Ns
                                   new List<TypeIdentifier>(), 
                                   new MethodIdentifier(method).InList()),
                               SelectedOperators = new AOR_ArithmeticOperatorReplacement().InList<IMutationOperator>(),
-                              WhiteSource = cci.InList(),
                           };
 
             var exec = new MutationExecutor(null, choices);
-            var container = new MutantsContainer(choices, exec);
-            IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive(), cci.InList());
+            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList()));
+            IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             var mut = assemblies.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children?? new NotifyingCollection<CheckedNode>())
@@ -205,12 +203,11 @@ namespace Ns
                                   new List<TypeIdentifier>(),
                                   new MethodIdentifier(method).InList()),
                 SelectedOperators = new AOR_ArithmeticOperatorReplacement().InList<IMutationOperator>(),
-                WhiteSource = white.InList(),
             };
 
             var exec = new MutationExecutor(null, choices);
-            var container = new MutantsContainer(choices, exec);
-            IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive(), cci.InList());
+            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList()));
+            IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             var mutants = assemblies.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>())

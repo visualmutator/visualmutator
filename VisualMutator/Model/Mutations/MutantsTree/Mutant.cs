@@ -108,10 +108,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         public MutantKilledSubstate KilledSubstate { get; set; }
 
-        public MutantGroup MutantGroup
-        {
-            get { return (MutantGroup) Parent; }
-        }
+       
 
         private bool _isEquivalent;
 

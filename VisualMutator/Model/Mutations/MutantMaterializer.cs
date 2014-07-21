@@ -10,15 +10,15 @@
     public class MutantMaterializer
     {
         private readonly IProjectClonesManager _clonesManager;
-        private readonly MutationSessionChoices _choices;
+        private readonly OriginalCodebase _originalCodebase;
         private readonly IMutantsCache _mutantsCache;
 
         public MutantMaterializer(IProjectClonesManager clonesManager,
-            MutationSessionChoices choices,
+            OriginalCodebase originalCodebase,
              IMutantsCache mutantsCache)
         {
             _clonesManager = clonesManager;
-            _choices = choices;
+            _originalCodebase = originalCodebase;
             _mutantsCache = mutantsCache;
         }
 
@@ -53,7 +53,7 @@
                     info.AssembliesPaths.Add(file);
                 }
 
-                var otherModules = _choices.WhiteSource
+                var otherModules = _originalCodebase.Modules
                     .Where(_ => singleMutated == null || _.Module.Name != singleMutated.Name);
 
                 foreach (var otherModule in otherModules)

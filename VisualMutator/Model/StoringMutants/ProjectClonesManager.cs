@@ -26,9 +26,7 @@
 
         private readonly IHostEnviromentConnection _hostEnviroment;
         private readonly IFileSystem _fs;
-        private List<FilePathAbsolute> _originalProjectFiles;
-        private IEnumerable<FilePathAbsolute> _referencedFiles;
-        private ProjectFilesClone _mainClone;
+        private readonly ProjectFilesClone _mainClone;
         private readonly FilesManager _filesManager;
 
         public ProjectClonesManager(
@@ -40,11 +38,11 @@
             _filesManager = filesManager;
             _fs = fs;
 
-            _originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
-            _referencedFiles = GetReferencedAssemblyPaths(_originalProjectFiles).Select(s => s.ToFilePathAbs());
+            List<FilePathAbsolute> originalProjectFiles = _hostEnviroment.GetProjectAssemblyPaths().ToList();
+            IEnumerable<FilePathAbsolute> referencedFiles = GetReferencedAssemblyPaths(originalProjectFiles).Select(s => s.ToFilePathAbs());
 
             FilePathAbsolute tmp = CreateTmpDir("VisualMutator-MainClone-");
-            _mainClone = _filesManager.CreateProjectClone(_referencedFiles, _originalProjectFiles, tmp).Result;
+            _mainClone = _filesManager.CreateProjectClone(referencedFiles, originalProjectFiles, tmp).Result;
         }
 
         public void Dispose()

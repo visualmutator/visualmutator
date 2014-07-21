@@ -150,9 +150,10 @@
                 Choices = _choices,
             };
 
-            _testsContainer.CreateTestSelections(_choices.TestAssemblies);
 
-            if (_choices.TestAssemblies.Select(a => a.TestsLoadContext.SelectedTests.TestIds.Count).Sum() == 0)
+
+            if (_choices.TestAssemblies.All(n => n.IsIncluded == false))
+            //if (_choices.TestAssemblies.Select(a => a.TestsLoadContext.SelectedTests.TestIds.Count).Sum() == 0)
             {
                 throw new NoTestsSelectedException();
             }
@@ -268,7 +269,7 @@
         {
             var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.Mutating);
 
-            var mutantModules = _mutantsContainer.InitMutantsForOperators(counter, _choices.WhiteSource);
+            var mutantModules = _mutantsContainer.InitMutantsForOperators(counter);
             _currentSession.MutantsGrouped = mutantModules;
 
             _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)

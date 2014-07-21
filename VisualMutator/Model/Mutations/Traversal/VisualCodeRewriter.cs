@@ -2,6 +2,7 @@
 {
     #region
 
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -33,6 +34,7 @@
        
         private readonly IOperatorCodeRewriter _rewriter;
         private readonly AstFormatter _formatter;
+        private bool foundAtLeastOneMatchingObject;
 
         public AstFormatter Formatter
         {
@@ -76,6 +78,7 @@
             {
                 _log.Info("Found object: " + firstOrDefault + " with callTypeName: " +
                     firstOrDefault.Context.CallTypeName + "while current type name is: " + typeName);
+                foundAtLeastOneMatchingObject = true;
             }
             newList = _capturedASTObjects.WhereNot(t => t.Object == obj && t.Context.CallTypeName ==
                     typeName).ToList();
@@ -93,6 +96,7 @@
             if(_capturedASTObjects.Any())
             {
                 _log.Error("Unfound objects while rewriting: " + string.Join(",", _capturedASTObjects));
+                throw new Exception("Unfound objects while rewriting: " + string.Join(",", _capturedASTObjects));
             }
         }
         /// <summary>

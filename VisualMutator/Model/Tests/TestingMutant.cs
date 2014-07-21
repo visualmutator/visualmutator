@@ -22,44 +22,32 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly TestsContainer _testsContainer;
-        private readonly ICodeVisualizer _codeVisualizer;
         private readonly MutantMaterializer _mutantMaterializer;
         private readonly MutationSessionChoices _choices;
-        private readonly NUnitXmlTestService _nunitService;
-        private readonly ISubject<SessionEventArgs> _sessionEventsSubject;
+        private readonly IObserver<SessionEventArgs> _sessionEventsSubject;
         private readonly IFactory<TestsRunContext> _testsRunContextFactory;
 
         private readonly Mutant _mutant;
         private StoredMutantInfo _storedMutantInfo;
-        private readonly DateTime _sessionStartTime;
         private readonly OptionsModel _options;
         private List<TestsRunContext> _contexts;
 
 
         public TestingMutant(
-            SessionController sessionController,
-            TestsContainer testsContainer,
-            ICodeVisualizer codeVisualizer,
             MutantMaterializer mutantMaterializer,
             OptionsModel options,
             MutationSessionChoices choices,
-            NUnitXmlTestService nunitService,
             IFactory<TestsRunContext> testsRunContextFactory,
             //--------
-            ISubject<SessionEventArgs> sessionEventsSubject,
+            IObserver<SessionEventArgs> sessionEventsSubject,
             Mutant mutant)
         {
-            _testsContainer = testsContainer;
-            _codeVisualizer = codeVisualizer;
             _mutantMaterializer = mutantMaterializer;
             _options = options;
             _choices = choices;
-            _nunitService = nunitService;
             _sessionEventsSubject = sessionEventsSubject;
             _testsRunContextFactory = testsRunContextFactory;
             _mutant = mutant;
-            _sessionStartTime = sessionController.SessionStartTime;
         }
         public void Cancel()
         {
@@ -109,8 +97,14 @@
 
             _log.Info("Loading tests for mutant " + _mutant.Id);
 
+            if (_choices.TestAssemblies.Count == 0)
+            {
+                throw new InvalidOperationException("_choices.TestAssemblies.Count == 0");
+            }
+
             _contexts = CreateTestContexts(storedMutantInfo.AssembliesPaths,
                 _choices.TestAssemblies).ToList();
+           
 
             _log.Info("Running tests for mutant " + _mutant.Id);
 
@@ -143,7 +137,7 @@
                 timoutDisposable.Dispose();
                 sw.Stop();
                 _mutant.MutantTestSession.TestingTimeMiliseconds = sw.ElapsedMilliseconds;
-                _mutant.MutantTestSession.TestingEndRelative = DateTime.Now - _sessionStartTime;
+                _mutant.MutantTestSession.TestingEnd = DateTime.Now;
             }
         }
 
@@ -161,6 +155,7 @@
             List<string> mutatedPaths,
             IList<TestNodeAssembly> testAssemblies)
         {
+            var testsSelector = new TestsSelector();
             foreach (var testNodeAssembly in testAssemblies)
             {
                 //todo: get rid of this ungly thing
@@ -168,8 +163,14 @@
                 var mutatedPath = mutatedPaths.Single(p => Path.GetFileName(p) ==
                     Path.GetFileName(testNodeAssembly.AssemblyPath));
 
-                var originalContext = testNodeAssembly.TestsLoadContext;
-                var context = _testsRunContextFactory.CreateWithParams(originalContext.SelectedTests, mutatedPath);
+
+               
+                var selectedTests = testsSelector.GetIncludedTests(testNodeAssembly);
+
+                _log.Debug("Created tests to run: " + selectedTests.TestsDescription);
+
+
+                var context = _testsRunContextFactory.CreateWithParams(selectedTests, mutatedPath);
 
                 yield return context;
             }

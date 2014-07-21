@@ -18,6 +18,9 @@
         {
             _methodSignature = method.ToString();
         }
+
+    
+
         public override string ToString()
         {
             return string.Format("Identifier: Module: {0}, Type: {1}, Method: {2}", ModuleName, TypeName, MethodSignature);

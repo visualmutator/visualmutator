@@ -11,8 +11,10 @@
     using Model;
     using Model.Decompilation;
     using Model.Decompilation.CodeDifference;
+    using Model.Mutations;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Types;
+    using Model.StoringMutants;
     using Model.Tests;
     using UsefulTools.Switches;
     using UsefulTools.Wpf;
@@ -25,7 +27,8 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly MutantDetailsViewModel _viewModel;
         private readonly ITestsContainer _testsContainer;
-        private readonly ICodeDifferenceCreator _codeDifferenceCreator;
+        private readonly ICodeVisualizer _codeVisualizer;
+        private readonly IMutantsCache _mutantsCache;
         private Mutant _currentMutant;
         private IDisposable _langObs;
         private IDisposable _tabObs;
@@ -33,15 +36,13 @@
         public MutantDetailsController(
             MutantDetailsViewModel viewModel, 
             ITestsContainer testsContainer, 
-            ICodeDifferenceCreator codeDifferenceCreator)
+            ICodeVisualizer codeVisualizer,
+            IMutantsCache mutantsCache)
         {
             _viewModel = viewModel;
             _testsContainer = testsContainer;
-            _codeDifferenceCreator = codeDifferenceCreator;
-
-
-            
-
+            _codeVisualizer = codeVisualizer;
+            _mutantsCache = mutantsCache;
         }
         public void Initialize()
         {
@@ -89,9 +90,9 @@
 
             if(mutant != null)
             {
-                CodeWithDifference diff = await Task.Run(
-                    () => _codeDifferenceCreator.CreateDifferenceListing(selectedLanguage,
-                    mutant));
+                MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
+                CodeWithDifference diff = await _codeVisualizer.CreateDifferenceListing(selectedLanguage,
+                    mutant, mutationResult);
                 if (diff != null)
                 {
                     _viewModel.PresentCode(diff);
@@ -102,7 +103,7 @@
         }
 
     
-        private void LoadTests(Mutant mutant)
+        private async void LoadTests(Mutant mutant)
         {
             _viewModel.TestNamespaces.Clear();
 
@@ -110,7 +111,7 @@
             
             if (mutant.MutantTestSession.IsComplete)
             {
-                var namespaces = _testsContainer.CreateMutantTestTree(mutant);
+                var namespaces = await Task.Run(() => _testsContainer.CreateMutantTestTree(mutant));
                 _viewModel.TestNamespaces.AddRange(namespaces);
             }
             else

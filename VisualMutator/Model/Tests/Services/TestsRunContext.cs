@@ -148,7 +148,7 @@
                 arg += (" /framework:" + _options.OtherParams);
             }
 
-            _log.Info("Running " + nunitConsolePath + arg);
+            _log.Info("Running \"" + nunitConsolePath+"\" " + arg);
             var startInfo = new ProcessStartInfo
             {
                 Arguments = arg,

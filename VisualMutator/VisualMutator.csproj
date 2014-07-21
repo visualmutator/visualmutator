@@ -277,6 +277,7 @@
     <Compile Include="Model\Exceptions\TestWasSelectedToMutateException.cs" />
     <Compile Include="Model\LimitedScopeStrategy.cs" />
     <Compile Include="Model\ModuleInfo.cs" />
+    <Compile Include="Model\Mutations\OriginalCodebase.cs" />
     <Compile Include="Model\Mutations\Traversal\AstNode.cs" />
     <Compile Include="Model\Mutations\Traversal\AstProcessor.cs" />
     <Compile Include="Model\Mutations\HighestVisitor.cs" />
