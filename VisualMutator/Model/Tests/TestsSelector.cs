@@ -12,15 +12,15 @@
     public class TestsSelector
     {
 
-        public SelectedTests GetIncludedTests(TestNodeAssembly assemblyNode)
+        public SelectedTests GetIncludedTests(List<TestNodeNamespace> namespaces)
         {
-            ICollection<TestId> selected = assemblyNode.Children
+            ICollection<TestId> selected = namespaces.Cast<CheckedNode>()
                 .SelectManyRecursive(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
-                .Cast<TestNodeMethod>()
+                .OfType<TestNodeMethod>()
                 .Select(m => m.TestId)
                 .ToList();
 
-            return new SelectedTests(selected, CreateMinimalTestsInfo(assemblyNode.TestNamespaces));
+            return new SelectedTests(selected, CreateMinimalTestsInfo(namespaces));
         }
 
         public string NameExtractor(TestTreeNode node)

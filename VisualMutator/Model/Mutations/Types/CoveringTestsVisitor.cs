@@ -6,6 +6,7 @@
     using CoverageFinder;
     using log4net;
     using Microsoft.Cci;
+    using UsefulTools.ExtensionMethods;
 
     public class CoveringTestsVisitor : CodeVisitor
     {
@@ -29,7 +30,7 @@
             _currentTestMethod = method.Attributes.Any(a =>
             {
                 var attrType = a.Type as INamespaceTypeReference;
-                return attrType != null && attrType.GetTypeFullName() == "NUnit.Framework.TestAttribute";
+                return attrType != null && attrType.GetTypeFullName().IsIn("NUnit.Framework.TestAttribute", "Xunit.FactAttribute");
             }) ? method : null;
 
             if (_currentTestMethod != null && _searcher.Matches(_currentTestMethod))

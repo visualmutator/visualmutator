@@ -26,6 +26,7 @@
         private readonly MutationSessionChoices _choices;
         private readonly IObserver<SessionEventArgs> _sessionEventsSubject;
         private readonly IFactory<TestsRunContext> _testsRunContextFactory;
+        private readonly TestServiceManager _testServiceManager;
 
         private readonly Mutant _mutant;
         private StoredMutantInfo _storedMutantInfo;
@@ -38,6 +39,7 @@
             OptionsModel options,
             MutationSessionChoices choices,
             IFactory<TestsRunContext> testsRunContextFactory,
+            TestServiceManager testServiceManager,
             //--------
             IObserver<SessionEventArgs> sessionEventsSubject,
             Mutant mutant)
@@ -47,6 +49,7 @@
             _choices = choices;
             _sessionEventsSubject = sessionEventsSubject;
             _testsRunContextFactory = testsRunContextFactory;
+            _testServiceManager = testServiceManager;
             _mutant = mutant;
         }
         public void Cancel()
@@ -155,7 +158,6 @@
             List<string> mutatedPaths,
             IList<TestNodeAssembly> testAssemblies)
         {
-            var testsSelector = new TestsSelector();
             foreach (var testNodeAssembly in testAssemblies)
             {
                 //todo: get rid of this ungly thing
@@ -163,16 +165,12 @@
                 var mutatedPath = mutatedPaths.Single(p => Path.GetFileName(p) ==
                     Path.GetFileName(testNodeAssembly.AssemblyPath));
 
-
-               
-                var selectedTests = testsSelector.GetIncludedTests(testNodeAssembly);
-
-                _log.Debug("Created tests to run: " + selectedTests.TestsDescription);
-
-
-                var context = _testsRunContextFactory.CreateWithParams(selectedTests, mutatedPath);
-
-                yield return context;
+                foreach (TestsLoadContext loadContext in testNodeAssembly.TestsLoadContexts)
+                {
+                    yield return _testServiceManager.CreateRunContext(loadContext, mutatedPath);
+                  //  TestsRunContext context = _testsRunContextFactory.CreateWithParams(loadContext, mutatedPath);
+                 //   yield return context;
+                }
             }
         }
 

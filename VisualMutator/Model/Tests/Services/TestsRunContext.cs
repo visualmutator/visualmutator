@@ -16,7 +16,13 @@
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
 
-    public class TestsRunContext
+    public interface ITestsRunContext
+    {
+        Task<MutantTestResults> RunTests();
+        void CancelRun();
+    }
+
+    public class TestsRunContext : ITestsRunContext
     {
         public MutantTestResults TestResults
         {
@@ -43,17 +49,20 @@
             CommonServices svc,
             NUnitXmlTestService nunitXmlTestService,
             //----------
-            SelectedTests selectedTests,
+            TestsLoadContext loadContext,
             string assemblyPath)
         {
             _options = options;
             _parser = parser;
             _processes = processes;
             _svc = svc;
-            _selectedTests = selectedTests;
             _assemblyPath = assemblyPath;
             _nUnitConsolePath = nunitXmlTestService.NunitConsolePath;
             _cancellationTokenSource = new CancellationTokenSource();
+
+            var testsSelector = new TestsSelector();
+            _selectedTests = testsSelector.GetIncludedTests(loadContext.Namespaces);
+            _log.Debug("Created tests to run: " + _selectedTests.TestsDescription);
         }
 
         public async Task<MutantTestResults> RunTests()
@@ -61,7 +70,7 @@
             string name = string.Format("muttest-{0}.xml", Path.GetFileName(_assemblyPath));
             string outputFilePath = new FilePathAbsolute(_assemblyPath).GetBrotherFileWithName(name).ToString();
 
-            if (string.IsNullOrWhiteSpace(_selectedTests.TestsDescription)) //TODO: what is this?
+            if (_selectedTests.TestIds.Count == 0)
             {
                 _testResults = new MutantTestResults();
                 return TestResults;

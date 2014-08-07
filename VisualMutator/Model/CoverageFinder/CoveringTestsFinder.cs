@@ -10,7 +10,7 @@
     using Mutations.Types;
     using UsefulTools.ExtensionMethods;
 
-    public class CoveringTestsFinder
+    public class CoveringTestsFinder : ICoveringTestsFinder
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -22,7 +22,7 @@
                         .ContinueWith(t => t.Result.Flatten().ToList());
         }
 
-        public List<MethodIdentifier> FindCoveringTests(IModuleInfo module, ICodePartsMatcher targetsMatcher)
+        private List<MethodIdentifier> FindCoveringTests(IModuleInfo module, ICodePartsMatcher targetsMatcher)
         {
             _log.Debug("Scanning " + module.Name + " for selected covering tests. ");
             var visitor = new CoveringTestsVisitor(targetsMatcher);
@@ -49,5 +49,10 @@
             }
             return visitor.FoundTests.ToList();
         } 
+    }
+
+    public interface ICoveringTestsFinder
+    {
+        Task<List<MethodIdentifier>> FindCoveringTests(List<CciModuleSource> modules, ICodePartsMatcher matcher);
     }
 }

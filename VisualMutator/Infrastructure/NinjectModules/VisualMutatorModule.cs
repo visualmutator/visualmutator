@@ -46,8 +46,10 @@
 
 
             Bind<ITestsService>().To<NUnitXmlTestService>().InSingletonScope();
-            Bind<NUnitTestLoader>().ToSelf().InSingletonScope();
+          //  Bind<NUnitTestLoader>().ToSelf().InSingletonScope();
             Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
+            Bind<TestsRunContext>().ToSelf().AndFromFactory();
+            Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
 
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
@@ -77,8 +79,7 @@
 
                         ch2.BindObjectRoot<TestingMutant>().ToSelf(ch3 => // on mutant testing
                         {
-                            ch3.Bind<TestsRunContext>().ToSelf().AndFromFactory();
-                            ch3.Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
+                          
                         });
 
 

@@ -22,7 +22,6 @@
         {
         }
 
-        public TestsLoadContext TestsLoadContext { get; set; }
 
         public string AssemblyPath
         {
@@ -38,6 +37,6 @@
             }
         }
 
-
+        public List<TestsLoadContext> TestsLoadContexts { get; set; }
     }
 }

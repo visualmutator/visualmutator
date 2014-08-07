@@ -37,13 +37,7 @@
 
         public Subject<object> Events { get; set; }
 
-        public async Task<List<MethodIdentifier>> FindCoveringTests(Task<List<CciModuleSource>> assembliesTask, ICodePartsMatcher matcher)
-        {
-            var finder = new CoveringTestsFinder();
-            List<CciModuleSource> modules = await assembliesTask;
-            return await finder.FindCoveringTests(modules, matcher);
-        }
-
+       
 
         public async Task<OperatorPackagesRoot> GetOperators()
         {

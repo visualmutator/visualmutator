@@ -337,12 +337,14 @@
     <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
     <Compile Include="Model\Tests\TestResultTreeCreator.cs" />
+    <Compile Include="Model\Tests\TestServiceManager.cs" />
     <Compile Include="Model\Tests\TestsLoader.cs" />
     <Compile Include="Model\Tests\TestsSelector.cs" />
     <Compile Include="Model\Tests\TestsTree\TestNodeAssembly.cs" />
     <Compile Include="Model\Tests\TestsTree\TestsRootNode.cs" />
     <Compile Include="Model\Tests\TmpTestNodeMethod.cs" />
     <Compile Include="Model\Tests\WorkerCollection.cs" />
+    <Compile Include="Model\Tests\XUnitTestService.cs" />
     <Compile Include="Model\TreeUtils.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />
@@ -379,7 +381,7 @@
     <Compile Include="Model\Mutations\Types\TypeNode.cs" />
     <Compile Include="Model\MutationTestingSession.cs" />
     <Compile Include="Model\Tests\Services\ITestService.cs" />
-    <Compile Include="Model\Tests\Services\NUnitTestService.cs" />
+    <Compile Include="Model\Tests\Services\TestEx.cs" />
     <Compile Include="Model\Tests\Services\NUnitWrapper.cs" />
     <Compile Include="Model\Tests\TestsContainer.cs" />
     <Compile Include="Model\Tests\MutantTestSession.cs" />

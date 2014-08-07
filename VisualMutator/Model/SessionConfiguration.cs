@@ -21,7 +21,6 @@
     public class SessionConfiguration
     {
         private readonly TestsLoader _testLoader;
-        private readonly ITypesManager _typesManager;
         private readonly IFactory<AutoCreationController> _autoCreationControllerFactory;
         private readonly IRootFactory<SessionController> _sessionFactory;
         private readonly IWhiteSource _whiteCache;
@@ -31,13 +30,11 @@
         public SessionConfiguration(
             IProjectClonesManager fileManager,
             TestsLoader testLoader,
-            ITypesManager typesManager,
             IFactory<AutoCreationController> autoCreationControllerFactory,
             IRootFactory<SessionController> sessionFactory,
             IWhiteSource whiteCache)
         {
             _testLoader = testLoader;
-            _typesManager = typesManager;
             _autoCreationControllerFactory = autoCreationControllerFactory;
             _sessionFactory = sessionFactory;
             _whiteCache = whiteCache;
@@ -68,10 +65,10 @@
                 throw;
             }
         }
-        public Task<object> LoadTests()
+        public async Task<object> LoadTests()
         {
-            return Task.Run(() => _testLoader.LoadTests(
-             _testsClone.Assemblies.AsStrings().ToList()).CastTo<object>());
+            return (await _testLoader.LoadTests(
+             _testsClone.Assemblies.AsStrings().ToList())).CastTo<object>();
         }
 
 
