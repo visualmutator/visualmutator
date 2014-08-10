@@ -19,7 +19,7 @@ namespace VisualMutator.Model.Tests.Services
 
 
         void Cancel();
-        TestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath);
+        ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath);
     }
 
   

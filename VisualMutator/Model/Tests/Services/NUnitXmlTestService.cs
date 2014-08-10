@@ -28,7 +28,7 @@
 
     public class NUnitXmlTestService : ITestsService
     {
-        private readonly IFactory<TestsRunContext> _testsRunContextFactory;
+        private readonly IFactory<NUnitTestsRunContext> _testsRunContextFactory;
         private readonly ISettingsManager _settingsManager;
         private readonly CommonServices _svc;
 
@@ -44,7 +44,7 @@
         }
         
         public NUnitXmlTestService(
-            IFactory<TestsRunContext> testsRunContextFactory,
+            IFactory<NUnitTestsRunContext> testsRunContextFactory,
             ISettingsManager settingsManager,
             INUnitWrapper nUnitWrapper,
             CommonServices svc)
@@ -64,7 +64,7 @@
             
         }
 
-        public TestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
+        public ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
         {
             return _testsRunContextFactory.CreateWithParams(loadContext, mutatedPath);
         }
@@ -86,17 +86,25 @@
 
         public virtual May<TestsLoadContext> LoadTests(string assemblyPath)
         {
-            
-            ITest testRoot = _nUnitWrapper.LoadTests(assemblyPath.InList());
-            int testCount = testRoot.TestsEx().SelectMany(n => n.TestsEx()).Count();
-            if (testCount == 0)
+
+            try
             {
-                return May.NoValue;
+                ITest testRoot = _nUnitWrapper.LoadTests(assemblyPath.InList());
+                int testCount = testRoot.TestsEx().SelectMany(n => n.TestsEx()).Count();
+                if (testCount == 0)
+                {
+                    return May.NoValue;
+                }
+                var classNodes = BuildTestTree(testRoot);
+                var context = new TestsLoadContext(FrameworkName, classNodes.ToList());
+                UnloadTests();
+                return context;
             }
-            var classNodes = BuildTestTree(testRoot);
-            var context = new TestsLoadContext(FrameworkName, classNodes.ToList());
-            UnloadTests();
-            return context;
+            catch (Exception e)
+            {
+                _log.Error("Excception While loading tests: ", e);
+                return May<TestsLoadContext>.NoValue;
+            }
         }
 
 

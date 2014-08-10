@@ -9,6 +9,7 @@
         public const string DsaTestsPath2 = @"C:\PLIKI\Dropbox\++Inzynierka\VisualMutator\Testy\Dsa\x86\Dsa.Test2.dll";
         public const string MiscUtil = @"C:\PLIKI\VisualMutator\testprojects\NUnit\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.dll";
         public const string MiscUtilTests = @"C:\PLIKI\VisualMutator\testprojects\NUnit\MiscUtil\MiscUtil.UnitTests\bin\Debug\MiscUtil.UnitTests.dll";
+        public const string AutoMapper = @"C:\PLIKI\VisualMutator\testprojects\XUnit\AutoMapper-develop\src\UnitTests\bin\NET4\Debug\AutoMapper.UnitTests.Net4.dll";
 
     }
 }

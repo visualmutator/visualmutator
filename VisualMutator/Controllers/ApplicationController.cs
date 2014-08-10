@@ -79,6 +79,7 @@
             _settingsManager.Initialize();
 
             LocateNUnitConsole();
+            LocateXUnitConsole();
         }
 
         private void LocateNUnitConsole()
@@ -97,6 +98,25 @@
                 ZipFile.ExtractToDirectory(nUnitConsoleZipPath, localDir);
                 _settingsManager[key] = nUnitConsoleDirPath;
                 _log.Debug("New nunitconsole path set to: "+ nUnitConsoleDirPath);
+            }
+        }
+
+        private void LocateXUnitConsole()
+        {
+            const string key = "XUnitConsoleDirPath";
+            if (!_settingsManager.ContainsKey(key) || !Directory.Exists(_settingsManager[key]))
+            {
+                var localDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+                Debug.Assert(localDir != null, "localDir != null");
+                var nUnitConsoleZipPath = Path.Combine(localDir, "xunitconsole.zip");
+                var nUnitConsoleDirPath = Path.Combine(localDir, "xunitconsole");
+                if (Directory.Exists(nUnitConsoleDirPath))
+                {
+                    Directory.Delete(nUnitConsoleDirPath, recursive: true);
+                }
+                ZipFile.ExtractToDirectory(nUnitConsoleZipPath, localDir);
+                _settingsManager[key] = nUnitConsoleDirPath;
+                _log.Debug("New xunitconsole path set to: " + nUnitConsoleDirPath);
             }
         }
 

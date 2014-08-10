@@ -213,6 +213,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="xunitconsole.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Resources\GenericCmd.bmp" />
     <None Include="app.config" />
     <Content Include="nunitconsole.zip">

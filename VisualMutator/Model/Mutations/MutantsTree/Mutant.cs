@@ -125,7 +125,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             }
         }
 
-        public List<TestsRunContext> TestRunContexts
+        public List<ITestsRunContext> TestRunContexts
         {
             get;
             set;

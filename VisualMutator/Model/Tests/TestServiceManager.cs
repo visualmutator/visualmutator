@@ -12,13 +12,13 @@
         private readonly Dictionary<string, ITestsService> _services;
 
         public TestServiceManager(
-            NUnitXmlTestService nunit)
-         //   XUnitTestService xunit)
+            NUnitXmlTestService nunit,
+            XUnitTestService xunit)
         {
             _services = new List<ITestsService>
                         {
                             nunit,
-                         //   xunit
+                            xunit
                         }.ToDictionary(s => s.FrameWorkName);
 
         }
@@ -30,7 +30,7 @@
               
         }
 
-        public TestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
+        public ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
         {
             return _services[loadContext.FrameworkName].CreateRunContext(loadContext, mutatedPath);
         }

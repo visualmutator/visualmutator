@@ -239,7 +239,7 @@
             }
             else if (innerException is TestsLoadingException)
             {
-                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading(), _viewModel.View);
+                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading() + " "+innerException, _viewModel.View);
             }
             else
             {

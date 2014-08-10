@@ -16,13 +16,7 @@
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
 
-    public interface ITestsRunContext
-    {
-        Task<MutantTestResults> RunTests();
-        void CancelRun();
-    }
-
-    public class TestsRunContext : ITestsRunContext
+    public class NUnitTestsRunContext : ITestsRunContext
     {
         public MutantTestResults TestResults
         {
@@ -42,7 +36,7 @@
         private readonly CancellationTokenSource _cancellationTokenSource;
         private MutantTestResults _testResults;
 
-        public TestsRunContext(
+        public NUnitTestsRunContext(
             OptionsModel options,
             NUnitResultsParser parser,
             IProcesses processes,
@@ -142,7 +136,7 @@
                 Path.GetFileNameWithoutExtension(inputFile) + "-Runlist.txt").Path;
             using (var file = File.CreateText(listpath))
             {
-                foreach (var str in selectedTests.TestsDescription.Split(' '))
+                foreach (var str in selectedTests.MinimalSelectionList)
                 {
                     file.WriteLine(str.Trim());
                 }

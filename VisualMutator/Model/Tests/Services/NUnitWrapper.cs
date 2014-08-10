@@ -51,8 +51,7 @@
         public ITest LoadTests(IEnumerable<string> assemblies)
         {
 
-            try
-            {
+          
                 var testRunner = new SimpleTestRunner();
                 
                 var enumerable = assemblies as IList<string> ?? assemblies.ToList();
@@ -74,11 +73,7 @@
                     return t;
 //                }
                
-            }
-            catch (Exception e)
-            {
-                throw new TestsLoadingException("Exception while loading tests.",e);
-            }
+            
 
         }
 

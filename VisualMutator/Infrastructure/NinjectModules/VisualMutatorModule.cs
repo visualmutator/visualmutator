@@ -48,8 +48,11 @@
             Bind<ITestsService>().To<NUnitXmlTestService>().InSingletonScope();
           //  Bind<NUnitTestLoader>().ToSelf().InSingletonScope();
             Bind<INUnitWrapper>().To<NUnitWrapper>().InSingletonScope();
-            Bind<TestsRunContext>().ToSelf().AndFromFactory();
+            Bind<NUnitTestsRunContext>().ToSelf().AndFromFactory();
             Bind<INUnitExternal>().To<NUnitResultsParser>().InSingletonScope();
+            Bind<XUnitResultsParser>().ToSelf().InSingletonScope();
+            Bind<XUnitTestsRunContext>().ToSelf().AndFromFactory();
+            Bind<XUnitTestService>().ToSelf().InSingletonScope();
 
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();

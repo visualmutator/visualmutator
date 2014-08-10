@@ -6,6 +6,7 @@
     using System.Text;
     using TestsTree;
     using UsefulTools.CheckboxedTree;
+    using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Switches;
 
@@ -32,30 +33,28 @@
                 .GetResult();
         }
 
-        public string CreateMinimalTestsInfo(IEnumerable<TestNodeNamespace> namespaces)
+        public List<string> CreateMinimalTestsInfo(IEnumerable<TestNodeNamespace> namespaces)
         {
-            var ids = namespaces.Select(n => MinimalTreeId((TestTreeNode) n,
-                NameExtractor, a => a.Children.Cast<TestTreeNode>()));
-            return string.Join(" ", ids).Trim();
+            var ids = namespaces.SelectMany(n => 
+                MinimalTreeId((TestTreeNode) n, NameExtractor, a => 
+                (a.Children ?? new NotifyingCollection<CheckedNode>()).Cast<TestTreeNode>()));
+
+            return ids.ToList();
         }
 
-        public string MinimalTreeId<Node>(Node node,
+        public List<string> MinimalTreeId<Node>(Node node,
             Func<Node, string> nameExtractor, Func<Node, IEnumerable<Node>> childExtractor) where Node : CheckedNode
         {
-            if(node.IsIncluded.HasValue)
+            if(node.IsIncluded.HasValue) // fully included or excluded
             {
-                if (node.IsIncluded.Value)
-                {
-                    return nameExtractor(node);
-                }
-                else return "";
+                return node.IsIncluded.Value ? nameExtractor(node).InList() : new List<string>();
             }
             else
             {
                 var strings = childExtractor(node)
-                    .Select(n => MinimalTreeId(n, nameExtractor, childExtractor))
-                    .Where(n => !string.IsNullOrWhiteSpace(n));
-                return string.Join(" ", strings);
+                    .SelectMany(n => MinimalTreeId(n, nameExtractor, childExtractor))
+                    .Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
+                return strings;
             }
 
         }

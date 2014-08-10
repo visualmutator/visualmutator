@@ -322,6 +322,8 @@
     <Compile Include="Model\TestGeneration\GenerationEngine.cs" />
     <Compile Include="Model\TestGeneration\GenerationInterface.cs" />
     <Compile Include="Model\TestGeneration\ValueSupplier.cs" />
+    <Compile Include="Model\Tests\Services\ITestsRunContext.cs" />
+    <Compile Include="Model\Tests\Services\XUnitTestsRunContext.cs" />
     <Compile Include="Model\Tests\TestingMutant.cs" />
     <Compile Include="Model\Tests\TestingProcess.cs" />
     <Compile Include="Model\Tests\Custom\AspNetTestingProcessExtension.cs" />
@@ -345,6 +347,7 @@
     <Compile Include="Model\Tests\TmpTestNodeMethod.cs" />
     <Compile Include="Model\Tests\WorkerCollection.cs" />
     <Compile Include="Model\Tests\XUnitTestService.cs" />
+    <Compile Include="Model\Tests\XUnitTestsVisitor.cs" />
     <Compile Include="Model\TreeUtils.cs" />
     <Compile Include="Model\Verification\AssemblyVerificationException.cs" />
     <Compile Include="Model\Verification\AssemblyVerifier.cs" />

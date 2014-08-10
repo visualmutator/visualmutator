@@ -178,33 +178,7 @@
             }
         }
 
-        class MapSettingsManager : ISettingsManager
-        {
-            private Dictionary<string, string> _settings; 
-            public MapSettingsManager()
-            {
-                _settings = new Dictionary<string, string>();
-            }
-
-            public void Initialize()
-            {
-                
-            }
-
-            public bool ContainsKey(string key)
-            {
-                return _settings.ContainsKey(key);
-            }
-
-            public string this[string key]
-            {
-                get { return _settings[key]; }
-                set
-                {
-                    _settings[key] = value;
-                }
-            }
-        }
+      
 
         [Test]
         public void IntegrationTesting()
@@ -232,7 +206,7 @@
             _kernel.Bind<ICodeDifferenceCreator>().To<CodeDifferenceCreator>().InSingletonScope();
             _kernel.Bind<ICodeVisualizer>().To<CodeVisualizer>().InSingletonScope();
             _kernel.Bind<IMutantsCache>().To<MutantsCache>().InSingletonScope();
-            _kernel.Bind<TestsRunContext>().ToSelf().AndFromFactory();
+            _kernel.Bind<NUnitTestsRunContext>().ToSelf().AndFromFactory();
             _kernel.Bind<OptionsModel>().ToConstant(new OptionsModel());
             _kernel.Bind<IMutationExecutor>().To<MutationExecutor>().InSingletonScope();
             _kernel.Bind<TestingMutant>().ToSelf().AndFromFactory();
@@ -314,6 +288,4 @@
              ModulesProvider = modulesProvider;
          }
      }
-
-
 }
