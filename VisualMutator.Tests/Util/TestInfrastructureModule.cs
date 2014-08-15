@@ -39,7 +39,7 @@
             Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
             Bind<IProcesses>().To<Processes>().InSingletonScope();
             Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
-            Bind<ISettingsManager>().To<MapSettingsManager>();
+            Bind<ISettingsManager>().To<MapSettingsManager>().InSingletonScope();
 
             var exe = new ImmediateExecute();
             Bind<IDispatcherExecute>().ToConstant(exe);

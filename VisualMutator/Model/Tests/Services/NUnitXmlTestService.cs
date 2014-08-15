@@ -155,7 +155,7 @@
                             Identifier = CreateIdentifier(testMethod),
                         };
                         c.Children.Add(nodeMethod);
-                        _log.Debug("Adding test: " + testName);
+                       // _log.Debug("Adding test: " + testName);
                         // context.TestMap.Add(testName, nodeMethod);
                         // }
                         //  else

@@ -14,6 +14,7 @@
     using NUnit.Util;
     using StoringMutants;
     using Tests;
+    using Tests.TestsTree;
     using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
@@ -65,10 +66,10 @@
                 throw;
             }
         }
-        public async Task<object> LoadTests()
+        public async Task<TestsRootNode> LoadTests()
         {
-            return (await _testLoader.LoadTests(
-             _testsClone.Assemblies.AsStrings().ToList())).CastTo<object>();
+            return await _testLoader.LoadTests(
+             _testsClone.Assemblies.AsStrings().ToList());
         }
 
 

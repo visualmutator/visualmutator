@@ -41,13 +41,18 @@
                 {
                     //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                     string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
-
-                    var memory = mutationResult.MutatedModules.WriteToStream(singleMutated);
-                    // _mutantsCache.Release(mutationResult);
-
+//
+//                    var memory = mutationResult.MutatedModules.WriteToStream(singleMutated);
+//                    // _mutantsCache.Release(mutationResult);
+//
+//                    using (FileStream peStream = File.Create(file))
+//                    {
+//                        await memory.CopyToAsync(peStream);
+//                    }
                     using (FileStream peStream = File.Create(file))
                     {
-                        await memory.CopyToAsync(peStream);
+                        mutationResult.MutatedModules.WriteToStream(singleMutated, peStream, file);
+                        //  await memory.CopyToAsync(peStream);
                     }
 
                     info.AssembliesPaths.Add(file);
@@ -70,12 +75,13 @@
                     //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                     string file = Path.Combine(info.Directory, module.Name + ".dll");
 
-                    var memory = cciModuleSource.WriteToStream(module);
+                    
                     // _mutantsCache.Release(mutationResult);
 
                     using (FileStream peStream = File.Create(file))
                     {
-                        await memory.CopyToAsync(peStream);
+                         cciModuleSource.WriteToStream(module, peStream, file);
+                      //  await memory.CopyToAsync(peStream);
                     }
 
                     info.AssembliesPaths.Add(file);

@@ -84,6 +84,8 @@
             catch (Exception e)
             {
                 _log.Error(e);
+                mutant.MutantTestSession.ErrorMessage = e.ToString();
+                mutant.MutantTestSession.ErrorDescription = e.Message;
                 mutant.State = MutantResultState.Error;
             }
             lock (this)

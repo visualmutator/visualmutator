@@ -17,6 +17,7 @@
     using Microsoft.Cci;
     using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
+    using Microsoft.Cci.MutableContracts;
     using StoringMutants;
     using VisualMutator.Infrastructure;
     using Assembly = Microsoft.Cci.MutableCodeModel.Assembly;
@@ -29,7 +30,7 @@
     {
         IModuleInfo AppendFromFile(string filePath);
         MemoryStream WriteToStream(IModuleInfo module);
-        void WriteToStream(IModuleInfo module, Stream stream);
+        void WriteToStream(IModuleInfo module, FileStream stream, string filePath);
         MetadataReaderHost Host { get; }
         List<ModuleInfo> ModulesInfo { get; }
         SourceEmitter GetSourceEmitter(CodeLanguage language, IModule assembly, SourceEmitterOutputString sourceEmitterOutput);
@@ -40,6 +41,7 @@
         private readonly MetadataReaderHost _host;
         private List<ModuleInfo> _moduleInfoList;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly Dictionary<string, PdbReader> pdbReaders;
 
         public List<IModuleInfo> Modules
         {
@@ -52,14 +54,14 @@
                 return _moduleInfoList;
             }
         }
-        public CciModuleSource()
+        public CciModuleSource(MetadataReaderHost host = null)
         {
-            _host = new PeReader.DefaultHost();
+            pdbReaders = new Dictionary<string, PdbReader>(StringComparer.OrdinalIgnoreCase);
+            _host = host ?? new CodeContractAwareHostEnvironment(true);
             _moduleInfoList = new List<ModuleInfo>();
         }
-        public CciModuleSource(MetadataReaderHost host, List<ModuleInfo> moduleInfoList)
+        public CciModuleSource(MetadataReaderHost host, List<ModuleInfo> moduleInfoList) : this(host)
         {
-            _host = host;
             _moduleInfoList = moduleInfoList;
         }
         public CciModuleSource(ProjectFilesClone filesClone) : this()
@@ -75,17 +77,15 @@
         }
         public CciModuleSource(string path) : this()
         {
-            var sss = new CodeDeepCopier(this.Host);
+          //  var sss = new CodeDeepCopier(this.Host);
             var m = DecompileFile(path);
-            var copied = sss.Copy(m.Module);
-            m.Module = copied;
+           // var copied = sss.Copy(m.Module);
+        //    m.Module = copied;
             _moduleInfoList.Add(m);
         }
 
-        private CciModuleSource(MetadataReaderHost host, IModule module)
+        private CciModuleSource(MetadataReaderHost host, IAssembly module) : this(host)
         {
-            _host = host;
-            _moduleInfoList = new List<ModuleInfo>();
             _moduleInfoList.Add(new ModuleInfo(module));
         }
 
@@ -130,33 +130,55 @@
              return new VisualSourceEmitter(output, _host, reader, noIL: lang == CodeLanguage.CSharp, printCompilerGeneratedMembers: false);
         }
 
-        public ModuleInfo DecompileFile(string filePath)
+        public bool TryGetPdbReader(IAssembly assembly, out PdbReader reader)
         {
-            _log.Info("Decompiling file: " + filePath);
-            IModule module = _host.LoadUnitFrom(filePath) as IModule;
+                string pdbFile = Path.ChangeExtension(assembly.Location, "pdb");
+                if (!pdbReaders.TryGetValue(pdbFile, out reader))
+                    pdbReaders[pdbFile] = reader =
+                        File.Exists(pdbFile)
+                        ? ReadPdb(pdbFile)
+                        : null;
+
+                return reader != null;
+        }
+
+        private PdbReader ReadPdb(string pdbFile)
+        {
+            using (var file = File.OpenRead(pdbFile))
+            {
+                return new PdbReader(file, _host);
+            }
+        }
+
+        private Assembly LoadAssemblyFrom(string filePath)
+        {
+            IAssembly module = _host.LoadUnitFrom(filePath) as IAssembly;
+            _host.RegisterAsLatest(module);
             if (module == null || module == Dummy.Module || module == Dummy.Assembly)
             {
                 throw new AssemblyReadException(filePath + " is not a PE file containing a CLR module or assembly.");
             }
 
-            PdbReader pdbReader = null;
-            string pdbFile = Path.ChangeExtension(module.Location, "pdbx");
-            if (File.Exists(pdbFile))
-            {
-                Stream pdbStream = File.OpenRead(pdbFile);
-                pdbReader = new PdbReader(pdbStream, _host);
-                pdbStream.Close();
-            }
-            
-            Module decompiledModule = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
-            ISourceLocationProvider sourceLocationProvider = pdbReader;
-            ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
+            PdbReader pdbReader;
+            TryGetPdbReader(module, out pdbReader);
+
+
+            var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
+            return new CodeDeepCopier(_host, pdbReader).Copy(decompiled);
+        }
+        public ModuleInfo DecompileFile(string filePath)
+        {
+            _log.Info("Decompiling file: " + filePath);
+
+            var decompiledModule = LoadAssemblyFrom(filePath);
+            PdbReader pdbReader;
+            TryGetPdbReader(decompiledModule, out pdbReader);
+            // ILocalScopeProvider localScopeProvider = new Decompiler.LocalScopeProvider(pdbReader);
             _log.Info("Decompiling file finished: " + filePath);
             return new ModuleInfo(decompiledModule, filePath)
             {
                 PdbReader = pdbReader,
-                LocalScopeProvider = localScopeProvider,
-                SourceLocationProvider = sourceLocationProvider,
+                LocalScopeProvider = pdbReader,
             };
         }
       
@@ -199,30 +221,41 @@
             return stream;
         }
 
-        public void WriteToStream(IModuleInfo module, Stream stream )
+        public void WriteToStream(IModuleInfo moduleInfo, FileStream stream, string filePath )
         {
-            PeWriter.WritePeToStream(module.Module, _host, stream);
+            var module = (ModuleInfo) moduleInfo;
+            if (module.PdbReader == null)
+            {
+                PeWriter.WritePeToStream(module.Module, _host, stream);
+            }
+            else
+            {
+                
+                using (var pdbWriter = new PdbWriter(Path.ChangeExtension(filePath, "pdb"), module.PdbReader))
+                {
+                    PeWriter.WritePeToStream(module.Module, _host, stream, module.PdbReader,
+                        module.PdbReader, pdbWriter);
+                }
+            }
         }
 
-        public void ReplaceWith(IModule newMod)
+        public void ReplaceWith(IAssembly newMod)
         {
-         //   if(newMod)
             var s = _moduleInfoList.SingleOrDefault(m => m.Name == newMod.Name.Value);
             if (s != null)
             {
                 s.Module = newMod;
                 _moduleInfoList = _moduleInfoList.Where(m => m == s).ToList();
             }
-
         }
-        public void ReplaceWith(List<IModule> modules)
+        public void ReplaceWith(List<IAssembly> modules)
         {
             foreach (var moduleInfo in _moduleInfoList)
             {
                 moduleInfo.Module = modules.Single(m => m.Name.Value == moduleInfo.Name);
             }
         }
-        public CciModuleSource CloneWith(IModule newMod)
+        public CciModuleSource CloneWith(IAssembly newMod)
         {
             var cci = new CciModuleSource(Host, _moduleInfoList);
             cci.ReplaceWith(newMod);

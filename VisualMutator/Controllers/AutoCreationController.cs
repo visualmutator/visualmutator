@@ -98,7 +98,7 @@
         
            // Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
 
-            Task<object> testsTask = _sessionConfiguration.LoadTests();
+            Task<TestsRootNode> testsTask = _sessionConfiguration.LoadTests();
 
 
             ITestsSelectStrategy testsSelector;

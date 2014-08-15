@@ -4,7 +4,7 @@
     using Microsoft.Cci;
     public interface IModuleInfo
     {
-        IModule Module
+        IAssembly Module
         {
             get; set;
         }
@@ -15,13 +15,13 @@
     }
     public class ModuleInfo : IModuleInfo
     {
-        public ModuleInfo(IModule module, string path = null)
+        public ModuleInfo(IAssembly module, string path = null)
         {
             Module = module;
         }
 
 
-        public IModule Module
+        public IAssembly Module
         {
             get; set;
         }
@@ -41,12 +41,6 @@
         public ILocalScopeProvider LocalScopeProvider
         {
             get; set;
-        }
-        [CanBeNull]
-        public ISourceLocationProvider SourceLocationProvider
-        {
-            get;
-            set;
         }
         [CanBeNull]
         public CciModuleSource SubCci

@@ -212,12 +212,14 @@
     <Compile Include="Infrastructure\ProcessTests.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Infrastructure\NinjectParamBindingsTests.cs" />
+    <Compile Include="Integration\IntegrationTests.cs" />
     <Compile Include="Mutations\CciMethodMatchingTests.cs" />
     <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
     <Compile Include="Mutations\WhiteCacheIntTests.cs" />
     <Compile Include="Operators\MapSettingsManager.cs" />
     <Compile Include="Operators\MutationTestsHelper.cs" />
+    <Compile Include="Operators\WhiteDummy.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />

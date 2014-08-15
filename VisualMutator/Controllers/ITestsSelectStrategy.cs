@@ -17,16 +17,16 @@
 
     public class AllTestsSelectStrategy : ITestsSelectStrategy
     {
-        private readonly Task<object> _testsTask;
+        private readonly Task<TestsRootNode> _testsTask;
 
-        public AllTestsSelectStrategy( Task<object> testsTask)
+        public AllTestsSelectStrategy( Task<TestsRootNode> testsTask)
         {
             _testsTask = testsTask;
         }
 
         public async Task<List<TestNodeAssembly>> SelectTests()
         {
-            var testsRootNode = (TestsRootNode) await _testsTask;
+            var testsRootNode = await _testsTask;
             testsRootNode.IsIncluded = true;
             return testsRootNode.TestNodeAssemblies.ToList();
         }
@@ -36,10 +36,10 @@
     {
         private readonly Task<List<CciModuleSource>> _assembliesTask;
         private readonly ICodePartsMatcher _matcher;
-        private readonly Task<object> _testsTask;
+        private readonly Task<TestsRootNode> _testsTask;
 
         public CoveringTestsSelectStrategy(Task<List<CciModuleSource>> assembliesTask,
-            ICodePartsMatcher matcher, Task<object> testsTask)
+            ICodePartsMatcher matcher, Task<TestsRootNode> testsTask)
         {
             _assembliesTask = assembliesTask;
             _matcher = matcher;

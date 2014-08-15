@@ -1,5 +1,6 @@
 ﻿namespace VisualMutator.Tests.UnitTesting
 {
+    using System.Collections.Generic;
     using Model.Tests;
     using NUnit.Framework;
     using SoftwareApproach.TestingExtensions;
@@ -38,10 +39,10 @@
              aba.IsIncluded = true;
 
              var testsSelector = new TestsSelector();
-             string minimalTreeId = testsSelector.MinimalTreeId(a, n => n.Name, n => n.Children);
+             var minimalTreeId = testsSelector.MinimalTreeId(a, n => n.Name, n => n.Children);
 
-             minimalTreeId.ShouldEqual("ABA ABBA");
-         }
+            minimalTreeId.ShouldEqual(new List<string> { "ABA ABBA" });
+        }
 
         [Test]
         public void Should_get_included_tests()
@@ -73,9 +74,9 @@
             aba.IsIncluded = true;
 
             var testsSelector = new TestsSelector();
-            string minimalTreeId = testsSelector.MinimalTreeId(a, n => n.Name, n => n.Children);
+            var minimalTreeId = testsSelector.MinimalTreeId(a, n => n.Name, n => n.Children);
 
-            minimalTreeId.ShouldEqual("ABA ABBA");
+            minimalTreeId.ShouldEqual(new List<string> { "ABA ABBA"});
         }
     }
 }
