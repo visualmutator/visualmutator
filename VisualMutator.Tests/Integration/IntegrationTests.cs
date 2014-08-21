@@ -91,8 +91,18 @@
 
         }
 
+        [Test]
+        public void ReadWriteTestAutoMapper()
+        {
+            var cci = new CciModuleSource(TestProjects.AutoMapper);
+            using (var file = File.OpenWrite(@"C:\PLIKI\VisualMutator\testprojects\Automapper-Integration-Tests\readwrite\AutoMapper.dll"))
+            {
+                cci.WriteToStream(cci.Module, file, file.Name);
+            }
+            
+        }
 
-    [Test]
+        [Test]
         public void IntegrationTestingAutoMapper()
         {
             var paths = new[] {
@@ -133,7 +143,7 @@
                 var meth = namespaces.Cast<CheckedNode>()
                     .SelectManyRecursive(n => n.Children, leafsOnly: true).OfType<TestNodeMethod>();
 
-                meth.Count(m => m.State == TestNodeState.Failure).ShouldEqual(2);
+                meth.Count(m => m.State == TestNodeState.Failure).ShouldEqual(0);
                 //  var storedMutantInfo = muma.StoreMutant(mutant).Result;
 
                 //  RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo);
@@ -207,7 +217,7 @@
 
             var mutants = assemblies.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>())
-                .OfType<Mutant>().Take(2);
+                .OfType<Mutant>().Take(4);
             return mutants;
         }
     }

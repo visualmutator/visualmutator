@@ -6,7 +6,6 @@
     using System.IO;
     using System.Xml.Linq;
     using System.Xml.Serialization;
-    using Microsoft.Cci.Ast;
     using Microsoft.Win32;
     using Model;
     using UsefulTools.Core;

@@ -57,7 +57,7 @@
         public CciModuleSource(MetadataReaderHost host = null)
         {
             pdbReaders = new Dictionary<string, PdbReader>(StringComparer.OrdinalIgnoreCase);
-            _host = host ?? new CodeContractAwareHostEnvironment(true);
+            _host = host ?? new PeReader.DefaultHost();
             _moduleInfoList = new List<ModuleInfo>();
         }
         public CciModuleSource(MetadataReaderHost host, List<ModuleInfo> moduleInfoList) : this(host)
@@ -163,8 +163,9 @@
             TryGetPdbReader(module, out pdbReader);
 
 
-            var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader);
-            return new CodeDeepCopier(_host, pdbReader).Copy(decompiled);
+            var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader, DecompilerOptions.ReadOnly);
+            return decompiled;
+            //  return new CodeDeepCopier(_host, pdbReader).Copy(decompiled);
         }
         public ModuleInfo DecompileFile(string filePath)
         {

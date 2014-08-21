@@ -15,12 +15,6 @@ namespace VisualMutator.Model.StoringMutants
     using Extensibility;
     using Infrastructure;
     using log4net;
-    using Microsoft.Cci;
-    using Microsoft.Cci.Ast;
-    using Microsoft.Cci.MutableCodeModel;
-    using Mutations.Types;
-    using Ninject.Infrastructure.Language;
-    using NUnit.Core;
 
     public class WhiteCache : IDisposable, IWhiteSource
     {

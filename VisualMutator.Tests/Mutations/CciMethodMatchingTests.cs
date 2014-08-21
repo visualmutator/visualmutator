@@ -9,7 +9,6 @@
     using log4net.Config;
     using log4net.Layout;
     using Microsoft.Cci;
-    using Microsoft.Cci.Ast;
     using Model;
     using Model.CoverageFinder;
     using Model.Mutations.Types;

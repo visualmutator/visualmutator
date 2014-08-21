@@ -190,7 +190,7 @@
 
             verifiEvents.Dispose();
             _choices.MutantsTestingOptions.TestingTimeoutSeconds
-                = (int)((2 * changelessMutant.MutantTestSession.TestingTimeMiliseconds) / 1000 + 1);
+                = (int)((3 * changelessMutant.MutantTestSession.TestingTimeMiliseconds) / 1000 + 1);
 
             bool canContinue = CheckForTestingErrors(changelessMutant);
             if (!canContinue)
