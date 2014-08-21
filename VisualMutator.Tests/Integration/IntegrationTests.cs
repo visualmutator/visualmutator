@@ -53,10 +53,10 @@
             var toMutate = TestProjects.MiscUtil.InList();
             var original = new OriginalCodebase(new List<CciModuleSource> {cci, cciTests});
 
-            var type = (NamedTypeDefinition)cci.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Adler32");
-            var method = type.Methods.First(m => m.Name.Value == "ComputeChecksum");
+            var type = (NamedTypeDefinition)cci.Module.Module.GetAllTypes().Single(t => t.Name.Value == "Range");
+            var method = type.Methods.First(m => m.Name.Value == "Contains");
 
-            var oper = new IdentityOperator2().InList<IMutationOperator>();
+            var oper = new ROR_RelationalOperatorReplacement().InList<IMutationOperator>();
 
             var mutants = SetupMutations(original, paths, toMutate, oper, new MethodIdentifier(method));
 
@@ -79,7 +79,8 @@
                 var meth = namespaces.Cast<CheckedNode>()
                     .SelectManyRecursive(n => n.Children, leafsOnly: true).OfType<TestNodeMethod>();
 
-                meth.Count(m => m.State == TestNodeState.Failure).ShouldEqual(2);
+             //   vis.CreateDifferenceListing()
+              //  meth.Count(m => m.State == TestNodeState.Failure).ShouldEqual(2);
                 //  var storedMutantInfo = muma.StoreMutant(mutant).Result;
 
                 //  RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo);
@@ -217,7 +218,7 @@
 
             var mutants = assemblies.Cast<CheckedNode>()
                 .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>())
-                .OfType<Mutant>().Take(4);
+                .OfType<Mutant>();//.Take(4);
             return mutants;
         }
     }

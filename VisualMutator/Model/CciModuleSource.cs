@@ -163,7 +163,8 @@
             TryGetPdbReader(module, out pdbReader);
 
 
-            var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader, DecompilerOptions.ReadOnly);
+            var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader, 
+                DecompilerOptions.None);
             return decompiled;
             //  return new CodeDeepCopier(_host, pdbReader).Copy(decompiled);
         }
