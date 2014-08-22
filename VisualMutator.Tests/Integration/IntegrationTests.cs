@@ -80,7 +80,7 @@
                     .SelectManyRecursive(n => n.Children, leafsOnly: true).OfType<TestNodeMethod>();
 
              //   vis.CreateDifferenceListing()
-              //  meth.Count(m => m.State == TestNodeState.Failure).ShouldEqual(2);
+                meth.Count(m => m.State == TestNodeState.Failure).ShouldBeGreaterThan(0);
                 //  var storedMutantInfo = muma.StoreMutant(mutant).Result;
 
                 //  RunTestsForMutant(_choices.MutantsTestingOptions, _storedMutantInfo);

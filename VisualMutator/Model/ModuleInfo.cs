@@ -4,7 +4,7 @@
     using Microsoft.Cci;
     public interface IModuleInfo
     {
-        IAssembly Module
+        IModule Module
         {
             get; set;
         }
@@ -15,13 +15,13 @@
     }
     public class ModuleInfo : IModuleInfo
     {
-        public ModuleInfo(IAssembly module, string path = null)
+        public ModuleInfo(IModule module, string path = null)
         {
             Module = module;
         }
 
 
-        public IAssembly Module
+        public IModule Module
         {
             get; set;
         }
