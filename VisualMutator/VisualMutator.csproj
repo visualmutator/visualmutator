@@ -322,7 +322,7 @@
     <Compile Include="Model\Tests\SelectedTests.cs" />
     <Compile Include="Model\Tests\Services\NUnitResultsParser.cs" />
     <Compile Include="Model\Tests\Services\NUnitXmlTestService.cs" />
-    <Compile Include="Model\Tests\Services\TestsRunContext.cs" />
+    <Compile Include="Model\Tests\Services\NUnitTestsRunContext.cs" />
     <Compile Include="Model\Tests\Services\TestsLoadContext.cs" />
     <Compile Include="Model\Tests\TestId.cs" />
     <Compile Include="Model\Tests\TestResultTreeCreator.cs" />

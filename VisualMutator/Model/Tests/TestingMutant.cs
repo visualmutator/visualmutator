@@ -37,6 +37,7 @@
             MutantMaterializer mutantMaterializer,
             OptionsModel options,
             MutationSessionChoices choices,
+            NUnitXmlTestService testService,
             TestServiceManager testServiceManager,
             //--------
             IObserver<SessionEventArgs> sessionEventsSubject,
@@ -164,6 +165,7 @@
 
                 foreach (TestsLoadContext loadContext in testNodeAssembly.TestsLoadContexts)
                 {
+                   
                     yield return _testServiceManager.CreateRunContext(loadContext, mutatedPath);
                   //  TestsRunContext context = _testsRunContextFactory.CreateWithParams(loadContext, mutatedPath);
                  //   yield return context;

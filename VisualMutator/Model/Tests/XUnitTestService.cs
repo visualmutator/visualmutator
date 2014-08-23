@@ -75,7 +75,8 @@
 
         public ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
         {
-            return _contextFactory.CreateWithParams(loadContext, mutatedPath);
+            var tesele = new TestsSelector(loadContext.Namespaces);
+            return _contextFactory.CreateWithParams(XUnitConsolePath, mutatedPath, tesele);
         }
     }
 }

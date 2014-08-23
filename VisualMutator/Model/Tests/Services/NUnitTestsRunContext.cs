@@ -30,33 +30,34 @@
         private readonly NUnitResultsParser _parser;
         private readonly IProcesses _processes;
         private readonly CommonServices _svc;
-        private readonly SelectedTests _selectedTests;
         private readonly string _assemblyPath;
         private readonly string _nUnitConsolePath;
+        private readonly TestsSelector _testsSelector;
         private readonly CancellationTokenSource _cancellationTokenSource;
         private MutantTestResults _testResults;
 
         public NUnitTestsRunContext(
             OptionsModel options,
-            NUnitResultsParser parser,
             IProcesses processes,
-            CommonServices svc,
-            NUnitXmlTestService nunitXmlTestService,
+            CommonServices svc, 
+            NUnitResultsParser parser,
             //----------
-            TestsLoadContext loadContext,
-            string assemblyPath)
+            string nUnitConsolePath,
+            string assemblyPath,
+            TestsSelector testsSelector)
         {
             _options = options;
             _parser = parser;
             _processes = processes;
             _svc = svc;
             _assemblyPath = assemblyPath;
-            _nUnitConsolePath = nunitXmlTestService.NunitConsolePath;
+            _nUnitConsolePath = nUnitConsolePath;
+            _testsSelector = testsSelector;
             _cancellationTokenSource = new CancellationTokenSource();
 
-            var testsSelector = new TestsSelector();
-            _selectedTests = testsSelector.GetIncludedTests(loadContext.Namespaces);
-            _log.Debug("Created tests to run: " + _selectedTests.TestsDescription);
+           // var testsSelector = new TestsSelector();
+          //  _selectedTests = testsSelector.GetIncludedTests(loadContext.Namespaces);
+          //  _log.Debug("Created tests to run: " + _selectedTests.TestsDescription);
         }
 
         public async Task<MutantTestResults> RunTests()
@@ -64,7 +65,7 @@
             string name = string.Format("muttest-{0}.xml", Path.GetFileName(_assemblyPath));
             string outputFilePath = new FilePathAbsolute(_assemblyPath).GetBrotherFileWithName(name).ToString();
 
-            if (_selectedTests.TestIds.Count == 0)
+            if (_testsSelector.IsEmpty)
             {
                 _testResults = new MutantTestResults();
                 return TestResults;
@@ -94,7 +95,7 @@
 
             try
             {
-                ProcessResults results = await RunNUnitConsole(_nUnitConsolePath, inputFile, outputFile, _selectedTests);
+                ProcessResults results = await RunNUnitConsole(_nUnitConsolePath, inputFile, outputFile);
                 if (!_svc.FileSystem.File.Exists(outputFile))
                 {
 
@@ -128,20 +129,25 @@
         }
 
         public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath,
-            string inputFile, string outputFile,
-            SelectedTests selectedTests)
+            string inputFile, string outputFile)
         {
             var listpath = new FilePathAbsolute(inputFile)
                 .GetBrotherFileWithName(
                 Path.GetFileNameWithoutExtension(inputFile) + "-Runlist.txt").Path;
-            using (var file = File.CreateText(listpath))
+
+            string testToRun = "";
+            if(!_testsSelector.AllowAll)
             {
-                foreach (var str in selectedTests.MinimalSelectionList)
+                using (var file = File.CreateText(listpath))
                 {
-                    file.WriteLine(str.Trim());
+                    foreach (var str in _testsSelector.MinimalSelectionList)
+                    {
+                        file.WriteLine(str.Trim());
+                    }
                 }
+                testToRun = " /runlist:" + listpath.InQuotes() + " ";
             }
-            string testToRun = " /runlist:" + listpath.InQuotes() + " ";
+
             string arg = inputFile.InQuotes()
                          + testToRun
                          + " /xml \"" + outputFile + "\" /nologo -trace=Verbose /noshadow /nothread";

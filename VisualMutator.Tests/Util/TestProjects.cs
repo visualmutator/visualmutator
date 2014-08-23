@@ -13,11 +13,17 @@
         public const string AutoMapperNet4 =   @"C:\PLIKI\VisualMutator\testprojects\XUnit\AutoMapper-develop\src\UnitTests\bin\NET4\Debug\AutoMapper.Net4.dll";
         public const string AutoMapperTests =        @"C:\PLIKI\VisualMutator\testprojects\XUnit\AutoMapper-develop\src\UnitTests\bin\NET4\Debug\AutoMapper.UnitTests.Net4.dll";
 
+        public const string NUnitConsoleDirPath =
+            @"C:\PLIKI\VisualMutator\nunitconsole";
+
         public const string NUnitConsolePath =
-            @"C:\USERS\AREGO\APPDATA\LOCAL\MICROSOFT\VISUALSTUDIO\12.0EXP\EXTENSIONS\PIOTRTRZPIL\VISUALMUTATOR\2.0.8\nunitconsole";
+           @"C:\PLIKI\VisualMutator\nunitconsole\nunit-console.exe";
+
+        public const string XUnitConsoleDirPath =
+                   @"C:\PLIKI\VisualMutator\xunitconsole";
 
         public const string XUnitConsolePath =
-                   @"C:\USERS\AREGO\APPDATA\LOCAL\MICROSOFT\VISUALSTUDIO\12.0EXP\EXTENSIONS\PIOTRTRZPIL\VISUALMUTATOR\2.0.8\xunitconsole";
+                  @"C:\PLIKI\VisualMutator\xunitconsole\xunit.console.exe";
 
     }
 }

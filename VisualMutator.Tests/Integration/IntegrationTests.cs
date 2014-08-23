@@ -28,6 +28,7 @@
     using NUnit.Util;
     using Operators;
     using OperatorsStandard.Operators;
+    using Roslyn.Compilers.CSharp;
     using SoftwareApproach.TestingExtensions;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
@@ -35,11 +36,62 @@
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
     using Util;
+    using Views;
     using VisualMutator.Infrastructure;
 
     [TestFixture]
     public class IntegrationTests : IntegrationTest
     {
+        [Test]
+        public void IntegrationTestingMiscUtilLight()
+        {
+            var cci = new CciModuleSource(TestProjects.MiscUtil);
+            var choices = new MutationSessionChoices();
+
+            var type = (NamedTypeDefinition)cci.Module.Module.GetAllTypes().Single(t => t.Name.Value == "Range");
+            var method = new MethodIdentifier(type.Methods.First(m => m.Name.Value == "Contains"));
+
+            choices.SelectedOperators.Add(new ROR_RelationalOperatorReplacement());
+            choices.Filter = method == null ? MutationFilter.AllowAll() :
+                                 new MutationFilter(
+                                  new List<TypeIdentifier>(),
+                                  method.InList());
+
+            var options = new OptionsModel();
+            var muexe = new MutationExecutor(options, choices);
+            var mucon = new MutantsContainer(muexe, new OriginalCodebase(cci.InList()));
+            var nodes = mucon.InitMutantsForOperators(ProgressCounter.Inactive());
+            Mutant mutant = nodes.Cast<CheckedNode>()
+              .SelectManyRecursive(n => n.Children ?? new NotifyingCollection<CheckedNode>())
+              .OfType<Mutant>().First();//.Take(4);
+            var cciWhite = new CciModuleSource(TestProjects.MiscUtil);
+            var resu = muexe.ExecuteMutation(mutant, cciWhite).Result;
+            string filePath = @"C:\PLIKI\VisualMutator\testprojects\MiscUtil-Integration-Tests\TestGround\MiscUtil.dll";
+            string filePathTests = @"C:\PLIKI\VisualMutator\testprojects\MiscUtil-Integration-Tests\TestGround\MiscUtil.UnitTests.dll";
+            using (var file = File.OpenWrite(filePath))
+            {
+                resu.MutatedModules.WriteToStream(resu.MutatedModules.Modules.Single(), file, filePath);
+            }
+
+            var runContext = new NUnitTestsRunContext(
+                options,
+                _kernel.Get<IProcesses>(),
+                _kernel.Get<CommonServices>(),
+                new NUnitResultsParser(),
+                TestProjects.NUnitConsolePath,
+                filePathTests,
+                new TestsSelector());
+            var testResult = runContext.RunTests().Result;
+            
+            var count = testResult.ResultMethods
+                .GroupBy(t => t.State)
+                .ToDictionary(t => t.Key);
+            var countStrings = count.Select(pair => pair.Key.ToString() + ": " + pair.Value);
+            _log.Info(string.Format("All test results: " + string.Join(" ", countStrings)));
+            count[TestNodeState.Failure].Count().ShouldEqual(0);
+           
+        }
+
         [Test]
         public void IntegrationTestingMiscUtil()
         {
@@ -191,8 +243,8 @@
                 mock.Setup(_ => _.GetTempPath()).Returns(Path.GetTempPath());
             });
 
-            _kernel.Get<ISettingsManager>()["NUnitConsoleDirPath"] = TestProjects.NUnitConsolePath;
-            _kernel.Get<ISettingsManager>()["XUnitConsoleDirPath"] = TestProjects.XUnitConsolePath;
+            _kernel.Get<ISettingsManager>()["NUnitConsoleDirPath"] = TestProjects.NUnitConsoleDirPath;
+            _kernel.Get<ISettingsManager>()["XUnitConsoleDirPath"] = TestProjects.XUnitConsoleDirPath;
 
             _kernel.Bind<IWhiteSource>().ToConstant(new WhiteDummy(toMutate));
 

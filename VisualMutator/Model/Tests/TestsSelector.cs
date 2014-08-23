@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Model.Tests
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -12,6 +13,40 @@
 
     public class TestsSelector
     {
+        private readonly bool _allowAll;
+        private readonly SelectedTests _selectedTests;
+
+        public TestsSelector()
+        {
+            _allowAll = true;
+        }
+
+        public TestsSelector(List<TestNodeNamespace> namespaces)
+        {
+            _allowAll = false;
+            _selectedTests = GetIncludedTests(namespaces);
+        }
+
+        public bool AllowAll
+        {
+            get { return _allowAll; }
+        }
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return !AllowAll && _selectedTests.TestIds.Count == 0;
+            }
+        }
+
+        public List<string> MinimalSelectionList
+        {
+            get
+            {
+                return AllowAll ? new List<string>() : _selectedTests.MinimalSelectionList;
+            }
+        }
 
         public SelectedTests GetIncludedTests(List<TestNodeNamespace> namespaces)
         {

@@ -66,7 +66,8 @@
 
         public ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
         {
-            return _testsRunContextFactory.CreateWithParams(loadContext, mutatedPath);
+            var selector = new TestsSelector(loadContext.Namespaces);
+            return _testsRunContextFactory.CreateWithParams(_nunitConsolePath, mutatedPath, selector);
         }
 
         private string FindConsolePath()

@@ -43,8 +43,8 @@
         private readonly XUnitResultsParser _parser;
         private readonly IProcesses _processes;
         private readonly CommonServices _svc;
-        private readonly SelectedTests _selectedTests;
         private readonly string _assemblyPath;
+        private readonly TestsSelector _testsSelector;
         private readonly string _nUnitConsolePath;
         private readonly CancellationTokenSource _cancellationTokenSource;
         private MutantTestResults _testResults;
@@ -52,22 +52,23 @@
         public XUnitTestsRunContext(
             XUnitResultsParser parser,
             IProcesses processes,
-            XUnitTestService testService,
             CommonServices svc,
             //----------
-            TestsLoadContext loadContext,
-            string assemblyPath)
+            string xUnitPath,
+            string assemblyPath,
+            TestsSelector testsSelector)
         {
             _parser = parser;
             _processes = processes;
             _svc = svc;
             _assemblyPath = assemblyPath;
-            _nUnitConsolePath = testService.XUnitConsolePath;// @"C:\PLIKI\DOWNLOAD\xunit-2.0-beta-3\src\xunit.console\bin\Debug\xunit.console.exe";
+            _testsSelector = testsSelector;
+            _nUnitConsolePath = xUnitPath;// @"C:\PLIKI\DOWNLOAD\xunit-2.0-beta-3\src\xunit.console\bin\Debug\xunit.console.exe";
             _cancellationTokenSource = new CancellationTokenSource();
 
-            var testsSelector = new TestsSelector();
-            _selectedTests = testsSelector.GetIncludedTests(loadContext.Namespaces);
-            _log.Debug("Created tests to run: " + _selectedTests.TestsDescription);
+           // var testsSelector = new TestsSelector();
+           // _selectedTests = testsSelector.GetIncludedTests(loadContext.Namespaces);
+            //_log.Debug("Created tests to run: " + _selectedTests.TestsDescription);
         }
 
         public async Task<MutantTestResults> RunTests()
@@ -78,7 +79,7 @@
             {
                 File.Delete(outputFilePath);
             }
-            if (_selectedTests.TestIds.Count == 0)
+            if (_testsSelector.IsEmpty)
             {
                 _testResults = new MutantTestResults();
                 return TestResults;
@@ -108,7 +109,7 @@
 
             try
             {
-                ProcessResults results = await RunNUnitConsole(_nUnitConsolePath, inputFile, outputFile, _selectedTests);
+                ProcessResults results = await RunNUnitConsole(_nUnitConsolePath, inputFile, outputFile);
                 _log.Debug("Process finished.");
                 if (!_svc.FileSystem.File.Exists(outputFile))
                 {
@@ -154,11 +155,13 @@
         }
         
         public Task<ProcessResults> RunNUnitConsole(string nunitConsolePath,
-            string inputFile, string outputFile,
-            SelectedTests selectedTests)
+            string inputFile, string outputFile)
         {
-            
-            string testToRun = " -names " + string.Join(";", selectedTests.MinimalSelectionList) + " ";
+            string testToRun = "";
+            if (!_testsSelector.AllowAll)
+            {
+                testToRun = " -names " + string.Join(";", _testsSelector.MinimalSelectionList) + " ";
+            }
             string arg = inputFile.InQuotes()  + testToRun
                          + " -xmlv1 " + outputFile.InQuotes() + " ";
 
