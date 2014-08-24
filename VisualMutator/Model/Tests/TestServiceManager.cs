@@ -12,11 +12,13 @@
         private readonly Dictionary<string, ITestsService> _services;
 
         public TestServiceManager(
+            MsTestService msTest,
             NUnitXmlTestService nunit,
             XUnitTestService xunit)
         {
             _services = new List<ITestsService>
                         {
+                            msTest,
                             nunit,
                             xunit
                         }.ToDictionary(s => s.FrameWorkName);

@@ -20,7 +20,7 @@
             _methodIdentifier = args[2];
             _resultsPath = args[3];
             _assembliesPaths = args[4].Split(';').ToList();
-            _otherParams = args.Skip(5).Aggregate((a, b) => a + " "+b);
+            _otherParams = args.Skip(5).Aggregate("",(a, b) => a + " "+b);
         }
 
         public string MethodIdentifier

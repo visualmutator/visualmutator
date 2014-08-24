@@ -54,6 +54,11 @@
             Bind<XUnitTestsRunContext>().ToSelf().AndFromFactory();
             Bind<XUnitTestService>().ToSelf().InSingletonScope();
 
+            Bind<MsTestResultsParser>().ToSelf().InSingletonScope();
+            Bind<MsTestRunContext>().ToSelf().AndFromFactory();
+            Bind<MsTestService>().ToSelf().InSingletonScope();
+
+
             Bind<IOptionsManager>().To<OptionsManager>().InSingletonScope();
             Bind<ContinuousConfigurator>().ToSelf().InSingletonScope();
             Bind<MainController>().ToSelf().AndFromFactory();
