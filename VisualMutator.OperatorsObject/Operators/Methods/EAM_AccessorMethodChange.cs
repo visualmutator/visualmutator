@@ -84,7 +84,7 @@
                     IMethodDefinition accessor;
                     if(TryGetCompatibileAccessor(methodCall.MethodToCall.ResolvedMethod, out accessor))
                     {
-                        _log.Info("Marking IMethodCall: " + methodCall.MethodToCall.ResolvedMethod + " - " + methodCall.MethodToCall.ResolvedMethod.GetType());
+                       // _log.Info("Marking IMethodCall: " + methodCall.MethodToCall.ResolvedMethod + " - " + methodCall.MethodToCall.ResolvedMethod.GetType());
                         MarkMutationTarget(methodCall, accessor.Name.Value.InList());
                     }
 

@@ -38,7 +38,7 @@
             }
             private void ProcessOperation<T>(T operation) where T : IBinaryOperation
             {
-                _log.Info("Visiting: " + operation);
+            //    _log.Info("Visiting: " + operation);
                 var passes = new List<string>
                 {
                     "Addition",
