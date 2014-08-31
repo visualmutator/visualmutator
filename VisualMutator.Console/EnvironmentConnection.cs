@@ -45,7 +45,14 @@
 
         public bool GetCurrentClassAndMethod(out MethodIdentifier methodIdentifier)
         {
-            methodIdentifier = new MethodIdentifier(_parser.MethodIdentifier);
+            if (_parser.MethodIdentifier != "null")
+            {
+                methodIdentifier = new MethodIdentifier(_parser.MethodIdentifier);
+            }
+            else
+            {
+                methodIdentifier = null;
+            }
             return true;
         }
 
