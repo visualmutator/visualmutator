@@ -1,20 +1,28 @@
 ﻿namespace VisualMutator.Model.Mutations.Traversal
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
+    using System.Reflection;
+    using Extensibility;
+    using log4net;
     using Microsoft.Cci;
     using UsefulTools.ExtensionMethods;
 
     public class AstProcessor
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         protected readonly IDictionary<object, AstDescriptor> AllAstIndices;
         public IDictionary<AstDescriptor, object> AllAstObjects;
         protected readonly IList<AstNode> AllNodes;
         private AstNode _currentNode;
-        private AstNode _currentMethod;
-        private AstNode _currentType;
+        private AstNode _currentMethodNode;
+        private AstNode _currentTypeNode;
         private readonly IModule _traversedModule;
-        protected int TreeObjectsCounter { get; set; }
+        private AstDescriptor _currentDescriptor;
+        private ISourceMethodBody _currentBody;
 
         public AstProcessor(IModule module)
         {
@@ -22,6 +30,7 @@
             AllAstObjects = new Dictionary<AstDescriptor, object>();
             AllNodes = new List<AstNode>();
             _traversedModule = module;
+            _currentDescriptor = new AstDescriptor(0);
         }
         public bool IsCurrentlyProcessed(object obj)
         {
@@ -29,7 +38,7 @@
         }
         public void Process<T>(T obj)
         {
-            TreeObjectsCounter++;
+            
             _currentNode = new AstNode(CreateProcessingContext<T>(),obj);//new AstNode(new AstDescriptor(TreeObjectsCounter), obj);
             if (!AllAstIndices.ContainsKey(obj))
             {
@@ -38,28 +47,50 @@
             }
             AllAstObjects.Add(GetDescriptorForCurrent(), obj);
             AllNodes.Add(_currentNode);
-        }
-        public void MethodEnter(IMethodDefinition method)
-        {
-            _currentMethod = new AstNode(_currentNode.Context, method);
+            _currentDescriptor = _currentDescriptor.Increment();
+
         }
 
-        public void MethodExit(IMethodDefinition method)
-        {
-            _currentMethod = null;
-        }
         public void TypeEnter(INamespaceTypeDefinition namespaceTypeDefinition)
         {
-            _currentType = new AstNode(_currentNode.Context, namespaceTypeDefinition);
+            
+            _currentDescriptor = _currentDescriptor.GoDown();
+            _log.Debug("Going down on "+new TypeIdentifier(namespaceTypeDefinition)+" - "+_currentDescriptor);
+            _currentTypeNode = new AstNode(_currentNode.Context, namespaceTypeDefinition);
+            
         }
 
         public void TypeExit(INamespaceTypeDefinition namespaceTypeDefinition)
         {
-            _currentType = null;
+            _currentTypeNode = null;
+            _currentDescriptor = _currentDescriptor.GoUp();
+        }
+        public void MethodEnter(IMethodDefinition method)
+        {
+            _currentDescriptor = _currentDescriptor.GoDown();
+            _log.Debug("Going down on " + new MethodIdentifier(method) + " - " + _currentDescriptor);
+            _currentMethodNode = new AstNode(_currentNode.Context, method);
+          
+        }
+
+        public void MethodExit(IMethodDefinition method)
+        {
+            _currentMethodNode = null;
+              _currentDescriptor = _currentDescriptor.GoUp();
+        }
+        public void MethodBodyEnter(ISourceMethodBody method)
+        {
+            _currentBody = method;
+            _currentDescriptor = _currentDescriptor.GoDown();
+        }
+        public void MethodBodyExit(ISourceMethodBody method)
+        {
+            _currentBody = null;
+            _currentDescriptor = _currentDescriptor.GoUp();
         }
         public AstDescriptor GetDescriptorForCurrent()
         {
-            return _currentNode.Context.Descriptor;
+            return _currentDescriptor; //_currentNode.Context.Descriptor;
         }
 
         public void PostProcess(MutationTarget mutationTarget)
@@ -94,7 +125,12 @@
         //    var target = _mutationTargets.SingleOrDefault(t => t.CounterValue == TreeObjectsCounter);
             AstNode node;
             if(mutationTarget.ProcessingContext != null)
-            {
+            {if(!AllAstObjects.ContainsKey(mutationTarget.ProcessingContext.Descriptor))
+                {
+                    _log.Error("No object: "+ mutationTarget.ProcessingContext.Descriptor);
+                    _log.Error("All objects: "+ AllAstObjects.Keys.Select(_=>_.ToString()).Aggregate((a,b) => a + "\n"+b));
+                    Debugger.Break();
+                }
                 node = new AstNode(mutationTarget.ProcessingContext,
                     AllAstObjects[mutationTarget.ProcessingContext.Descriptor]);
             }
@@ -155,14 +191,14 @@
         {
             return new ProcessingContext()
                    {
-                       Descriptor = new AstDescriptor(TreeObjectsCounter),
-                       Method = _currentMethod,
-                       Type = _currentType,
+                       Descriptor = _currentDescriptor,
+                       Method = _currentMethodNode,
+                       Type = _currentTypeNode,
                        CallTypeName = typeof(T).Name,
                        ModuleName = _traversedModule.Name.Value,
                    };
         }
 
-       
+
     }
 }

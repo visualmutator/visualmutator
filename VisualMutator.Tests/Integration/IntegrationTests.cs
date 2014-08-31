@@ -47,7 +47,7 @@
         {
             var cci = new CciModuleSource(TestProjects.MiscUtil);
             var choices = new MutationSessionChoices();
-
+            var tt = cci.Module.Module.GetAllTypes();
             var type = (NamedTypeDefinition)cci.Module.Module.GetAllTypes().Single(t => t.Name.Value == "Range");
             var method = new MethodIdentifier(type.Methods.First(m => m.Name.Value == "Contains"));
 
@@ -86,7 +86,7 @@
             var count = testResult.ResultMethods
                 .GroupBy(t => t.State)
                 .ToDictionary(t => t.Key);
-            var countStrings = count.Select(pair => pair.Key.ToString() + ": " + pair.Value);
+            var countStrings = count.Select(pair => pair.Key.ToString() + ": " + pair.Value.Count());
             _log.Info(string.Format("All test results: " + string.Join(" ", countStrings)));
             count[TestNodeState.Failure].Count().ShouldEqual(0);
            

@@ -2,7 +2,9 @@
 {
     #region
 
+    using System.Linq;
     using Microsoft.Cci;
+    using Microsoft.Cci.ILToCodeModel;
 
     #endregion
 
@@ -10,14 +12,23 @@
     {
         private readonly MutationFilter _filter;
         private readonly VisualCodeVisitor _visitor;
+        private readonly CciModuleSource _module;
 
-        public VisualCodeTraverser(MutationFilter filter, VisualCodeVisitor visitor)
+        public VisualCodeTraverser(MutationFilter filter, VisualCodeVisitor visitor, CciModuleSource module)
         {
             _filter = filter;
             _visitor = visitor;
+            _module = module;
             PreorderVisitor = visitor;
         }
-      
+        public override void Traverse(IMethodBody methodBody)
+        {
+            var moduleInfo =  _module.ModulesInfo.Single();
+            var smb = new SourceMethodBody(methodBody, _module.Host, moduleInfo.PdbReader, moduleInfo.LocalScopeProvider, DecompilerOptions.None);
+            _visitor.MethodBodyEnter(smb);
+            Traverse(smb);
+            _visitor.MethodBodyExit(smb);
+        }
         public override void TraverseChildren(INamespaceTypeDefinition namespaceTypeDefinition)
         {
             if (_filter.Matches(namespaceTypeDefinition))

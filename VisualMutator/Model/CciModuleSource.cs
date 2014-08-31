@@ -168,7 +168,7 @@
             }
         }
 
-        private Assembly LoadAssemblyFrom(string filePath)
+        private IAssembly LoadAssemblyFrom(string filePath)
         {
             IAssembly module = _host.LoadUnitFrom(filePath) as IAssembly;
             _host.RegisterAsLatest(module);
@@ -181,9 +181,9 @@
             TryGetPdbReader(module, out pdbReader);
 
 
-            var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader,
-                DecompilerOptions.None);
-            return decompiled;
+          //  var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader,
+          //      DecompilerOptions.None);
+            return module;
             //  return new CodeDeepCopier(_host, pdbReader).Copy(decompiled);
         }
         public ModuleInfo DecompileFile(string filePath)

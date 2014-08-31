@@ -118,11 +118,12 @@
         /// <param name="method">Current method</param>
         public override void RewriteChildren(MethodDefinition method)
         {
-            _rewriter.MethodEnter(method);
-            
-            base.RewriteChildren(method);
-            
-            _rewriter.MethodExit(method);
+            if (_filter.Matches(method))
+            {
+                _rewriter.MethodEnter(method);
+                base.RewriteChildren(method);
+                _rewriter.MethodExit(method);
+            }
         }
 
     }

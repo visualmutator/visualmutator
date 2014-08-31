@@ -1,29 +1,77 @@
 ﻿namespace VisualMutator.Model.Mutations
 {
-    public struct AstDescriptor
+    using System.Reflection.Emit;
+
+    public interface IAstDescriptor
     {
-        private readonly int _index;
 
-        public AstDescriptor(int index)
+    }
+    public struct DummyDescriptor : IAstDescriptor
+    {
+        public bool Equals(DummyDescriptor other)
         {
-            _index = index;
-        }
-
-        private bool Equals(AstDescriptor other)
-        {
-            return _index == other._index;
+            return true;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((AstDescriptor) obj);
+            return obj is DummyDescriptor && Equals((DummyDescriptor) obj);
         }
 
         public override int GetHashCode()
         {
-            return _index;
+            return 0;
+        }
+
+        public static bool operator ==(DummyDescriptor left, DummyDescriptor right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DummyDescriptor left, DummyDescriptor right)
+        {
+            return !left.Equals(right);
+        }
+
+        public override string ToString()
+        {
+            return "D";
+        }
+    }
+
+    public struct AstDescriptor : IAstDescriptor
+    {
+        private readonly IAstDescriptor _significant;
+        private readonly int _index;
+
+        public AstDescriptor(IAstDescriptor significant, int index)
+        {
+            _significant = significant;
+            _index = index;
+        }
+        public AstDescriptor(int index)
+        {
+            _significant = new DummyDescriptor();
+            _index = index;
+        }
+        public bool Equals(AstDescriptor other)
+        {
+            return _significant.Equals(other._significant) && _index == other._index;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is AstDescriptor && Equals((AstDescriptor) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_significant.GetHashCode()*1397) ^ _index;
+            }
         }
 
         public static bool operator ==(AstDescriptor left, AstDescriptor right)
@@ -38,7 +86,21 @@
 
         public override string ToString()
         {
-            return string.Format("Index: {0}", _index);
+           return _significant + string.Format("->{0}", _index);
+        }
+
+        public AstDescriptor GoDown()
+        {
+            return new AstDescriptor(this, 0);
+        }
+        public AstDescriptor GoUp()
+        {
+            return (AstDescriptor) _significant;
+        }
+
+        public AstDescriptor Increment()
+        {
+            return new AstDescriptor(_significant, _index + 1);
         }
     }
 }

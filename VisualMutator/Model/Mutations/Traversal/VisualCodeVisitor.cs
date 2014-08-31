@@ -59,6 +59,16 @@
             visitor.VisitAny(obj);
             return true;
         }
+        public void MethodBodyEnter(ISourceMethodBody method)
+        {
+            _processor.MethodBodyEnter(method);
+        }
+
+        public void MethodBodyExit(ISourceMethodBody method)
+        {
+            _processor.MethodBodyExit(method);
+           // _currentMethodObj = null;
+        }
         public void MethodEnter(IMethodDefinition method)
         {
             _processor.MethodEnter(method);
@@ -85,10 +95,10 @@
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
-            // _log.Debug("MarkMutationTarget: " + TreeObjectsCounter + " - " + Formatter.Format(obj)+" : " + obj.GetHashCode());
+             _log.Debug("MarkMutationTarget: " + _processor.GetDescriptorForCurrent() + " - " + Formatter.Format(obj)+" : " + obj.GetHashCode());
             string groupname = "#" + (groupCounter++);//+" - "+_formatter.Format(obj);
             foreach (var mutationVariant in variants)
-            {
+            {   
                 var mutationTarget = new MutationTarget(mutationVariant)
                 {
                     Id = _operatorId+"#" + genId(), 

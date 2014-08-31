@@ -17,7 +17,6 @@
         private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly ICollection<MutationTarget> _mutationTargets;//TODO: remove, its ambigius with base class field of the same name
         private readonly ICollection<MutationTarget> _sharedTargets;
-        private readonly Hashtable<object, object> _copyFor;
         //List of objects found in this model tree corresponding to mutation targets
         private List<AstNode> _targetAstObjects;
         private List<AstNode> _sharedAstObjects;
@@ -33,12 +32,11 @@
         }
 
         public VisualCodeVisitorBack(ICollection<MutationTarget> mutationTargets, 
-            ICollection<MutationTarget> sharedTargets, IModule module, string id, Hashtable<object, object> copyFor)
+            ICollection<MutationTarget> sharedTargets, IModule module, string id)
             : base(id, new OperatorCodeVisitor(), module)
         {
             _mutationTargets = mutationTargets;
             _sharedTargets = sharedTargets;
-            _copyFor = copyFor;
             _targetAstObjects = new List<AstNode>();
             _sharedAstObjects = new List<AstNode>();
         }
