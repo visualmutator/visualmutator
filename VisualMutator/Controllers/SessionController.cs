@@ -235,7 +235,7 @@
                 controlSource.Where(ev => ev.Type == ControlEventType.SaveResults)
                     .Subscribe(o => SaveResults()),
             });
-}
+        }
 
         private void Finish()
         {
@@ -243,7 +243,7 @@
             _sessionState = SessionState.Finished;
             SessionEndTime = DateTime.Now;
 
-            RaiseMinorStatusUpdate(OperationsState.Finished, 100);
+            RaiseMinorStatusUpdate(OperationsState.Testing, 100);
             
         }
 

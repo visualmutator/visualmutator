@@ -73,13 +73,13 @@
         }
 
 
-        public async Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier, bool auto)
+        public async Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier, List<string> testAssemblies, bool auto)
         {
             _whiteCache.Pause(true);
             try
             {
                 AutoCreationController creationController = _autoCreationControllerFactory.Create();
-                var choices = await creationController.Run(methodIdentifier, auto);
+                var choices = await creationController.Run(methodIdentifier, testAssemblies, auto);
                 var original = new OriginalCodebase(LoadAssemblies().Result);
                 return _sessionFactory.CreateWithBindings(choices, original);
             }

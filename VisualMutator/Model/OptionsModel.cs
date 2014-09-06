@@ -2,11 +2,14 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using CommandLine;
+    using log4net;
     using UsefulTools.Core;
 
     public class OptionsModel : ModelElement
     {
+        
         public OptionsModel()
         {
             WhiteCacheThreadsCount = 2;
@@ -81,21 +84,35 @@
                 SetAndRise(ref _otherParams, value, () => OtherParams);
             }
         }
-        
+
+        private OtherParams _parsedParams;
         public OtherParams ParsedParams
         {
+            set
+            {
+                _parsedParams = value;
+            }
             get
             {
-                var options = new OtherParams();
-                if (CommandLine.Parser.Default.ParseArguments(OtherParams.Split(' '), options))
+                if(_parsedParams == null)
                 {
-                    return options;
+                    var options = new OtherParams();
+                    if (Parser.Default.ParseArguments(OtherParams.Split(' '), options))
+                    {
+                        _parsedParams = options;
+                        return options;
+                    }
+                    else
+                    {
+                        // var str = options.LastParserState.Errors.Select(a=>a.ToString()).Aggregate((a, b) => a.ToString() + "n" + b.ToString());
+                        throw new Exception("Invalid params string in options.: ");
+                    }
                 }
                 else
                 {
-                   // var str = options.LastParserState.Errors.Select(a=>a.ToString()).Aggregate((a, b) => a.ToString() + "n" + b.ToString());
-                    throw new Exception("Invalid params string in options.: ");
+                    return _parsedParams;
                 }
+                
             }
         }
        
@@ -104,35 +121,35 @@
     public class OtherParams
     {
 
-        [Option("loglevel", DefaultValue = "DEBUG", HelpText = "")]
+        [Option("loglevel", DefaultValue = "DEBUG", HelpText = "", Required = false)]
         public string LogLevel
         {
             get; set;
         }
-        [Option( "debugfiles", DefaultValue = false, HelpText = "")]
+        [Option( "debugfiles", DefaultValue = false, HelpText = "", Required = false)]
         public bool DebugFiles
         {
             get; set;
         }
-        [Option( "nunitnetversion", DefaultValue = "", HelpText = "")]
+        [Option( "nunitnetversion", DefaultValue = "", HelpText = "", Required = false)]
         public string NUnitNetVersion
         {
             get; set;
         }
-        [Option("legacyCreation", DefaultValue = false, HelpText = "")]
+        [Option("legacyCreation", DefaultValue = false, HelpText = "", Required = false)]
         public bool LegacyCreation
         {
             get; set;
         }
-        [ParserState]
-        public IParserState LastParserState
-        {
-            get; set;
-        }
+//        [ParserState]
+//        public IParserState LastParserState
+//        {
+//            get; set;
+//        }
 
         public override string ToString()
         {
-            return string.Format("LogLevel: {0}, DebugFiles: {1}, NUnitNetVersion: {2}, LegacyCreation: {3}, LastParserState: {4}", LogLevel, DebugFiles, NUnitNetVersion, LegacyCreation, LastParserState);
+            return string.Format("LogLevel: {0}, DebugFiles: {1}, NUnitNetVersion: {2}, LegacyCreation: {3}", LogLevel, DebugFiles, NUnitNetVersion, LegacyCreation);
         }
     }
 }

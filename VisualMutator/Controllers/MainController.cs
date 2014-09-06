@@ -149,7 +149,7 @@
             }
         }
 
-        public async Task RunMutationSession(MethodIdentifier methodIdentifier = null, bool auto = false)
+        public async Task RunMutationSession(MethodIdentifier methodIdentifier = null, List<string> testAssemblies = null,  bool auto = false)
         {
             //_host.Build();
             _log.Info("Showing mutation session window.");
@@ -160,7 +160,7 @@
             try
             {
                 IObjectRoot<SessionController> sessionController = 
-                    await sessionConfiguration.Get.CreateSession(methodIdentifier, auto);
+                    await sessionConfiguration.Get.CreateSession(methodIdentifier, testAssemblies, auto);
 
                 Clean();
                 _sessionConfiguration = sessionConfiguration;
@@ -187,31 +187,7 @@
             }
         }
        
-        public void RunMutationSessionAuto2(MethodIdentifier methodIdentifier)
-        {
-          //  _host.Build();
-            _log.Info("Showing mutation session window.");
-
-            _sessionConfiguration = _continuousConfigurator
-                .GetConfiguration().Get.CreateSessionConfiguration();
-
-            try
-            {
-
-                var a = _sessionConfiguration.Get.CreateSession(methodIdentifier, true).Result;
-
-            }
-            catch (TaskCanceledException)
-            {
-                // cancelled by user
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
+   
         public void PauseOperations()
         {
             SetState(OperationsState.Pausing);
@@ -335,7 +311,7 @@
                  .Subscribe(args =>
                  {
                          _viewModel.OperationsState = OperationsState.Testing;
-                         _viewModel.OperationsStateDescription = "Running tests... ({0}/{1})"
+                         _viewModel.OperationsStateDescription = "Mutants tested: {0}/{1}"
                              .Formatted(args.NumberOfAllMutantsTested + 1,
                                  args.NumberOfAllMutants);
 

@@ -14,6 +14,7 @@
     using UsefulTools.CheckboxedTree;
     using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
 
     interface IMutationSessionStrategy
     {
@@ -82,7 +83,7 @@
         {
             var matcher = methodMatcher.Join(new SolutionTypesManager.ProperlyNamedMatcher());
             var assemblyNode = new AssemblyNode(module.Name);
-
+            assemblyNode.AssemblyPath = module.Module.Location.ToFilePathAbs();
             System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
             {
                 foreach (INamedTypeDefinition typeDefinition in leafTypes)

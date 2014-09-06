@@ -3,60 +3,87 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using CommandLine;
+    using Model;
 
-    public class CommandLineParser
+    public class CommandLineParser : OtherParams
     {
-        private readonly List<string> _assembliesPaths;
-        private readonly string _methodIdentifier;
-        private string _resultsPath;
-        private int _whiteThreads;
-        private int _mutantThreads;
-        private string _otherParams;
 
-        public CommandLineParser(string[] args)
+    
+        public void ParseFrom(string[] args)
         {
-            _whiteThreads = Convert.ToInt32(args[0]);
-            _mutantThreads = Convert.ToInt32(args[1]);
-            _methodIdentifier = args[2];
-            _resultsPath = args[3];
-            _assembliesPaths = args[4].Split(';').ToList();
-            _otherParams = args.Skip(5).Aggregate("",(a, b) => a + " "+b);
+            if (!Parser.Default.ParseArguments(args, this))
+            {// 
+                // var str = options.LastParserState.Errors.Select(a=>a.ToString()).Aggregate((a, b) => a.ToString() + "n" + b.ToString());
+                throw new Exception("Invalid params string in options.: " + args);
+            }
         }
 
+        [Option("sourceThreads", DefaultValue = 2, HelpText = "The number of original source processing threads.")]
+        public int SourceThreads
+        {
+            get; set;
+        }
+        [Option("mutationThreads", DefaultValue = 3, HelpText = "The number of mutant processing threads.")]
+        public int MutationThreads
+        {
+            get; set;
+        }
+        [Option("methodIdentifier", DefaultValue = "null", HelpText = "An identifier of a single method to mutation test.")]
         public string MethodIdentifier
         {
+            get; set;
+        }
+        [Option("resultsXml", HelpText = "The path to store the xml result at.")]
+        public string ResultsXml
+        {
+            get; set;
+        }
+        [Option("sourceAssemblies", HelpText = "The ';'-separated paths to source assemblies to mutate.")]
+        public string AssembliesPaths
+        {
+            get; set;
+        }
+        [Option("testAssemblies", HelpText = "The ';'-separated list of assemblies' names to include the tests from.")]
+        public string TestAssemblies
+        {
+            get; set;
+        }
+
+//        [ParserState]
+//        public IParserState LastParserState
+//        {
+//            get; set;
+//        }
+
+     
+        public OtherParams OtherParams
+        {
             get
             {
-                return _methodIdentifier;
+                var o = new OtherParams();
+                o.DebugFiles = DebugFiles;
+                o.LegacyCreation = LegacyCreation;
+                o.LogLevel = LogLevel;
+                o.NUnitNetVersion = NUnitNetVersion;
+                return o;
             }
         }
 
-        public string ResultsPath
-        {
-            get { return _resultsPath; }
-        }
-
-        public List<string> AssembliesPaths
+        public List<string> AssembliesPathsList
         {
             get
             {
-                return _assembliesPaths;
+                return AssembliesPaths.Split(';').ToList();
             }
         }
 
-        public int WhiteThreads
+        public List<string> TestAssembliesList
         {
-            get { return _whiteThreads; }
-        }
-
-        public int MutantThreads
-        {
-            get { return _mutantThreads; }
-        }
-
-        public string OtherParams
-        {
-            get { return _otherParams; }
+            get
+            {
+                return TestAssemblies.Split(';').ToList();
+            }
         }
     }
 }

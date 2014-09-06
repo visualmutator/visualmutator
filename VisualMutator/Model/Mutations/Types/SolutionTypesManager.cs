@@ -18,6 +18,7 @@
     using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
+    using UsefulTools.Paths;
     using MethodIdentifier = Extensibility.MethodIdentifier;
 
     #endregion
@@ -76,7 +77,7 @@
             ICodePartsMatcher matcher)
         {
             var assemblyNode = new AssemblyNode(module.Name);
-
+            assemblyNode.AssemblyPath = module.Module.Location.ToFilePathAbs();
             System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
             {
                 foreach (INamedTypeDefinition typeDefinition in leafTypes)

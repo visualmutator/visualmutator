@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Infrastructure;
@@ -12,7 +13,7 @@
 
     public interface ITestsSelectStrategy
     {
-        Task<List<TestNodeAssembly>> SelectTests();
+        Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies);
     }
 
     public class AllTestsSelectStrategy : ITestsSelectStrategy
@@ -24,11 +25,11 @@
             _testsTask = testsTask;
         }
 
-        public async Task<List<TestNodeAssembly>> SelectTests()
+        public async Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies)
         {
             var testsRootNode = await _testsTask;
             testsRootNode.IsIncluded = true;
-            return testsRootNode.TestNodeAssemblies.ToList();
+            return testsRootNode.TestNodeAssemblies.Where(a =>testAssemblies.Contains(a.Name)).ToList();
         }
     }
 
@@ -46,15 +47,17 @@
             _testsTask = testsTask;
         }
 
-        public async Task<List<TestNodeAssembly>> SelectTests()
+        public async Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies)
         {
             var finder = new CoveringTestsFinder();
-            List<CciModuleSource> modules = await _assembliesTask;
+            List<CciModuleSource> modules = (await _assembliesTask)
+                .Where(a => testAssemblies.Select(Path.GetFileNameWithoutExtension)
+                .Contains(a.Module.Name)).ToList();
             var coveringTask = finder.FindCoveringTests(modules, _matcher);
 
             var result = await TupleExtensions.WhenAll(Tuple.Create(coveringTask, _testsTask));
             var coveringTests = result.Item1;
-            var testsRootNode = (TestsRootNode)result.Item2;
+            var testsRootNode = result.Item2;
 
             SelectOnlyCoveredTests(testsRootNode, coveringTests);
 

@@ -53,12 +53,11 @@
             {
                 _boot.Initialize();
                 OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
-                optionsModel.WhiteCacheThreadsCount = _parser.WhiteThreads;//1;
-                optionsModel.ProcessingThreadsCount = _parser.MutantThreads;
+                optionsModel.WhiteCacheThreadsCount = _parser.SourceThreads;//1;
+                optionsModel.ProcessingThreadsCount = _parser.MutationThreads;
                 optionsModel.MutantsCacheEnabled = false;
-                optionsModel.OtherParams = _parser.OtherParams;
-                var strin = optionsModel.ParsedParams;
-                Console.WriteLine(strin.ToString());
+                optionsModel.ParsedParams = _parser.OtherParams;
+                Console.WriteLine(_parser.OtherParams.ToString());
                 _boot.AppController.OptionsManager.WriteOptions(optionsModel);
 
               //  _connection.Build();
@@ -72,11 +71,11 @@
                     tcs.SetResult(new object());
                 });
 
-                await _boot.AppController.MainController.RunMutationSession(methodIdentifier, true);
+                await _boot.AppController.MainController.RunMutationSession(methodIdentifier, _parser.TestAssembliesList, true);
 
                 await tcs.Task;
 
-                await _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsPath);
+                await _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsXml);
                 //                for (int i = 0; i < 1000; i++)
                 //                {
                 //                    _boot.AppController.MainController.RunMutationSessionAuto2(methodIdentifier);

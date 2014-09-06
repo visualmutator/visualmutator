@@ -31,7 +31,7 @@
 
         public IEnumerable<FilePathAbsolute> GetProjectAssemblyPaths()
         {
-           return _parser.AssembliesPaths.Select(a => a.ToFilePathAbs());
+           return _parser.AssembliesPathsList.Select(a => a.ToFilePathAbs()).Concat(_parser.TestAssembliesList.Select(a => a.ToFilePathAbs()));
         }
 
         public string GetTempPath()

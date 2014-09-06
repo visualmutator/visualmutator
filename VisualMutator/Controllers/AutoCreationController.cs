@@ -27,6 +27,7 @@
     using Model.Tests.TestsTree;
     using UsefulTools.Core;
     using UsefulTools.DependencyInjection;
+    using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
     using UsefulTools.Wpf;
     using ViewModels;
@@ -85,7 +86,7 @@
             get; set;
         }
 
-        public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate = null, bool auto = false)
+        public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate = null, List<string> testAssemblies = null, bool auto = false)
         {
             _sessionCreationWindowShowTime = DateTime.Now;
 
@@ -116,7 +117,7 @@
                 matcher = new AllMatcher();
             }
 
-            var testsSelecting = testsSelector.SelectTests();
+            var testsSelecting = testsSelector.SelectTests(testAssemblies);
 
             var t1 = sessionCreator.GetOperators();
 
@@ -134,7 +135,8 @@
                 {
                     _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded());
                 }
-                _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
+                var assembliesToMutate = task.Result.Where(a => !testAssemblies.ToEmptyIfNull().Contains(a.AssemblyPath.Path)).ToList();
+                _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assembliesToMutate);
                 _whiteSource = assembliesTask.Result;
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 

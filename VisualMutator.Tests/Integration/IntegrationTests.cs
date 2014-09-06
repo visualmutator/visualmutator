@@ -260,7 +260,7 @@
                                   new List<TypeIdentifier>(),
                                   method.InList()),
                               SelectedOperators = operators,
-                              TestAssemblies = strategy.SelectTests().Result
+                              TestAssemblies = strategy.SelectTests(null).Result
                           };
             _kernel.Bind<MutationSessionChoices>().ToConstant(choices);
 
