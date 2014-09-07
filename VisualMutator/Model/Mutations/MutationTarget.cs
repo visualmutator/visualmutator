@@ -37,7 +37,7 @@
 
         public override string ToString()
         {
-            return string.Format("MutationTarget: {0}", Name);
+            return string.Format("MutationTarget: {0}, {1}", Name, ProcessingContext == null ? "" :  ProcessingContext.Descriptor.ToString());
         }
     }
 }

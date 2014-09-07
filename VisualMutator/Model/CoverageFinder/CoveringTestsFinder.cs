@@ -7,6 +7,7 @@
     using Exceptions;
     using log4net;
     using Microsoft.Cci;
+    using Microsoft.Cci.ILToCodeModel;
     using Mutations.Types;
     using UsefulTools.ExtensionMethods;
 
@@ -16,24 +17,23 @@
 
         public Task<List<MethodIdentifier>> FindCoveringTests(List<CciModuleSource> modules, ICodePartsMatcher matcher)
         {
-            return Task.WhenAll(modules.Select(module => 
-                    module.Modules.Select(m => 
-                    Task.Run(() => FindCoveringTests(m, matcher)))).Flatten())
+            var tt = modules.Select(module => Task.Run(() => FindCoveringTests(module, matcher)));
+            return Task.WhenAll(tt)
                         .ContinueWith(t => t.Result.Flatten().ToList());
         }
 
-        private List<MethodIdentifier> FindCoveringTests(IModuleInfo module, ICodePartsMatcher targetsMatcher)
+        private List<MethodIdentifier> FindCoveringTests(CciModuleSource module, ICodePartsMatcher targetsMatcher)
         {
-            _log.Debug("Scanning " + module.Name + " for selected covering tests. ");
+            _log.Debug("Scanning " + module.Module.Name + " for selected covering tests. ");
             var visitor = new CoveringTestsVisitor(targetsMatcher);
 
             var traverser = new CodeTraverser
             {
                 PreorderVisitor = visitor
             };
-
-            traverser.Traverse(module.Module);
-            _log.Debug("Finished scanning module"+module.Name + ". Found " + visitor.FoundTests.Count+
+            
+            traverser.Traverse(module.Decompile(module.Module));
+            _log.Debug("Finished scanning module"+ module.Module.Name + ". Found " + visitor.FoundTests.Count+
                 ". Scanned total: " + visitor.ScannedMethods + " methods and "+
                 visitor.ScannedMethodCalls+" method calls.");
 

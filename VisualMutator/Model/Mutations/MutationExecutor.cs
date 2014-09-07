@@ -84,7 +84,7 @@
 
                     var visitor = new VisualCodeVisitor(mutationOperator.Info.Id, operatorVisitor, module.Module.Module);
 
-                    var traverser = new VisualCodeTraverser(_filter, visitor);
+                    var traverser = new VisualCodeTraverser(_filter, visitor, module);
 
                     traverser.Traverse(module.Module.Module);
                     visitor.PostProcess();
@@ -108,9 +108,11 @@
 
         public async Task<MutationResult> ExecuteMutation(Mutant mutant, CciModuleSource moduleSource)
         {
-            
+            var type = new TypeIdentifier((INamedTypeDefinition) mutant.MutationTarget.ProcessingContext.Type.Object);
+            var method = new MethodIdentifier((IMethodDefinition) mutant.MutationTarget.ProcessingContext.Method.Object);
+            var filter = new MutationFilter(type.InList(), method.InList());
 
-            _log.Debug("ExecuteMutation in object: " + ToString() + GetHashCode());
+            _log.Debug("ExecuteMutation of: " + type+" - " +method );
             IMutationOperator mutationOperator = mutant.MutationTarget.OperatorId == null ? new IdentityOperator() :
                 _mutOperators.Single(m => mutant.MutationTarget.OperatorId == m.Info.Id);
             var cci = moduleSource;
@@ -121,15 +123,15 @@
                 var module = moduleSource.Modules.Single();
 
                 var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                        _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
-                        module.Module, mutationOperator.Info.Id, null);
-                var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
+                    _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
+                    module.Module, mutationOperator.Info.Id);
+                var traverser2 = new VisualCodeTraverser(_filter, visitorBack, moduleSource);
                 traverser2.Traverse(module.Module);
                 visitorBack.PostProcess();
                 var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
                 var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                    visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
+                    visitorBack.SharedAstObjects, _filter, operatorCodeRewriter, traverser2);
 
                 operatorCodeRewriter.MutationTarget =
                     new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
@@ -177,15 +179,15 @@
                 {
                     var module = cci.Module;
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                            _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
-                            module.Module, mutationOperator.Info.Id, null);
-                    var traverser2 = new VisualCodeTraverser(_filter, visitorBack);
+                        _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
+                        module.Module, mutationOperator.Info.Id);
+                    var traverser2 = new VisualCodeTraverser(_filter, visitorBack, cci);
                     traverser2.Traverse(module.Module);
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
                     var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
+                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter, traverser2);
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);

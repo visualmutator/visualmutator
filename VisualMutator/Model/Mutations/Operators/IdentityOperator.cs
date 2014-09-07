@@ -33,7 +33,7 @@ namespace VisualMutator.Model.Mutations.Operators
         class Visitor :OperatorCodeVisitor
         {
             private bool _found;
-            public override void Visit(IAddition addition)
+            public override void Visit(ILessThan addition)
             {
                 if (!_found)
                 {
