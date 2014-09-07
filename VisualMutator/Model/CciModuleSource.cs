@@ -180,7 +180,7 @@
             PdbReader pdbReader;
             TryGetPdbReader(module, out pdbReader);
 
-
+            module = new MetadataDeepCopier(_host).Copy(module);
           //  var decompiled = Decompiler.GetCodeModelFromMetadataModel(_host, module, pdbReader,
           //      DecompilerOptions.None);
             return module;
@@ -287,6 +287,14 @@
             //ModuleInfo moduleInfo = (ModuleInfo) Modules.Single();
             return new CodeDeepCopier(Host);//, moduleInfo.SourceLocationProvider, moduleInfo.LocalScopeProvider);
 
+        }
+        public Assembly Copy(ModuleInfo module)
+        {
+            return new MetadataDeepCopier(_host).Copy(module.Module);
+        }
+        public Assembly Decompile(ModuleInfo module)
+        {
+            return Decompiler.GetCodeModelFromMetadataModel(_host, module.Module, module.PdbReader, DecompilerOptions.None);
         }
     }
 }

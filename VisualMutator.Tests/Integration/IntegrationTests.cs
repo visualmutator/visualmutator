@@ -48,10 +48,10 @@
             var cci = new CciModuleSource(TestProjects.MiscUtil);
             var choices = new MutationSessionChoices();
             var tt = cci.Module.Module.GetAllTypes();
-            var type = (NamedTypeDefinition)cci.Module.Module.GetAllTypes().Single(t => t.Name.Value == "Range");
-            var method = new MethodIdentifier(type.Methods.First(m => m.Name.Value == "Contains"));
-
-            choices.SelectedOperators.Add(new ROR_RelationalOperatorReplacement());
+          //  var type = (NamedTypeDefinition)cci.Module.Module.GetAllTypes().Single(t => t.Name.Value == "Range");
+           // var method = new MethodIdentifier(type.Methods.First(m => m.Name.Value == "Contains"));
+            MethodIdentifier method = null;
+            choices.SelectedOperators.Add(new IdentityOperator2());
             choices.Filter = method == null ? MutationFilter.AllowAll() :
                                  new MutationFilter(
                                   new List<TypeIdentifier>(),

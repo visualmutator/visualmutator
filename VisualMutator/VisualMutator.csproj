@@ -238,6 +238,7 @@
     <Compile Include="Controllers\OptionsController.cs" />
     <Compile Include="Controllers\SessionCreator.cs" />
     <Compile Include="Controllers\SessionEventArgs.cs" />
+    <Compile Include="EnumerableUtils.cs" />
     <Compile Include="Infrastructure\TupleExtensions.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\CustomTraceListener.cs" />

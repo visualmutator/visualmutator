@@ -4,13 +4,18 @@
 
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using Extensibility;
     using log4net;
     using Microsoft.Cci;
+    using Microsoft.Cci.ILToCodeModel;
     using Microsoft.Cci.MutableCodeModel;
     using UsefulTools.ExtensionMethods;
+    using MethodBody = Microsoft.Cci.MutableCodeModel.MethodBody;
+    using SourceMethodBody = Microsoft.Cci.MutableCodeModel.SourceMethodBody;
 
     #endregion
 
@@ -35,24 +40,24 @@
         private readonly IOperatorCodeRewriter _rewriter;
         private readonly AstFormatter _formatter;
         private bool foundAtLeastOneMatchingObject;
+        private VisualCodeTraverser _traverser;
 
         public AstFormatter Formatter
         {
             get { return _formatter; }
         }
 
-        public VisualCodeRewriter(IMetadataHost host, 
-                                List<AstNode> capturedAstObjects,
-                                List<AstNode> sharedAstObjects, 
-                                MutationFilter filter, 
-                                IOperatorCodeRewriter rewriter)
+        public VisualCodeRewriter(IMetadataHost host, List<AstNode> capturedAstObjects, 
+            List<AstNode> sharedAstObjects, MutationFilter filter, 
+            IOperatorCodeRewriter rewriter, VisualCodeTraverser traverser)
             : base(host, rewriter)
         {
             _capturedASTObjects = capturedAstObjects;
             _sharedASTObjects = sharedAstObjects;
             _filter = filter;
             _rewriter = rewriter;
-        //    _rewriter.Parent = this;
+            _traverser = traverser;
+            //    _rewriter.Parent = this;
             _formatter = new AstFormatter();
         }
 
@@ -65,7 +70,8 @@
         /// <param name="obj"></param>
         /// <returns>True if allowed to rewrite the current object</returns>
         protected override bool Process<T>(T obj)
-        {
+        {//File.AppendAllText("C:\\PLIKI\\process-logs.txt", "\nProcessing object: " + Formatter.Format(obj)+"\n");
+         //   _log.Debug("Processing object: " + Formatter.Format(obj));
             string typeName = typeof(T).Name;
             //We are checking if it is the same object (of course) and if 
             var newList = _capturedASTObjects.WhereNot(t => t.Object == obj).ToList();
@@ -126,5 +132,24 @@
             }
         }
 
+        public override void RewriteChildren(MethodBody methodBody)
+        {
+            base.RewriteChildren(methodBody);
+        }
+
+        public override IMethodBody Rewrite(IMethodBody methodBody)
+        {
+            SourceMethodBody smb;
+          //  _log.Debug("Tring to rewrite: : " + methodBody.MethodDefinition);
+            if (_traverser.MethodBodies.TryGetValue(methodBody, out smb))
+            {
+                _log.Debug("Rewriting SourceMethodBody: "+ smb);
+                return Rewrite(smb);
+            }
+            else
+            {
+                return base.Rewrite(methodBody);
+            }
+        }
     }
 }

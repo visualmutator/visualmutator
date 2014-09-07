@@ -123,15 +123,15 @@
                 var module = moduleSource.Modules.Single();
 
                 var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                        _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
-                        module.Module, mutationOperator.Info.Id);
+                    _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
+                    module.Module, mutationOperator.Info.Id);
                 var traverser2 = new VisualCodeTraverser(_filter, visitorBack, moduleSource);
                 traverser2.Traverse(module.Module);
                 visitorBack.PostProcess();
                 var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
                 var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                    visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
+                    visitorBack.SharedAstObjects, _filter, operatorCodeRewriter, traverser2);
 
                 operatorCodeRewriter.MutationTarget =
                     new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);
@@ -179,15 +179,15 @@
                 {
                     var module = cci.Module;
                     var visitorBack = new VisualCodeVisitorBack(mutant.MutationTarget.InList(),
-                            _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
-                            module.Module, mutationOperator.Info.Id);
+                        _sharedTargets.GetValues(mutationOperator, returnEmptySet: true),
+                        module.Module, mutationOperator.Info.Id);
                     var traverser2 = new VisualCodeTraverser(_filter, visitorBack, cci);
                     traverser2.Traverse(module.Module);
                     visitorBack.PostProcess();
                     var operatorCodeRewriter = mutationOperator.CreateRewriter();
 
                     var rewriter = new VisualCodeRewriter(cci.Host, visitorBack.TargetAstObjects,
-                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter);
+                        visitorBack.SharedAstObjects, _filter, operatorCodeRewriter, traverser2);
 
                     operatorCodeRewriter.MutationTarget =
                         new UserMutationTarget(mutant.MutationTarget.Variant.Signature, mutant.MutationTarget.Variant.AstObjects);

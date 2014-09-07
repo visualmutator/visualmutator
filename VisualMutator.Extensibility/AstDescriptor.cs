@@ -4,7 +4,7 @@
 
     public interface IAstDescriptor
     {
-
+        bool IsContainedIn(AstDescriptor another);
     }
     public struct DummyDescriptor : IAstDescriptor
     {
@@ -22,6 +22,11 @@
         public override int GetHashCode()
         {
             return 0;
+        }
+
+        public bool IsContainedIn(AstDescriptor another)
+        {
+            return false;
         }
 
         public static bool operator ==(DummyDescriptor left, DummyDescriptor right)
@@ -82,6 +87,11 @@
         public static bool operator !=(AstDescriptor left, AstDescriptor right)
         {
             return !Equals(left, right);
+        }
+
+        public bool IsContainedIn(AstDescriptor another)
+        {
+            return another == this || _significant.IsContainedIn(another);
         }
 
         public override string ToString()

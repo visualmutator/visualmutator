@@ -55,7 +55,7 @@
         {
             
             _currentDescriptor = _currentDescriptor.GoDown();
-            _log.Debug("Going down on "+new TypeIdentifier(namespaceTypeDefinition)+" - "+_currentDescriptor);
+         //   _log.Debug("Going down on "+new TypeIdentifier(namespaceTypeDefinition)+" - "+_currentDescriptor);
             _currentTypeNode = new AstNode(_currentNode.Context, namespaceTypeDefinition);
             
         }
@@ -68,7 +68,7 @@
         public void MethodEnter(IMethodDefinition method)
         {
             _currentDescriptor = _currentDescriptor.GoDown();
-            _log.Debug("Going down on " + new MethodIdentifier(method) + " - " + _currentDescriptor);
+         //   _log.Debug("Going down on " + new MethodIdentifier(method) + " - " + _currentDescriptor);
             _currentMethodNode = new AstNode(_currentNode.Context, method);
           
         }
@@ -83,10 +83,11 @@
             _currentBody = method;
             _currentDescriptor = _currentDescriptor.GoDown();
         }
-        public void MethodBodyExit(ISourceMethodBody method)
+        public AstDescriptor MethodBodyExit(ISourceMethodBody method)
         {
             _currentBody = null;
             _currentDescriptor = _currentDescriptor.GoUp();
+            return _currentDescriptor;
         }
         public AstDescriptor GetDescriptorForCurrent()
         {

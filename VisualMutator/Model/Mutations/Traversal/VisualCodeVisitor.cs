@@ -64,9 +64,9 @@
             _processor.MethodBodyEnter(method);
         }
 
-        public void MethodBodyExit(ISourceMethodBody method)
+        public AstDescriptor MethodBodyExit(ISourceMethodBody method)
         {
-            _processor.MethodBodyExit(method);
+           return _processor.MethodBodyExit(method);
            // _currentMethodObj = null;
         }
         public void MethodEnter(IMethodDefinition method)
