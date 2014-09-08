@@ -91,7 +91,7 @@
             {
                 sw.Restart();
 
-                var mergedTargets = _mutationExecutor.FindTargets(module);
+                var mergedTargets = _mutationExecutor.FindTargets(module, subProgress);
                 var assemblyNode = BuildMutantsTree(module.Module.Name, mergedTargets);
 
                 _log.Info("Found total of: " + mergedTargets.Values.Count() + " mutation targets in " + assemblyNode.Name);

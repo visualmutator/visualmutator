@@ -57,9 +57,6 @@ namespace VisualMutator.Model.Tests
         }
     
 
-        public long RunTestsTimeRawMiliseconds { get; set; }
-
-        public long LoadTestsTimeRawMiliseconds { get; set; }
 
         public Exception Exception { get; set; }
         public DateTime TestingEnd { get; set; }

@@ -25,11 +25,19 @@
             _testsTask = testsTask;
         }
 
-        public async Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies)
+        public async Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies = null)
         {
             var testsRootNode = await _testsTask;
             testsRootNode.IsIncluded = true;
-            return testsRootNode.TestNodeAssemblies.Where(a =>testAssemblies.Contains(a.Name)).ToList();
+            if(testAssemblies != null)
+            {
+                return testsRootNode.TestNodeAssemblies.Where(a => 
+                    testAssemblies.Select(Path.GetFileNameWithoutExtension).Contains(a.Name)).ToList();
+            }
+            else
+            {
+                return testsRootNode.TestNodeAssemblies.ToList();
+            }
         }
     }
 
@@ -47,11 +55,11 @@
             _testsTask = testsTask;
         }
 
-        public async Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies)
+        public async Task<List<TestNodeAssembly>> SelectTests(List<string> testAssemblies = null)
         {
             var finder = new CoveringTestsFinder();
             List<CciModuleSource> modules = (await _assembliesTask)
-                .Where(a => testAssemblies.Select(Path.GetFileNameWithoutExtension)
+                .Where(a => testAssemblies == null || testAssemblies.Select(Path.GetFileNameWithoutExtension)
                 .Contains(a.Module.Name)).ToList();
             var coveringTask = finder.FindCoveringTests(modules, _matcher);
 

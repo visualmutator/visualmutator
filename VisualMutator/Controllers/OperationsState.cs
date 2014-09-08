@@ -23,7 +23,6 @@
 
         MutationFinished,
 
-        SavingMutants,
 
     }
 }

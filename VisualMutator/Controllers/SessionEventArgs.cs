@@ -177,7 +177,11 @@
         {
         }
 
-       
+
+        public string Description
+        {
+            get; set;
+        }
 
         public int NumberOfAllMutantsTested
         {
@@ -192,5 +196,6 @@
             get;
             set;
         }
+
     }
 }

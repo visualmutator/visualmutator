@@ -197,9 +197,13 @@
             {
                 throw new TestingErrorsException();
             }
+            await Task.Run(() =>
+            {
+                CreateMutants();
+                RunTests();
 
-            CreateMutants();
-            RunTests();
+            });
+
         }
         public async Task RunMutationSession(IObservable<ControlEvent> controlSource)
         {
@@ -243,7 +247,7 @@
             _sessionState = SessionState.Finished;
             SessionEndTime = DateTime.Now;
 
-            RaiseMinorStatusUpdate(OperationsState.Testing, 100);
+            RaiseMinorStatusUpdate(OperationsState.Finished, 100);
             
         }
 

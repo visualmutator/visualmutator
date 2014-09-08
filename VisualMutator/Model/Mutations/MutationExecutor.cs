@@ -24,7 +24,7 @@
 
     public interface IMutationExecutor
     {
-        MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module);
+        MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module, ProgressCounter subProgress);
         Task<MutationResult> ExecuteMutation(Mutant mutant, CciModuleSource moduleSource);
         Task<MutationResult> ExecuteMutation(Mutant mutant, List<CciModuleSource> moduleSource);
     }
@@ -33,7 +33,7 @@
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly MutationSessionChoices _choices;
+        private readonly CommonServices _svc;
         private readonly IOperatorUtils _operatorUtils;
         private readonly OptionsModel _options;
         private readonly MutationFilter _filter;
@@ -42,14 +42,15 @@
 
         public MutationExecutor(
             OptionsModel options,
-        MutationSessionChoices choices
+        MutationSessionChoices choices, 
+        CommonServices svc
         )
         {
-            _choices = choices;
+            _svc = svc;
             _operatorUtils = new OperatorUtils();
             _options = options;
-            _filter = _choices.Filter;
-            _mutOperators = _choices.SelectedOperators;
+            _filter = choices.Filter;
+            _mutOperators = choices.SelectedOperators;
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
         }
        
@@ -64,7 +65,7 @@
         }
 
 
-        public MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module)
+        public MultiDictionary<IMutationOperator, MutationTarget> FindTargets(CciModuleSource module, ProgressCounter subProgress)
         {
             _log.Info("Finding targets for module: " + module.Module.Name);
             _log.Info("Using mutation operators: " + _mutOperators.Select(_ => _.Info.Id)
@@ -72,10 +73,12 @@
 
             var mergedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
             _sharedTargets = new MultiDictionary<IMutationOperator, MutationTarget>();
+            subProgress.Initialize(_mutOperators.Count);
             foreach (var mutationOperator in _mutOperators)
             {
                 try
                 {
+                    subProgress.Progress();
                     var ded = mutationOperator.CreateVisitor();
                     IOperatorCodeVisitor operatorVisitor = ded;
                     operatorVisitor.Host = module.Host;
@@ -98,7 +101,8 @@
                 }
                 catch (Exception e)
                 {
-                    throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutationOperator.Info.Name), e);
+                    _svc.Logging.ShowError("Finding targets operation failed in operator: {0}. Exception: {1}".Formatted(mutationOperator.Info.Name, e.ToString()));
+                    //throw new MutationException("Finding targets operation failed in operator: {0}.".Formatted(mutationOperator.Info.Name), e);
                 }
             }
             return mergedTargets;

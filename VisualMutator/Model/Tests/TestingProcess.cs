@@ -23,6 +23,7 @@
         private int _mutantsKilledCount;
         private readonly WorkerCollection<Mutant> _mutantsWorkers;
         private int _testedMutantsCount;
+        private bool _stopping;
 
 
         public TestingProcess(
@@ -48,15 +49,19 @@
 
         public void RaiseTestingProgress()
         {
+            
             _log.Info("Testing progress: all:"+ _allMutantsCount +
                 ", tested: "+ _testedNonEquivalentMutantsCount
                 +"killed: "+ _mutantsKilledCount);
-
             _sessionEventsSubject.OnNext(new TestingProgressEventArgs(OperationsState.Testing)
             {
                 NumberOfAllMutants = _allMutantsCount,
                 NumberOfAllMutantsTested = _testedMutantsCount,
+                Description = ("Mutants tested: {0}/{1} " + (_stopping ? "(Stop request)" : ""))
+                             .Formatted(_testedMutantsCount + 1,
+                                 _allMutantsCount),
             });
+
             _sessionEventsSubject.OnNext(new MutationScoreInfoEventArgs(OperationsState.Testing)
             {
                 NumberOfAllNonEquivalent = _testedNonEquivalentMutantsCount,
@@ -67,10 +72,12 @@
         public void Stop()
         {
             _mutantsWorkers.Stop();
+            _stopping = true;
         }
 
         public void Start(Action endCallback)
         {
+            _stopping = false;
             _mutantsWorkers.Start(endCallback);
         }
 
@@ -90,10 +97,10 @@
             }
             lock (this)
             {
+                RaiseTestingProgress();
                 _testedNonEquivalentMutantsCount++;
                 _testedMutantsCount++;
                 _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
-                RaiseTestingProgress();
             }
         }
 

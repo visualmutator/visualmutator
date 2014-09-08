@@ -56,6 +56,11 @@
 
         private static bool TryGetCompatibileAccessor(IMethodDefinition resolvedMethod, out IMethodDefinition accessor)
         {
+            if(resolvedMethod == null || resolvedMethod.ContainingTypeDefinition == null || resolvedMethod.ContainingTypeDefinition.Properties == null)
+            {
+                accessor = default(IMethodDefinition);
+                return false;
+            }
             var result = resolvedMethod.ContainingTypeDefinition.Properties
                 .FirstOrDefault(p => p.Getter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
                 && TypeHelper.ParameterListsAreEquivalent(p.Getter.Parameters, resolvedMethod.Parameters));

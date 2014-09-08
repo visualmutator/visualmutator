@@ -91,6 +91,8 @@
 
             progress.Initialize(mutants.Count * multiplier);
 
+            
+
             var mutantsNode = new XElement("Mutants",
                 new XAttribute("Total", mutants.Count),
                 new XAttribute("Live", live.Count),

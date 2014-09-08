@@ -258,12 +258,11 @@
                 _viewModel.OperationsStateDescription = FunctionalExt.ValuedSwitch<OperationsState, string>(state)
                     .Case(OperationsState.None, "")
                     .Case(OperationsState.TestingPaused, "Paused")
-                    .Case(OperationsState.Finished, "Finished")
+                   // .Case(OperationsState.Finished, "Finished")
                     .Case(OperationsState.PreCheck, "Pre-check...")
                     .Case(OperationsState.Mutating, "Creating mutants...")
                     .Case(OperationsState.Pausing, "Pausing...")
                     .Case(OperationsState.Stopping, "Stopping...")
-                    .Case(OperationsState.SavingMutants, "Saving mutants...")
                     .Case(OperationsState.Error, "Error occurred.")
                     .GetResult();
             }
@@ -311,9 +310,7 @@
                  .Subscribe(args =>
                  {
                          _viewModel.OperationsState = OperationsState.Testing;
-                         _viewModel.OperationsStateDescription = "Mutants tested: {0}/{1}"
-                             .Formatted(args.NumberOfAllMutantsTested + 1,
-                                 args.NumberOfAllMutants);
+                     _viewModel.OperationsStateDescription = args.Description;
 
                         _viewModel.Progress = args.NumberOfAllMutantsTested.AsPercentageOf(args.NumberOfAllMutants);
                  }),

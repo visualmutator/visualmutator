@@ -199,7 +199,6 @@
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Infrastructure\NinjectParamBindingsTests.cs" />
     <Compile Include="Integration\IntegrationTests.cs" />
-    <Compile Include="Integration\Vsitor.cs" />
     <Compile Include="Mutations\CciMethodMatchingTests.cs" />
     <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
