@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+    using System.Security.Policy;
     using Extensibility;
     using log4net;
     using Microsoft.Cci;
@@ -88,6 +89,9 @@
         {
             _processor.TypeExit(namespaceTypeDefinition);
         }
+
+        private static HashSet<string> _conflicts = new HashSet<string>();
+
         public void MarkMutationTarget<T>(T obj, IList<MutationVariant> variants )
         {
             Func<int> genId = () => id[0]++;
@@ -95,6 +99,7 @@
             {
                 throw new ArgumentException("MarkMutationTarget must be called on current Visit method argument");
             }
+
              _log.Debug("MarkMutationTarget: " + _processor.GetDescriptorForCurrent() + " - " + Formatter.Format(obj)+" : " + obj.GetHashCode());
             string groupname = "#" + (groupCounter++);//+" - "+_formatter.Format(obj);
             foreach (var mutationVariant in variants)
@@ -107,7 +112,14 @@
                     GroupName = groupname,
                     OperatorId = _operatorId,
                 };
-
+                if(_conflicts.Contains(mutationTarget.Id))
+                {
+                    mutationTarget.Id = mutationTarget.Id + "-conflict:" + DateTime.Now;
+                }
+                else
+                {
+                    _conflicts.Add(mutationTarget.Id);
+                }
                 if (mutationTarget.ProcessingContext.Method != null)
                 {
                     mutationTarget.MethodRaw = (IMethodDefinition) mutationTarget.ProcessingContext.Method.Object;

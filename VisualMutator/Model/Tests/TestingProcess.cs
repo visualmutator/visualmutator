@@ -58,7 +58,7 @@
                 NumberOfAllMutants = _allMutantsCount,
                 NumberOfAllMutantsTested = _testedMutantsCount,
                 Description = ("Mutants tested: {0}/{1} " + (_stopping ? "(Stop request)" : ""))
-                             .Formatted(_testedMutantsCount + 1,
+                             .Formatted(_testedMutantsCount ,
                                  _allMutantsCount),
             });
 
@@ -85,6 +85,7 @@
         {
             try
             {
+                _log.Info("Testing process for mutant: "+ mutant.Id);
                 IObjectRoot<TestingMutant> testingMutant = _mutantTestingFactory.CreateWithParams(_sessionEventsSubject, mutant);
                 await testingMutant.Get.RunAsync();
             }
@@ -97,10 +98,11 @@
             }
             lock (this)
             {
-                RaiseTestingProgress();
+                
                 _testedNonEquivalentMutantsCount++;
                 _testedMutantsCount++;
                 _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
+                RaiseTestingProgress();
             }
         }
 

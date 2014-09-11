@@ -82,50 +82,66 @@
         //TODO:test error behaviour
         public async Task<MutationResult> GetMutatedModulesAsync(Mutant mutant)
         {
-            _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
-            _log.Info("Request to cache for mutant: " + mutant.Id);
-            bool creating = false;
-            MutationResult result;
-            if (_disableCache || !_cache.Contains(mutant.Id))
+            try
             {
-                Task<MutationResult> resultTask;
-                lock (this)
+                _log.Debug("GetMutatedModules in object: " + ToString() + GetHashCode());
+                _log.Info("Request to cache for mutant: " + mutant.Id);
+                bool creating = false;
+                MutationResult result;
+                if (_disableCache || !_cache.Contains(mutant.Id))
                 {
-                    ConcurrentBag<TaskCompletionSource<MutationResult>> val;
-                    if (_map.TryGetValue(mutant.Id, out val))
+                    _log.Debug("Cache#Mutant " + mutant.Id + " not yet in cache.");
+                    Task<MutationResult> resultTask;
+                    ConcurrentBag<TaskCompletionSource<MutationResult>> awaitQueue;
+                    if (_map.TryGetValue(mutant.Id, out awaitQueue))
                     {
+                        _log.Debug("Cache#Mutant " + mutant.Id + " is being awaited for. Subscribing.");
                         var tcs = new TaskCompletionSource<MutationResult>();
-                        val.Add(tcs);
+                        awaitQueue.Add(tcs);
                         resultTask = tcs.Task;
                     }
                     else
                     {
+                        _log.Debug("Cache#Mutant " + mutant.Id + " is not waited for. Creating subscriber.");
                         _map.TryAdd(mutant.Id, new ConcurrentBag<TaskCompletionSource<MutationResult>>());
                         resultTask = CreateNew(mutant);
                         creating = true;
                     }
-                }
-                result = await resultTask;
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Task");
+                    result = await resultTask;
 
-                if (creating)
-                {
-                    lock(this)
+                    if (creating)
                     {
+                        _log.Debug("Cache#Mutant " + mutant.Id + ": Creation complete. Trying to remove subscribers queue");
                         ConcurrentBag<TaskCompletionSource<MutationResult>> awaiters;
-                        _map.TryRemove(mutant.Id, out awaiters);
-                        foreach (var tcs in awaiters)
+                        if(_map.TryRemove(mutant.Id, out awaiters))
                         {
-                            tcs.SetResult(result);
+                            _log.Debug("Cache#Mutant " + mutant.Id + string.Format(": Subscribers queue removed. Setting result on {0} subscribers", awaiters.Count));
+                            foreach (var tcs in awaiters)
+                            {
+                                tcs.SetResult(result);
+                            }
+                        }
+                        else
+                        {
+                            _log.Debug("Cache#Mutant " + mutant.Id + ": Could not remove subscribers queue");
                         }
                     }
+                    return result;
+                }
+                else
+                {
+                    _log.Debug("Cache contains value for mutant " + mutant.Id);
+                    result = (MutationResult) _cache.Get(mutant.Id);
                 }
                 return result;
             }
-            else
+            catch (Exception e)
             {
-                result = (MutationResult) _cache.Get(mutant.Id);
+                _log.Error(e);
+                throw;
             }
-            return result;
+           
         }
 
         public void Release(MutationResult mutationResult)
@@ -185,19 +201,21 @@
             
                 if(_options.ParsedParams.LegacyCreation)
                 {
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting white cache.");
                     var cci = await _whiteCache.GetWhiteModulesAsyncOld();
 
-
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation start.");
                     result = await _mutationExecutor.ExecuteMutation(mutant, cci);
-
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation finished.");
                 }
                 else
                 {
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting white cache.");
                     var cci = await _whiteCache.GetWhiteSourceAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
-
-
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": taken source: "+cci.Guid);
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation start.");
                     result = await _mutationExecutor.ExecuteMutation(mutant, cci);
-
+                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation finished.");
                 }
 
 

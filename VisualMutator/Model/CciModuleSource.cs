@@ -114,6 +114,8 @@
             }
         }
 
+        public Guid Guid { get; set; }
+
         public void Dispose()
         {
             Dispose(true);

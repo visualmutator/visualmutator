@@ -16,21 +16,33 @@
         private readonly int _maxCount;
         private int _currentCount;
         private readonly Func<T, Task> _workAction;
-
+        private readonly Timer _watchdog;
         public WorkerCollection(ICollection<T> items, int maxCount, Func<T, Task> workAction)
         {
             _maxCount = maxCount;
             _workAction = workAction;
             _toProcessList = new LinkedList<T>(items);
+            _watchdog = new Timer(o =>
+            {
+                _log.Info("Testing process inactive for too long. Watchdog firing!");
+                lock (this)
+                {
+                    _currentCount = 0;
+                    Monitor.Pulse(this);
+                }
+            } );
+            
         }
 
         public void Stop()
         {
+            _watchdog.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
             _requestedStop = true;
         }
 
         public void Start(Action endCallback)
         {
+            _watchdog.Change(30000, 30000);
             _requestedStop = false;
 
             bool emptyStop = false;
@@ -60,7 +72,8 @@
                         _workAction(item)
                             .ContinueWith(t =>
                             {
-                                if(t.Exception != null)
+                                _watchdog.Change(30000, 30000);
+                                if (t.Exception != null)
                                 {
                                     _log.Error(t.Exception);
                                 }

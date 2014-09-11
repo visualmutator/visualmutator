@@ -15,6 +15,7 @@ namespace VisualMutator.Model.StoringMutants
     using Extensibility;
     using Infrastructure;
     using log4net;
+    using stdole;
 
     public class WhiteCache : IDisposable, IWhiteSource
     {
@@ -102,6 +103,8 @@ namespace VisualMutator.Model.StoringMutants
                     var task = filesClone.Assemblies.Select(a =>
                     {
                         var cci = new CciModuleSource(a.Path);
+                        cci.Guid = Guid.NewGuid();
+                        _log.Debug("Whitecache#" + a.FileName + ": Created initial source: "+cci.Guid);
                         return cci;
                     }).ToList();
 
@@ -156,15 +159,29 @@ namespace VisualMutator.Model.StoringMutants
             foreach (var path in projectFilesClone.Assemblies)
             {
                 var cci = new CciModuleSource(path.Path);
+                
                 _moduleNameToFileName.Add(cci.Modules.Single().Name, path.FileName);
                 _fileNameToModuleName.Add(path.FileName, cci.Modules.Single().Name);
                 var queue = new BlockingCollection<CciModuleSource>(20) {cci};
                 _whiteCaches.TryAdd(path.FileName, queue);
+                _log.Debug("Whitecache#" + PrintCacheState(path.FileName) + "Initializing module name.");
             }
             _paths.Add(projectFilesClone);
             _initialized = true;
             NotifyClients();
             
+        }
+
+        private string PrintCacheState(string key)
+        {
+            if (_whiteCaches.ContainsKey(key))
+            {
+                return string.Format("[{0}]({1}/{2}): ", key, _whiteCaches[key].Count, _maxCount);
+            }
+            else
+            {
+                return "notfound:" + key;
+            }
         }
 
         private void TryAdd(ProjectFilesClone item1)
@@ -173,13 +190,16 @@ namespace VisualMutator.Model.StoringMutants
             {
                 if (whiteCach.Value.Count < _maxCount)
                 {
+                    var guid = Guid.NewGuid();
+                    _log.Debug("Whitecache#"+ PrintCacheState(whiteCach.Key) + "Add started.");
                     var filePath = item1.Assemblies.Single(_ => _.FileName == whiteCach.Key);
                     var cci = new CciModuleSource(filePath.Path);
-                        
+                    cci.Guid = guid;
+                    
                     whiteCach.Value.Add(cci);
+                    _log.Debug("Whitecache#" + PrintCacheState(whiteCach.Key) + "Add finished: " + guid);
                 }
             }
-            
         }
 
         private void NotifyClients()
@@ -190,6 +210,7 @@ namespace VisualMutator.Model.StoringMutants
                 CciModuleSource cciModuleSource = TryTake(client.Key);
                 if (cciModuleSource != null)
                 {
+                    _log.Debug("Whitecache#" + PrintCacheState(client.Key) + "Source taken later: " + cciModuleSource.Guid);
                     client.Tcs.TrySetResult(cciModuleSource);
                 }
                 else
@@ -259,6 +280,7 @@ namespace VisualMutator.Model.StoringMutants
             CciModuleSource cciModuleSource = TryTake(moduleName);
             if (cciModuleSource != null)
             {
+                _log.Debug("Whitecache#" + PrintCacheState(moduleName) + "Taken immediately: "+ cciModuleSource.Guid);
                 return Task.FromResult(cciModuleSource);
             }
             else
@@ -267,10 +289,12 @@ namespace VisualMutator.Model.StoringMutants
                 if (_error != null)
                 {
                     client.Tcs.SetException(_error);
+                    _log.Debug("Whitecache#" + PrintCacheState(moduleName) + "Error occurred.");
                 }
                 else
                 {
                     _clients.Enqueue(client);
+                    _log.Debug("Whitecache#"+ PrintCacheState(moduleName)+"Enqueued waiting client.");
                 }
                 return client.Tcs.Task;
             }
