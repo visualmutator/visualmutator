@@ -81,13 +81,13 @@
             Func<int> genId = () => id[0]++;
 
             //var originalModules = _choices.WhiteSource;//_whiteCache.GetWhiteModules();
-            percentCompleted.Initialize(_originalCodebase.Modules.Count);
+            percentCompleted.Initialize(_originalCodebase.ModulesToMutate.Count);
             var subProgress = percentCompleted.CreateSubprogress();
 
             var sw = new Stopwatch();
 
             var assNodes = new List<AssemblyNode>();
-            foreach (var module in _originalCodebase.Modules)
+            foreach (var module in _originalCodebase.ModulesToMutate)
             {
                 sw.Restart();
 

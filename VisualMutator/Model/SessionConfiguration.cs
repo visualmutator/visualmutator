@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows.Documents;
     using Controllers;
     using CoverageFinder;
     using Infrastructure;
+    using log4net;
     using Microsoft.Cci;
     using Mutations;
     using Mutations.Types;
@@ -21,6 +24,10 @@
 
     public class SessionConfiguration
     {
+
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         private readonly TestsLoader _testLoader;
         private readonly IFactory<AutoCreationController> _autoCreationControllerFactory;
         private readonly IRootFactory<SessionController> _sessionFactory;
@@ -80,7 +87,8 @@
             {
                 AutoCreationController creationController = _autoCreationControllerFactory.Create();
                 var choices = await creationController.Run(methodIdentifier, testAssemblies, auto);
-                var original = new OriginalCodebase(LoadAssemblies().Result);
+                var original = new OriginalCodebase(LoadAssemblies().Result, testAssemblies);
+                _log.Info("Created original codebase with assemblies to mutate: "+ original.ModulesToMutate.Select(m => m.Module.Name).MakeString());
                 return _sessionFactory.CreateWithBindings(choices, original);
             }
             finally

@@ -6,13 +6,24 @@
 
     public static class EnumerableUtils
     {
-         public static string MakeString<T>(this IEnumerable<T> enumerable, char delimiter)
+         public static string MakeString<T>(this IEnumerable<T> enumerable, string delimiter)
          {
-             return enumerable.Select(a => a.ToString()).Aggregate("", (a, b) => a + delimiter + b);
-         }
+            if (enumerable.Any())
+            {
+                return "[" + enumerable.Select(a => a.ToString()).Aggregate((a, b) => a + delimiter + b) + "]";
+            }
+            else
+            {
+                return "[]";
+            }
+        }
         public static string MakeString<T>(this IEnumerable<T> enumerable)
         {
-            return enumerable.Select(a => a.ToString()).Aggregate("", (a, b) => a + ", " + b);
+            return MakeString(enumerable, ", ");
+        }
+        public static string MakeString<T>(this IEnumerable<T> enumerable, char delimiter)
+        {
+            return MakeString(enumerable, delimiter.ToString());
         }
     }
 }

@@ -90,7 +90,7 @@
             _processor.TypeExit(namespaceTypeDefinition);
         }
 
-        private static HashSet<string> _conflicts = new HashSet<string>();
+        private HashSet<string> _conflicts = new HashSet<string>();
 
         public void MarkMutationTarget<T>(T obj, IList<MutationVariant> variants )
         {

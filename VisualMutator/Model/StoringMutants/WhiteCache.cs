@@ -180,7 +180,7 @@ namespace VisualMutator.Model.StoringMutants
             }
             else
             {
-                return "notfound:" + key;
+                return "notfound: " + key+": ";
             }
         }
 
@@ -210,7 +210,7 @@ namespace VisualMutator.Model.StoringMutants
                 CciModuleSource cciModuleSource = TryTake(client.Key);
                 if (cciModuleSource != null)
                 {
-                    _log.Debug("Whitecache#" + PrintCacheState(client.Key) + "Source taken later: " + cciModuleSource.Guid);
+                    _log.Debug("Whitecache#" + PrintCacheState(_moduleNameToFileName[client.Key]) + "Source taken later: " + cciModuleSource.Guid);
                     client.Tcs.TrySetResult(cciModuleSource);
                 }
                 else
@@ -280,7 +280,7 @@ namespace VisualMutator.Model.StoringMutants
             CciModuleSource cciModuleSource = TryTake(moduleName);
             if (cciModuleSource != null)
             {
-                _log.Debug("Whitecache#" + PrintCacheState(moduleName) + "Taken immediately: "+ cciModuleSource.Guid);
+                _log.Debug("Whitecache#" + PrintCacheState(_moduleNameToFileName[moduleName]) + "Taken immediately: "+ cciModuleSource.Guid);
                 return Task.FromResult(cciModuleSource);
             }
             else
@@ -289,12 +289,12 @@ namespace VisualMutator.Model.StoringMutants
                 if (_error != null)
                 {
                     client.Tcs.SetException(_error);
-                    _log.Debug("Whitecache#" + PrintCacheState(moduleName) + "Error occurred.");
+                    _log.Debug("Whitecache#" + PrintCacheState(_moduleNameToFileName[moduleName]) + "Error occurred.");
                 }
                 else
                 {
                     _clients.Enqueue(client);
-                    _log.Debug("Whitecache#"+ PrintCacheState(moduleName)+"Enqueued waiting client.");
+                    _log.Debug("Whitecache#"+ PrintCacheState(_moduleNameToFileName[moduleName]) +"Enqueued waiting client.");
                 }
                 return client.Tcs.Task;
             }

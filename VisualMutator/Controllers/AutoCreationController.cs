@@ -90,8 +90,6 @@
         {
             _sessionCreationWindowShowTime = DateTime.Now;
 
-
-           
             SessionCreator sessionCreator = _sessionCreatorFactory.Create();
 
             Task<List<CciModuleSource>> assembliesTask = _sessionConfiguration.LoadAssemblies();
@@ -116,7 +114,7 @@
                 testsSelector = new AllTestsSelectStrategy(testsTask);
                 matcher = new AllMatcher();
             }
-
+            _log.Info("Selecting tests in assemblies: "+ testAssemblies.MakeString());
             var testsSelecting = testsSelector.SelectTests(testAssemblies);
 
             var t1 = sessionCreator.GetOperators();
@@ -189,6 +187,7 @@
             tcs.TrySetResult(new object());
             _viewModel.Close();
         }
+
         private async Task<MutationSessionChoices> WaitForResult(bool auto, Task mainTask)
         {
             _viewModel.ShowDialog(); // blocking if gui
