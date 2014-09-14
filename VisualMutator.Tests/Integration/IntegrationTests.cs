@@ -58,7 +58,7 @@
                                   method.InList());
 
             var options = new OptionsModel();
-            var muexe = new MutationExecutor(options, choices);
+            var muexe = new MutationExecutor(options, choices, null);
             var mucon = new MutantsContainer(muexe, new OriginalCodebase(cci.InList()));
             var nodes = mucon.InitMutantsForOperators(ProgressCounter.Inactive());
             Mutant mutant = nodes.Cast<CheckedNode>()

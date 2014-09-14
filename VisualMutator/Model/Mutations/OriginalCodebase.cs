@@ -11,11 +11,11 @@
         private readonly List<CciModuleSource> _modules;
         private readonly List<string> _testAssemblies;
 
-        public OriginalCodebase(List<CciModuleSource> modules, List<string> testAssemblies)
+        public OriginalCodebase(List<CciModuleSource> modules, List<string> testAssemblies = null)
         {
             //.Where(cci => !testAssemblies.Select(Path.GetFileNameWithoutExtension).Contains(cci.Module.Name)).ToList()
             _modules = modules;
-            _testAssemblies = testAssemblies;
+            _testAssemblies = testAssemblies.ToEmptyIfNull().ToList();
         }
 
         public List<CciModuleSource> Modules

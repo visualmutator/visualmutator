@@ -59,7 +59,7 @@
 
 
             <WrapPanel Grid.Row="0">
-                <TextBlock Width="180" HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
+                <TextBlock Width="210" HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
 
                
                 <Controls:ImageButton HorizontalAlignment="Right"

@@ -113,7 +113,7 @@
                               SelectedOperators = new LOR_LogicalOperatorReplacement().InList<IMutationOperator>(),
                           };
 
-            var exec = new MutationExecutor(new OptionsModel(), choices);
+            var exec = new MutationExecutor(new OptionsModel(), choices, null);
             var container = new MutantsContainer(exec, original);
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 

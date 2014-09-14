@@ -67,8 +67,8 @@ namespace Ns
             //  var method = type.Methods.Single(m => m.Name.Value == "Method1");
 
            
-            var exec = new MutationExecutor(null, choices);
-            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList()));
+            var exec = new MutationExecutor(null, choices, null);
+            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList(), new List<string>()));
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             var mut = assemblies.Cast<CheckedNode>()
@@ -129,8 +129,8 @@ namespace Ns
                               SelectedOperators = new AOR_ArithmeticOperatorReplacement().InList<IMutationOperator>(),
                           };
 
-            var exec = new MutationExecutor(null, choices);
-            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList()));
+            var exec = new MutationExecutor(null, choices, null);
+            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList(), new List<string>()));
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             var mut = assemblies.Cast<CheckedNode>()
@@ -205,8 +205,8 @@ namespace Ns
                 SelectedOperators = new AOR_ArithmeticOperatorReplacement().InList<IMutationOperator>(),
             };
 
-            var exec = new MutationExecutor(null, choices);
-            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList()));
+            var exec = new MutationExecutor(null, choices, null);
+            var container = new MutantsContainer(exec, new OriginalCodebase(cci.InList(), new List<string>()));
             IList<AssemblyNode> assemblies = container.InitMutantsForOperators(ProgressCounter.Inactive());
 
             var mutants = assemblies.Cast<CheckedNode>()
