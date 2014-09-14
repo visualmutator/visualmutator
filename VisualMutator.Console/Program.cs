@@ -128,6 +128,8 @@ namespace VisualMutator.Console
         }
         private static void Main(string[] args)
         {
+            Console.WriteLine("Started VisualMutator.Console with params: "+ args.MakeString());
+
             if (args.Length >= 5)
             {
                 var parser = new CommandLineParser();

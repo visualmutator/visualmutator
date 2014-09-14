@@ -78,6 +78,7 @@ namespace VisualMutator.Model.StoringMutants
             _clients = new ConcurrentQueue<WhiteClient>();
             _maxCount = maxCount;
             _initialMaxCount = maxCount;
+            _log.Debug("Whitecache Initializing with max count: "+ _initialMaxCount);
             _paths = new BlockingCollection<ProjectFilesClone>();
         }
 
@@ -259,11 +260,13 @@ namespace VisualMutator.Model.StoringMutants
                 if (!pause)
                 {
                     _maxCount = _initialMaxCount;
+                    _log.Debug("Whitecache unpausing. Current count: "+ _initialMaxCount);
                     Pulse();
                 }
                 else
                 {
                     _maxCount = 1;
+                    _log.Debug("Whitecache paused. Current count: " + _maxCount);
                 }
             }
         }

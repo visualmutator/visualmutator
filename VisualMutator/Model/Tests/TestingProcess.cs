@@ -49,10 +49,14 @@
 
         public void RaiseTestingProgress()
         {
-            
+            _log.Info("**********************************************************");
+
             _log.Info("Testing progress: all:"+ _allMutantsCount +
                 ", tested: "+ _testedNonEquivalentMutantsCount
                 +"killed: "+ _mutantsKilledCount);
+
+            _log.Info("**********************************************************");
+
             _sessionEventsSubject.OnNext(new TestingProgressEventArgs(OperationsState.Testing)
             {
                 NumberOfAllMutants = _allMutantsCount,

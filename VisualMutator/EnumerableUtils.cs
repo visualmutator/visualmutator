@@ -8,6 +8,10 @@
     {
          public static string MakeString<T>(this IEnumerable<T> enumerable, string delimiter)
          {
+            if(enumerable == null)
+            {
+                return "null";
+            }
             if (enumerable.Any())
             {
                 return "[" + enumerable.Select(a => a.ToString()).Aggregate((a, b) => a + delimiter + b) + "]";

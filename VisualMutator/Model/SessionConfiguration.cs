@@ -87,7 +87,7 @@
             {
                 AutoCreationController creationController = _autoCreationControllerFactory.Create();
                 var choices = await creationController.Run(methodIdentifier, testAssemblies, auto);
-                var original = new OriginalCodebase(LoadAssemblies().Result, testAssemblies);
+                var original = new OriginalCodebase(LoadAssemblies().Result, testAssemblies.ToEmptyIfNull().ToList());
                 _log.Info("Created original codebase with assemblies to mutate: "+ original.ModulesToMutate.Select(m => m.Module.Name).MakeString());
                 return _sessionFactory.CreateWithBindings(choices, original);
             }
