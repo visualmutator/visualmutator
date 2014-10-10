@@ -85,7 +85,9 @@
         private void LocateNUnitConsole()
         {
             const string key = "NUnitConsoleDirPath";
-            if (!_settingsManager.ContainsKey(key) || !Directory.Exists(_settingsManager[key]))
+            if (!_settingsManager.ContainsKey(key) 
+                || !Directory.Exists(_settingsManager[key])
+                 || !File.Exists(Path.Combine(_settingsManager[key], "nunit-console.exe")))
             {
                 var localDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
                 Debug.Assert(localDir != null, "localDir != null");
@@ -104,7 +106,9 @@
         private void LocateXUnitConsole()
         {
             const string key = "XUnitConsoleDirPath";
-            if (!_settingsManager.ContainsKey(key) || !Directory.Exists(_settingsManager[key]))
+            if (!_settingsManager.ContainsKey(key) 
+                || !Directory.Exists(_settingsManager[key]) 
+                || !File.Exists(Path.Combine(_settingsManager[key], "xunit.console.exe")))
             {
                 var localDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
                 Debug.Assert(localDir != null, "localDir != null");
