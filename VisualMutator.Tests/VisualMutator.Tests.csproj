@@ -61,61 +61,65 @@
     <Reference Include="May">
       <HintPath>..\packages\Strilanc.Value.May.1.0.2\lib\portable-net4+sl4+wp7+win8\May.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
+    <Reference Include="Microsoft.Cci.Analysis.AnalysisUtilities">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.Analysis.AnalysisUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.CodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModelToIL, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    <Reference Include="Microsoft.Cci.AstsProjectedAsCodeModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.AstsProjectedAsCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.ILGenerator, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.ILGenerator.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CodeModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataHelper, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.MetadataHelper.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CodeModelToIL">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CodeModelToIL.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.MetadataModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.ContractExtractor">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ContractExtractor.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MutableCodeModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MutableMetadataModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.ILGenerator">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ILGenerator.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.NewILToCodeModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MetadataHelper">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MetadataHelper.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbReader, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.PdbReader.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MetadataModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MetadataModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbWriter, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.PdbWriter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MutableCodeModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MutableCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PeReader, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.PeReader.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MutableMetadataModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PeWriter, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.PeWriter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.NewILToCodeModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.SourceModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\PLIKI\Programowanie\C#\AST2\Samples\PeToPe\bin\Debug\Microsoft.Cci.SourceModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PdbReader">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PdbReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbWriter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PdbWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeReader">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PeReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeWriter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PeWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ReflectionEmitter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ReflectionEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceEmitter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.SourceEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1402.2112\lib\net40\Moq.dll</HintPath>
@@ -225,6 +229,7 @@
     <Compile Include="Util\TestProjects.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
