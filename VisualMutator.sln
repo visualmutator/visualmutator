@@ -30,10 +30,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.OperatorsStan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.OperatorsObject", "VisualMutator.OperatorsObject\VisualMutator.OperatorsObject.csproj", "{0AEFE663-70C8-4466-98B7-E506215D1B58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGround", "TestGround\TestGround.csproj", "{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.GUI", "VisualMutator.GUI\VisualMutator.GUI.csproj", "{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMutator.Console", "VisualMutator.Console\VisualMutator.Console.csproj", "{D3C35E11-13E4-4A78-8222-39C30C12B52D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B40A493B-C264-423D-B5C7-14E120B4D358} = {B40A493B-C264-423D-B5C7-14E120B4D358}
@@ -124,25 +120,6 @@ Global
 		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|x86.ActiveCfg = Release|x86
 		{0AEFE663-70C8-4466-98B7-E506215D1B58}.Release|x86.Build.0 = Release|x86
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{A8502D08-C5FF-43F2-B01D-AF4D6BB1D32A}.Release|x86.ActiveCfg = Release|x86
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E6E6172C-D6FD-4A53-A67D-F52CB6B973F6}.Release|x86.ActiveCfg = Release|x86
 		{D3C35E11-13E4-4A78-8222-39C30C12B52D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3C35E11-13E4-4A78-8222-39C30C12B52D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3C35E11-13E4-4A78-8222-39C30C12B52D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

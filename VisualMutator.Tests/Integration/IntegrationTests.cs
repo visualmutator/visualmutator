@@ -23,7 +23,6 @@
     using Model.Tests.Services;
     using Model.Tests.TestsTree;
     using Ninject;
-    using NUnit.Core;
     using NUnit.Framework;
     using NUnit.Util;
     using Operators;
