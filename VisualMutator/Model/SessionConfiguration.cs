@@ -2,47 +2,54 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows.Documents;
     using Controllers;
+    using CoverageFinder;
     using Infrastructure;
+    using log4net;
     using Microsoft.Cci;
+    using Mutations;
     using Mutations.Types;
     using NUnit.Util;
     using StoringMutants;
     using Tests;
+    using Tests.TestsTree;
     using UsefulTools.DependencyInjection;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
 
     public class SessionConfiguration
     {
+
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         private readonly TestsLoader _testLoader;
-        private readonly ITypesManager _typesManager;
         private readonly IFactory<AutoCreationController> _autoCreationControllerFactory;
         private readonly IRootFactory<SessionController> _sessionFactory;
+        private readonly IWhiteSource _whiteCache;
         private readonly ProjectFilesClone _originalFilesClone;
         private readonly ProjectFilesClone _testsClone;
 
         public SessionConfiguration(
             IProjectClonesManager fileManager,
             TestsLoader testLoader,
-            ITypesManager typesManager,
             IFactory<AutoCreationController> autoCreationControllerFactory,
             IRootFactory<SessionController> sessionFactory,
-            IWhiteCache whiteCache)
+            IWhiteSource whiteCache)
         {
             _testLoader = testLoader;
-            _typesManager = typesManager;
             _autoCreationControllerFactory = autoCreationControllerFactory;
             _sessionFactory = sessionFactory;
+            _whiteCache = whiteCache;
 
-            fileManager.Initialize();
+            
 
             _originalFilesClone = fileManager.CreateClone("Mutants");
-
-            whiteCache.Initialize();
 
             _testsClone = fileManager.CreateClone("Tests");
             if (_originalFilesClone.IsIncomplete || _testsClone.IsIncomplete
@@ -54,35 +61,43 @@
 
         public bool AssemblyLoadProblem { get; set; }
 
-        public Task<IModuleSource> LoadAssemblies()
+        public async Task<List<CciModuleSource>> LoadAssemblies()
         {
-            return Task.Run(() => _typesManager.LoadAssemblies(
-                    _originalFilesClone.Assemblies));
+            try
+            {
+                return await _whiteCache.GetWhiteModulesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
-        public Task<object> LoadTests()
+        public async Task<TestsRootNode> LoadTests()
         {
-            return Task.Run(() => _testLoader.LoadTests(
-             _testsClone.Assemblies.AsStrings().ToList()).CastTo<object>());
-        }
-
-
-        public async Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier = null)
-        {
-            AutoCreationController creationController = _autoCreationControllerFactory.Create();
-            var choices = await creationController.Run(methodIdentifier) ;
-            return _sessionFactory.CreateWithBindings(choices);
-
-        }
-        public async Task<IObjectRoot<SessionController>> CreateSessionAuto(MethodIdentifier methodIdentifier)
-        {
-
-            AutoCreationController creationController = _autoCreationControllerFactory.Create();
-            var choices = await creationController.Run(methodIdentifier, true);
-            return _sessionFactory.CreateWithBindings(choices);
-           
-
+            return await _testLoader.LoadTests(
+             _testsClone.Assemblies.AsStrings().ToList());
         }
 
-        
+
+        public async Task<IObjectRoot<SessionController>> CreateSession(MethodIdentifier methodIdentifier, List<string> testAssemblies, bool auto)
+        {
+            _whiteCache.Pause(true);
+            try
+            {
+                AutoCreationController creationController = _autoCreationControllerFactory.Create();
+                var choices = await creationController.Run(methodIdentifier, testAssemblies, auto);
+                var original = new OriginalCodebase(LoadAssemblies().Result, testAssemblies.ToEmptyIfNull().ToList());
+                _log.Info("Created original codebase with assemblies to mutate: "+ original.ModulesToMutate.Select(m => m.Module.Name).MakeString());
+                return _sessionFactory.CreateWithBindings(choices, original);
+            }
+            finally
+            {
+                _whiteCache.Pause(false);
+            }
+            
+
+            
+        }
     }
 }

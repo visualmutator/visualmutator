@@ -21,7 +21,7 @@
     public interface ICodeDifferenceCreator
     {
 
-        Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant);
+        CodeWithDifference GetDiff(CodeLanguage language, string originalCode, string mutatedCode);
     }
 
     public class CodeDifferenceCreator : ICodeDifferenceCreator
@@ -29,13 +29,9 @@
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
-        private readonly ICodeVisualizer _codeVisualizer;
-        private readonly IMutantsCache _mutantsCache;
 
-        public CodeDifferenceCreator(ICodeVisualizer codeVisualizer, IMutantsCache mutantsCache)
+        public CodeDifferenceCreator()
         {
-            _codeVisualizer = codeVisualizer;
-            _mutantsCache = mutantsCache;
         }
 
         public CodeWithDifference GetDiff(CodeLanguage language, string input1, string input2)
@@ -49,36 +45,7 @@
             };
         }
 
-        public async Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant)
-        {
-            _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
-            MutationResult mutationResult = await _mutantsCache.GetMutatedModulesAsync(mutant);
-            try
-            {
-                var whiteCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodRaw, mutationResult);
-                var mutatedCode = _codeVisualizer.Visualize(language, mutant.MutationTarget.MethodMutated, mutationResult);
-                CodePair pair = new CodePair
-                {
-                    OriginalCode = whiteCode,
-                    MutatedCode = mutatedCode
-                };
-                return GetDiff(language, pair.OriginalCode, pair.MutatedCode);
-            }
-            catch (Exception e)
-            {
-                _log.Error(e);
-                return new CodeWithDifference
-                {
-                    Code = "Exception occurred while decompiling: " + e,
-                    LineChanges = Enumerable.Empty<LineChange>().ToList()
-                };
-            }
-        }
-
-        public string GetListing(CodeLanguage language, IModuleSource modules)
-        {
-            return _codeVisualizer.Visualize(language, modules);
-        }
+     
 
         private LineChange NewLineChange(LineChangeType type, 
             StringBuilder diff, int startIndex, int endIndex)

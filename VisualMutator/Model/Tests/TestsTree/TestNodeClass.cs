@@ -9,7 +9,6 @@
     public class TestNodeClass : TestTreeNode
     {
        
-        public string Namespace { get; set; }
 
 
         public TestNodeClass(string name)
@@ -19,6 +18,7 @@
         }
 
 
-        public string FullName { get; set; }
+        public string FullName { get { return Parent.Name + "." + Name; } }
+        public string Namespace { get; set; }
     }
 }

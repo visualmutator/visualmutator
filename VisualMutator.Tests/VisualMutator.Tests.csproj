@@ -61,75 +61,65 @@
     <Reference Include="May">
       <HintPath>..\packages\Strilanc.Value.May.1.0.2\lib\portable-net4+sl4+wp7+win8\May.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Cci.Analysis.AnalysisUtilities">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.Analysis.AnalysisUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.AstsProjectedAsCodeModel">
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.AstsProjectedAsCodeModel.dll</HintPath>
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.AstsProjectedAsCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.CodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CodeModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CodeModelToIL, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CodeModelToIL">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CodeModelToIL.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.ContractExtractor">
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.ContractExtractor.dll</HintPath>
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ContractExtractor.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.CSharpSourceEmitter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.ILGenerator, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.ILGenerator.dll</HintPath>
+    <Reference Include="Microsoft.Cci.ILGenerator">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ILGenerator.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataHelper, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MetadataHelper.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MetadataHelper">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MetadataHelper.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MetadataModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MetadataModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MetadataModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MutableCodeModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MutableCodeModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MutableCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MutableMetadataModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.MutableMetadataModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.NewILToCodeModel">
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbReader, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PdbReader.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PdbReader">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PdbReader.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PdbWriter, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PdbWriter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PdbWriter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PdbWriter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PeReader, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PeReader.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PeReader">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.PeWriter, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PeWriter.dll</HintPath>
+    <Reference Include="Microsoft.Cci.PeWriter">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PeWriter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.ReflectionEmitter">
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.ReflectionEmitter.dll</HintPath>
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ReflectionEmitter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Cci.SourceEmitter">
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.SourceEmitter.dll</HintPath>
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.SourceEmitter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.SourceModel, Version=1.0.13.0, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
+    <Reference Include="Microsoft.Cci.SourceModel">
+      <HintPath>..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1402.2112\lib\net40\Moq.dll</HintPath>
@@ -149,22 +139,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.Extensions.NamedScope.3.0.0.5\lib\net45-full\Ninject.Extensions.NamedScope.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.core.dll</HintPath>
+    <Reference Include="nunit.core, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\nunit.core.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.core.interfaces.dll</HintPath>
+    <Reference Include="nunit.core.interfaces, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\nunit.core.interfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\framework\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.mocks, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.util, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\framework\nunit.mocks.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.util">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\NUnit 2.6.3\bin\lib\nunit.util.dll</HintPath>
+      <HintPath>..\lib\nunit.util.dll</HintPath>
     </Reference>
     <Reference Include="Roslyn.Compilers">
       <HintPath>..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
@@ -200,13 +188,8 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="UsefulTools, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.0.9.4\lib\net45\UsefulTools.dll</HintPath>
-    </Reference>
-    <Reference Include="UsefulTools.Wpf, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\UsefulTools.Wpf.0.9.4\lib\net45\UsefulTools.Wpf.dll</HintPath>
+    <Reference Include="UsefulTools">
+      <HintPath>..\packages\UsefulTools.1.0.0\lib\net45\UsefulTools.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -217,54 +200,34 @@
     <Compile Include="Infrastructure\ProcessTests.cs" />
     <Compile Include="Infrastructure\NinjectTests.cs" />
     <Compile Include="Infrastructure\NinjectParamBindingsTests.cs" />
+    <Compile Include="Integration\IntegrationTests.cs" />
     <Compile Include="Mutations\CciMethodMatchingTests.cs" />
     <Compile Include="Mutations\VisualStudioCodeElementsFormatterTests.cs" />
     <Compile Include="Mutations\NamespaceGrouperTests.cs" />
-    <Compile Include="Mutations\TestSelectionIntTests.cs" />
-    <Compile Include="Mutations\TestSelectionTests.cs" />
-    <Compile Include="Operators\IntegrationTests.cs" />
-    <Compile Include="Operators\CciAssumptions.cs" />
-    <Compile Include="Operators\Object\IntegrationTests.cs" />
-    <Compile Include="Operators\Standard\LOR_Test.cs" />
+    <Compile Include="Mutations\WhiteCacheIntTests.cs" />
+    <Compile Include="Operators\MapSettingsManager.cs" />
+    <Compile Include="Operators\MutationTestsHelper.cs" />
+    <Compile Include="Operators\WhiteDummy.cs" />
     <Compile Include="Results\Difference.cs" />
     <Compile Include="Infrastructure\InfrastructureTests.cs" />
     <Compile Include="Mutations\MutantsContainerTests.cs" />
-    <Compile Include="Operators\MutationTestsHelper.cs" />
-    <Compile Include="Operators\BruteForceTests.cs" />
-    <Compile Include="Operators\Object\EHC_Test.cs" />
-    <Compile Include="Operators\Object\OAN_Test.cs" />
-    <Compile Include="Operators\Object\OAO_Test.cs" />
-    <Compile Include="Operators\Object\MCI_Test.cs" />
-    <Compile Include="Operators\Object\RFI_Test.cs" />
-    <Compile Include="Operators\Object\EXS_Test.cs" />
-    <Compile Include="Operators\Object\ISD_Test.cs" />
-    <Compile Include="Operators\Object\DEH_Test.cs" />
-    <Compile Include="Operators\Object\TestFieldInitializationDeletion.cs" />
-    <Compile Include="Operators\Object\TestOverloadingMethodContentsChange.cs" />
-    <Compile Include="Operators\Object\PRV_Test.cs" />
-    <Compile Include="Operators\Object\TestNullInsertion.cs" />
-    <Compile Include="Operators\Object\Test_EMM.cs" />
-    <Compile Include="Operators\Object\DMC_Test.cs" />
-    <Compile Include="Operators\Standard\LCR_Test.cs" />
-    <Compile Include="Operators\Standard\TestUnaryOperatorInsertion.cs" />
-    <Compile Include="Operators\Object\EHR_Test.cs" />
-    <Compile Include="Operators\Standard\ABS_Test.cs" />
-    <Compile Include="Operators\Standard\AOR_Test.cs" />
-    <Compile Include="Operators\Object\TestEqualityOperatorChange.cs" />
-    <Compile Include="Operators\Standard\TestLogicalOperatorReplacement.cs" />
-    <Compile Include="Operators\Standard\TestRelationalOperatorReplacement.cs" />
     <Compile Include="Results\XmlResultsGeneratorTests.cs" />
     <Compile Include="TestGeneration\TestRoslyn.cs" />
+    <Compile Include="UnitTesting\XUnitServiceTests.cs" />
     <Compile Include="UnitTesting\TestsSelectorTests.cs" />
     <Compile Include="UnitTesting\TestWrapperMocking.cs" />
     <Compile Include="UnitTesting\MsTestServiceTests.cs" />
-    <Compile Include="UnitTesting\NUnitServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolutionTypesTests.cs" />
     <Compile Include="UnitTesting\TestContainerTests.cs" />
+    <Compile Include="Util\IntegrationTest.cs" />
     <Compile Include="Util\LogMessageService.cs" />
+    <Compile Include="Util\NinjectTestExt.cs" />
+    <Compile Include="Util\TestInfrastructureModule.cs" />
+    <Compile Include="Util\TestProjects.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

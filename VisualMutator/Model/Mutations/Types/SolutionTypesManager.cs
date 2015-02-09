@@ -8,6 +8,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
+    using CoverageFinder;
     using Exceptions;
     using Extensibility;
     using Infrastructure;
@@ -18,7 +19,7 @@
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
-    using MethodIdentifier = Model.MethodIdentifier;
+    using MethodIdentifier = Extensibility.MethodIdentifier;
 
     #endregion
 
@@ -27,10 +28,7 @@
 
         bool IsAssemblyLoadError { get; set; }
 
-
-        IModuleSource LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths);
-
-        IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
+        IList<AssemblyNode> CreateNodesFromAssemblies(List<CciModuleSource> modules,
             ICodePartsMatcher constraints);
         MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies);
     }
@@ -46,14 +44,11 @@
     public class SolutionTypesManager : ITypesManager
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly ICciModuleSource _moduleSource;
 
         public bool IsAssemblyLoadError { get; set; }
    
-        public SolutionTypesManager(
-            ICciModuleSource moduleSource)
+        public SolutionTypesManager()
         {
-            _moduleSource = moduleSource;
         }
 
         public MutationFilter CreateFilterBasedOnSelection(ICollection<AssemblyNode> assemblies)
@@ -61,16 +56,14 @@
             var methods = assemblies
                 .SelectManyRecursive<CheckedNode>(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
                 .OfType<MethodNode>().Select(type => type.MethodDefinition).ToList();
-            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new Extensibility.MethodIdentifier(m)).ToList());
+            return new MutationFilter(new List<TypeIdentifier>(), methods.Select(m => new MethodIdentifier(m)).ToList());
         }
-      
 
-        public IList<AssemblyNode> CreateNodesFromAssemblies(IModuleSource modules,
-            ICodePartsMatcher constraints)
+        public IList<AssemblyNode> CreateNodesFromAssemblies(List<CciModuleSource> modules, ICodePartsMatcher constraints)
         {
             var matcher = constraints.Join(new ProperlyNamedMatcher());
 
-            List<AssemblyNode> assemblyNodes = modules.Modules.Select(m => CreateAssemblyNode(m, matcher)).ToList();
+            List<AssemblyNode> assemblyNodes = modules.Select(m => CreateAssemblyNode(m.Module, matcher)).ToList();
             var root = new RootNode();
             root.Children.AddRange(assemblyNodes);
             root.IsIncluded = true;
@@ -78,41 +71,13 @@
             return assemblyNodes;
         }
 
-
-
-        public IModuleSource LoadAssemblies(IEnumerable<FilePathAbsolute> assembliesPaths)
-        {
-            foreach (FilePathAbsolute assemblyPath in assembliesPaths)
-            {
-                try
-                {
-                    //TODO:leak
-                    _moduleSource.AppendFromFile((string)assemblyPath);
-//                    if(module.StrongNameSigned)
-//                    {
-//                       // throw new StrongNameSignedAssemblyException();
-//                    }
-                }
-                catch (AssemblyReadException e)
-                {
-                    _log.Error("ReadAssembly failed. ", e);
-                    IsAssemblyLoadError = true;
-                }
-                catch (Exception e)
-                {
-                    _log.Error("ReadAssembly failed. ", e);
-                    IsAssemblyLoadError = true;
-                }
-            } 
-            return _moduleSource;
-        }
-
+     
 
         public AssemblyNode CreateAssemblyNode(IModuleInfo module, 
             ICodePartsMatcher matcher)
         {
-            var assemblyNode = new AssemblyNode(module.Name, module);
-
+            var assemblyNode = new AssemblyNode(module.Name);
+            assemblyNode.AssemblyPath = module.Module.Location.ToFilePathAbs();
             System.Action<CheckedNode, ICollection<INamedTypeDefinition>> typeNodeCreator = (parent, leafTypes) =>
             {
                 foreach (INamedTypeDefinition typeDefinition in leafTypes)
@@ -164,7 +129,7 @@
             }
             while (children.OfType<TypeNode>().Any())
             {
-                TypeNode typeNamespaceNode = node.Children.OfType<TypeNode>().First();
+                TypeNode typeNamespaceNode = children.OfType<TypeNode>().First();
                 RemoveFromParentIfEmpty(typeNamespaceNode);
                 children.Remove(typeNamespaceNode);
             }
@@ -174,8 +139,8 @@
                 node.Parent = null;
             }
         }
- 
-        class ProperlyNamedMatcher : CodePartsMatcher
+
+        public class ProperlyNamedMatcher : CodePartsMatcher
         {
             public override bool Matches(IMethodReference method)
             {

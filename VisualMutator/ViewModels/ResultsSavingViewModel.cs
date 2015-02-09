@@ -14,6 +14,7 @@
         {
             IncludeDetailedTestResults = false;
             IncludeCodeDifferenceListings= false;
+            
         }
 
         public void Show()
@@ -54,6 +55,21 @@
             }
         }
 
+        private bool _savingInProgress;
+
+        public bool SavingInProgress
+        {
+            get
+            {
+                return _savingInProgress;
+            }
+            set
+            {
+                SetAndRise(ref _savingInProgress, value, () => SavingInProgress);
+            }
+        }
+
+
         private bool _includeCodeDifferenceListings;
 
         public bool IncludeCodeDifferenceListings
@@ -65,6 +81,20 @@
             set
             {
                 SetAndRise(ref _includeCodeDifferenceListings, value, () => IncludeCodeDifferenceListings);
+            }
+        }
+
+        private int _progress;
+
+        public int Progress
+        {
+            get
+            {
+                return _progress;
+            }
+            set
+            {
+                SetAndRise(ref _progress, value, () => Progress);
             }
         }
         private SmartCommand _commandSaveResults;
@@ -106,6 +136,22 @@
             set
             {
                 SetAndRise(ref _commandBrowse, value, () => CommandBrowse);
+            }
+        }
+
+     
+
+        private bool _isCancelled;
+
+        public bool IsCancelled
+        {
+            get
+            {
+                return _isCancelled;
+            }
+            set
+            {
+                SetAndRise(ref _isCancelled, value, () => IsCancelled);
             }
         }
     }

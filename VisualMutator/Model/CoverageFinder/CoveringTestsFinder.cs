@@ -1,4 +1,4 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.CoverageFinder
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -7,33 +7,33 @@
     using Exceptions;
     using log4net;
     using Microsoft.Cci;
+    using Microsoft.Cci.ILToCodeModel;
     using Mutations.Types;
-    using StoringMutants;
     using UsefulTools.ExtensionMethods;
 
-    public class CoveringTestsFinder
+    public class CoveringTestsFinder : ICoveringTestsFinder
     {
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Task<List<MethodIdentifier>> FindCoveringTests(IModuleSource moduleSource, ICodePartsMatcher matcher)
+        public Task<List<MethodIdentifier>> FindCoveringTests(List<CciModuleSource> modules, ICodePartsMatcher matcher)
         {
-            return Task.WhenAll(moduleSource.Modules.Select(module =>
-                    Task.Run(() => FindCoveringTests(module, matcher))))
+            var tt = modules.Select(module => Task.Run(() => FindCoveringTests(module, matcher)));
+            return Task.WhenAll(tt)
                         .ContinueWith(t => t.Result.Flatten().ToList());
         }
 
-        public List<MethodIdentifier> FindCoveringTests(IModuleInfo module, ICodePartsMatcher targetsMatcher)
+        private List<MethodIdentifier> FindCoveringTests(CciModuleSource module, ICodePartsMatcher targetsMatcher)
         {
-            _log.Debug("Scanning " + module.Name + " for selected covering tests. ");
+            _log.Debug("Scanning " + module.Module.Name + " for selected covering tests. ");
             var visitor = new CoveringTestsVisitor(targetsMatcher);
 
             var traverser = new CodeTraverser
             {
                 PreorderVisitor = visitor
             };
-
-            traverser.Traverse(module.Module);
-            _log.Debug("Finished scanning module"+module.Name + ". Found " + visitor.FoundTests.Count+
+            
+            traverser.Traverse(module.Decompile(module.Module));
+            _log.Debug("Finished scanning module"+ module.Module.Name + ". Found " + visitor.FoundTests.Count+
                 ". Scanned total: " + visitor.ScannedMethods + " methods and "+
                 visitor.ScannedMethodCalls+" method calls.");
 
@@ -49,5 +49,10 @@
             }
             return visitor.FoundTests.ToList();
         } 
+    }
+
+    public interface ICoveringTestsFinder
+    {
+        Task<List<MethodIdentifier>> FindCoveringTests(List<CciModuleSource> modules, ICodePartsMatcher matcher);
     }
 }

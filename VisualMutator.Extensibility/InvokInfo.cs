@@ -100,5 +100,12 @@ namespace VisualMutator.Extensibility
 				
                 
         }
+
+        public string ToStringBasicVisit()
+        {
+            string indent = new string(' ', LevelCount * 3);
+            string methodParamName = MethodType;
+            return indent + methodParamName + " -- " + ObjToString();
+        }
     }
 }

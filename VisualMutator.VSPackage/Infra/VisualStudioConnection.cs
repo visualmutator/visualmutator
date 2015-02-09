@@ -13,6 +13,7 @@
     using EnvDTE;
     using EnvDTE80;
     using Infra;
+    using Infra.UsefulTools.Wpf;
     using log4net;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
@@ -23,6 +24,7 @@
     using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
+    using VisualMutator.Model.CoverageFinder;
 
     #endregion
 
@@ -95,16 +97,26 @@
         }
 
     
+        private void Guarded(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
 
+                _log.Error(e);
+            }
+        }
        
         public void Initialize()
         {
-     //      
-           // _buildEvents.OnBuildBegin += () => _subject.OnNext(EventType.HostClosed)
-          //  _buildEvents.OnBuildDone += _buildEvents_OnBuildDone;
+            _buildEvents.OnBuildBegin += delegate {Guarded(() => _subject.OnNext(EventType.BuildBegin)); };
+            _buildEvents.OnBuildDone += delegate { Guarded(() => _subject.OnNext(EventType.BuildDone)); };
 
-            _solutionEvents.Opened += () => _subject.OnNext(EventType.HostOpened);
-            _solutionEvents.AfterClosing += () => _subject.OnNext(EventType.HostClosed);
+            _solutionEvents.Opened += () => Guarded(() => _subject.OnNext(EventType.HostOpened));
+            _solutionEvents.AfterClosing += () => Guarded(() => _subject.OnNext(EventType.HostClosed));
 
             _settingsManager = new ShellSettingsManager(_package);
 

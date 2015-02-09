@@ -11,6 +11,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using CoverageFinder;
     using Exceptions;
     using Infrastructure;
     using log4net;
@@ -25,42 +26,48 @@
 
     #endregion
 
-    public class NUnitXmlTestService : NUnitTestService
+    public class NUnitXmlTestService : ITestsService
     {
-        private readonly IFactory<NUnitTester> _nUnitTesterFactory;
+        private readonly IFactory<NUnitTestsRunContext> _testsRunContextFactory;
         private readonly ISettingsManager _settingsManager;
         private readonly CommonServices _svc;
 
+        private const string FrameworkName = "NUnit";
+
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly string _nunitConsolePath;
+        private readonly INUnitWrapper _nUnitWrapper;
 
-        public NUnitXmlTestService(
-            INUnitWrapper nUnitWrapper, 
-            IFactory<NUnitTester> nUnitTesterFactory,
-            ISettingsManager settingsManager,
-            CommonServices svc)
-            : base(nUnitWrapper)
+        public string NunitConsolePath
         {
-            _nUnitTesterFactory = nUnitTesterFactory;
+            get { return _nunitConsolePath; }
+        }
+        
+        public NUnitXmlTestService(
+            IFactory<NUnitTestsRunContext> testsRunContextFactory,
+            ISettingsManager settingsManager,
+            INUnitWrapper nUnitWrapper,
+            CommonServices svc)
+          
+        {
+            _testsRunContextFactory = testsRunContextFactory;
             _settingsManager = settingsManager;
+            _nUnitWrapper = nUnitWrapper;
             _svc = svc;
 
             _nunitConsolePath = FindConsolePath();
             _log.Info("Set NUnit Console path: " + _nunitConsolePath);
         }
 
-
-        public override May<TestsLoadContext> LoadTests(string assemblyPath)
-        {
-            May<TestsLoadContext> loadTests = base.LoadTests(assemblyPath);
-
-            UnloadTests();
-            return loadTests;
-        }
-
-        public override void Cancel()
+        public void Cancel()
         {
             
+        }
+
+        public ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath)
+        {
+            var selector = new TestsSelector(loadContext.Namespaces);
+            return _testsRunContextFactory.CreateWithParams(_nunitConsolePath, mutatedPath, selector);
         }
 
         private string FindConsolePath()
@@ -75,9 +82,130 @@
             return nUnitConsolePath;
         }
 
-        public NUnitTester SpawnTester(TestsRunContext arg)
+
+        public string FrameWorkName { get { return FrameworkName; } }
+
+        public virtual May<TestsLoadContext> LoadTests(string assemblyPath)
         {
-            return _nUnitTesterFactory.CreateWithParams(_nunitConsolePath, arg);
+
+            try
+            {
+                ITest testRoot = _nUnitWrapper.LoadTests(assemblyPath.InList());
+                int testCount = testRoot.TestsEx().SelectMany(n => n.TestsEx()).Count();
+                if (testCount == 0)
+                {
+                    return May.NoValue;
+                }
+                var classNodes = BuildTestTree(testRoot);
+                var context = new TestsLoadContext(FrameworkName, classNodes.ToList());
+                UnloadTests();
+                return context;
+            }
+            catch (Exception e)
+            {
+                _log.Error("Excception While loading tests: ", e);
+                return May<TestsLoadContext>.NoValue;
+            }
         }
+
+
+        public static IList<T> ConvertToListOf<T>(IList iList)
+        {
+            IList<T> result = new List<T>();
+            if (iList != null)
+            {
+                foreach (T value in iList)
+                {
+                    result.Add(value);
+                }
+            }
+
+            return result;
+        }
+
+
+        public void UnloadTests()
+        {
+            // _nUnitWrapper.UnloadProject();
+        }
+
+        private IEnumerable<TestNodeClass> BuildTestTree(ITest test)
+        {
+            IEnumerable<ITest> classes = GetTestClasses(test).ToList();
+
+            foreach (ITest testClass in classes.Where(c => c.Tests != null && c.Tests.Count != 0))
+            {
+
+                var c = new TestNodeClass(testClass.TestName.Name)
+                {
+                    Namespace = testClass.Parent.TestName.FullName,
+                    //  FullName = testClass.TestName.FullName,
+
+                };
+
+                foreach (ITest testMethod in testClass.Tests.Cast<ITest>())
+                {
+                    if (_nUnitWrapper.NameFilter == null || _nUnitWrapper.NameFilter.Match(testMethod))
+                    {
+                        string testName = testMethod.TestName.FullName;
+                        //if(!context.TestMap.ContainsKey(testName))
+                        //  {
+                        var nodeMethod = new TestNodeMethod(c, testName)
+                        {
+                            TestId = new NUnitTestId(testMethod.TestName),
+                            Identifier = CreateIdentifier(testMethod),
+                        };
+                        c.Children.Add(nodeMethod);
+                       // _log.Debug("Adding test: " + testName);
+                        // context.TestMap.Add(testName, nodeMethod);
+                        // }
+                        //  else
+                        //  {
+                        //       _log.Debug("Already exists test: " + testName);
+                        //       //TODO: handle he case where parametrized test method may be present duplicated.
+                        //   }
+                    }
+                }
+                if (c.Children.Any())
+                {
+                    yield return c;
+                  
+                }
+            }
+        }
+
+        private MethodIdentifier CreateIdentifier(ITest testMethod)
+        {
+            return new MethodIdentifier(testMethod.TestName.FullName + "()");
+        }
+
+        private IEnumerable<ITest> GetTestClasses(ITest test)
+        {
+            //TODO: return new[] { test }.SelectManyRecursive(t => t.Tests != null ? t.Tests.Cast<ITest>() : new ITest[0])
+            //     .Where(t => t.TestType == "TestFixture");
+            var list = new List<ITest>();
+            GetTestClassesInternal(list, test);
+            return list;
+        }
+
+        private void GetTestClassesInternal(List<ITest> list, ITest test)
+        {
+            var tests = test.Tests ?? new ITest[0];
+            if (test.TestType == "TestFixture")
+            {
+                list.Add(test);
+            }
+            else
+            {
+                foreach (var t in tests.Cast<ITest>())
+                {
+                    GetTestClassesInternal(list, t);
+                }
+            }
+        }
+
+
+
+
     }
 }

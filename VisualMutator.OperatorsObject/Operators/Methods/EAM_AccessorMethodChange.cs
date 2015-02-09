@@ -56,6 +56,11 @@
 
         private static bool TryGetCompatibileAccessor(IMethodDefinition resolvedMethod, out IMethodDefinition accessor)
         {
+            if(resolvedMethod == null || resolvedMethod.ContainingTypeDefinition == null || resolvedMethod.ContainingTypeDefinition.Properties == null)
+            {
+                accessor = default(IMethodDefinition);
+                return false;
+            }
             var result = resolvedMethod.ContainingTypeDefinition.Properties
                 .FirstOrDefault(p => p.Getter.Name.UniqueKey != resolvedMethod.Name.UniqueKey
                 && TypeHelper.ParameterListsAreEquivalent(p.Getter.Parameters, resolvedMethod.Parameters));
@@ -84,7 +89,7 @@
                     IMethodDefinition accessor;
                     if(TryGetCompatibileAccessor(methodCall.MethodToCall.ResolvedMethod, out accessor))
                     {
-                        _log.Info("Marking IMethodCall: " + methodCall.MethodToCall.ResolvedMethod + " - " + methodCall.MethodToCall.ResolvedMethod.GetType());
+                       // _log.Info("Marking IMethodCall: " + methodCall.MethodToCall.ResolvedMethod + " - " + methodCall.MethodToCall.ResolvedMethod.GetType());
                         MarkMutationTarget(methodCall, accessor.Name.Value.InList());
                     }
 

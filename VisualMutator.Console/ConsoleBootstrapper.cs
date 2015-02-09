@@ -9,73 +9,14 @@
     using System.Threading.Tasks;
     using log4net;
     using Model;
-    using Moq;
+    using Model.CoverageFinder;
     using Ninject.Modules;
-    using UsefulTools.Core;
-    using UsefulTools.FileSystem;
-    using UsefulTools.Threading;
-    using UsefulTools.Wpf;
-    using Views;
+    using UsefulTools.ExtensionMethods;
     using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;
 
     #endregion
 
-    public class FakeExecute : IDispatcherExecute
-    {
-        public void OnUIThread(Action action)
-        {
-            action();
-        }
-
-        public void PostOnUIThread(Action action)
-        {
-            action();
-        }
-
-        public TaskScheduler GuiScheduler { get { return TaskScheduler.Default; } }
-        public SynchronizationContext GuiSyncContext { get {return SynchronizationContext.Current;} }
-    }
-    public class ConsoleInfrastructureModule : NinjectModule
-    {
-        public override void Load()
-        {
-            Infrastructure();
-
-        }
-        private void Infrastructure()
-        {
-            Bind<IMessageService>().To<ConsoleMessageService>().InSingletonScope();
-            Bind<IEventService>().To<EventService>().InSingletonScope();
-            Bind<IThreading>().To<Threading>().InSingletonScope();
-            Bind<CommonServices>().ToSelf().InSingletonScope();
-            Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
-            Bind<IProcesses>().To<Processes>().InSingletonScope();
-            Bind<IThreadPoolExecute>().To<ThreadPoolExecute>();
-
-            Bind<IDispatcherExecute>().ToConstant(new FakeExecute());
-            Kernel.InjectFuncFactory(() => DateTime.Now);
-        }
-    }
-    public class FakeViewsModule : NinjectModule
-    {
-        public override void Load()
-        {
-            Bind<IMutationResultsView>().ToConstant(new Mock<IMutationResultsView>().Object);
-            Bind<IMutantsSavingView>().ToConstant(new Mock<IMutantsSavingView>().Object);
-            Bind<ISessionCreationView>().ToConstant(new Mock<ISessionCreationView>().Object);
-            Bind<IChooseTestingExtensionView>().ToConstant(new Mock<IChooseTestingExtensionView>().Object);
-            Bind<IMutantDetailsView>().ToConstant(new Mock<IMutantDetailsView>().Object);
-            Bind<IResultsSavingView>().ToConstant(new Mock<IResultsSavingView>().Object);
-            Bind<ITestsSelectableTree>().ToConstant(new Mock<ITestsSelectableTree>().Object);
-            Bind<IMutantsCreationOptionsView>().ToConstant(new Mock<IMutantsCreationOptionsView>().Object);
-            Bind<IMutantsTestingOptionsView>().ToConstant(new Mock<IMutantsTestingOptionsView>().Object);
-            Bind<IMutationsTreeView>().ToConstant(new Mock<IMutationsTreeView>().Object);
-            Bind<ITypesTreeView>().ToConstant(new Mock<ITypesTreeView>().Object);
-            Bind<IOptionsView>().ToConstant(new Mock<IOptionsView>().Object);
-
-        }
-    }
     public class ConsoleBootstrapper
     {
         private readonly EnvironmentConnection _connection;
@@ -106,29 +47,48 @@
         }
 
 
-        public void Initialize()
+        public async Task Initialize()
         {
             try
             {
                 _boot.Initialize();
+                OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
+                optionsModel.WhiteCacheThreadsCount = _parser.SourceThreads;//1;
+                optionsModel.ProcessingThreadsCount = _parser.MutationThreads;
+                optionsModel.MutantsCacheEnabled = false;
+                optionsModel.ParsedParams = _parser.OtherParams;
+                Console.WriteLine(_parser.OtherParams.ToString());
+                _boot.AppController.OptionsManager.WriteOptions(optionsModel);
+
+              //  _connection.Build();
                 MethodIdentifier methodIdentifier;
                 _connection.GetCurrentClassAndMethod(out methodIdentifier);
-                OptionsModel optionsModel = _boot.AppController.OptionsManager.ReadOptions();
-                optionsModel.WhiteCacheThreadsCount = 0;
-                optionsModel.ProcessingThreadsCount = 2;
-                _boot.AppController.OptionsManager.WriteOptions(optionsModel);
-                _boot.AppController.MainController.RunMutationSessionAuto(methodIdentifier);
+
+                var tcs = new TaskCompletionSource<object>();
 
                 _boot.AppController.MainController.SessionFinishedEvents.Subscribe(_ =>
                 {
-                    _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsPath);
+                    tcs.SetResult(new object());
                 });
-                Console.ReadLine();
+
+                await _boot.AppController.MainController.RunMutationSession(methodIdentifier, _parser.TestAssembliesList, true);
+
+                await tcs.Task;
+
+                await _boot.AppController.MainController.SaveResultsAuto(_parser.ResultsXml);
+                //                for (int i = 0; i < 1000; i++)
+                //                {
+                //                    _boot.AppController.MainController.RunMutationSessionAuto2(methodIdentifier);
+                //                }
+
+                _connection.End();
+                //   Console.ReadLine();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _log.Error(e);
             }
+          //  Console.ReadLine();
         }
     }
 }

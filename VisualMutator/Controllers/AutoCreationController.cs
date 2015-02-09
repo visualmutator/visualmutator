@@ -17,6 +17,7 @@
     using log4net;
     using Microsoft.Cci;
     using Model;
+    using Model.CoverageFinder;
     using Model.Exceptions;
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Operators;
@@ -26,6 +27,7 @@
     using Model.Tests.TestsTree;
     using UsefulTools.Core;
     using UsefulTools.DependencyInjection;
+    using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
     using UsefulTools.Wpf;
     using ViewModels;
@@ -41,12 +43,18 @@
         private readonly IFactory<SessionCreator> _sessionCreatorFactory;
         private readonly IDispatcherExecute _execute;
         private readonly CommonServices _svc;
+        private readonly IDispatcherExecute _dispatcher;
         private readonly CreationViewModel _viewModel;
         private readonly ITypesManager _typesManager;
+        private List<CciModuleSource> _whiteSource;
 
         public MutationSessionChoices Result { get; protected set; }
 
+        TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+        private DateTime _sessionCreationWindowShowTime;
+
         public AutoCreationController(
+            IDispatcherExecute dispatcher,
             CreationViewModel viewModel,
             ITypesManager typesManager,
             SessionConfiguration sessionConfiguration,
@@ -55,6 +63,7 @@
             IDispatcherExecute execute,
             CommonServices svc)
         {
+            _dispatcher = dispatcher;
             _viewModel = viewModel;
             _typesManager = typesManager;
             _sessionConfiguration = sessionConfiguration;
@@ -63,7 +72,7 @@
             _execute = execute;
             _svc = svc;
             
-            _viewModel.CommandCreateMutants = new SmartCommand(AcceptChoices,
+            _viewModel.CommandCreateMutants = new SmartCommand(CommandOk,
                () => _viewModel.TypesTreeMutate.Assemblies != null && _viewModel.TypesTreeMutate.Assemblies.Count != 0
                      && _viewModel.TypesTreeToTest.TestAssemblies != null && _viewModel.TypesTreeToTest.TestAssemblies.Count != 0
                      && _viewModel.MutationsTree.MutationPackages.Count != 0)
@@ -77,82 +86,88 @@
             get; set;
         }
 
-        public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate = null, bool auto = false)
+        public async Task<MutationSessionChoices> Run(MethodIdentifier singleMethodToMutate = null, List<string> testAssemblies = null, bool auto = false)
         {
-            SessionCreationWindowShowTime = DateTime.Now;
+            _sessionCreationWindowShowTime = DateTime.Now;
 
-            if(_sessionConfiguration.AssemblyLoadProblem)
-            {
-                _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded(), _viewModel.View);
-            }
+            SessionCreator sessionCreator = _sessionCreatorFactory.Create();
 
+            Task<List<CciModuleSource>> assembliesTask = _sessionConfiguration.LoadAssemblies();
+
+        
+           // Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
+
+            Task<TestsRootNode> testsTask = _sessionConfiguration.LoadTests();
+
+
+            ITestsSelectStrategy testsSelector;
             bool constrainedMutation = false;
             ICodePartsMatcher matcher;
             if (singleMethodToMutate != null)
             {
                 matcher = new CciMethodMatcher(singleMethodToMutate);
+                testsSelector = new CoveringTestsSelectStrategy(assembliesTask, matcher, testsTask);
                 constrainedMutation = true;
             }
             else
             {
+                testsSelector = new AllTestsSelectStrategy(testsTask);
                 matcher = new AllMatcher();
             }
-
-            SessionCreator sessionCreator = _sessionCreatorFactory.Create();
-
-            Task<IModuleSource> assembliesTask = _sessionConfiguration.LoadAssemblies();
-
-            Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
-
-            Task<object> testsTask = _sessionConfiguration.LoadTests();
+            _log.Info("Selecting tests in assemblies: "+ testAssemblies.MakeString());
+            var testsSelecting = testsSelector.SelectTests(testAssemblies);
 
             var t1 = sessionCreator.GetOperators();
 
             var t2 = sessionCreator.BuildAssemblyTree(assembliesTask, constrainedMutation, matcher);
 
-            var t3 = sessionCreator.BuildTestTree(coveringTask, testsTask, constrainedMutation);
-
-            t1.ContinueWith(task =>
+            var t11 = t1.ContinueWith(task =>
             {
                 _viewModel.MutationsTree.MutationPackages
                     = new ReadOnlyCollection<PackageNode>(task.Result.Packages);
             },CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            t2.ContinueWith(task =>
+            var t22 = t2.ContinueWith(task =>
             {
-                _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(task.Result);
+                if (_typesManager.IsAssemblyLoadError)
+                {
+                    _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded());
+                }
+                var assembliesToMutate = task.Result.Where(a => !testAssemblies.ToEmptyIfNull().Contains(a.AssemblyPath.Path)).ToList();
+                _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assembliesToMutate);
+                _whiteSource = assembliesTask.Result;
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
-            t3.ContinueWith(task =>
+            var t33 = testsSelecting.ContinueWith(task =>
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
+               
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
+              
             try
             {
-                var mainTask = Task.WhenAll(t1, t2, t3).ContinueWith(t =>
+                var mainTask = Task.WhenAll(t1, t2, testsSelecting, t11, t22, t33).ContinueWith(t =>
                 {
+                    
                     if (t.Exception != null)
                     {
                         ShowError(t.Exception);
                         _viewModel.Close();
-                    }
-                    else
-                    {
-                        if(auto)
-                        {
-                            AcceptChoices();
-                        }
+                        tcs.TrySetCanceled();
                     }
                 }, _execute.GuiScheduler);
-                if (!auto)
+
+                var wrappedTask = Task.WhenAll(tcs.Task, mainTask);
+
+                if (_sessionConfiguration.AssemblyLoadProblem)
                 {
-                    _viewModel.ShowDialog();
+                    new TaskFactory(_dispatcher.GuiScheduler)
+                        .StartNew(() =>
+                        _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded()));
                 }
-                await mainTask;
-                return Result;
-              
+                return await WaitForResult(auto, wrappedTask);
             }
             catch (Exception e)
             {
@@ -161,28 +176,56 @@
             }
         }
 
-        protected void AcceptChoices()
+        protected void CommandOk()
         {
             if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
             {
                 _svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
                 return;
+                //   throw new Exception(UserMessages.ErrorNoTestsToRun());
             }
-            Result = new MutationSessionChoices
+            tcs.TrySetResult(new object());
+            _viewModel.Close();
+        }
+
+        private async Task<MutationSessionChoices> WaitForResult(bool auto, Task mainTask)
+        {
+            _viewModel.ShowDialog(); // blocking if gui
+            if (!auto && !tcs.Task.IsCompleted) //CommandOk was not called
+            {
+                tcs.TrySetCanceled();
+            }
+            if (auto)
+            {
+                tcs.TrySetResult(new object());
+            }
+            await mainTask;
+            if (auto)
+            {
+                if (_viewModel.TypesTreeToTest.TestAssemblies.All(a => a.IsIncluded == false))
+                {
+                    //_svc.Logging.ShowError(UserMessages.ErrorNoTestsToRun(), _viewModel.View);
+                       throw new Exception(UserMessages.ErrorNoTestsToRun());
+                }
+            }
+            
+            return AcceptChoices();
+        }
+        protected MutationSessionChoices AcceptChoices()
+        {
+            
+            return new MutationSessionChoices
             {
                 SelectedOperators = _viewModel.MutationsTree.MutationPackages.SelectMany(pack => pack.Operators)
                     .Where(oper => (bool)oper.IsIncluded).Select(n => n.Operator).ToList(),
                 Filter = _typesManager.CreateFilterBasedOnSelection(_viewModel.TypesTreeMutate.Assemblies),
                 TestAssemblies = _viewModel.TypesTreeToTest.TestAssemblies,
-                MutantsCreationOptions = _viewModel.MutantsCreation.Options,
-                MutantsTestingOptions = _viewModel.MutantsTesting.Options,
-                MainOptions = _options
+                SessionCreationWindowShowTime = _sessionCreationWindowShowTime
             };
 
-            _viewModel.Close();
         }
 
-      
+        
         private void ShowError(Exception exc)
         {
             var aggregate = exc as AggregateException;
@@ -197,7 +240,7 @@
             }
             else if (innerException is TestsLoadingException)
             {
-                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading(), _viewModel.View);
+                _svc.Logging.ShowError(UserMessages.ErrorTestsLoading() + " "+innerException, _viewModel.View);
             }
             else
             {

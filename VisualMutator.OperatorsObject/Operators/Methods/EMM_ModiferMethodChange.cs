@@ -55,7 +55,7 @@
         {
             public override void Visit(IMethodCall methodCall)
             {
-                _log.Info("Visiting IMethodCall: " + methodCall);
+              //  _log.Info("Visiting IMethodCall: " + methodCall);
               /*  TypeHelper.GetDefiningUnitReference(methodCall.MethodToCall.ContainingType.ResolvedType);
                 Host.CoreAssemblySymbolicIdentity
                 var namedTypeReference = methodCall.MethodToCall.ContainingType.ResolvedType as INamedTypeReference;

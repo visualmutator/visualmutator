@@ -1,26 +1,62 @@
 ﻿namespace VisualMutator.Model.Tests
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using TestsTree;
     using UsefulTools.CheckboxedTree;
+    using UsefulTools.Core;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Switches;
 
     public class TestsSelector
     {
+        private readonly bool _allowAll;
+        private readonly SelectedTests _selectedTests;
 
-        public SelectedTests GetIncludedTests(TestNodeAssembly assemblyNode)
+        public TestsSelector()
         {
-            ICollection<TestId> selected = assemblyNode.Children
+            _allowAll = true;
+        }
+
+        public TestsSelector(List<TestNodeNamespace> namespaces)
+        {
+            _allowAll = false;
+            _selectedTests = GetIncludedTests(namespaces);
+        }
+
+        public bool AllowAll
+        {
+            get { return _allowAll; }
+        }
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return !AllowAll && _selectedTests.TestIds.Count == 0;
+            }
+        }
+
+        public List<string> MinimalSelectionList
+        {
+            get
+            {
+                return AllowAll ? new List<string>() : _selectedTests.MinimalSelectionList;
+            }
+        }
+
+        public SelectedTests GetIncludedTests(List<TestNodeNamespace> namespaces)
+        {
+            ICollection<TestId> selected = namespaces.Cast<CheckedNode>()
                 .SelectManyRecursive(node => node.Children, node => node.IsIncluded ?? true, leafsOnly: true)
-                .Cast<TestNodeMethod>()
+                .OfType<TestNodeMethod>()
                 .Select(m => m.TestId)
                 .ToList();
 
-            return new SelectedTests(selected, CreateMinimalTestsInfo(assemblyNode.TestNamespaces));
+            return new SelectedTests(selected, CreateMinimalTestsInfo(namespaces));
         }
 
         public string NameExtractor(TestTreeNode node)
@@ -32,30 +68,28 @@
                 .GetResult();
         }
 
-        public string CreateMinimalTestsInfo(IEnumerable<TestNodeNamespace> namespaces)
+        public List<string> CreateMinimalTestsInfo(IEnumerable<TestNodeNamespace> namespaces)
         {
-            var ids = namespaces.Select(n => MinimalTreeId((TestTreeNode) n,
-                NameExtractor, a => a.Children.Cast<TestTreeNode>()));
-            return string.Join(" ", ids).Trim();
+            var ids = namespaces.SelectMany(n => 
+                MinimalTreeId((TestTreeNode) n, NameExtractor, a => 
+                (a.Children ?? new NotifyingCollection<CheckedNode>()).Cast<TestTreeNode>()));
+
+            return ids.ToList();
         }
 
-        public string MinimalTreeId<Node>(Node node,
+        public List<string> MinimalTreeId<Node>(Node node,
             Func<Node, string> nameExtractor, Func<Node, IEnumerable<Node>> childExtractor) where Node : CheckedNode
         {
-            if(node.IsIncluded.HasValue)
+            if(node.IsIncluded.HasValue) // fully included or excluded
             {
-                if (node.IsIncluded.Value)
-                {
-                    return nameExtractor(node);
-                }
-                else return "";
+                return node.IsIncluded.Value ? nameExtractor(node).InList() : new List<string>();
             }
             else
             {
                 var strings = childExtractor(node)
-                    .Select(n => MinimalTreeId(n, nameExtractor, childExtractor))
-                    .Where(n => !string.IsNullOrWhiteSpace(n));
-                return string.Join(" ", strings);
+                    .SelectMany(n => MinimalTreeId(n, nameExtractor, childExtractor))
+                    .Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
+                return strings;
             }
 
         }

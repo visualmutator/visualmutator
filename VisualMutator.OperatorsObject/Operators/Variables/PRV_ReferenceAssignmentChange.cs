@@ -32,7 +32,7 @@
            
             public override void Visit(IAssignment assignment)
             {
-                _log.Info("Visiting IAssignment: " + assignment);
+            //    _log.Info("Visiting IAssignment: " + assignment);
             //    var defaultEqualsDefinition = TypeHelper.GetMethod(Host.PlatformType.SystemObject.ResolvedType.Members,
               //                                                    Host.NameTable.GetNameFor("Equals"), 
               //                                                    Host.PlatformType.SystemObject);
@@ -92,7 +92,7 @@
 
             public override IExpression Rewrite(IAssignment assignment)
             {
-                _log.Info("Rewriting IAssignment: " + assignment + " Pass: " + MutationTarget.PassInfo);
+              //  _log.Info("Rewriting IAssignment: " + assignment + " Pass: " + MutationTarget.PassInfo);
 
                 var targetType = assignment.Target.Type;
                 IMethodDefinition currentMethod = CurrentMethod;

@@ -31,21 +31,17 @@
                 .Case(TraceEventType.Warning, ()=>_log.Warn(format))
                 .Case(TraceEventType.Information, ()=>_log.Info(format))
                 .Default(() => { });
-
         }
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
         {
-
             base.TraceEvent(eventCache, source, eventType, id, message);
            
             Switch.On(eventType)
                 .Case(TraceEventType.Error, () => _log.Error(message))
                 .Case(TraceEventType.Warning, () => _log.Warn(message))
                 .Case(TraceEventType.Information, () => _log.Info(message))
-                .Default(() =>
-                {
-                });
+                .Default(() => {  });
         }
 
       

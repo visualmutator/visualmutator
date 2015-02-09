@@ -22,7 +22,6 @@ namespace VisualMutator.ViewModels
 
             SelectedLanguage = CodeLanguage.CSharp;
 
-          //  SelectedTabHeader = "Code";
             SelectedIndex = 1;
         }
 
@@ -98,7 +97,6 @@ namespace VisualMutator.ViewModels
         public void PresentCode(CodeWithDifference codeWithDifference)
         {
             View.PresentCode(codeWithDifference);
-            //View.SetText(codeWithDifference.Code);
         }
 
         public void ClearCode()

@@ -1,17 +1,22 @@
 ﻿namespace VisualMutator.Model
 {
     using System;
+    using System.Linq;
+    using System.Reflection;
     using CommandLine;
+    using log4net;
     using UsefulTools.Core;
 
     public class OptionsModel : ModelElement
     {
+        
         public OptionsModel()
         {
-            WhiteCacheThreadsCount = Environment.ProcessorCount + 1;
+            WhiteCacheThreadsCount = 2;
             MutantsCacheEnabled = true;
-            ProcessingThreadsCount = Environment.ProcessorCount + 1;
+            ProcessingThreadsCount = 3;
             OtherParams = "";
+            MaxNumerOfMutantPerOperator = 100;
         }
 
         private bool _mutantsCacheEnabled;
@@ -52,7 +57,22 @@
             }
         }
 
+        private int _maxNumerOfMutantPerOperator;
+        public int MaxNumerOfMutantPerOperator
+        {
+            get
+            {
+                return _maxNumerOfMutantPerOperator;
+            }
+            set
+            {
+                SetAndRise(ref _maxNumerOfMutantPerOperator, value, () => MaxNumerOfMutantPerOperator);
+            }
+        }
+        
+
         private string _otherParams;
+
         public string OtherParams
         {
             get
@@ -64,48 +84,72 @@
                 SetAndRise(ref _otherParams, value, () => OtherParams);
             }
         }
-        
+
+        private OtherParams _parsedParams;
         public OtherParams ParsedParams
         {
+            set
+            {
+                _parsedParams = value;
+            }
             get
             {
-                var options = new OtherParams();
-                if (CommandLine.Parser.Default.ParseArguments(OtherParams.Split(' '), options))
+                if(_parsedParams == null)
                 {
-                    return options;
+                    var options = new OtherParams();
+                    if (Parser.Default.ParseArguments(OtherParams.Split(' '), options))
+                    {
+                        _parsedParams = options;
+                        return options;
+                    }
+                    else
+                    {
+                        // var str = options.LastParserState.Errors.Select(a=>a.ToString()).Aggregate((a, b) => a.ToString() + "n" + b.ToString());
+                        throw new Exception("Invalid params string in options.: ");
+                    }
                 }
                 else
                 {
-                    throw new Exception("Invalid params string in options.");
+                    return _parsedParams;
                 }
+                
             }
         }
+       
 
-        
     }
     public class OtherParams
     {
 
-        [Option('l', "loglevel", DefaultValue = "DEBUG", HelpText = "")]
+        [Option("loglevel", DefaultValue = "DEBUG", HelpText = "", Required = false)]
         public string LogLevel
         {
             get; set;
         }
-        [Option('d', "debugfiles", DefaultValue = false, HelpText = "")]
+        [Option( "debugfiles", DefaultValue = false, HelpText = "", Required = false)]
         public bool DebugFiles
         {
             get; set;
         }
-        [Option('n', "nunitnetversion", DefaultValue = "", HelpText = "")]
+        [Option( "nunitnetversion", DefaultValue = "", HelpText = "", Required = false)]
         public string NUnitNetVersion
         {
             get; set;
         }
-        [ParserState]
-        public IParserState LastParserState
+        [Option("legacyCreation", DefaultValue = false, HelpText = "", Required = false)]
+        public bool LegacyCreation
         {
             get; set;
         }
+//        [ParserState]
+//        public IParserState LastParserState
+//        {
+//            get; set;
+//        }
 
+        public override string ToString()
+        {
+            return string.Format("LogLevel: {0}, DebugFiles: {1}, NUnitNetVersion: {2}, LegacyCreation: {3}", LogLevel, DebugFiles, NUnitNetVersion, LegacyCreation);
+        }
     }
 }

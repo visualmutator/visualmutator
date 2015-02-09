@@ -22,5 +22,7 @@
         {
             get { return _fullName; }
         }
+
+        public string StackTrace { get; set; }
     }
 }

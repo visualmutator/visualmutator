@@ -2,11 +2,11 @@
 {
     #region
 
+    using System;
     using System.Diagnostics;
     using System.IO;
     using System.Xml.Linq;
     using System.Xml.Serialization;
-    using Microsoft.Cci.Ast;
     using Microsoft.Win32;
     using Model;
     using UsefulTools.Core;
@@ -21,14 +21,17 @@
     public class OptionsController : Controller
     {
         private readonly OptionsViewModel _viewModel;
+        private readonly CommonServices _svc;
         private readonly IOptionsManager _optionsManager;
 
       
         public OptionsController(
             OptionsViewModel viewModel, 
+            CommonServices svc,
             IOptionsManager optionsManager)
         {
             _viewModel = viewModel;
+            _svc = svc;
             _optionsManager = optionsManager;
 
             _viewModel.CommandSave = new SmartCommand(SaveResults);
@@ -39,13 +42,24 @@
         {
             OptionsModel optionsModel = _optionsManager.ReadOptions();
             _viewModel.Options = optionsModel;
+            _viewModel.Options.ParsedParams = null;
             _viewModel.Show();
         }
 
         public void SaveResults()
         {
-            _optionsManager.WriteOptions(_viewModel.Options);
-            _viewModel.Close();
+            try
+            {
+                
+                bool ok = _viewModel.Options.ParsedParams != null;
+                _optionsManager.WriteOptions(_viewModel.Options);
+                _viewModel.Close();
+            }
+            catch (Exception e)
+            {
+                _svc.Logging.ShowError("Params are incorrect: "+ e);
+            }
+            
         }
 
         public void Close()

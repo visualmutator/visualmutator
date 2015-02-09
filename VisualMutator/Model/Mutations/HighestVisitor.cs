@@ -2,6 +2,7 @@
 {
     using Extensibility;
     using Microsoft.Cci;
+    using Traversal;
 
     public class HighestVisitor : VisualCodeVisitor
     {

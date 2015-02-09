@@ -898,18 +898,23 @@ namespace VisualMutator.Extensibility
 
         public override string ToString()
         {
-            StringBuilder b = new StringBuilder();
-            int c = 0;
+            var b = new StringBuilder();
             foreach (var element in AllElements)
-            {//c + "/" + AllElements.Count + 
+            {
                 string text = element.ToString();
                 b.AppendLine(text);
-              //  Console.WriteLine(text);
-                c++;
             }
             return b.ToString();
-            //return AllElements.Select((i, c) => c+"/"+AllElements.Count + i.ToString())
-            //  .Aggregate((s,s2)=>s+Environment.NewLine+s2);
+        }
+        public string ToStringBasicVisit()
+        {
+            var b = new StringBuilder();
+            foreach (var element in AllElements)
+            {
+                string text = element.ToStringBasicVisit();
+                b.AppendLine(text);
+            }
+            return b.ToString();
         }
         public void Initialize()
         {

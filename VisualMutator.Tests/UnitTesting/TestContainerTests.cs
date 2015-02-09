@@ -23,7 +23,6 @@
     using UsefulTools.Core;
     using UsefulTools.FileSystem;
     using UsefulTools.Paths;
-    using UsefulTools.Wpf;
     using Util;
     using VisualMutator.Infrastructure;
 

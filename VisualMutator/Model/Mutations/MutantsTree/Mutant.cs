@@ -25,7 +25,14 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             Parent = parent;
             UpdateDisplayedText();
         }
-
+        public Mutant(string id, MutationTarget mutationTarget)
+           : base("Mutant", false)
+        {
+            _id = id;
+            _mutationTarget = mutationTarget;
+            _mutantTestSession = new MutantTestSession();
+            UpdateDisplayedText();
+        }
 
         private readonly string _id;
 
@@ -88,7 +95,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
                 return MutationTarget.Variant.Signature;
             }
         }
-        private MutantTestSession _mutantTestSession;
+        private readonly MutantTestSession _mutantTestSession;
 
         public MutantTestSession MutantTestSession
         {
@@ -101,10 +108,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
 
         public MutantKilledSubstate KilledSubstate { get; set; }
 
-        public MutantGroup MutantGroup
-        {
-            get { return (MutantGroup) Parent; }
-        }
+       
 
         private bool _isEquivalent;
 
@@ -121,7 +125,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             }
         }
 
-        public List<TestsRunContext> TestRunContexts
+        public List<ITestsRunContext> TestRunContexts
         {
             get;
             set;
@@ -141,6 +145,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
              Switch.Into<string>().From(State)
              .Case(MutantResultState.Untested, "Untested")
              .Case(MutantResultState.Creating, "Creating mutant...")
+             .Case(MutantResultState.Writing, "Writing mutant...")
              .Case(MutantResultState.Tested, "Executing tests...")
              .Case(MutantResultState.Killed, () =>
              {
@@ -162,21 +167,7 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             DisplayedText = "{0} - {1} - {2}".Formatted(Id, MutationTarget.Variant.Signature, stateText);
         }
     }
-    public enum StateSignal
-    {
-        //Not yet tested
-        Untested,
-        Creating,
-        //During testing
-        Tested,
-        //Any test failed or was inconclusive
-        Killed,
-        //All tests passed
-        Live,
-        //Error occurred while testing
-        Error,
-        Equivalent
-    }
+  
     public enum MutantKilledSubstate
     {
         Normal,

@@ -8,41 +8,23 @@
 
     public class ContinuousConfiguration : IDisposable
     {
-        private readonly IProjectClonesManager _fileManager;
-        private readonly OperatorsManager _operatorsManager;
+        private readonly IWhiteSource _whiteCache;
         private readonly IRootFactory<SessionConfiguration> _sessionConfigurationFactory;
-        private readonly OptionsModel _optionsModel;
-        private readonly IWhiteCache _whiteCache;
 
         public ContinuousConfiguration(
-             IProjectClonesManager fileManager,
+            IWhiteSource whiteCache,
             OperatorsManager operatorsManager,
-            IRootFactory<SessionConfiguration> sessionConfigurationFactory,
-            IFactory<WhiteCache> whiteCacheFactory,
-            IFactory<DisabledWhiteCache> disabledCacheFactory,
-            //------
-            OptionsModel optionsModel)
+            IRootFactory<SessionConfiguration> sessionConfigurationFactory)
         {
-            _fileManager = fileManager;
-            _operatorsManager = operatorsManager;
+            _whiteCache = whiteCache;
             _sessionConfigurationFactory = sessionConfigurationFactory;
-            _optionsModel = optionsModel;
 
-            if (_optionsModel.WhiteCacheThreadsCount != 0)
-            {
-                _whiteCache = whiteCacheFactory.CreateWithParams(_optionsModel.WhiteCacheThreadsCount);
-            }
-            else
-            {
-                _whiteCache = disabledCacheFactory.Create();
-            }
-
-            _operatorsManager.GetOperators();
+            operatorsManager.GetOperators();
         }
 
         public IObjectRoot<SessionConfiguration> CreateSessionConfiguration()
         {
-            return _sessionConfigurationFactory.CreateWithBindings(_whiteCache, _optionsModel);
+                return _sessionConfigurationFactory.Create();
         }
 
         public void Dispose()

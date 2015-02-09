@@ -19,7 +19,6 @@
         {
             Bind<IMessageService>().To<MessageService>().InSingletonScope();
             Bind<IEventService>().To<EventService>().InSingletonScope();
-            Bind<IThreading>().To<Threading>().InSingletonScope();
             Bind<CommonServices>().ToSelf().InSingletonScope();
             Bind<IFileSystem>().To<FileSystemService>().InSingletonScope();
             Bind<IProcesses>().To<Processes>().InSingletonScope();

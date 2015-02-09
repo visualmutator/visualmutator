@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using log4net;
     using NUnit.Framework;
@@ -33,7 +34,14 @@
             get;
             set;
         }
-
+        public IEnumerable<string> AssembliesFileNames
+        {
+            get
+            {
+                return Assemblies.Select(_ => _.FileName);
+            }
+            
+        }
         public List<FilePathAbsolute> Referenced
         {
             get;

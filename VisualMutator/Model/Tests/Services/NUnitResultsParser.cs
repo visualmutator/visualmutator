@@ -39,7 +39,6 @@
 
             var nsStack = new Stack<String>();
             bool isParametrizedTest = false;
-            TestNodeClass currentClass = null;
             try
             {
                 while (reader.Read())
@@ -58,7 +57,7 @@
                         if (reader.NodeType == XmlNodeType.EndElement)
                         {
                             isParametrizedTest = false;
-                            currentClass = null;
+                            //currentClass = null;
                         }
                         else if (reader.NodeType == XmlNodeType.Element)
                         {
@@ -69,8 +68,8 @@
                             if (reader.GetAttribute("type") == "TestFixture")
                             {
                                 isParametrizedTest = false;
-                                currentClass = new TestNodeClass(reader.GetAttribute("name"));
-                                currentClass.Namespace = nsStack.Aggregate((a, b) => a + "." + b);
+                                //currentClass = new TestNodeClass(reader.GetAttribute("name"));
+                                //currentClass.Namespace = nsStack.Aggregate((a, b) => a + "." + b);
                             }
                         }
                     }
@@ -112,7 +111,7 @@
                 {
                     result.Success = test.Attribute("success").Value == "True";
                 }
-                _log.Debug("Found test case: " + testName + " with success: " + result.Success);
+                //_log.Debug("Found test case: " + testName + " with success: " + result.Success);
                 if (!result.Success)
                 {
                     result.Message = test.Descendants(XName.Get("message", "")).Single().Value;
