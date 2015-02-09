@@ -11,12 +11,15 @@ namespace VisualMutator.Model.Tests.Services
 
     #endregion
 
-    public interface ITestService
+    public interface ITestsService
     {
+        string FrameWorkName { get; }
+
         May<TestsLoadContext> LoadTests(string assemblyPath);
 
 
         void Cancel();
+        ITestsRunContext CreateRunContext(TestsLoadContext loadContext, string mutatedPath);
     }
 
   

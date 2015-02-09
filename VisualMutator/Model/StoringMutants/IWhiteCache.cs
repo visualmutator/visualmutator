@@ -3,13 +3,14 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public interface IWhiteCache
+    public interface IWhiteSource
     {
-        void Initialize();
-        CciModuleSource GetWhiteModules();
-        void Reinitialize(List<string> assembliesPaths);
-        Task<CciModuleSource> GetWhiteModulesAsync();
+        Task Initialize();
+        Task<List<CciModuleSource>> GetWhiteModulesAsync();
         void Dispose();
-        bool Paused {  set; }
+        void Pause(bool paused);
+        Task<CciModuleSource> GetWhiteSourceAsync(string moduleName);
+        void ReturnToCache(string name, CciModuleSource whiteModules);
+        Task<List<CciModuleSource>> GetWhiteModulesAsyncOld();
     }
 }

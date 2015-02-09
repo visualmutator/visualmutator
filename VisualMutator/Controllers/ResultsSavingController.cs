@@ -2,9 +2,14 @@
 {
     #region
 
+    using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Reflection;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
+    using log4net;
     using Microsoft.Win32;
     using Model;
     using UsefulTools.Core;
@@ -16,6 +21,8 @@
 
     public class ResultsSavingController : Controller
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly ResultsSavingViewModel _viewModel;
 
         private readonly IFileSystem _fs;
@@ -25,6 +32,7 @@
         private readonly XmlResultsGenerator _generator;
 
         private MutationTestingSession _currentSession;
+        private CancellationTokenSource _cts;
 
         public ResultsSavingController(
             ResultsSavingViewModel viewModel, 
@@ -37,10 +45,44 @@
             _svc = svc;
             _generator = generator;
 
-            _viewModel.CommandSaveResults = new SmartCommand(SaveResults);
 
-            _viewModel.CommandClose = new SmartCommand(Close);
-            _viewModel.CommandBrowse = new SmartCommand(BrowsePath);
+
+            _viewModel.CommandSaveResults = new SmartCommand(async () =>
+            {
+                try
+                {
+                    await SaveResults();
+                }
+                catch (OperationCanceledException e)
+                {
+                    Close();
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                }
+            },
+                canExecute: () => !_viewModel.SavingInProgress)
+                .UpdateOnChanged(_viewModel, _ => _.SavingInProgress);
+
+            _viewModel.CommandClose = new SmartCommand(() =>
+            {
+                if(_cts != null)
+                {
+                    _cts.Cancel();
+                    _viewModel.IsCancelled = true;
+                }
+                else
+                {
+                    Close();
+                }
+            },
+                canExecute: () => !_viewModel.IsCancelled)
+                .UpdateOnChanged(_viewModel, _ => _.IsCancelled);
+
+            _viewModel.CommandBrowse = new SmartCommand(BrowsePath, 
+                canExecute: () => !_viewModel.SavingInProgress)
+                .UpdateOnChanged(_viewModel, _ => _.SavingInProgress);
 
             if (_svc.Settings.ContainsKey("MutationResultsFilePath"))
             {
@@ -49,7 +91,13 @@
            
         }
 
-        
+        public bool IsCancelled { get; set; }
+
+        public ResultsSavingViewModel ViewModel
+        {
+            get { return _viewModel; }
+        }
+
         public void Run(MutationTestingSession currentSession)
         {
             _currentSession = currentSession;
@@ -77,38 +125,52 @@
 
 
         }
-        public void SaveResults()
+        public async Task SaveResults(string path = null)
         {
-            if (string.IsNullOrEmpty(_viewModel.TargetPath)
-                || !Path.IsPathRooted(_viewModel.TargetPath))
+            if(path == null)
             {
-                _svc.Logging.ShowError("Invalid path");
-                return;
+                if (string.IsNullOrEmpty(_viewModel.TargetPath)
+                || !Path.IsPathRooted(_viewModel.TargetPath))
+                {
+                    _svc.Logging.ShowError("Invalid path");
+                    return;
+                }
+                path = _viewModel.TargetPath;
             }
 
-            XDocument document = _generator.GenerateResults(_currentSession, 
-                _viewModel.IncludeDetailedTestResults, _viewModel.IncludeCodeDifferenceListings);
+            _viewModel.SavingInProgress = true;
+            _cts = new CancellationTokenSource();
+            var progress = ProgressCounter.Invoking(i => _viewModel.Progress = i);
+
+            XDocument document = await _generator.GenerateResults(_currentSession,
+            _viewModel.IncludeDetailedTestResults, 
+            _viewModel.IncludeCodeDifferenceListings, 
+            progress,
+            _cts.Token);
 
             try
             {
-                using (var writer = _fs.File.CreateText(_viewModel.TargetPath))
+
+                using (var writer = _fs.File.CreateText(path))
                 {
                     writer.Write(document.ToString());
                 }
-                _svc.Settings["MutationResultsFilePath"] = _viewModel.TargetPath;
+                _svc.Settings["MutationResultsFilePath"] = path;
 
                 _viewModel.Close();
 
 
                 var p = new Process();
 
-                p.StartInfo.FileName = _viewModel.TargetPath;
+                p.StartInfo.FileName = path;
                 p.Start();
             }
             catch (IOException)
             {
-                _svc.Logging.ShowError("Cannot write file: " + _viewModel.TargetPath);
+                _svc.Logging.ShowError("Cannot write file: " + path);
             }
+          
+            
             
         }
         public void Close()

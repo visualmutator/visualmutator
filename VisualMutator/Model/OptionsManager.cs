@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Xml.Serialization;
+    using log4net;
     using UsefulTools.Paths;
 
     public interface IOptionsManager
@@ -16,6 +18,8 @@
 
     public class OptionsManager : IOptionsManager
     {
+        private static ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public enum EventType
         {
             Updated,
@@ -32,22 +36,29 @@
 
         public OptionsModel ReadOptions()
         {
-            string path = GetOptionsFilePath();
-            if(File.Exists(path))
+            try
             {
-                using (StreamReader stream = new StreamReader(GetOptionsFilePath()))
+                string path = GetOptionsFilePath();
+                if(File.Exists(path))
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(OptionsModel));
+                    using (StreamReader stream = new StreamReader(GetOptionsFilePath()))
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(OptionsModel));
+                        _events.OnNext(EventType.Loaded);
+                        return (OptionsModel)serializer.Deserialize(stream);
+                    }
+                }
+                else
+                {
                     _events.OnNext(EventType.Loaded);
-                    return (OptionsModel)serializer.Deserialize(stream);
+                    return new OptionsModel();
                 }
             }
-            else
+            catch (Exception e)
             {
-                _events.OnNext(EventType.Loaded);
+                _log.Error(e);
                 return new OptionsModel();
             }
-            
         }
 
         public void WriteOptions(OptionsModel options)

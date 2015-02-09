@@ -44,21 +44,32 @@
             var mutant = (Mutant)((TreeViewItem)sender).DataContext;
             item.IsSelected = true;
             item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
-            if (mutant.State == MutantResultState.Error)
+            var messageItem = (item.ContextMenu.Items[0] as MenuItem);
+            var markEquivalent = (item.ContextMenu.Items[1] as MenuItem);
+            var unmarkEquivalent = (item.ContextMenu.Items[2] as MenuItem);
+
+            messageItem.Visibility = mutant.State == MutantResultState.Error ?
+                Visibility.Visible : Visibility.Collapsed;
+
+            if(mutant.State == MutantResultState.Live)
             {
-                (item.ContextMenu.Items[0] as MenuItem).IsEnabled = true;
-            }
-         
-            if(mutant.IsEquivalent)
-            {
-                (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Visible;
-                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Collapsed;
+                if (mutant.IsEquivalent)
+                {
+                    unmarkEquivalent.Visibility = Visibility.Visible;
+                    markEquivalent.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    markEquivalent.Visibility = Visibility.Visible;
+                    unmarkEquivalent.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
-                (item.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Visible;
-                (item.ContextMenu.Items[2] as MenuItem).Visibility = Visibility.Collapsed;
+                markEquivalent.Visibility = Visibility.Collapsed;
+                unmarkEquivalent.Visibility = Visibility.Collapsed;
             }
+            
 
         }
 

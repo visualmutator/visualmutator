@@ -13,8 +13,6 @@
 
     public abstract class TestTreeNode : CheckedNode, IExpandableNode
     {
-        private ICommand _commandRunTest;
-
    
         private TestNodeState _state;
 
@@ -22,7 +20,6 @@
             : base( name, hasChildren)
         {
             Parent = parent;
-            CommandRunTest = new SmartCommand(Comm);
         }
 
         public bool HasResults
@@ -31,24 +28,6 @@
             {
                 return (State == TestNodeState.Failure || State == TestNodeState.Success
                     || State == TestNodeState.Inconclusive);
-            }
-        }
-
-  
-     
-        public ICommand CommandRunTest
-        {
-            get
-            {
-                return _commandRunTest;
-            }
-            set
-            {
-                if (_commandRunTest != value)
-                {
-                    _commandRunTest = value;
-                    RaisePropertyChanged(() => CommandRunTest);
-                }
             }
         }
 

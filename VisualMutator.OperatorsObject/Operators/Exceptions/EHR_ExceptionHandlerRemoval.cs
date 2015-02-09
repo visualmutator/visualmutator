@@ -26,7 +26,7 @@
 
             public override void Visit(ITryCatchFinallyStatement operation)
             {
-                _log.Info("Visit ITryCatchFinallyStatement: " + operation);
+              //  _log.Info("Visit ITryCatchFinallyStatement: " + operation);
                 if (operation.CatchClauses.Count() >= 2 )
                 {
                     var passes = new List<string>();

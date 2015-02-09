@@ -4,13 +4,21 @@
 
     public class SelectedTests
     {
-        public SelectedTests(ICollection<TestId> selected, string testsDescription)
+        private readonly List<string> _minimalSelectionList;
+
+        public List<string> MinimalSelectionList
         {
-            TestsDescription = testsDescription;
+            get { return _minimalSelectionList; }
+        }
+
+        public SelectedTests(ICollection<TestId> selected, List<string> minimalSelectionList)
+        {
+            _minimalSelectionList = minimalSelectionList;
             TestIds = selected;
         }
 
         public ICollection<TestId> TestIds { get; private set; }
-        public string TestsDescription { get; private set; }
+        public string TestsDescription { get {return string.Join(" ", _minimalSelectionList).Trim();
+            } }
     }
 }

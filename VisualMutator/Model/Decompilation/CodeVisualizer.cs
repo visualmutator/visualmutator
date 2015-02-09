@@ -2,11 +2,18 @@
 {
     #region
 
+    using System;
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Threading.Tasks;
+    using CodeDifference;
     using CSharpSourceEmitter;
     using log4net;
     using Microsoft.Cci;
+    using Mutations;
+    using Mutations.MutantsTree;
     using StoringMutants;
 
     #endregion
@@ -15,60 +22,101 @@
     {
 
 
-        string Visualize(CodeLanguage language, IMethodDefinition method, IModuleSource modules);
-        string Visualize(CodeLanguage language, IModuleSource modules);
+        string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource);
+        string Visualize(CodeLanguage language, ICciModuleSource modules);
+        Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant, MutationResult mutationResult);
     }
 
     public class CodeVisualizer : ICodeVisualizer
     {
-        private readonly ICciModuleSource _cci;
-        
+        private readonly OriginalCodebase _originalCodebase;
+        private readonly ICodeDifferenceCreator _differenceCreator;
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-
-        public CodeVisualizer(ICciModuleSource cci)
+        public CodeVisualizer(
+            OriginalCodebase originalCodebase,
+            ICodeDifferenceCreator differenceCreator)
         {
-            _cci = cci;
+            _originalCodebase = originalCodebase;
+            _differenceCreator = differenceCreator;
         }
 
-        public string Visualize(CodeLanguage language, IModuleSource modules)
+        public async Task<CodeWithDifference> CreateDifferenceListing(CodeLanguage language, Mutant mutant, MutationResult mutationResult)
         {
-            var sb = new StringBuilder();
-     
-            
-            foreach (var assembly in modules.Modules)
+            _log.Debug("CreateDifferenceListing in object: " + ToString() + GetHashCode());
+            try
             {
-                var sourceEmitterOutput = new SourceEmitterOutputString();
-                var sourceEmitter = _cci.GetSourceEmitter(language, assembly, sourceEmitterOutput);
-                sourceEmitter.Traverse(assembly);
-                sb.Append(sourceEmitterOutput.Data);
-            }  
-  
-            return sb.ToString();
+                
+                var whiteCode = await VisualizeOriginalCode(language, mutant);
+                var mutatedCode = await VisualizeMutatedCode(language, mutationResult);
+                CodePair pair = new CodePair
+                {
+                    OriginalCode = whiteCode,
+                    MutatedCode = mutatedCode
+                };
+                return _differenceCreator.GetDiff(language, pair.OriginalCode, pair.MutatedCode);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                return new CodeWithDifference
+                {
+                    Code = "Exception occurred while decompiling: " + e,
+                    LineChanges = Enumerable.Empty<LineChange>().ToList()
+                };
+            }
         }
-        
-        public string Visualize(CodeLanguage language, IMethodDefinition method, IModuleSource modules)
+
+
+        public async Task<string> VisualizeOriginalCode(CodeLanguage language, Mutant mutant)
+        {
+            var whiteCode = Visualize(language, mutant.MutationTarget.MethodRaw,
+                _originalCodebase.Modules.Single(m => m.Module.Name == mutant.MutationTarget.ProcessingContext.ModuleName));
+            return whiteCode;
+        }
+
+        public async Task<string> VisualizeMutatedCode(CodeLanguage language, MutationResult mutationResult)
+        {
+            
+
+            var result = Visualize(language, mutationResult.MethodMutated, mutationResult.MutatedModules);
+          //  _mutantsCache.Release(mutationResult);
+            return result;
+        }
+
+        public string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource)
         {
             if (method == null)
             {
                 return "No method to visualize.";
             }
-
-            var sb = new StringBuilder();
             _log.Info("Visualize: " + method);
-            var module = (IModule) TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
+            var module = (IModule)TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
             var sourceEmitterOutput = new SourceEmitterOutputString();
-
-            var sourceEmitter = _cci.GetSourceEmitter(language, module, sourceEmitterOutput);
+            var sourceEmitter = moduSource.GetSourceEmitter(language, module, sourceEmitterOutput);
             sourceEmitter.Traverse(method);
-       
-            sb.Append(sourceEmitterOutput.Data);
+            return sourceEmitterOutput.Data;
+        }
 
-               
+
+        public string Visualize(CodeLanguage language, ICciModuleSource modules)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var assembly in modules.Modules)
+            {
+                var sourceEmitterOutput = new SourceEmitterOutputString();
+                var sourceEmitter = modules.GetSourceEmitter(language, assembly.Module, sourceEmitterOutput);
+                sourceEmitter.Traverse(assembly.Module);
+                sb.Append(sourceEmitterOutput.Data);
+            }
 
             return sb.ToString();
         }
+
+
       
+
+
     }
 }

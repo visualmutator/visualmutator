@@ -2,9 +2,11 @@
 {
     #region
 
+    using System.Collections.Generic;
     using System.Text;
     using Microsoft.Cci;
     using MutantsTree;
+    using StoringMutants;
     using UsefulTools.CheckboxedTree;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Paths;
@@ -12,22 +14,15 @@
     #endregion
     public class AssemblyNode : MutationNode
     {
-        private IModule _assemblyDefinition;
+     
 
 
-        public AssemblyNode(string name, IModule assemblyDefinition)
+        public AssemblyNode(string name)
             : base( name, true)
         {
-            _assemblyDefinition = assemblyDefinition;
+           
         }
 
-        public IModule AssemblyDefinition
-        {
-            get
-            {
-                return _assemblyDefinition;
-            }
-        }
 
         public FilePathAbsolute AssemblyPath
         {
@@ -51,10 +46,14 @@
     public class TypeNode : MutationNode
     {
 
-        public TypeNode(CheckedNode parent, string name)
+        public TypeNode(CheckedNode parent, string name, IEnumerable<MethodNode> children = null)
             : base( name, true)
         {
             Parent = parent;
+            if(children != null)
+            {
+                Children.AddRange(children);
+            }
         }
 
 
@@ -77,7 +76,7 @@
     public class MethodNode : MutationNode
     {
         private readonly IMethodDefinition _methodDefinition;
-
+       
         public MethodNode(CheckedNode parent, string name, IMethodDefinition methodDefinition, bool hasChildren)
             : base(name, hasChildren)
         {
@@ -85,6 +84,19 @@
             Parent = parent;
         }
 
+        public MethodNode(string name, IMethodDefinition methodDefinition, IEnumerable<MutationNode> children)
+           : base(name, true)
+        {
+            _methodDefinition = methodDefinition;
+            
+            Children.AddRange(children);
+            foreach (var child in Children)
+            {
+                child.Parent = this;
+            }
+        }
+
+        //TODO: refactor and remove 
         public IMethodDefinition MethodDefinition
         {
             get { return _methodDefinition; }

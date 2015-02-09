@@ -1,39 +1,58 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.Tests
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-
-  
+    using log4net;
 
     public class WorkerCollection<T> where T : class 
     {
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly LinkedList<T> _toProcessList;
         private bool _requestedStop;
-        private readonly SemaphoreSlim _semaphore;
         private readonly int _maxCount;
         private int _currentCount;
         private readonly Func<T, Task> _workAction;
-
+        private readonly Timer _watchdog;
         public WorkerCollection(ICollection<T> items, int maxCount, Func<T, Task> workAction)
         {
             _maxCount = maxCount;
             _workAction = workAction;
-            _semaphore = new SemaphoreSlim(_maxCount);
             _toProcessList = new LinkedList<T>(items);
+            _watchdog = new Timer(o =>
+            {
+                _log.Info("Testing process inactive for too long. Watchdog firing!");
+                lock (this)
+                {
+                    _currentCount = 0;
+                    Monitor.Pulse(this);
+                }
+            } );
+            
         }
 
         public void Stop()
         {
+            _watchdog.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
             _requestedStop = true;
         }
 
         public void Start(Action endCallback)
         {
+            _watchdog.Change(30000, 30000);
             _requestedStop = false;
 
             bool emptyStop = false;
+
+            if(_toProcessList.Count == 0)
+            {
+                endCallback();
+                return;
+            }
+
             while (!emptyStop && !_requestedStop)
             {
                 lock (this)
@@ -53,6 +72,11 @@
                         _workAction(item)
                             .ContinueWith(t =>
                             {
+                                _watchdog.Change(30000, 30000);
+                                if (t.Exception != null)
+                                {
+                                    _log.Error(t.Exception);
+                                }
                                 lock (this)
                                 {
                                     _currentCount--;
@@ -71,7 +95,6 @@
                 {
                     emptyStop = true;
                     _currentCount--;
-                    // _semaphore.Release();
                 }
             }
         }

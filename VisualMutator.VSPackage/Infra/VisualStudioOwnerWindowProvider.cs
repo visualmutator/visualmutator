@@ -4,6 +4,8 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model
 
     using System.Windows;
     using System.Windows.Interop;
+    using Infra.UsefulTools.Wpf;
+    using UsefulTools.Core;
     using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
     using IWin32Window = System.Windows.Forms.IWin32Window;
@@ -19,15 +21,16 @@ namespace PiotrTrzpil.VisualMutator_VSPackage.Model
             _hostEnviroment = hostEnviroment;
         }
 
-        public IWin32Window GetWindow()
+
+        public object GetWindow()
         {
             return _hostEnviroment.GetWindow();
         }
 
-        public void SetOwnerFor(Window window)
+        public void SetOwnerFor(IWindow window)
         {
             NativeWindowInfo vsWindow = _hostEnviroment.WindowInfo;
-            WindowInteropHelper helper = new WindowInteropHelper(window);
+            WindowInteropHelper helper = new WindowInteropHelper((Window) window);
             helper.Owner = vsWindow.Handle;
         }
 

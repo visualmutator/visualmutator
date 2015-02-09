@@ -1,7 +1,5 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.CoverageFinder
 {
-    using System.Text.RegularExpressions;
-
     public class MethodIdentifier
     {
         private readonly string _methodName;

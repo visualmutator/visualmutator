@@ -24,7 +24,7 @@
         {
             public override void Visit(ITryCatchFinallyStatement operation)
             {
-                _log.Info("Visit ITryCatchFinallyStatement: " + operation);
+             //   _log.Info("Visit ITryCatchFinallyStatement: " + operation);
                 var systemException = Parent.CurrentMethod.ContainingTypeDefinition.PlatformType.SystemException;
                 if (operation.CatchClauses.Any() && 
                     operation.CatchClauses.All(c => ((INamedTypeReference)c.ExceptionType) != systemException))

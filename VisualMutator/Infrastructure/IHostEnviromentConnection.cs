@@ -8,6 +8,7 @@ namespace VisualMutator.Infrastructure
     using System.Collections.Generic;
     using System.Windows.Forms;
     using Model;
+    using Model.CoverageFinder;
     using UsefulTools.Paths;
     using UsefulTools.Wpf;
 
@@ -16,7 +17,9 @@ namespace VisualMutator.Infrastructure
     public enum EventType
     {
         HostOpened,
-        HostClosed
+        HostClosed,
+        BuildBegin,
+        BuildDone
     }
     public interface IHostEnviromentConnection
     {

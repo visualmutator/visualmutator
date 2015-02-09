@@ -24,7 +24,7 @@
         {
             public override void Visit(ICatchClause catchClause)
             {
-                _log.Info("Visit ICatchClause: " + catchClause);
+              //  _log.Info("Visit ICatchClause: " + catchClause);
 
                 if (catchClause.ExceptionContainer != Dummy.LocalVariable) //if local variable is declared
                 {

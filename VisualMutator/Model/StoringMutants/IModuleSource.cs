@@ -9,7 +9,7 @@
 
     public interface IModuleSource 
     {
-        List<IModule> Modules
+        List<IModuleInfo> Modules
         {
             get;
         }
@@ -17,11 +17,11 @@
 
     class SimpleModuleSource : IModuleSource
     {
-        public SimpleModuleSource(List<IModule> modules)
+        public SimpleModuleSource(List<IModuleInfo> modules)
         {
             Modules = modules;
         }
 
-        public List<IModule> Modules { get; private set; }
+        public List<IModuleInfo> Modules { get; private set; }
     }
 }

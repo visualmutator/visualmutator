@@ -4,6 +4,7 @@
 
     using System.Diagnostics;
     using System.Windows;
+    using CoverageFinder;
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Wpf;
 

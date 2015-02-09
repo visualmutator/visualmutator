@@ -7,19 +7,22 @@
     {
        
 
-public static string ErrorPretest_TestsFailed(string firstTestThatFailedFullName, string message)
+public static string ErrorPretest_TestsFailed(string x, string a, string firstTestThatFailedFullName, string message)
 {
     return @"One or more tests failed or were inconclusive on unmodified source assemblies. 
-If you continue with session, its results will be inacurate.
+If you continue with the session, its results will be inacurate.
 
-First test that failed: {0}
-Message: {1}
+All tests that failed ({0}): 
+{1}
 
-Do you want to continue mutation session?
-"
+First test that failed: {2}
+First failed test's message: {3}
+
+Do you want to continue the mutation session?
+"// disable failed tests and
 
 
-        .Formatted(firstTestThatFailedFullName, message);
+        .Formatted(x, a, firstTestThatFailedFullName, message);
 
 
 }
@@ -70,6 +73,11 @@ public static string ErrorNoFilesToMutate()
 {
     return
         @"No files to mutate were found.";
+}
+public static string ErrorNoTestsToRun()
+{
+    return
+        @"Select at least one test to run.";
 }
         public static string ErrorStrongNameSignedAssembly()
         {

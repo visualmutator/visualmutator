@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using log4net;
     using NUnit.Framework;
@@ -14,7 +15,7 @@
         private readonly IFileSystem _fs;
         private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ProjectFilesClone(FilePathAbsolute path, IFileSystem fs)
+        public ProjectFilesClone(IFileSystem fs, FilePathAbsolute path)
         {
             _fs = fs;
             Assemblies = new List<FilePathAbsolute>();
@@ -33,7 +34,14 @@
             get;
             set;
         }
-
+        public IEnumerable<string> AssembliesFileNames
+        {
+            get
+            {
+                return Assemblies.Select(_ => _.FileName);
+            }
+            
+        }
         public List<FilePathAbsolute> Referenced
         {
             get;
@@ -45,7 +53,7 @@
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -63,7 +71,10 @@
                     {
                         _log.Warn(e);
                     }
-
+                    catch (IOException e)
+                    {
+                        _log.Warn(e);
+                    }
                 }
             }
         }

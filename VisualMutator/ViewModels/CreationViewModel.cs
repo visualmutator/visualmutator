@@ -16,17 +16,12 @@
             ISessionCreationView view,
             TypesTreeViewModel typesTreeToMutate,
             TestsSelectableTreeViewModel typesTreeToTest,
-            MutationsTreeViewModel mutationsTree,
-            MutantsCreationOptionsViewModel mutantsCreation,
-             MutantsTestingOptionsViewModel mutantsTesting)
+            MutationsTreeViewModel mutationsTree)
             : base(view)
         {
             MutationsTree = mutationsTree;
             TypesTreeMutate = typesTreeToMutate;
             TypesTreeToTest = typesTreeToTest;
-            MutantsCreation = mutantsCreation;
-            MutantsTesting = mutantsTesting;
-            MutantsTesting.Initialize(View);
 
         }
         private MutationsTreeViewModel _mutationsTree;
@@ -40,20 +35,6 @@
             set
             {
                 SetAndRise(ref _mutationsTree, value, () => MutationsTree);
-            }
-        }
-
-        private MutantsCreationOptionsViewModel _mutantsCreation;
-
-        public MutantsCreationOptionsViewModel MutantsCreation
-        {
-            get
-            {
-                return _mutantsCreation;
-            }
-            set
-            {
-                SetAndRise(ref _mutantsCreation, value, () => MutantsCreation);
             }
         }
 
@@ -113,18 +94,6 @@
             set
             {
                 SetAndRise(ref _commandWriteMutants, value, () => CommandWriteMutants);
-            }
-        }
-        private MutantsTestingOptionsViewModel _mutantsTesting;
-        public MutantsTestingOptionsViewModel MutantsTesting
-        {
-            get
-            {
-                return _mutantsTesting;
-            }
-            set
-            {
-                SetAndRise(ref _mutantsTesting, value, () => MutantsTesting);
             }
         }
         public string MutantsGenerationPath

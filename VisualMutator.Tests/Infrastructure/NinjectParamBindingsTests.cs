@@ -47,7 +47,7 @@
         {
             public override void Load()
             {
-                Kernel.InjectChildFactory<SomeTimedModule>(childKernel =>
+                Kernel.BindObjectRoot<SomeTimedModule>().ToSelf(childKernel =>
                 {
                     childKernel.Bind<SomeInnerModule>().ToSelf().InSingletonScope();
 

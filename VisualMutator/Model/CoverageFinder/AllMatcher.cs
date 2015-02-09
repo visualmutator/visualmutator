@@ -1,9 +1,10 @@
-﻿namespace VisualMutator.Model
+﻿namespace VisualMutator.Model.CoverageFinder
 {
     using System;
     using System.Reflection;
     using log4net;
     using Microsoft.Cci;
+
     public abstract class CodePartsMatcher : ICodePartsMatcher
     {
         public abstract bool Matches(IMethodReference method);

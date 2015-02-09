@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
     using Model;
+    using Model.CoverageFinder;
 
     public class VisualStudioCodeElementsFormatter
     {//what abou tnonymous?

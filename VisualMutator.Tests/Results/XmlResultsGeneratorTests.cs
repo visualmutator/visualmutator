@@ -1,6 +1,7 @@
 ﻿namespace VisualMutator.Tests.Results
 {
     using System;
+    using System.Threading;
     using System.Xml.Linq;
     using Extensibility;
     using Model;
@@ -8,6 +9,7 @@
     using Model.Mutations.MutantsTree;
     using Model.Mutations.Types;
     using NUnit.Framework;
+    using UsefulTools.Core;
 
 
     [TestFixture]
@@ -16,14 +18,14 @@
         [Test]
         public void Test()
         {
-             var gen = new XmlResultsGenerator(null,null,null);
+             var gen = new XmlResultsGenerator(null,null,null, null, null);
 
             var muSession = new MutationTestingSession();
             
             var mutar = new MutationTarget(new MutationVariant());
 
 
-            var ass = new AssemblyNode("Ass", null);
+            var ass = new AssemblyNode("Assembly");
             muSession.MutantsGrouped.Add(ass);
             var nodeNamespace = new TypeNamespaceNode(ass, "Namespace");
             ass.Children.Add(nodeNamespace);
@@ -36,7 +38,7 @@
             var nodeMutant = new Mutant("m1", nodeGroup, mutar);
             nodeGroup.Children.Add(nodeMutant);
 
-            XDocument generateResults = gen.GenerateResults(muSession, false, false);
+            XDocument generateResults = gen.GenerateResults(muSession, false, false, ProgressCounter.Inactive(), CancellationToken.None).Result;
 
             Console.WriteLine(generateResults.ToString());
             //gen.

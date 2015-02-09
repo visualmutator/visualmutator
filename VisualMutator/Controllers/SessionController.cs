@@ -9,6 +9,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
     using Infrastructure;
     using log4net;
@@ -39,6 +40,7 @@
     {
         private readonly IMutantsContainer _mutantsContainer;
 
+        private readonly IDispatcherExecute _dispatcher;
         private readonly CommonServices _svc;
         private readonly MutantDetailsController _mutantDetailsController;
 
@@ -46,14 +48,14 @@
        
         private readonly IFactory<ResultsSavingController> _resultsSavingFactory;
         private readonly IFactory<TestingProcess> _testingProcessFactory;
-        private readonly IFactory<TestingMutant> _testingMutantFactory;
+        private readonly IRootFactory<TestingMutant> _testingMutantFactory;
         private readonly MutationSessionChoices _choices;
 
 
         private MutationTestingSession _currentSession;
 
 
-        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
         private RequestedHaltState? _requestedHaltState;
@@ -63,20 +65,21 @@
         private SessionState _sessionState;
 
 
-        private TestingProcessExtensionOptions _testingProcessExtensionOptions;
         private readonly List<IDisposable> _subscriptions;
         private TestingProcess _testingProcess;
 
         public SessionController(
+            IDispatcherExecute dispatcher,
             CommonServices svc,
             MutantDetailsController mutantDetailsController,
             IMutantsContainer mutantsContainer,
             ITestsContainer testsContainer,
             IFactory<ResultsSavingController> resultsSavingFactory,
             IFactory<TestingProcess> testingProcessFactory,
-            IFactory<TestingMutant> testingMutantFactory,
+            IRootFactory<TestingMutant> testingMutantFactory,
             MutationSessionChoices choices)
         {
+            _dispatcher = dispatcher;
             _svc = svc;
             _mutantDetailsController = mutantDetailsController;
             _mutantsContainer = mutantsContainer;
@@ -91,12 +94,6 @@
             _subscriptions = new List<IDisposable>();
 
 
-            var subs1 =_sessionEventsSubject.OfType<MutantStoredEventArgs>().Subscribe(e =>
-            {
-                _testingProcessExtensionOptions.TestingProcessExtension
-                    .OnTestingOfMutantStarting(e.StoredMutantInfo.Directory, e.StoredMutantInfo.AssembliesPaths);
-            });
-            _subscriptions.Add(subs1);
         }
 
         public IObservable<SessionEventArgs> SessionEventsObservable
@@ -118,111 +115,112 @@
 
         private void RaiseMinorStatusUpdate(OperationsState type, int progress)
         {
-            _sessionEventsSubject.OnNext(new MinorSessionUpdateEventArgs(type, progress));
+            try
+            {
+                _sessionEventsSubject.OnNext(new MinorSessionUpdateEventArgs(type, progress));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
         private void RaiseMinorStatusUpdate(OperationsState type, ProgressUpdateMode mode)
         {
-            _sessionEventsSubject.OnNext(new MinorSessionUpdateEventArgs(type, mode));
+            try
+            {
+                _sessionEventsSubject.OnNext(new MinorSessionUpdateEventArgs(type, mode));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void OnTestingStarting(string directory, Mutant mutant)
         {
         
         }
-
-        public void RunMutationSession(IObservable<ControlEvent> controlSource)
+        public async Task RunCore()
         {
-            Subscribe(controlSource);
+            _mutantDetailsController.Initialize();
 
-            SessionStartTime = DateTime.Now;
-
-            MutationSessionChoices choices = _choices;
-            _sessionState = SessionState.Running;
-
-            RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
-
-            _testingProcessExtensionOptions = choices.MutantsTestingOptions.TestingProcessExtensionOptions;
-            _svc.Threading.ScheduleAsync(() =>
+            _currentSession = new MutationTestingSession
             {
+                Filter = _choices.Filter,
+                Choices = _choices,
+            };
 
-                _mutantsContainer.Initialize(choices.SelectedOperators, 
-                    choices.MutantsCreationOptions, choices.Filter);
 
-                _mutantDetailsController.Initialize();
 
-                _currentSession = new MutationTestingSession
-                {
-                    Filter = choices.Filter,
-                    Choices = choices,
-                };
-                
-                _testsContainer.CreateTestSelections(choices.TestAssemblies);
+            if (_choices.TestAssemblies.All(n => n.IsIncluded == false))
+            //if (_choices.TestAssemblies.Select(a => a.TestsLoadContext.SelectedTests.TestIds.Count).Sum() == 0)
+            {
+                throw new NoTestsSelectedException();
+            }
 
-                if (choices.TestAssemblies.Select(a => a.TestsLoadContext.SelectedTests.TestIds.Count).Sum() == 0)
-                {
-                    throw new NoTestsSelectedException();
-                }
+            _log.Info("Initializing test environment...");
 
-                _log.Info("Initializing test environment...");
-                
-                _log.Info("Creating pure mutant for initial checks...");
-                AssemblyNode assemblyNode;
-                Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out assemblyNode);
-                
+            _log.Info("Creating pure mutant for initial checks...");
+            AssemblyNode assemblyNode;
+            Mutant changelessMutant = _mutantsContainer.CreateEquivalentMutant(out assemblyNode);
 
-                _svc.Threading.InvokeOnGui(() =>
-                    {
-                        _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
-                        {
-                            MutantsGrouped = assemblyNode.InList(),
-                        });
 
-                    });
+            _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
+            {
+                MutantsGrouped = assemblyNode.InList(),
+            });
 
-                var verifiEvents =_sessionEventsSubject.OfType<MutantVerifiedEvent>().Subscribe(e =>
+            var verifiEvents = _sessionEventsSubject
+                .OfType<MutantVerifiedEvent>()
+                .Subscribe(e =>
                 {
                     if (e.Mutant == changelessMutant && !e.VerificationResult)
                     {
                         _svc.Logging.ShowWarning(UserMessages.ErrorPretest_VerificationFailure(
                             changelessMutant.MutantTestSession.Exception.Message));
 
-                        _choices.MutantsCreationOptions.IsMutantVerificationEnabled = false;
                     }
                 });
 
 
-                TestingMutant testingMutant = _testingMutantFactory
-                    .CreateWithParams(_sessionEventsSubject, changelessMutant);
+            IObjectRoot<TestingMutant> testingMutant = _testingMutantFactory
+                .CreateWithParams(_sessionEventsSubject, changelessMutant);
 
-                testingMutant.RunAsync().ContinueWith(t =>
-                {
-                    verifiEvents.Dispose();
-                    _choices.MutantsTestingOptions.TestingTimeoutSeconds
-                        = (int) ((2*changelessMutant.MutantTestSession.TestingTimeMiliseconds)/1000 + 1);
+            var result = await testingMutant.Get.RunAsync();
 
-                    _svc.Threading.PostOnGui(() =>
-                    {
-                        if (_requestedHaltState != null)
-                        {
-                            _sessionState = SessionState.NotStarted;
-                            _requestedHaltState = null;
-                        }
-                        else
-                        {
-                            bool canContinue = CheckForTestingErrors(changelessMutant);
-                            if (canContinue)
-                            {
-                                CreateMutants(continuation: RunTests);
-                            }
-                            else
-                            {
-                                FinishWithError();
-                            }
-                        }
-                    });
-                });
-            },
-            onException: FinishWithError);
+            verifiEvents.Dispose();
+            _choices.MutantsTestingOptions.TestingTimeoutSeconds
+                = (int)((3 * changelessMutant.MutantTestSession.TestingTimeMiliseconds) / 1000 + 1);
+
+            bool canContinue = CheckForTestingErrors(changelessMutant);
+            if (!canContinue)
+            {
+                throw new TestingErrorsException();
+            }
+            await Task.Run(() =>
+            {
+                CreateMutants();
+                RunTests();
+
+            });
+
+        }
+        public async Task RunMutationSession(IObservable<ControlEvent> controlSource)
+        {
+            try
+            {
+                Subscribe(controlSource);
+                SessionStartTime = DateTime.Now;
+                _sessionState = SessionState.Running;
+                RaiseMinorStatusUpdate(OperationsState.PreCheck, ProgressUpdateMode.Indeterminate);
+                await RunCore();
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                FinishWithError();
+            }
+     
         }
 
         public DateTime SessionStartTime { get; set; }
@@ -241,26 +239,16 @@
                 controlSource.Where(ev => ev.Type == ControlEventType.SaveResults)
                     .Subscribe(o => SaveResults()),
             });
-}
+        }
 
         private void Finish()
         {
             _log.Info("Finishing mutation session.");
             _sessionState = SessionState.Finished;
-            RaiseMinorStatusUpdate(OperationsState.Finished, 100);
-            _currentSession.MutationScore = _testingProcess.MutationScore;
-            if (_testingProcessExtensionOptions != null)
-            {
-                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
-            }
-
-            foreach (var subscription in _subscriptions)
-            {
-                subscription.Dispose();
-            }
             SessionEndTime = DateTime.Now;
-            _subscriptions.Clear();
-            _sessionEventsSubject.OnCompleted();
+
+            RaiseMinorStatusUpdate(OperationsState.Finished, 100);
+            
         }
 
         public DateTime SessionEndTime { get; set; }
@@ -269,10 +257,10 @@
         {
             _sessionState = SessionState.Finished;
             RaiseMinorStatusUpdate(OperationsState.Error, 0);
-            if (_testingProcessExtensionOptions != null)
-            {
-                _testingProcessExtensionOptions.TestingProcessExtension.OnSessionFinished();
-            }
+        }
+
+        public void Dispose()
+        {
             foreach (var subscription in _subscriptions)
             {
                 subscription.Dispose();
@@ -281,25 +269,17 @@
             _sessionEventsSubject.OnCompleted();
         }
 
-        public void CreateMutants(Action continuation )
+        public void CreateMutants()
         {
             var counter = ProgressCounter.Invoking(RaiseMinorStatusUpdate, OperationsState.Mutating);
 
-            _svc.Threading.ScheduleAsync(
-            () =>
-            {
-                var mutantModules = _mutantsContainer.InitMutantsForOperators(counter);
-                _currentSession.MutantsGrouped = mutantModules;
-            },
-            () =>
-            {
-                _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
-                {
-                    MutantsGrouped = _currentSession.MutantsGrouped,
-                });
+            var mutantModules = _mutantsContainer.InitMutantsForOperators(counter);
+            _currentSession.MutantsGrouped = mutantModules;
 
-                continuation();
-            }, onException: FinishWithError);
+            _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
+            {
+                MutantsGrouped = _currentSession.MutantsGrouped,
+            });
         }
 
         public void RunTests()
@@ -309,13 +289,28 @@
 
             _testingProcess = _testingProcessFactory.CreateWithParams(_sessionEventsSubject, allMutants);
 
+            foreach (var allMutant in allMutants)
+            {
+                var subscription = allMutant
+                    .WhenPropertyChanged(m => m.IsEquivalent)
+                    .Subscribe(equivalent => _testingProcess.MarkedAsEqivalent(equivalent));
+                _subscriptions.Add(subscription);
+            }
+
+
+            _subscriptions.Add(
+            _sessionEventsSubject.OfType<MutationScoreInfoEventArgs>()
+                .Subscribe(args =>
+                {
+                    _currentSession.MutationScore = args.MutationScore;
+                }));
+
             new Thread(RunTestsInternal).Start();
-            //_svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }
         
         private void RunTestsInternal()
         {
-            Action endCallback = () => _svc.Threading.InvokeOnGui(()=>
+            Action endCallback = () => new TaskFactory(_dispatcher.GuiScheduler).StartNew(() =>
             {
                 if (_requestedHaltState != null)
                 {
@@ -354,7 +349,6 @@
         {
             _log.Info("Requesting resume.");
             new Thread(RunTestsInternal).Start();
-            //_svc.Threading.ScheduleAsync(RunTestsInternal, onException: FinishWithError);
         }
 
         public void StopOperations()
@@ -395,9 +389,16 @@
 
                 var testMethods =  changelessMutant.TestRunContexts 
                     .SelectMany(c => c.TestResults.ResultMethods).ToList();
-                //  MutantTestSession.TestsByAssembly.Values
-                //     .SelectMany(v => v.TestMap.Values)
+             
                 var test = testMethods.FirstOrDefault(t => t.State == TestNodeState.Failure);
+
+                var allFailedTests = testMethods
+                    .Where(t => t.State == TestNodeState.Failure || t.State == TestNodeState.Inconclusive)
+                    .Select(_ => _.Name)
+                    .ToList();
+                
+                string allFailedString = allFailedTests.Aggregate((a, b) => a + "\n" + b);
+
 
                 string testName = null;
                 string testMessage = null;
@@ -415,8 +416,11 @@
                     testName = testInconcl.Name;
                     testMessage = "Test was inconclusive.";
                 }
-
-                return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_TestsFailed(testName, testMessage));
+                bool disableAndContinue = _svc.Logging.ShowYesNoQuestion(
+                    UserMessages.ErrorPretest_TestsFailed(allFailedTests.Count.ToString(),
+                    allFailedString, testName, testMessage));
+                return disableAndContinue;
+                //return _svc.Logging.ShowYesNoQuestion(UserMessages.ErrorPretest_TestsFailed(testName, testMessage));
             }
             return true;
         }
@@ -430,13 +434,17 @@
         {
             _mutantDetailsController.CleanDetails();
         }
-        public void SaveResults()
+        public ResultsSavingController SaveResults()
         {
             var resultsSavingController = _resultsSavingFactory.Create();
             resultsSavingController.Run(_currentSession);
+            return resultsSavingController;
         }
 
         
     }
 
+    public class TestingErrorsException : Exception
+    {
+    }
 }

@@ -92,12 +92,12 @@
             {
               //  Kernel.Load(new ContextPreservationModule());
                 Kernel.Bind<SomeMainModule>().ToSelf().InSingletonScope();
-                Kernel.InjectChildFactory<SomeTimedModule>(childKernel =>
+                Kernel.BindObjectRoot<SomeTimedModule>().ToSelf(childKernel =>
                 {
                     //childKernel.Bind<SomeTimedObject>().ToSelf().AndFromFactory();
                     childKernel.Bind<SomeInnerModule>().ToSelf().InSingletonScope();
 
-                    childKernel.InjectChildFactory<SomeTimedObject>(child =>
+                    childKernel.BindObjectRoot<SomeTimedObject>().ToSelf(child =>
                     {
                         child.Bind<SomeTimedObject>().ToSelf().InSingletonScope();
                         child.Bind<SomeTimedObjectInner>().ToSelf().InSingletonScope();

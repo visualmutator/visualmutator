@@ -1,20 +1,17 @@
-﻿namespace PiotrTrzpil.VisualMutator_VSPackage.Infrastructure
+﻿namespace VisualMutator.Infrastructure
 {
     #region
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
-    using System.Windows;
     using log4net;
     using Ninject;
     using Ninject.Activation.Strategies;
     using Ninject.Modules;
     using UsefulTools.Core;
     using VisualMutator.Controllers;
-    using VisualMutator.Infrastructure;
     using VisualMutator.Infrastructure.NinjectModules;
 
     #endregion

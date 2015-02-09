@@ -11,9 +11,11 @@
     using System.Threading.Tasks;
     using log4net;
     using RunProcessAsTask;
+    using UsefulTools.ExtensionMethods;
 
     public interface IProcesses
     {
+        Task<ProcessResults> RunHiddenAsync(string path, string args);
          Task<ProcessResults> RunAsync(ProcessStartInfo processStartInfo);
          Task<ProcessResults> RunAsync(string fileName);
          Task<ProcessResults> RunAsync(ProcessStartInfo processStartInfo, CancellationTokenSource cancellationToken);
@@ -31,6 +33,19 @@
         public Task<ProcessResults> RunAsync(ProcessStartInfo processStartInfo)
         {
             return ProcessEx.RunAsync(processStartInfo);
+        }
+        public Task<ProcessResults> RunHiddenAsync(string path, string args)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                Arguments = args.InQuotes(),
+                CreateNoWindow = true,
+                ErrorDialog = false,
+                RedirectStandardOutput = false,
+                FileName = path,
+                UseShellExecute = false,
+            };
+            return ProcessEx.RunAsync(startInfo);
         }
 
         public Task<ProcessResults> RunAsync(string fileName)

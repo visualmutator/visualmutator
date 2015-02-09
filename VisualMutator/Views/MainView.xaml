@@ -55,23 +55,20 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
-                <RowDefinition />
             </Grid.RowDefinitions>
 
 
             <WrapPanel Grid.Row="0">
-                <TextBlock Width="180" HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
+                <TextBlock Width="210" HorizontalAlignment="Left" Text="{Binding OperationsStateDescription}" />
 
                
-                <!--  <Button HorizontalAlignment="Right" Content="T"
-                        Command="{Binding CommandTest}" />
-                <Button  HorizontalAlignment="Right" Content="Stop" Command="{Binding CommandStop}"/>-->
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_stop_unpressed.png"
                                       DisabledImage="/VisualMutator;component/Views/images/button_stop_disabled.png"
                                       HoverImage="/VisualMutator;component/Views/images/button_stop_mouseover.png"
                                       PressedImage="/VisualMutator;component/Views/images/button_stop_pressed.png"
                                       ImageSize="18" ToolTip="Stop"
+                                      ToolTipService.ShowOnDisabled="True"
                                       Command="{Binding CommandStop}" />
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_continue_unpressed.png"
@@ -79,6 +76,7 @@
                                       HoverImage="/VisualMutator;component/Views/images/button_continue_mouseover.png"
                                       PressedImage="/VisualMutator;component/Views/images/button_continue_pressed.png"
                                       ImageSize="18" ToolTip="Continue"
+                                      ToolTipService.ShowOnDisabled="True"
                                       Command="{Binding CommandContinue}" />
                 <Controls:ImageButton HorizontalAlignment="Right"
                                       NormalImage="/VisualMutator;component/Views/images/button_pause_unpressed.png"
@@ -86,6 +84,7 @@
                                       HoverImage="/VisualMutator;component/Views/images/button_pause_mouseover.png"
                                       PressedImage="/VisualMutator;component/Views/images/button_pause_pressed.png"
                                       ImageSize="18" ToolTip="Pause"
+                                      ToolTipService.ShowOnDisabled="True"
                                       Command="{Binding CommandPause}" />
                 <Button HorizontalAlignment="Right" Content="New session..."
                         Command="{Binding CommandCreateNewMutants}" />
@@ -104,7 +103,6 @@
                          IsIndeterminate="{Binding IsProgressIndeterminate}"
                          Value="{Binding Progress}" />
 
-            <TextBlock Grid.Row="3" Text="Mutants gruped by operators:" />
         </Grid>
 
 
@@ -113,7 +111,7 @@
 
             <TreeView.Resources>
                 <ContextMenu x:Key="ErrorMutantContextMenu" StaysOpen="true">
-                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" IsEnabled="false"/>
+                    <MenuItem Header="Error Message" Click="MenuItemMessage_Click" Visibility="Collapsed"/>
                     <MenuItem Header="Mark Equivalent" Click="MenuItemMarkEquivalent_Click" Visibility="Collapsed" />
                     <MenuItem Header="Unmark Equivalent" Click="MenuItemUnmarkEquivalent_Click" Visibility="Collapsed" />
                 </ContextMenu>

@@ -13,6 +13,7 @@
     using EnvDTE;
     using EnvDTE80;
     using Infra;
+    using Infra.UsefulTools.Wpf;
     using log4net;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
@@ -23,6 +24,7 @@
     using UsefulTools.Wpf;
     using VisualMutator.Infrastructure;
     using VisualMutator.Model;
+    using VisualMutator.Model.CoverageFinder;
 
     #endregion
 
@@ -95,16 +97,26 @@
         }
 
     
+        private void Guarded(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
 
+                _log.Error(e);
+            }
+        }
        
         public void Initialize()
         {
-     //      
-           // _buildEvents.OnBuildBegin += () => _subject.OnNext(EventType.HostClosed)
-          //  _buildEvents.OnBuildDone += _buildEvents_OnBuildDone;
+            _buildEvents.OnBuildBegin += delegate {Guarded(() => _subject.OnNext(EventType.BuildBegin)); };
+            _buildEvents.OnBuildDone += delegate { Guarded(() => _subject.OnNext(EventType.BuildDone)); };
 
-            _solutionEvents.Opened += () => _subject.OnNext(EventType.HostOpened);
-            _solutionEvents.AfterClosing += () => _subject.OnNext(EventType.HostClosed);
+            _solutionEvents.Opened += () => Guarded(() => _subject.OnNext(EventType.HostOpened));
+            _solutionEvents.AfterClosing += () => Guarded(() => _subject.OnNext(EventType.HostClosed));
 
             _settingsManager = new ShellSettingsManager(_package);
 
@@ -128,7 +140,18 @@
             return Path.GetTempPath();
         }
 
-     
+        public IEnumerable<DirectoryPathAbsolute> GetProjectPaths()
+        {
+
+            return from project in _dte.Solution.Cast<Project>()
+                   let confManager = project.ConfigurationManager
+                   where confManager != null
+                         && confManager.ActiveConfiguration != null
+                         && confManager.ActiveConfiguration.IsBuildable
+                   let values = project.Properties.Cast<Property>().ToDictionary(prop => prop.Name)
+                   where values.ContainsKey("LocalPath")
+                   select values["LocalPath"].Value.CastTo<string>().ToDirPathAbs();
+        }
 
         public void Test()
         {
@@ -142,13 +165,26 @@
             if(methodAtCaret != null)
             {
                 var parameters = methodAtCaret.Parameters.Cast<CodeParameter2>().ToList();
-                var names = parameters.Select(p => GetKindString(p) + p.Type.AsFullName).ToList();
+                var names = parameters.Select(p => GetKindString(p) 
+                    + (string.IsNullOrEmpty(p.Type.AsFullName) ? TranslateTypeName(p.Type.AsString)
+                    : p.Type.AsFullName)).ToList();
 
                 methodIdentifier = new VisualStudioCodeElementsFormatter()
                     .CreateIdentifier(methodAtCaret.FullName, names);
                 return true;
             }
             return false;
+        }
+
+        private string TranslateTypeName(string asString)
+        {
+
+            return asString
+                .Replace("byte[]", "System.Byte[]")
+                .Replace("char[]", "System.Char[]")
+                .Replace("int[]", "System.Int32[]")
+                .Replace("long[]", "System.Int64[]")
+                .Replace("short[]", "System.Int16[]");
         }
 
         private string GetKindString(CodeParameter2 codeParameter)

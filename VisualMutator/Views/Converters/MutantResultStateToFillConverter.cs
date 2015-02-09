@@ -23,6 +23,7 @@
                 .Case(MutantResultState.Live, Brushes.Orange)
                 .Case(MutantResultState.Tested, Brushes.Blue)
                 .Case(MutantResultState.Creating, Brushes.Green)
+                .Case(MutantResultState.Writing, Brushes.Green)
                 .Case(MutantResultState.Error, Brushes.Red)
                 .GetResult();
         }
