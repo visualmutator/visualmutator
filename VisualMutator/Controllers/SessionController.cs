@@ -31,7 +31,6 @@
     using UsefulTools.ExtensionMethods;
     using UsefulTools.Switches;
     using UsefulTools.Wpf;
-    using Wintellect.PowerCollections;
 
     #endregion
 

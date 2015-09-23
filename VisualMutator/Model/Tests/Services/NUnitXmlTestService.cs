@@ -74,7 +74,7 @@
         {
             var nUnitDirPath = _settingsManager["NUnitConsoleDirPath"];
             var nUnitConsolePath = Path.Combine(nUnitDirPath, "nunit-console-x86.exe");
-            
+
             if (!_svc.FileSystem.File.Exists(nUnitConsolePath))
             {
                 throw new FileNotFoundException(nUnitConsolePath + " file was found.");

@@ -25,7 +25,7 @@
         public void Test1()
         {
             var processes = new Processes();
-            var p = new ProcessStartInfo("mspaint.exe");
+            var p = new ProcessStartInfo("cmd.exe");
            // p.
             var s = new CancellationTokenSource();
             processes.RunAsync(p, s).ContinueWith(t =>
