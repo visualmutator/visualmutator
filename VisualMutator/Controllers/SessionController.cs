@@ -68,6 +68,8 @@
         private readonly List<IDisposable> _subscriptions;
         private TestingProcess _testingProcess;
 
+        private readonly OptionsModel _options;
+
         public SessionController(
             IDispatcherExecute dispatcher,
             CommonServices svc,
@@ -77,7 +79,8 @@
             IFactory<ResultsSavingController> resultsSavingFactory,
             IFactory<TestingProcess> testingProcessFactory,
             IRootFactory<TestingMutant> testingMutantFactory,
-            MutationSessionChoices choices)
+            MutationSessionChoices choices,
+            OptionsModel options)
         {
             _dispatcher = dispatcher;
             _svc = svc;
@@ -92,6 +95,7 @@
             _sessionState = SessionState.NotStarted;
             _sessionEventsSubject = new Subject<SessionEventArgs>();
             _subscriptions = new List<IDisposable>();
+            _options = options;
 
 
         }
@@ -189,9 +193,10 @@
             var result = await testingMutant.Get.RunAsync();
 
             verifiEvents.Dispose();
+            
             _choices.MutantsTestingOptions.TestingTimeoutSeconds
-                = (int)((3 * changelessMutant.MutantTestSession.TestingTimeMiliseconds) / 1000 + 1);
-
+                = (int)((_options.TimeFactorForMutations * changelessMutant.MutantTestSession.TestingTimeMiliseconds) + 1);
+            
             bool canContinue = CheckForTestingErrors(changelessMutant);
             if (!canContinue)
             {
@@ -275,6 +280,8 @@
 
             var mutantModules = _mutantsContainer.InitMutantsForOperators(counter);
             _currentSession.MutantsGrouped = mutantModules;
+
+            
 
             _sessionEventsSubject.OnNext(new MutationFinishedEventArgs(OperationsState.MutationFinished)
             {

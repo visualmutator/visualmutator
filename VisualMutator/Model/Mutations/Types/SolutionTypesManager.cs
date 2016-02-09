@@ -67,6 +67,7 @@
             var root = new RootNode();
             root.Children.AddRange(assemblyNodes);
             root.IsIncluded = true;
+           // root.Children[1].IsIncluded = false; //experiment toDel
 
             return assemblyNodes;
         }

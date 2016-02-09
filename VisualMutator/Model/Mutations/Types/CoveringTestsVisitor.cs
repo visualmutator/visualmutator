@@ -30,7 +30,7 @@
             _currentTestMethod = method.Attributes.Any(a =>
             {
                 var attrType = a.Type as INamespaceTypeReference;
-                return attrType != null && attrType.GetTypeFullName().IsIn("NUnit.Framework.TestAttribute", "Xunit.FactAttribute");
+                return attrType != null && attrType.GetTypeFullName().IsIn("NUnit.Framework.TestAttribute", "Xunit.FactAttribute"/*, "Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute"*/);
             }) ? method : null;
 
             if (_currentTestMethod != null && _searcher.Matches(_currentTestMethod))

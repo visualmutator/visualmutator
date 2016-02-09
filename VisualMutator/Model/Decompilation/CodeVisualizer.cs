@@ -72,29 +72,53 @@
         {
             var whiteCode = Visualize(language, mutant.MutationTarget.MethodRaw,
                 _originalCodebase.Modules.Single(m => m.Module.Name == mutant.MutationTarget.ProcessingContext.ModuleName));
+
+            if (mutant._mutationTargets.Count != 0 && mutant.MutationTarget.MethodRaw != mutant._mutationTargets[0].MethodRaw)
+            {
+                whiteCode += Visualize(language, mutant._mutationTargets[0].MethodRaw,
+                _originalCodebase.Modules.Single(m => m.Module.Name == mutant._mutationTargets[0].ProcessingContext.ModuleName));
+            }
             return whiteCode;
         }
 
         public async Task<string> VisualizeMutatedCode(CodeLanguage language, MutationResult mutationResult)
         {
-            
+            var result = Visualize(language, mutationResult.MethodMutated, mutationResult.MutatedModules);//oryginalnie była tylko ta linijka i return
 
-            var result = Visualize(language, mutationResult.MethodMutated, mutationResult.MutatedModules);
-          //  _mutantsCache.Release(mutationResult);
+            if (mutationResult.AdditionalMethodsMutated != null && mutationResult.MethodMutated!=mutationResult.AdditionalMethodsMutated[0])
+            {
+                result += Visualize(language, mutationResult.AdditionalMethodsMutated[0], mutationResult.MutatedModules);
+            }
+            //  _mutantsCache.Release(mutationResult);*/
             return result;
         }
 
         public string Visualize(CodeLanguage language, IMethodDefinition method, ICciModuleSource moduSource)
         {
-            if (method == null)
+                if (method == null)
+                {
+                    return "No method to visualize.";
+                }
+                _log.Info("Visualize: " + method);
+                var module = (IModule)TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
+                var sourceEmitterOutput = new SourceEmitterOutputString();
+                var sourceEmitter = moduSource.GetSourceEmitter(language, module, sourceEmitterOutput);
+                sourceEmitter.Traverse(method);
+            return sourceEmitterOutput.Data;
+        }
+        
+        public string Visualize(CodeLanguage language, IMethodDefinition mainMethod, System.Collections.Generic.List<IMethodDefinition> addMethods, ICciModuleSource moduSource)
+        {
+            if (mainMethod == null)
             {
                 return "No method to visualize.";
             }
-            _log.Info("Visualize: " + method);
-            var module = (IModule)TypeHelper.GetDefiningUnit(method.ContainingTypeDefinition);
+            _log.Info("Visualize: " + mainMethod);
+            var module = (IModule)TypeHelper.GetDefiningUnit(addMethods[0].ContainingTypeDefinition);
             var sourceEmitterOutput = new SourceEmitterOutputString();
             var sourceEmitter = moduSource.GetSourceEmitter(language, module, sourceEmitterOutput);
-            sourceEmitter.Traverse(method);
+            sourceEmitter.Traverse(addMethods[0]);
+
             return sourceEmitterOutput.Data;
         }
 

@@ -34,38 +34,44 @@
             var info = new StoredMutantInfo(clone);
 
 
-            if(mutationResult.MutatedModules != null)
+            if (mutationResult.MutatedModules != null)
             {
+                //AKB
+                /*foreach (ICciModuleSource mutatedModule in mutationResult.MutatedModules)
+                {*/
                 var singleMutated = mutationResult.MutatedModules.Modules.SingleOrDefault();
-                if (singleMutated != null)
-                {
-                    //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
-                    string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
-//
-//                    var memory = mutationResult.MutatedModules.WriteToStream(singleMutated);
-//                    // _mutantsCache.Release(mutationResult);
-//
-//                    using (FileStream peStream = File.Create(file))
-//                    {
-//                        await memory.CopyToAsync(peStream);
-//                    }
-                    using (FileStream peStream = File.Create(file))
+                    if (singleMutated != null)
                     {
-                        mutationResult.MutatedModules.WriteToStream(singleMutated, peStream, file);
-                        //  await memory.CopyToAsync(peStream);
+                        //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
+                        string file = Path.Combine(info.Directory, singleMutated.Name + ".dll");
+                        //
+                        //                    var memory = mutationResult.MutatedModules.WriteToStream(singleMutated);
+                        //                    // _mutantsCache.Release(mutationResult);
+                        //
+                        //                    using (FileStream peStream = File.Create(file))
+                        //                    {
+                        //                        await memory.CopyToAsync(peStream);
+                        //                    }
+                        using (FileStream peStream = File.Create(file))
+                        {
+
+                            mutationResult.MutatedModules.WriteToStream(singleMutated, peStream, file);
+
+                            //  await memory.CopyToAsync(peStream);
+                        }
+
+                        info.AssembliesPaths.Add(file);
                     }
 
-                    info.AssembliesPaths.Add(file);
-                }
+                    var otherModules = _originalCodebase.Modules
+                        .Where(_ => singleMutated == null || _.Module.Name != singleMutated.Name);
 
-                var otherModules = _originalCodebase.Modules
-                    .Where(_ => singleMutated == null || _.Module.Name != singleMutated.Name);
-
-                foreach (var otherModule in otherModules)
-                {
-                    string file = Path.Combine(info.Directory, otherModule.Module.Name + ".dll");
-                    info.AssembliesPaths.Add(file);
-                }
+                    foreach (var otherModule in otherModules)
+                    {
+                        string file = Path.Combine(info.Directory, otherModule.Module.Name + ".dll");
+                        info.AssembliesPaths.Add(file);
+                    }
+                //}
             }
             else
             {
@@ -75,13 +81,13 @@
                     //TODO: remove: assemblyDefinition.Name.Name + ".dll", use factual original file name
                     string file = Path.Combine(info.Directory, module.Name + ".dll");
 
-                    
+
                     // _mutantsCache.Release(mutationResult);
 
                     using (FileStream peStream = File.Create(file))
                     {
-                         cciModuleSource.WriteToStream(module, peStream, file);
-                      //  await memory.CopyToAsync(peStream);
+                        cciModuleSource.WriteToStream(module, peStream, file);
+                        //  await memory.CopyToAsync(peStream);
                     }
 
                     info.AssembliesPaths.Add(file);

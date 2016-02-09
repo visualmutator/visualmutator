@@ -1,0 +1,297 @@
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.csprojResolveAssemblyReference.cache
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunitconsole.zip
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.exe.config
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.exe
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\CommandLine.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\log4net.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.AnalysisUtilities.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.AstsProjectedAsCodeModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModelToIL.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ContractExtractor.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CSharpSourceEmitter.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ILGenerator.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataHelper.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableCodeModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableMetadataModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.NewILToCodeModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbReader.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbWriter.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeReader.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeWriter.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ReflectionEmitter.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceEmitter.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceModel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Moq.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Reactive.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\UsefulTools.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\UsefulTools.Wpf.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Extensibility.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.OperatorsStandard.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\RunProcessAsTask.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\May.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.interfaces.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\LinqLib.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.CSharp.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\DiffLib.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.util.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.CoreEx.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Extensibility.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.OperatorsStandard.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\CommandLine.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\log4net.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.AnalysisUtilities.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.AstsProjectedAsCodeModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModelToIL.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ILGenerator.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataHelper.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableCodeModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableMetadataModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbReader.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbWriter.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeReader.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeWriter.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceEmitter.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Moq.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Windows.Interactivity.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\RunProcessAsTask.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\May.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.interfaces.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\LinqLib.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.CSharp.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\DiffLib.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\de\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\en\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\es\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\fr\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\it\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\ja\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\ko\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.exe
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ContractExtractor.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CSharpSourceEmitter.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.NewILToCodeModel.xml
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ReflectionEmitter.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunitconsole.zip
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.exe.config
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.exe
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\CommandLine.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\log4net.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.AnalysisUtilities.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.AstsProjectedAsCodeModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModelToIL.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ContractExtractor.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CSharpSourceEmitter.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ILGenerator.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataHelper.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableCodeModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableMetadataModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.NewILToCodeModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbReader.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbWriter.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeReader.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeWriter.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ReflectionEmitter.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceEmitter.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceModel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Moq.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Reactive.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\UsefulTools.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\UsefulTools.Wpf.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Extensibility.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.OperatorsStandard.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Windows.Interactivity.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\RunProcessAsTask.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\May.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.interfaces.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\LinqLib.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.CSharp.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\DiffLib.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.util.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.CoreEx.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Extensibility.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.OperatorsStandard.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\CommandLine.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\log4net.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.AnalysisUtilities.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.AstsProjectedAsCodeModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModelToIL.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ContractExtractor.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CSharpSourceEmitter.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ILGenerator.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataHelper.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableCodeModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableMetadataModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.NewILToCodeModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbReader.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbWriter.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeReader.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeWriter.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ReflectionEmitter.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceEmitter.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceModel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Moq.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Windows.Interactivity.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\RunProcessAsTask.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\May.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.interfaces.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\LinqLib.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.CSharp.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\DiffLib.xml
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\de\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\en\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\es\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\fr\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\it\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\ja\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\ko\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.csprojResolveAssemblyReference.cache
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.exe
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunitconsole.zip
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.exe.config
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.exe
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Console.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\CommandLine.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\log4net.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.AnalysisUtilities.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.AstsProjectedAsCodeModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModelToIL.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ContractExtractor.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CSharpSourceEmitter.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ILGenerator.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataHelper.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableCodeModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableMetadataModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.NewILToCodeModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbReader.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbWriter.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeReader.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeWriter.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ReflectionEmitter.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceEmitter.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceModel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Moq.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Reactive.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\UsefulTools.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\UsefulTools.Wpf.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Extensibility.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.OperatorsStandard.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\RunProcessAsTask.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\May.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.interfaces.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\LinqLib.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.CSharp.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\DiffLib.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.util.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.CoreEx.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.Extensibility.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.OperatorsStandard.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\VisualMutator.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\CommandLine.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\log4net.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.AnalysisUtilities.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.AstsProjectedAsCodeModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CodeModelToIL.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ContractExtractor.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.CSharpSourceEmitter.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ILGenerator.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataHelper.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MetadataModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableCodeModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.MutableMetadataModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.NewILToCodeModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbReader.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PdbWriter.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeReader.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.PeWriter.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.ReflectionEmitter.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceEmitter.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Microsoft.Cci.SourceModel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Moq.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ChildKernel.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Ninject.Extensions.ContextPreservation.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\System.Windows.Interactivity.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\RunProcessAsTask.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\May.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\nunit.core.interfaces.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\LinqLib.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.CSharp.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\Roslyn.Compilers.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\DiffLib.xml
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\de\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\en\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\es\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\fr\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\it\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\ja\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\ko\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.csprojResolveAssemblyReference.cache
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.exe
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Console\obj\Debug\VisualMutator.Console.pdb

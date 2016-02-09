@@ -146,10 +146,13 @@
 
         public void Release(MutationResult mutationResult)
         {
+            /*foreach (ICciModuleSource cciMod in mutationResult.MutatedModules) //AKB
+            {*/
             var cci = (CciModuleSource)mutationResult.MutatedModules;
-                        _whiteCache.ReturnToCache(
-                            cci.Modules.Single().Name,
-                            cci);
+                _whiteCache.ReturnToCache(
+                    cci.Modules.Single().Name,
+                    cci);
+            /*}*/
             //  var tt = mutationResult.WhiteModules.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Range");
             //tt.ToString();
             //  var type = cci.Modules.Single().Module.GetAllTypes().Single(t => t.Name.Value == "Deque") as NamedTypeDefinition;
@@ -194,6 +197,8 @@
             MutationResult result;
             if (mutant.MutationTarget == null || mutant.MutationTarget.ProcessingContext == null)
             {
+                /*List<ICciModuleSource> cciModules = new List<ICciModuleSource>();
+                cciModules.Add(new CciModuleSource());*/
                 result = new MutationResult(mutant, new CciModuleSource(), null, null);
             }
             else
@@ -212,9 +217,19 @@
                 {
                     _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting white cache.");
                     var cci = await _whiteCache.GetWhiteSourceAsync(mutant.MutationTarget.ProcessingContext.ModuleName);
-                    _log.Debug("Cache#Mutant " + mutant.Id + ": taken source: "+cci.Guid);
-                    _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation start.");
-                    result = await _mutationExecutor.ExecuteMutation(mutant, cci);
+                    if (mutant._mutationTargets.Count == 0)
+                    {
+                        _log.Debug("Cache#Mutant " + mutant.Id + ": taken source: " + cci.Guid);
+                        _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation start.");
+                        result = await _mutationExecutor.ExecuteMutation(mutant, cci);
+                    }
+                    else
+                    {
+                        var cci2 = await _whiteCache.GetWhiteSourceAsync(mutant._mutationTargets[0].ProcessingContext.ModuleName);
+                        _log.Debug("Cache#Mutant " + mutant.Id + ": taken source: " + cci.Guid);
+                        _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation start.");
+                        result = await _mutationExecutor.ExecuteMutation(mutant, cci, cci2);
+                    }
                     _log.Debug("Cache#Mutant " + mutant.Id + ": Awaiting mutation finished.");
                 }
 

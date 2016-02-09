@@ -114,7 +114,7 @@
          //   _nUnitTesterFactory.CreateWithParams(_nunitConsolePath, arg);
 
             IDisposable timoutDisposable =
-              Observable.Timer(TimeSpan.FromSeconds(options.TestingTimeoutSeconds))
+              Observable.Timer(TimeSpan.FromMilliseconds(options.TestingTimeoutSeconds))
               .Subscribe(e => CancelTestRun());
 
             try

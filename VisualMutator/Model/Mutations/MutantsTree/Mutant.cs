@@ -34,9 +34,13 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             UpdateDisplayedText();
         }
 
-        private readonly string _id;
+        private /*readonly*/ string _id;
 
-        private readonly MutationTarget _mutationTarget;
+        private /*readonly*/ MutationTarget _mutationTarget;
+
+        public List<MutationTarget> _mutationTargets = new List<MutationTarget>();
+
+        public int _nrTimesWasAdded = 0;
 
         public MutationTarget MutationTarget
         {
@@ -44,14 +48,21 @@ namespace VisualMutator.Model.Mutations.MutantsTree
             {
                 return _mutationTarget;
             }
+            set
+            {
+                _mutationTarget = value;
+            }
         }
-     
 
         public string Id
         {
             get
             {
                 return _id;
+            }
+            set
+            {
+                _id = value;
             }
         }
         

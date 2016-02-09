@@ -11,7 +11,7 @@ namespace VisualMutator.Model
     {
         public MutantsTestingOptions()
         {
-            TestingTimeoutSeconds = 40;
+            TestingTimeoutSeconds = 40000;
         }
         private int _testingTimeoutSeconds;
 

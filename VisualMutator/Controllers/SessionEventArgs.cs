@@ -169,6 +169,18 @@
             get;
             set;
         }
+        //AKB
+        public int NumberOfFirstOrderMutants
+        {
+            get;
+            set;
+        }
+        //AKB
+        public int NumberOfMarkedEq
+        {
+            get;
+            set;
+        }
     }
     public class TestingProgressEventArgs : SessionEventArgs
     {

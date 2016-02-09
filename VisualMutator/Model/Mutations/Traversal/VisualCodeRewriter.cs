@@ -61,6 +61,28 @@
             _formatter = new AstFormatter();
         }
 
+        public VisualCodeRewriter(IMetadataHost host, List<AstNode> capturedAstObjects, List<AstNode> capturedAstObjects2,
+            List<AstNode> sharedAstObjects, List<AstNode> sharedAstObjects2, MutationFilter filter,
+            IOperatorCodeRewriter rewriter, VisualCodeTraverser traverser)
+            : base(host, rewriter)
+        {
+            _capturedASTObjects = capturedAstObjects;
+            foreach (AstNode element in capturedAstObjects2)
+            {
+                _capturedASTObjects.Add(element);
+            }
+            _sharedASTObjects = sharedAstObjects;
+            foreach (AstNode element in sharedAstObjects2)
+            {
+                _sharedASTObjects.Add(element);
+            }
+            _filter = filter;
+            _rewriter = rewriter;
+            _traverser = traverser;
+            //    _rewriter.Parent = this;
+            _formatter = new AstFormatter();
+        }
+
         /// <summary>
         /// Filters elements so that every one is processed only once. 
         /// This is required to avoid rewriting some object multiple times 
@@ -127,8 +149,10 @@
             if (_filter.Matches(method))
             {
                 _rewriter.MethodEnter(method);
+                //_rewriter2.MethodEnter(method);
                 base.RewriteChildren(method);
                 _rewriter.MethodExit(method);
+                //_rewriter2.MethodEnter(method);
             }
         }
 

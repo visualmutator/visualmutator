@@ -31,6 +31,7 @@
             MutationScore = "";
             OperationsState = OperationsState.None;
             OperationsStateDescription = "";
+            MarkedEq = "";
         }
 
         private OperationsState _operationsState;
@@ -250,6 +251,21 @@
             set
             {
                 SetAndRise(ref _mutationScore, value, () => MutationScore);
+            }
+        }
+
+        //AKB
+        private string _markedEq;
+
+        public string MarkedEq
+        {
+            get
+            {
+                return _markedEq;
+            }
+            set
+            {
+                SetAndRise(ref _markedEq, value, () => MarkedEq);
             }
         }
 

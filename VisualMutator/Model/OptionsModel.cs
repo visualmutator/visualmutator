@@ -17,6 +17,9 @@
             ProcessingThreadsCount = 3;
             OtherParams = "";
             MaxNumerOfMutantPerOperator = 100;
+            TimeFactorForMutations = 3;
+            MutationOrder = 0;
+            UseCodeCoverage = false;
         }
 
         private bool _mutantsCacheEnabled;
@@ -29,6 +32,19 @@
             set
             {
                 SetAndRise(ref _mutantsCacheEnabled, value, () => MutantsCacheEnabled);
+            }
+        }
+        //AKB
+        private bool _useCodeCoverage;
+        public bool UseCodeCoverage
+        {
+            get
+            {
+                return _useCodeCoverage;
+            }
+            set
+            {
+                SetAndRise(ref _useCodeCoverage, value, () => UseCodeCoverage);
             }
         }
 
@@ -69,7 +85,47 @@
                 SetAndRise(ref _maxNumerOfMutantPerOperator, value, () => MaxNumerOfMutantPerOperator);
             }
         }
-        
+        private int _timeFactorForMutations;
+        public int TimeFactorForMutations
+        {
+            get
+            {
+                return _timeFactorForMutations;
+            }
+            set
+            {
+                SetAndRise(ref _timeFactorForMutations, value, () => TimeFactorForMutations);
+            }
+        }
+
+        //AKB
+        private int _mutationOrder;
+
+        public int MutationOrder
+        {
+            get
+            {
+                return _mutationOrder;
+            }
+            set
+            {
+                SetAndRise(ref _mutationOrder, value, () => MutationOrder);
+            }
+        }
+        //AKB
+        private int _mutationOrder2;
+
+        public int MutationOrder2
+        {
+            get
+            {
+                return _mutationOrder2;
+            }
+            set
+            {
+                 SetAndRise(ref _mutationOrder2, value, () => MutationOrder2);
+            }
+        }   
 
         private string _otherParams;
 

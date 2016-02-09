@@ -6,8 +6,8 @@
         xmlns:ViewModels="clr-namespace:VisualMutator.ViewModels"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        d:DesignHeight="163" d:DesignWidth="395" Title="Save Mutation Testing Results"
-        Width="300" Height="200">
+        d:DesignHeight="163" d:DesignWidth="395" Title="Options for Mutation Testing"
+        Width="360" Height="275">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,8 +25,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -51,29 +54,39 @@
 <!--                  IsChecked="{Binding Options.WhiteCacheEnabled}" />-->
 <!--        -->
         
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Source files processing threads:" />
-        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="16" Minimum="0"
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Source files processing threads:" />
+        <xctk:IntegerUpDown Grid.Row="5" Grid.Column="1" Maximum="16" Minimum="0"
                                   Value="{Binding Options.WhiteCacheThreadsCount, Mode=TwoWay}" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Mutant processing threads:" />
-        <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1" Maximum="16" Minimum="1"
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Mutant processing threads:" />
+        <xctk:IntegerUpDown Grid.Row="6" Grid.Column="1" Maximum="16" Minimum="1"
                                   Value="{Binding Options.ProcessingThreadsCount, Mode=TwoWay}" />
-        <CheckBox Grid.Row="2" Style="{StaticResource checkstyle}"
+        <CheckBox Grid.Row="3" Style="{StaticResource checkstyle}"
+                  Content="Use Code Coverage Detection"
+                  IsChecked="{Binding Options.UseCodeCoverage}" />
+        
+        <CheckBox Grid.Row="4" Style="{StaticResource checkstyle}"
                   Content="Enable mutant code cache"
                   IsChecked="{Binding Options.MutantsCacheEnabled}" />
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Max number of mutants per operator:" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Max number of mutants per operator:" />
 
-        <xctk:IntegerUpDown Grid.Row="3" Grid.Column="1" Maximum="1000" Minimum="1"
+        <xctk:IntegerUpDown Grid.Row="0" Grid.Column="1" Maximum="1000" Minimum="1"
                                   Value="{Binding Options.MaxNumerOfMutantPerOperator, Mode=TwoWay}" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Time after which timed-out mutant is killed: " />
+
+        <xctk:IntegerUpDown Grid.Row="1" Grid.Column="1" Maximum="100" Minimum="1"
+                                  Value="{Binding Options.TimeFactorForMutations, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Mutation order: " />
+
+        <xctk:IntegerUpDown Grid.Row="2" Grid.Column="1" Maximum="2" Minimum="1"
+                                  Value="{Binding Options.MutationOrder, Mode=TwoWay}" />
 
 
-
-
-
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Other Params:" />
-        <TextBox Grid.Row="5" Grid.ColumnSpan="2" Text="{Binding Options.OtherParams, Mode=TwoWay}"></TextBox>
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="Other Params:" />
+        <TextBox Grid.Row="8" Grid.ColumnSpan="2" Text="{Binding Options.OtherParams, Mode=TwoWay}"></TextBox>
         
-        <DockPanel Grid.Row="6" HorizontalAlignment="Right" Grid.ColumnSpan="2">
+        <DockPanel Grid.Row="9" HorizontalAlignment="Right" Grid.ColumnSpan="2">
             <Button Content="OK" Command="{Binding CommandSave}" />
             <Button Content="Cancel" Command="{Binding CommandClose}" />
         </DockPanel>

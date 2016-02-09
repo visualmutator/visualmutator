@@ -258,7 +258,7 @@
                 _viewModel.OperationsStateDescription = FunctionalExt.ValuedSwitch<OperationsState, string>(state)
                     .Case(OperationsState.None, "")
                     .Case(OperationsState.TestingPaused, "Paused")
-                    .Case(OperationsState.Finished, "Finished")
+                    .Case(OperationsState.Finished, "Finished:" + _viewModel.OperationsStateDescription)
                     .Case(OperationsState.PreCheck, "Pre-check...")
                     .Case(OperationsState.Mutating, "Creating mutants...")
                     .Case(OperationsState.Pausing, "Pausing...")
@@ -318,8 +318,23 @@
                  .Subscribe(args =>
                  {
             
-                         _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllNonEquivalent);
+                         if (args.NumberOfFirstOrderMutants!=0)
+                         {
+                            _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}(FOM:{2}) ", args.NumberOfMutantsKilled, args.NumberOfAllNonEquivalent, args.NumberOfFirstOrderMutants);
+                         }
+                         else
+                         { 
+                            _viewModel.MutantsRatio = string.Format("Mutants killed: {0}/{1}", args.NumberOfMutantsKilled, args.NumberOfAllNonEquivalent);
+                         }
                          _viewModel.MutationScore = string.Format(@"Mutation score: {0}%", args.MutationScore.AsPercentageOf(1.0d));
+                     if (args.NumberOfMarkedEq!=0)
+                     {
+                         _viewModel.MarkedEq = string.Format("Mutants equivalent: {0}", args.NumberOfMarkedEq);
+                     }
+                     else
+                     {
+                         _viewModel.MarkedEq = "";
+                     }
                   
             
                  }),

@@ -88,6 +88,9 @@
             List<Mutant> mutantsWithErrors = mutants.Where(m => m.State == MutantResultState.Error).ToList();
             List<Mutant> testedMutants = mutants.Where(m => m.MutantTestSession.IsComplete).ToList();
             List<Mutant> live = testedMutants.Where(m => m.State == MutantResultState.Live).ToList();
+            //AKB
+            List<Mutant> markedAsEquivalentAmongLive = mutants.Where(m => m.IsEquivalent).ToList();
+            List<Mutant> unpairedFOMs = mutants.Where(m => m.Id.IndexOf("First Order Mutant") != -1).ToList();
 
             progress.Initialize(mutants.Count * multiplier);
 
@@ -96,6 +99,9 @@
             var mutantsNode = new XElement("Mutants",
                 new XAttribute("Total", mutants.Count),
                 new XAttribute("Live", live.Count),
+                //AKB
+                new XAttribute("MarkedAsEquivalentAmongLive", markedAsEquivalentAmongLive.Count),
+                new XAttribute("UnpairedFirstOrderMutants", unpairedFOMs.Count),
                 new XAttribute("Killed", testedMutants.Count - live.Count),
                 new XAttribute("Untested", mutants.Count - testedMutants.Count),
                 new XAttribute("WithError", mutantsWithErrors.Count),
@@ -137,6 +143,7 @@
                     )
                 )
             );
+
 
 
             var optionalElements = new List<XElement>();

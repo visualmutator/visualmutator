@@ -31,6 +31,7 @@
                 new PRV_ReferenceAssignmentChange(), 
                 new MCI_MemberCallFromAnotherInheritedClass(), 
               //  new NullInsertion(), 
+                //new RSO_RemoveStatementOperator(),
             };
 
         }

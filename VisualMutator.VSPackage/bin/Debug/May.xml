@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>May</name>
+    </assembly>
+    <members>
+        <member name="T:Strilanc.Value.May">
+            <summary>Utility methods for the generic May type.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Maybe``1(``0)">
+            <summary>Returns a potential value containing the given value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Match``2(Strilanc.Value.May{``0},System.Func{``0,``1},``1)">
+            <summary>Matches this potential value either into a function expecting a value or against an alternative value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Bind``2(Strilanc.Value.May{``0},System.Func{``0,Strilanc.Value.May{``1}})">
+            <summary>Returns the potential result of potentially applying the given function to this potential value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Else``1(Strilanc.Value.May{``0},System.Func{``0})">
+            <summary>Returns the value contained in the given potential value, if any, or else the result of evaluating the given alternative value function.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Unwrap``1(Strilanc.Value.May{Strilanc.Value.May{``0}})">
+            <summary>Flattens a doubly-potential value, with the result containing a value only if both levels contained a value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Else``1(Strilanc.Value.May{``0},System.Func{Strilanc.Value.May{``0}})">
+            <summary>Returns the value contained in the given potential value, if any, or else the result of evaluating the given alternative potential value function.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Else``1(Strilanc.Value.May{``0},``0)">
+            <summary>Returns the value contained in the given potential value, if any, or else the given alternative value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Else``1(Strilanc.Value.May{``0},Strilanc.Value.May{``0})">
+            <summary>Returns the value contained in the given potential value, if any, or else the given alternative potential value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Select``2(Strilanc.Value.May{``0},System.Func{``0,``1})">
+            <summary>Returns the result of potentially applying a function to this potential value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Where``1(Strilanc.Value.May{``0},System.Func{``0,System.Boolean})">
+            <summary>Returns the same value, unless the contained value does not match the filter in which case a no value is returned.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.SelectMany``3(Strilanc.Value.May{``0},System.Func{``0,Strilanc.Value.May{``1}},System.Func{``0,``1,``2})">
+            <summary>Projects optional values, returning a no value if anything along the way is a no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Combine``3(Strilanc.Value.May{``0},Strilanc.Value.May{``1},System.Func{``0,``1,``2})">
+            <summary>Combines the values contained in several potential values with a projection function, returning no value if any of the inputs contain no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Combine``4(Strilanc.Value.May{``0},Strilanc.Value.May{``1},Strilanc.Value.May{``2},System.Func{``0,``1,``2,``3})">
+            <summary>Combines the values contained in several potential values with a projection function, returning no value if any of the inputs contain no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.Combine``5(Strilanc.Value.May{``0},Strilanc.Value.May{``1},Strilanc.Value.May{``2},Strilanc.Value.May{``3},System.Func{``0,``1,``2,``3,``4})">
+            <summary>Combines the values contained in several potential values with a projection function, returning no value if any of the inputs contain no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.IfHasValueThenDo``1(Strilanc.Value.May{``0},System.Action{``0})">
+            <summary>
+            Potentially runs an action taking the potential value's value.
+            No effect if the potential value is no value.
+            Returns an IMayHaveValue that has a value iff the action was run.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.May.ElseDo(Strilanc.Value.IMayHaveValue,System.Action)">
+            <summary>Runs the given no value action if the given potential value does not contain a value, and otherwise does nothing.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.ElseDefault``1(Strilanc.Value.May{``0})">
+            <summary>Returns the value contained in the given potential value, if any, or else the type's default value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May.ForceGetValue``1(Strilanc.Value.May{``0})">
+            <summary>Returns the value contained in the potential value, or throws an InvalidOperationException if it contains no value.</summary>
+        </member>
+        <member name="P:Strilanc.Value.May.NoValue">
+            <summary>
+            A potential value containing no value. Implicitely converts to a no value of any generic May type.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="T:Strilanc.Value.MayNoValue">
+            <summary>
+            A non-generic lack-of-value type, equivalent to generic likes like lack-of-int.
+            Use Strilanc.Value.May.NoValue to get an instance.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="T:Strilanc.Value.IMayHaveValue">
+            <summary>
+            A potential value that may or may not contain an unknown value of unknown type.
+            All implementations should compare equal and have a hash code of 0 when HasValue is false.
+            </summary>
+            <remarks>
+            Used to allow comparisons of the raw May.NoValue to generic ones like May&lt;int&gt;.NoValue.
+            Also used as the result type of the 'do action if value present' method, but only because there is no standard void or unit type.
+            </remarks>
+        </member>
+        <member name="P:Strilanc.Value.IMayHaveValue.HasValue">
+            <summary>Determines if this potential value contains a value or not.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayNoValue.GetHashCode">
+            <summary>Returns the hash code for a lack of potential value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayNoValue.Equals(Strilanc.Value.IMayHaveValue)">
+            <summary>Determines if the given potential value contains no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayNoValue.Equals(System.Object)">
+            <summary>Determines if the given object is a potential value containing no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayNoValue.op_Equality(Strilanc.Value.MayNoValue,Strilanc.Value.MayNoValue)">
+            <summary>Determines if two lack of values are equal (they are).</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayNoValue.op_Inequality(Strilanc.Value.MayNoValue,Strilanc.Value.MayNoValue)">
+            <summary>Determines if two lack of values are not equal (they're not).</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayNoValue.ToString">
+            <summary>Returns a string representation of this lack of value.</summary>
+        </member>
+        <member name="P:Strilanc.Value.MayNoValue.HasValue">
+            <summary>Determines if this potential value contains a value or not (it doesn't).</summary>
+        </member>
+        <member name="T:Strilanc.Value.May`1">
+            <summary>
+            A potential value that may contain no value or may contain a value of type T.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.#ctor(`0)">
+            <summary>Constructs a potential value containing the given value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.Match``1(System.Func{`0,``0},System.Func{``0})">
+            <summary>Matches this potential value into either a function expecting a value or a function expecting no value, returning the result.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Implicit(Strilanc.Value.MayNoValue)~Strilanc.Value.May{`0}">
+            <summary>Returns a potential value containing no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Implicit(`0)~Strilanc.Value.May{`0}">
+            <summary>Returns a potential value containing the given value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Explicit(Strilanc.Value.May{`0})~`0">
+            <summary>Returns the value contained in the potential value, throwing a cast exception if the potential value contains no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Equality(Strilanc.Value.May{`0},Strilanc.Value.May{`0})">
+            <summary>Determines if two potential values are equivalent.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Inequality(Strilanc.Value.May{`0},Strilanc.Value.May{`0})">
+            <summary>Determines if two potential values are not equivalent.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Equality(Strilanc.Value.May{`0},Strilanc.Value.IMayHaveValue)">
+            <summary>Determines if two potential values are equivalent.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.op_Inequality(Strilanc.Value.May{`0},Strilanc.Value.IMayHaveValue)">
+            <summary>Determines if two potential values are not equivalent.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.GetHashCode">
+            <summary>Returns the hash code for this potential value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.Equals(Strilanc.Value.May{`0})">
+            <summary>
+            Determines if this potential value is equivalent to the given potential value.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.Equals(Strilanc.Value.IMayHaveValue)">
+            <summary>
+            Determines if this potential value is equivalent to the given potential value.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.Equals(System.Object)">
+            <summary>
+            Determines if this potential value is equivalent to the given object.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.May`1.ToString">
+            <summary>Returns a string representation of this potential value.</summary>
+        </member>
+        <member name="P:Strilanc.Value.May`1.NoValue">
+            <summary>
+            A potential value containing no value.
+            Note: All forms of no value are equal, including May.NoValue, May&lt;T&gt;.NoValue, May&lt;AnyOtherT&gt;.NoValue, default(May&lt;T&gt;) and new May&lt;T&gt;().
+            Note: Null is NOT equivalent to new May&lt;object&gt;(null) and neither is equivalent to new May&lt;string&gt;(null).
+            </summary>
+        </member>
+        <member name="P:Strilanc.Value.May`1.HasValue">
+            <summary>Determines if this potential value contains a value or not.</summary>
+        </member>
+        <member name="T:Strilanc.Value.MayUtilities">
+            <summary>Utility methods that involve May&lt;T&gt; but with a focus on other types.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.AsNullable``1(Strilanc.Value.May{``0})">
+            <summary>Returns the value contained in the given potential value as a nullable type, returning null if there is no contained value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.AsMay``1(System.Nullable{``0})">
+            <summary>Returns the value contained in the given nullable value as a potential value, with null corresponding to no value.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayAggregate``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``0,``0})">
+            <summary>
+            Returns the result of using a folder function to combine all the items in the sequence into one aggregate item.
+            If the sequence is empty, the result is NoValue.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayMin``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IComparer{``0})">
+            <summary>
+            Returns the minimum value in a sequence, as determined by the given comparer or else the type's default comparer.
+            If the sequence is empty, the result is NoValue.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayMax``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IComparer{``0})">
+            <summary>
+            Returns the maximum value in a sequence, as determined by the given comparer or else the type's default comparer.
+            If the sequence is empty, the result is NoValue.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayMinBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IComparer{``1})">
+            <summary>
+            Returns the minimum value in a sequence, as determined by projecting the items and using the given comparer or else the type's default comparer.
+            If the sequence is empty, the result is NoValue.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayMaxBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Collections.Generic.IComparer{``1})">
+            <summary>
+            Returns the maximum value in a sequence, as determined by projecting the items and using the given comparer or else the type's default comparer.
+            If the sequence is empty, the result is NoValue.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayFirst``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>Returns the first item in a sequence, or else NoValue if the sequence is empty.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayLast``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>Returns the last item in a sequence, or else NoValue if the sequence is empty.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MaySingle``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>Returns the single item in a sequence, NoValue if the sequence is empty, or throws an exception if there is more than one item.</summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.WhereHasValue``1(System.Collections.Generic.IEnumerable{Strilanc.Value.May{``0}})">
+            <summary>
+            Enumerates the values in the potential values in the sequence.
+            The potential values that contain no value are skipped.
+            </summary>
+        </member>
+        <member name="M:Strilanc.Value.MayUtilities.MayAll``1(System.Collections.Generic.IEnumerable{Strilanc.Value.May{``0}})">
+            <summary>
+            Enumerates the values in all the potential values in the sequence.
+            However, if any of the potential values contains no value then the entire result is no value.
+            </summary>
+        </member>
+    </members>
+</doc>

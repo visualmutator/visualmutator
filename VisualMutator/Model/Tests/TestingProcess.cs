@@ -21,6 +21,9 @@
         private readonly int _allMutantsCount;
         private int _testedNonEquivalentMutantsCount;
         private int _mutantsKilledCount;
+        //AKB
+        private int _numberOfMarkedEq;
+        private int _numberOfFirstOrderMutants;
         private readonly WorkerCollection<Mutant> _mutantsWorkers;
         private int _testedMutantsCount;
         private bool _stopping;
@@ -40,6 +43,9 @@
             _allMutantsCount = allMutants.Count;
             _testedNonEquivalentMutantsCount = 0;
             _testedMutantsCount = 0;
+            //AKB
+            _numberOfFirstOrderMutants = 0;
+            _numberOfMarkedEq = 0;
 
             _log.Info("Testing process: all:" + _allMutantsCount);
 
@@ -70,6 +76,9 @@
             {
                 NumberOfAllNonEquivalent = _testedNonEquivalentMutantsCount,
                 NumberOfMutantsKilled = _mutantsKilledCount,
+                //AKB
+                NumberOfFirstOrderMutants = _numberOfFirstOrderMutants,
+                NumberOfMarkedEq = _numberOfMarkedEq,
             });
         }
 
@@ -106,6 +115,11 @@
                 _testedNonEquivalentMutantsCount++;
                 _testedMutantsCount++;
                 _mutantsKilledCount = _mutantsKilledCount.IncrementedIf(mutant.State == MutantResultState.Killed);
+                //AKB
+                if (mutant.Id.IndexOf("First Order Mutant")!=-1)
+                {
+                    _numberOfFirstOrderMutants++;
+                }
                 RaiseTestingProgress();
             }
         }
@@ -123,16 +137,22 @@
                 if (equivalent)
                 {
                     _testedNonEquivalentMutantsCount--;
+                    _numberOfMarkedEq++;
+
                 }
                 else
                 {
                     _testedNonEquivalentMutantsCount++;
+                    _numberOfMarkedEq--;
                 }
            
                 _sessionEventsSubject.OnNext(new MutationScoreInfoEventArgs(OperationsState.None)
                 {
                     NumberOfMutantsKilled = _mutantsKilledCount,
                     NumberOfAllNonEquivalent = _testedNonEquivalentMutantsCount,
+                    //AKB
+                    NumberOfFirstOrderMutants = _numberOfFirstOrderMutants,
+                    NumberOfMarkedEq = _numberOfMarkedEq,
                 });
             }
         }

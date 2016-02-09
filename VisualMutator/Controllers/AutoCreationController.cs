@@ -95,7 +95,7 @@
             Task<List<CciModuleSource>> assembliesTask = _sessionConfiguration.LoadAssemblies();
 
         
-           // Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
+          //  Task<List<MethodIdentifier>> coveringTask = sessionCreator.FindCoveringTests(assembliesTask, matcher);
 
             Task<TestsRootNode> testsTask = _sessionConfiguration.LoadTests();
 
@@ -134,6 +134,7 @@
                     _svc.Logging.ShowWarning(UserMessages.WarningAssemblyNotLoaded());
                 }
                 var assembliesToMutate = task.Result.Where(a => !testAssemblies.ToEmptyIfNull().Contains(a.AssemblyPath.Path)).ToList();
+                //assembliesToMutate = ClassCoverage.UnmarkNotCovered(assembliesToMutate,testAssemblies);
                 _viewModel.TypesTreeMutate.Assemblies = new ReadOnlyCollection<AssemblyNode>(assembliesToMutate);
                 _whiteSource = assembliesTask.Result;
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
@@ -142,6 +143,12 @@
             {
                 _viewModel.TypesTreeToTest.TestAssemblies
                                 = new ReadOnlyCollection<TestNodeAssembly>(task.Result);
+
+                if (_options.UseCodeCoverage)
+                {
+                    ClassCoverage.UnmarkNotCovered(_viewModel.TypesTreeMutate.Assemblies, _viewModel.TypesTreeToTest.TestAssemblies);
+                }
+
                
             }, CancellationToken.None, TaskContinuationOptions.NotOnFaulted, _execute.GuiScheduler);
 
@@ -158,7 +165,7 @@
                         tcs.TrySetCanceled();
                     }
                 }, _execute.GuiScheduler);
-
+               
                 var wrappedTask = Task.WhenAll(tcs.Task, mainTask);
 
                 if (_sessionConfiguration.AssemblyLoadProblem)

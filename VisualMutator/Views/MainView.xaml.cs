@@ -40,37 +40,43 @@
 
         private void trv_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var item = ((TreeViewItem) sender);
-            var mutant = (Mutant)((TreeViewItem)sender).DataContext;
-            item.IsSelected = true;
-            item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
-            var messageItem = (item.ContextMenu.Items[0] as MenuItem);
-            var markEquivalent = (item.ContextMenu.Items[1] as MenuItem);
-            var unmarkEquivalent = (item.ContextMenu.Items[2] as MenuItem);
-
-            messageItem.Visibility = mutant.State == MutantResultState.Error ?
-                Visibility.Visible : Visibility.Collapsed;
-
-            if(mutant.State == MutantResultState.Live)
+            try
             {
-                if (mutant.IsEquivalent)
+                var item = ((TreeViewItem)sender);
+                var mutant = (Mutant)((TreeViewItem)sender).DataContext;
+                item.IsSelected = true;
+                item.ContextMenu = (ContextMenu)Tree.Resources["ErrorMutantContextMenu"];
+                var messageItem = (item.ContextMenu.Items[0] as MenuItem);
+                var markEquivalent = (item.ContextMenu.Items[1] as MenuItem);
+                var unmarkEquivalent = (item.ContextMenu.Items[2] as MenuItem);
+
+                messageItem.Visibility = mutant.State == MutantResultState.Error ?
+                    Visibility.Visible : Visibility.Collapsed;
+
+                if (mutant.State == MutantResultState.Live)
                 {
-                    unmarkEquivalent.Visibility = Visibility.Visible;
-                    markEquivalent.Visibility = Visibility.Collapsed;
+                    if (mutant.IsEquivalent)
+                    {
+                        unmarkEquivalent.Visibility = Visibility.Visible;
+                        markEquivalent.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        markEquivalent.Visibility = Visibility.Visible;
+                        unmarkEquivalent.Visibility = Visibility.Collapsed;
+                    }
                 }
                 else
                 {
-                    markEquivalent.Visibility = Visibility.Visible;
+                    markEquivalent.Visibility = Visibility.Collapsed;
                     unmarkEquivalent.Visibility = Visibility.Collapsed;
                 }
-            }
-            else
-            {
-                markEquivalent.Visibility = Visibility.Collapsed;
-                unmarkEquivalent.Visibility = Visibility.Collapsed;
-            }
-            
 
+            }
+            catch
+            {
+                
+            }
         }
 
         private void MenuItemMarkEquivalent_Click(object sender, RoutedEventArgs e)

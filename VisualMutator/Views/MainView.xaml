@@ -88,13 +88,15 @@
                                       Command="{Binding CommandPause}" />
                 <Button HorizontalAlignment="Right" Content="New session..."
                         Command="{Binding CommandCreateNewMutants}" />
-                <Button HorizontalAlignment="Right" Content="O"
+                <Button HorizontalAlignment="Right" Content="Options"
                         Command="{Binding CommandOptions}" />
             </WrapPanel>
 
             <DockPanel Grid.Row="1">
                 <TextBlock DockPanel.Dock="Left" Text="{Binding MutantsRatio}" />
-                <TextBlock DockPanel.Dock="Right" Text="{Binding MutationScore}" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding MarkedEq}" />
+                <TextBlock DockPanel.Dock="Top" Text="{Binding MutationScore}" />
+
 
             </DockPanel>
 
@@ -164,6 +166,8 @@
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <Setter Property="IsExpanded" Value="True" />
+                            <EventSetter Event="TreeViewItem.PreviewMouseRightButtonDown"
+                                         Handler="trv_PreviewMouseRightButtonDown" />
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
@@ -188,9 +192,10 @@
                     <DockPanel>
                         <Rectangle Style="{StaticResource MutationStateRectangleStyle}" >
                         </Rectangle>
-                        <TextBlock Text="{Binding DisplayedText}" />
+                        <TextBlock Text="{Binding DisplayedText}" /> 
+                        
                     </DockPanel>
-                  
+
                 </DataTemplate>
             </TreeView.Resources>
         </TreeView>

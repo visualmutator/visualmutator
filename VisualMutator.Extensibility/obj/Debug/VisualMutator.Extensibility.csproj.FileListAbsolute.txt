@@ -1,0 +1,14 @@
+C:\Users\Kacper\Desktop\Semestr VII\Inż\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\VisualMutator.Extensibility.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\VisualMutator.Extensibility.pdb
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.dll
+C:\Users\Kacper\Desktop\Semestr VII\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.pdb
+G:\Inż\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\VisualMutator.Extensibility.dll
+G:\Inż\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\VisualMutator.Extensibility.pdb
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.csprojResolveAssemblyReference.cache
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.dll
+G:\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.pdb
+C:\Users\Kacper\Desktop\Inż\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\VisualMutator.Extensibility.dll
+C:\Users\Kacper\Desktop\Inż\AppData\Local\Microsoft\VisualStudio\10.0Exp\Extensions\PiotrTrzpil\VisualMutator.VSPackage\1.0\VisualMutator.Extensibility.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.dll
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.pdb
+C:\Users\Kacper\Desktop\Inż\VisualMutator\VM2\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\PiotrTrzpil-visualmutator-3bf8a5fb3f0f\VisualMutator.Extensibility\obj\Debug\VisualMutator.Extensibility.csprojResolveAssemblyReference.cache

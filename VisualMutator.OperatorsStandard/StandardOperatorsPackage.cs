@@ -19,6 +19,9 @@
                 new LCR_LogicalConnectorReplacement(), 
                 new LOR_LogicalOperatorReplacement(), 
                 new ROR_RelationalOperatorReplacement(), 
+                new OODL_OperatorDeletion(),
+                new SSDL_StatementBlockDeletion(),
+                
 
             };
         }

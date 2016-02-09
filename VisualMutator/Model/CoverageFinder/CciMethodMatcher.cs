@@ -20,7 +20,8 @@
         {
             var sig = CreateIdentifier(method);
             _log.Debug("matching: "+sig);
-            return sig == _identifier;
+            //AKB to rethink
+            return sig.MethodNameWithoutParams == _identifier.MethodNameWithoutParams;
         }
 
         public bool Matches(ITypeReference typeReference)
